@@ -14,7 +14,7 @@ When you start a fresh project, make sure to copy the `.env` file by using `cp .
 
 ## ES6 modules
 
-The package uses ES6 modules but since there is no bundler (such as Rollup or Webpack) we rely on NodeJS to handle this for us, because of this it is important that all code files have the extension `.mjs` (Module JavaScript).
+The package uses ES6 modules but since there is no bundler (such as Rollup or Webpack) we rely on NodeJS to handle this for us, because of this it is important to ensure that `"type": "module"` (Module JavaScript) is set in package.json.
 
 ## Database clients
 

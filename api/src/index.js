@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import knex from "./database_client.mjs";
-import nestedRouter from "./routers/nested.mjs";
+import knex from "./database_client.js";
+import nestedRouter from "./routers/nested.js";
 
 const app = express();
 app.use(cors());
