@@ -167,6 +167,39 @@ AggregateError [ECONNREFUSED]:
 }
 ```
 
+### Broken TypeScript config file
+This boilerplate does not use TypeScript, but Vite which is used in the `app` package has built in support for TypeScript.
+This means that Vite (or rather `esbuild` which is used internally) will look for a TypScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
+If it does find a TypeScript config file but that file is invalid or empty you'll see errors like this:
+
+```
+✘ [ERROR] Unexpected end of file in JSON
+
+    ../../tsconfig.json:1:0:
+      1 │ 
+        ╵ ^
+
+failed to load config from /Users/milton/dev/hyf/hyf-project-template/app/vite.config.js
+error when starting dev server:
+Error: Build failed with 1 error:
+../../tsconfig.json:1:0: ERROR: Unexpected end of file in JSON
+    at failureErrorWithLog (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1651:15)
+    at /Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1059:25
+    at runOnEndCallbacks (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1486:45)
+    at buildResponseToResult (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1057:7)
+    at /Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1086:16
+    at responseCallbacks.<computed> (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:704:9)
+    at handleIncomingPacket (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:764:9)
+    at Socket.readFromStdout (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:680:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:559:12)
+```
+
+There are 3 possible solutions:
+1. Delete the offending TypeScript config file
+2. Fix the issue in the file so that Vite can use it
+3. Move your project folder to some place that doesn't put the TypeScript config file in the parent folder of your project folder
+
 ## Architecture diagram
 
 ![Architecture](./images/architecture.png)
