@@ -169,7 +169,7 @@ AggregateError [ECONNREFUSED]:
 
 ### Broken TypeScript config file
 This boilerplate does not use TypeScript, but Next which is used in the `app` package has built in support for TypeScript.
-This means that Next (or rather `esbuild` which is used internally) will look for a TypScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
+This means that Next (or rather `esbuild` which is used internally) will look for a TypeScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
 If it does find a TypeScript config file but that file is invalid or empty you'll see errors like this:
 
 ```
