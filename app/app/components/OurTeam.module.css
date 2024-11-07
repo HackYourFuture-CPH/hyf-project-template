@@ -1,0 +1,38 @@
+/* Our Team section styles */
+.ourTeam {
+    width: 100%; /* Full width */
+    background-color: #f5ebeb; /* Light background color */
+    padding: 40px 20px; /* Padding around the section */
+    text-align: center; /* Center text */
+    margin: 40px 0; /* Space between sections */
+}
+
+.teamMembers {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around; /* Space items evenly */
+    flex-wrap: wrap; /* Allow wrapping of items */
+}
+
+.member {
+    max-width: 200px; /* Limit width of member boxes */
+    margin: 10px; /* Margin around each member box */
+    background-color: white; /* White background for each member */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding inside each member box */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+.memberImage {
+    border-radius: 50%; /* Circular image */
+    margin-bottom: 10px; /* Space below the image */
+}
+
+.member h3 {
+    margin: 10px 0; /* Space around member name */
+    font-size: 1.2rem; /* Font size for names */
+}
+
+.member p {
+    font-size: 0.9rem; /* Font size for descriptions */
+    color: #555; /* Darker gray for text */
+}

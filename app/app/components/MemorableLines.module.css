@@ -1,0 +1,48 @@
+/* MemorableLines.module.css */
+
+/* Memorable Lines section styles */
+.memorableLines {
+    width: 100%; /* Full width */
+    padding: 40px 20px; /* Padding around the section */
+    text-align: center; /* Center the text */
+    background-color: #f5ebeb; /* Light background color */
+    margin: 40px 0; /* Space between sections */
+}
+
+.linesContainer {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center the items */
+    flex-wrap: wrap; /* Allow wrapping to the next line */
+}
+
+.line {
+    max-width: 300px; /* Limit width of each line box */
+    margin: 20px; /* Space between line boxes */
+    background-color: #ffffff; /* White background for each quote box */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding inside each quote box */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+.quoteImage {
+    border-radius: 50%; /* Circular image */
+    margin-bottom: 10px; /* Space below the image */
+}
+
+.blockquote {
+    font-size: 1.2rem; /* Quote font size */
+    font-style: italic; /* Italicize the quote */
+    color: #555; /* Quote text color */
+    margin: 10px 0; /* Space around quote */
+}
+
+.bookTitle {
+    font-size: 1rem; /* Font size for book title */
+    font-weight: bold; /* Bold text for book title */
+    margin: 5px 0; /* Space around book title */
+}
+
+.author {
+    font-size: 0.9rem; /* Font size for author name */
+    color: #867070; /* Color for author name */
+}

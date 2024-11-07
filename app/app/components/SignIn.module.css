@@ -1,0 +1,38 @@
+/* SignIn section styles */
+.signIn {
+    width: 100%; /* Ensure it takes full width */
+    background-color: #f5ebeb; /* Background color to match design */
+    padding: 40px 20px; /* Add padding */
+    border-radius: 8px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    margin: 40px 0; /* Space between sections */
+}
+
+.signInTitle {
+    font-size: 2rem; /* Larger font size for title */
+    margin-bottom: 10px; /* Space below title */
+}
+
+.signInDescription {
+    font-size: 1rem; /* Standard font size for description */
+    margin-bottom: 20px; /* Space below description */
+    color: #333; /* Text color */
+}
+
+.buttonContainer {
+    display: flex; /* Use flexbox to align buttons */
+    justify-content: center; /* Center the buttons */
+    margin-bottom: 20px; /* Space below buttons */
+}
+
+.benefitsTitle {
+    font-size: 1.5rem; /* Title for benefits section */
+    margin: 20px 0; /* Space around benefits title */
+}
+
+.benefitsList {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove default padding */
+    color: #333; /* Text color for benefits */
+    text-align: left; /* Align text left */
+}

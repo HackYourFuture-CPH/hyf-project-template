@@ -1,0 +1,34 @@
+/* Search.module.css */
+
+/* Search section styles */
+.search {
+    background-color: #f5ebeb; /* Background color to match the design */
+    padding: 40px 20px; /* Add padding around the section */
+    border-radius: 8px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    margin: 40px 0; /* Space between sections */
+}
+
+.searchTitle {
+    font-size: 2rem; /* Larger font size for title */
+    margin-bottom: 10px; /* Space below title */
+}
+
+.searchDescription {
+    font-size: 1rem; /* Smaller font for description */
+    margin-bottom: 20px; /* Space below description */
+    color: #333; /* Dark text color */
+}
+
+.searchContainer {
+    display: flex; /* Flexbox for input and button alignment */
+    justify-content: center; /* Center the items */
+}
+
+.searchInput {
+    padding: 10px; /* Padding inside input */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    width: 300px; /* Width of the input */
+    margin-right: 10px; /* Space between input and button */
+}

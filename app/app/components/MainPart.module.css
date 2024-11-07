@@ -1,0 +1,15 @@
+/* MainPart section styles */
+.mainPart {
+    width: 100%;
+    height: 100vh; /* Set to full viewport height */
+    background-image: url("/main.jpg");
+    background-size: cover; /* Ensure the background covers the entire area */
+    background-position: center; /* Center the background image */
+    color: white; /* Adjust text color for contrast */
+    display: flex; /* Use flexbox for centering */
+    flex-direction: column; /* Align items in a column */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    text-align: center; /* Center text */
+    padding: 20px; /* Add some padding */
+}

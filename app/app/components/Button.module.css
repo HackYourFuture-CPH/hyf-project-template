@@ -1,0 +1,41 @@
+/* Button.module.css */
+
+.button {
+    padding: 12px 24px; /* Padding inside the button */
+    border: none; /* Remove default border */
+
+    color: white; /* Default text color */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition:
+        background-color 0.3s,
+        color 0.3s; /* Transition for background and text color */
+    font-weight: bold; /* Bold font for emphasis */
+}
+
+.primary {
+    background-color: #d5b4b4; /* Primary button color (Light Pink) */
+    color: #867070; /* Text color (Dark Brownish) */
+    border: 2px solid #d5b4b4; /* Border to match button color */
+    letter-spacing: 1px; /* Space between letters */
+    margin: 10px; /* Space between buttons */
+}
+
+.primary:hover {
+    background-color: #e4d0d0; /* Darker shade on hover (Medium Pink) */
+    border: 2px solid #e4d0d0; /* Match border to hover background */
+}
+
+.secondary {
+    background-color: #ffffff; /* Secondary button color (White) */
+    color: #867070; /* Text color (Dark Brownish) */
+    border: 2px solid #867070; /* Border to match text color */
+    letter-spacing: 1px; /* Space between letters */
+    margin: 10px; /* Space between buttons */
+}
+
+.secondary:hover {
+    background-color: #f5ebeb; /* Color on hover for secondary button (Lightest Pink) */
+    color: #867070; /* Keep text color same on hover */
+    border: 2px solid #867070; /* Change border color on hover */
+}

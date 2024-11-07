@@ -1,0 +1,45 @@
+/* Header styles */
+.header {
+    width: 100%;
+    background-color: transparent; /* Set background color as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    padding: 20px 0; /* Add some padding around the header */
+}
+
+.logoContainer {
+    margin-bottom: 10px; /* Space between logo and nav */
+}
+
+.logo {
+    max-width: 150px; /* Adjust size of the logo as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.nav {
+    width: 100%;
+}
+
+.navList {
+    display: flex;
+    justify-content: center; /* Center navigation items */
+    list-style-type: none; /* Remove default list styles */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+.navItem {
+    margin: 0 15px; /* Space between navigation items */
+}
+
+.navItem a {
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Change to desired text color */
+    font-family: "Lato", sans-serif; /* Use the Lato font */
+    font-weight: 400; /* Adjust font weight as needed */
+}
+
+.navItem a:hover {
+    text-decoration: underline; /* Underline on hover */
+}

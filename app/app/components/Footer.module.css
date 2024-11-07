@@ -1,0 +1,67 @@
+/* Footer.module.css */
+
+.footer {
+    background-color: #d5b4b4; /* Background color */
+    color: #ffffff; /* Text color */
+    padding: 20px; /* Padding for the footer */
+    text-align: center; /* Center text */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footerContent {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around; /* Space between sections */
+    align-items: flex-start; /* Align items to the start */
+    flex-wrap: wrap; /* Allow wrapping */
+    margin-bottom: 20px; /* Space below content */
+}
+
+.socialMedia,
+.navigation,
+.contact {
+    flex: 1; /* Allow sections to grow */
+    min-width: 200px; /* Minimum width for each section */
+    margin: 10px; /* Margin between sections */
+}
+
+.footerHeading {
+    margin-bottom: 10px; /* Space below headings */
+    font-size: 1.2rem; /* Font size for headings */
+}
+
+.socialIcons {
+    display: flex; /* Flexbox for social icons */
+    justify-content: center; /* Center the icons */
+}
+
+.socialIcon {
+    margin: 0 10px; /* Space between icons */
+}
+
+.navigation ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+}
+
+.navigation ul li {
+    margin: 5px 0; /* Space between navigation items */
+}
+
+.navigation a {
+    color: #ffffff; /* Color for navigation links */
+    text-decoration: none; /* Remove underline */
+}
+
+.footerBottom {
+    margin-top: 20px; /* Space above the copyright section */
+    font-size: 0.8rem; /* Smaller font size for copyright */
+    color: #ffffff; /* Text color */
+}
+.dividerLine {
+    width: 600px; /* Width of the divider line */
+    border-bottom: 1px solid #867070; /* Divider line color */
+}
