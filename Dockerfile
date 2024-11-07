@@ -1,14 +1,17 @@
-# Use a base Node image
+# Use the official Node.js image
 FROM node:16
 
-# Set the working directory
-WORKDIR /app
+# Set the working directory to /app/api
+WORKDIR /api
 
-# Copy only necessary files
-COPY . .
+# Copy only the contents of the 'api' directory (including package.json)
+COPY api/package.json api/package-lock.json ./
 
-# Comment out or remove npm install to skip it
- RUN npm install
+# Install dependencies in the /app/api directory
+RUN npm install
 
-# Set the command to start the application
-CMD ["node", "api/src/index.js"]
+# Copy the rest of the files
+COPY api/ .
+
+# Set the command to start your app
+CMD ["node", "src/index.js"]
