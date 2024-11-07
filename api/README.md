@@ -1,3 +1,9 @@
+# Usage
+
+```javascript
+node index.js
+```
+
 # The API package
 
 This package sets up a [Express](https://expressjs.com/) API server and a connection to a SQL database using [Knex](https://knexjs.org/).
