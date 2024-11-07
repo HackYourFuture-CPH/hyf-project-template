@@ -4,6 +4,15 @@
 node index.js
 ```
 
+# Endpoint log
+
+for testing( this just retourn a text, it doesnt contact the db)
+
+https://wflance-production.up.railway.app/api/nested/
+
+for all users
+https://wflance-production.up.railway.app/api/nested/users
+
 # The API package
 
 This package sets up a [Express](https://expressjs.com/) API server and a connection to a SQL database using [Knex](https://knexjs.org/).
