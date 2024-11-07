@@ -1,102 +1,63 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import RoleSelection from './components/RoleSelection';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+import { handleSignUp, handleSignIn } from './utils/auth';
 
-export default function Home() {
-  const { data: session } = useSession();
+const Home = () => {
   const [role, setRole] = useState(null);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleSignIn = async provider => {
-    console.log('Selected role for sign-in:', role);
-    if (!role) {
-      alert('Please select a role (Developer or Client) before signing in.');
-      return;
+  const handleSignUpClick = async (name, email, password, phone) => {
+    const result = await handleSignUp(name, email, password, phone, role);
+    if (result.success) {
+      router.push(role === 'developer' ? '/dev-dashboard' : '/client-dashboard');
+    } else {
+      setError(result.message);
     }
-
-    console.log(`Signing in with provider ${provider} and role ${role}`);
-
-    const callbackUrl = role === 'developer' ? '/dev-dashboard' : '/client-dashboard';
-
-    await signIn(provider, { callbackUrl });
   };
 
-  const handleSignOut = async () => {
-    console.log('Signing out...');
-    await signOut();
-    setRole(null);
-  };
-
-  useEffect(() => {
-    if (session?.user && role) {
-      const targetUrl = role === 'developer' ? '/dev-dashboard' : '/client-dashboard';
-      router.push(targetUrl);
+  const handleSignInClick = async (email, password) => {
+    const result = await handleSignIn(email, password);
+    if (result.success) {
+      router.push(result.role === 'developer' ? '/dev-dashboard' : '/client-dashboard');
+    } else {
+      setError(result.message);
     }
-  }, [session, role, router]);
+  };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
-      {session?.user ? (
-        <div className='flex flex-col items-center space-y-4 bg-white p-8 rounded-lg shadow-md w-80'>
-          <h2 className='text-xl font-semibold'>Welcome, {session.user.name}</h2>
-          <p className='text-gray-500'>Role: {role || 'Not assigned'}</p>
-          <button onClick={handleSignOut} className='px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600'>
-            Sign Out
-          </button>
-        </div>
-      ) : (
-        <div className='bg-white p-8 rounded-lg shadow-md w-80'>
-          {!role ? (
-            <div className='flex flex-col items-center space-y-4'>
-              <h2 className='text-2xl font-bold mb-4 text-gray-700'>Select Your Role</h2>
-              <button
-                onClick={() => {
-                  setRole('developer');
-                }}
-                className='w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-              >
-                Developer
-              </button>
-              <button
-                onClick={() => {
-                  setRole('client');
-                }}
-                className='w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
-              >
-                Client
-              </button>
-            </div>
+    <div className='min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 p-4'>
+      <div className='bg-white shadow-lg rounded-lg p-8 max-w-lg w-full'>
+        <h1 className='text-3xl font-bold text-gray-800 text-center mb-6'>
+          {isSignUp ? 'Create Your Account' : 'Welcome to WFlance!'}
+        </h1>
+
+        {isSignUp ? (
+          !role ? (
+            <RoleSelection setRole={setRole} />
           ) : (
-            <div className='flex flex-col items-center space-y-4'>
-              <h2 className='text-2xl font-bold mb-4 text-gray-700'>
-                Sign In as {role.charAt(0).toUpperCase() + role.slice(1)}
-              </h2>
-              <button
-                onClick={() => handleSignIn('google')}
-                className='w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-              >
-                Sign In with Google
-              </button>
-              <button
-                onClick={() => handleSignIn('github')}
-                className='w-full px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900'
-              >
-                Sign In with GitHub
-              </button>
-              <button
-                onClick={() => {
-                  setRole(null);
-                }}
-                className='mt-4 text-gray-500 underline'
-              >
-                Go Back
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+            <SignUp handleSignUp={handleSignUpClick} setRole={setRole} error={error} role={role} />
+          )
+        ) : (
+          <SignIn handleSignIn={handleSignInClick} error={error} />
+        )}
+
+        {error && <p className='text-red-500 text-center mt-4'>{error}</p>}
+
+        <button
+          onClick={() => setIsSignUp(prev => !prev)}
+          className='mt-6 w-full underline text-grey-00 font-semibold py-2 rounded-lg transition duration-300 ease-in-out'
+        >
+          {isSignUp ? 'Have an account? Sign In' : 'Need an account? Sign Up'}
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
