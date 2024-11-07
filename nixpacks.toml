@@ -1,4 +1,8 @@
 [phases.setup]
 working_directory = "api"
-[phases]
-start = "node src/index.js"
+
+[phases.build]
+cmds = ["npm install"]
+
+[phases.start]
+cmd = "node src/index.js"
