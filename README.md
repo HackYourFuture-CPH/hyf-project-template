@@ -45,7 +45,7 @@ This project will provide essential features such as client communication, deadl
 
 ## Team Structure
 
-- **Mentor**: Kristoffer Tøllbøll
+- **Mentor**: Kristoffer Tøllbøll, Magdalena Odrowąż-Żelezik
 - **Team Members**: Alejandro Gispert, YueJias Shi, Ali Reza
 - **Company**: YAR Solutions
 
