@@ -41,9 +41,9 @@ async function testTableExistence() {
 testTableExistence();
 
 // This nested router example can also be replaced with your own sub-router
-apiRouter.use("/nested", nestedRouter);
+// apiRouter.use("/nested", nestedRouter);
 
-app.use("/api", apiRouter);
+app.use("/api/books", apiRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
