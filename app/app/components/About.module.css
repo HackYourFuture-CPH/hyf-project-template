@@ -1,0 +1,66 @@
+.about {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f5ebeb;
+    padding: 40px;
+    width: 100%;
+    margin: 50px 0 0 0;
+    height: 450px;
+}
+
+.textContainer {
+    flex: 1;
+    margin-right: 20px;
+    max-width: 500px;
+}
+
+.aboutTitle {
+    font-size: 2rem;
+    margin-bottom: 60px;
+}
+
+.aboutDescription {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.authorContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 320px;
+    height: 320px;
+    background-color: #fff;
+}
+
+.authorImage {
+    border-radius: 50%;
+    margin-top: -50px;
+}
+
+.quoteContainer {
+    text-align: center;
+}
+
+.quoteContainer h3 {
+    margin: 0;
+}
+
+.quoteContainer blockquote {
+    font-style: italic;
+    color: #555;
+    margin: 10px 0;
+    padding: 20px;
+}
+
+.learnMore {
+    color: #e072a8;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.learnMore:hover {
+    color: #d06097;
+}
