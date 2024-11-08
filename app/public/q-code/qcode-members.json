@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Kiruthiga",
+        "src": "/q-code/kiruthiga.png",
+        "GitHub": "https://github.com/Saikiruthiga",
+        "LinkedIn": "https://www.linkedin.com/in/kiruthigasivachidambaram/"
+    },
+    {
+        "name": "Nada",
+        "src": "/q-code/nada.png",
+        "GitHub": "https://github.com/NadaJrad",
+        "LinkedIn": "https://www.linkedin.com/in/nada-jrad/"
+    },
+    {
+        "name": "Tanya",
+        "src": "/q-code/tanya.png",
+        "GitHub": "https://github.com/tanya-newStart",
+        "LinkedIn": "https://www.linkedin.com/in/tanya-dewland/"
+    },
+    {
+        "name": "Moein",
+        "src": "/q-code/moein.png",
+        "GitHub": "https://github.com/MoeinHeydari90/",
+        "LinkedIn": "https://www.linkedin.com/in/moein-heydari/"
+    }
+]
