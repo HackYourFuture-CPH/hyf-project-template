@@ -14,6 +14,7 @@ const connection = knex({
     ssl:
       process.env.DB_USE_SSL === "true" ? { rejectUnauthorized: false } : false,
   },
+  debug: true,
 });
 
 export default connection;
