@@ -1,69 +1,99 @@
-// app/components/OurTeam.jsx
-import React from "react";
+"use client"; // Mark this component as a client component
+
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image"; // Import Image from Next.js
 import styles from "./OurTeam.module.css"; // Import the CSS module
 
 const OurTeam = () => {
+    const [members, setMembers] = useState([]); // State to hold the member data
+    const [visibleMembers, setVisibleMembers] = useState([]); // State for visibility
+    const membersRef = useRef([]);
+
+    useEffect(() => {
+        // Fetch members from JSON file
+        const fetchMembers = async () => {
+            const response = await fetch("/q-code/qcode-members.json"); // Adjust path if necessary
+            const data = await response.json();
+            setMembers(data);
+            setVisibleMembers(Array(data.length).fill(false)); // Initialize visibility based on member count
+        };
+
+        fetchMembers();
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setVisibleMembers((prev) => {
+                        const updated = [...prev];
+                        updated[index] = true; // Set member to visible
+                        return updated;
+                    });
+                } else {
+                    // Optionally hide the member when it leaves the viewport
+                    setVisibleMembers((prev) => {
+                        const updated = [...prev];
+                        updated[index] = false; // Reset visibility when out of view
+                        return updated;
+                    });
+                }
+            });
+        });
+
+        // Observe each member element
+        membersRef.current.forEach((member) => {
+            if (member) {
+                observer.observe(member);
+            }
+        });
+
+        return () => {
+            // Clean up the observer on component unmount
+            if (observer) {
+                observer.disconnect();
+            }
+        };
+    }, [members]); // Rerun the effect if members change
+
     return (
         <section className={styles.ourTeam}>
             <h2>Our Team</h2>
             <div className={styles.teamMembers}>
-                <div className={styles.member}>
-                    <Image
-                        src="/kiruthiga.png" // Path to the member's image in the public folder
-                        alt="Kiruthiga"
-                        className={styles.memberImage}
-                        width={150} // Adjust width as necessary
-                        height={150} // Adjust height to maintain aspect ratio
-                    />
-                    <h3>KIRUTHIGA</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo
-                        ligula eget dolor.
-                    </p>
-                </div>
-                <div className={styles.member}>
-                    <Image
-                        src="/nada.png" // Path to the member's image in the public folder
-                        alt="Nada"
-                        className={styles.memberImage}
-                        width={150}
-                        height={150}
-                    />
-                    <h3>NADA</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo
-                        ligula eget dolor.
-                    </p>
-                </div>
-                <div className={styles.member}>
-                    <Image
-                        src="/tanya.png" // Path to the member's image in the public folder
-                        alt="Tanya"
-                        className={styles.memberImage}
-                        width={150}
-                        height={150}
-                    />
-                    <h3>TANYA</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo
-                        ligula eget dolor.
-                    </p>
-                </div>
-                <div className={styles.member}>
-                    <Image
-                        src="/moein.png" // Path to the member's image in the public folder
-                        alt="Moein"
-                        className={styles.memberImage}
-                        width={150}
-                        height={150}
-                    />
-                    <h3>MOEIN</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo
-                        ligula eget dolor.
-                    </p>
-                </div>
+                {members.map((member, index) => (
+                    <div
+                        key={member.name}
+                        className={`${styles.member} ${visibleMembers[index] ? styles.visible : ""}`}
+                        ref={(el) => (membersRef.current[index] = el)} // Assign reference
+                    >
+                        <Image
+                            src={member.src} // Use the src from JSON
+                            alt={member.name}
+                            className={styles.memberImage}
+                            width={300}
+                            height={300}
+                        />
+                        <h3>{member.name.toUpperCase()}</h3>
+
+                        {/* Social media icons container */}
+                        <div className={styles.socialMediaIcons}>
+                            <a href={member.GitHub} target="_blank" rel="noopener noreferrer">
+                                <img
+                                    src="/social-media/github.png" // Ensure this path is correct
+                                    alt="GitHub"
+                                    className={styles.socialIcon}
+                                />
+                            </a>
+                            <a href={member.LinkedIn} target="_blank" rel="noopener noreferrer">
+                                <img
+                                    src="/social-media/linkedin.png" // Ensure this path is correct
+                                    alt="LinkedIn"
+                                    className={styles.socialIcon}
+                                />
+                            </a>
+                        </div>
+                    </div>
+                ))}
             </div>
         </section>
     );

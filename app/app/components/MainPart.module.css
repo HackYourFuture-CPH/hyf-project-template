@@ -1,15 +1,45 @@
-/* MainPart section styles */
 .mainPart {
-    width: 100%;
-    height: 100vh; /* Set to full viewport height */
+    text-align: center;
+    padding: 200px 10px;
     background-image: url("/main.jpg");
-    background-size: cover; /* Ensure the background covers the entire area */
-    background-position: center; /* Center the background image */
-    color: white; /* Adjust text color for contrast */
-    display: flex; /* Use flexbox for centering */
-    flex-direction: column; /* Align items in a column */
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    text-align: center; /* Center text */
-    padding: 20px; /* Add some padding */
+    background-size: cover;
+    background-position: center;
+    color: #333;
+    width: 100%;
+    height: 800px;
+    margin-top: -150px;
+}
+
+.mainTitle {
+    font-size: 2.5rem;
+    color: #867070;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    max-width: 600px;
+}
+
+.subTitle {
+    font-size: 1.5rem;
+    margin-bottom: 100px;
+    color: #867070;
+}
+
+.descriptionContainer {
+    margin: 150px 0px 0px 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 500px;
+}
+
+.description {
+    font-size: 1rem;
+    margin-bottom: 30px;
+    max-width: 450px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }

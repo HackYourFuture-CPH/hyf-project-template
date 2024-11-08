@@ -1,38 +1,62 @@
-/* Our Team section styles */
 .ourTeam {
-    width: 100%; /* Full width */
-    background-color: #f5ebeb; /* Light background color */
-    padding: 40px 20px; /* Padding around the section */
-    text-align: center; /* Center text */
-    margin: 40px 0; /* Space between sections */
+    width: 100%;
+    background-color: #f5ebeb;
+    padding: 40px 20px;
+    text-align: center;
+    margin: 50px 0;
 }
 
 .teamMembers {
-    display: flex; /* Use flexbox for layout */
-    justify-content: space-around; /* Space items evenly */
-    flex-wrap: wrap; /* Allow wrapping of items */
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
 }
 
 .member {
-    max-width: 200px; /* Limit width of member boxes */
-    margin: 10px; /* Margin around each member box */
-    background-color: white; /* White background for each member */
-    border-radius: 8px; /* Rounded corners */
-    padding: 20px; /* Padding inside each member box */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    max-width: 400px;
+    margin: 10px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+        opacity 2s ease,
+        transform 2s ease;
+}
+
+.member:hover {
+    transform: scale(1.05);
 }
 
 .memberImage {
-    border-radius: 50%; /* Circular image */
-    margin-bottom: 10px; /* Space below the image */
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
 }
 
-.member h3 {
-    margin: 10px 0; /* Space around member name */
-    font-size: 1.2rem; /* Font size for names */
+.socialMediaIcons {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.member p {
-    font-size: 0.9rem; /* Font size for descriptions */
-    color: #555; /* Darker gray for text */
+.member:hover .socialMediaIcons {
+    opacity: 1;
+}
+
+.socialIcon {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
 }

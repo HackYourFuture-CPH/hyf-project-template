@@ -1,60 +1,66 @@
-/* About section styles */
 .about {
-    width: 100%; /* Ensure it takes full width */
-    background-color: #f5ebeb; /* Background color to match design */
-    padding: 40px 20px; /* Add padding */
-    display: flex; /* Use flexbox for layout */
-    flex-direction: column; /* Column layout */
-    align-items: center; /* Center content */
-    text-align: center; /* Center align text */
-    border-radius: 8px; /* Rounded corners */
-    margin: 40px 0; /* Margin to separate sections */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f5ebeb;
+    padding: 40px;
+    width: 100%;
+    margin: 50px 0 0 0;
+    height: 450px;
+}
+
+.textContainer {
+    flex: 1;
+    margin-right: 20px;
+    max-width: 500px;
 }
 
 .aboutTitle {
-    font-size: 2rem; /* Larger font for the title */
-    margin-bottom: 10px; /* Space below title */
+    font-size: 2rem;
+    margin-bottom: 60px;
 }
 
 .aboutDescription {
-    font-size: 1rem; /* Standard font size for description */
-    margin-bottom: 20px; /* Space below description */
-    color: #333; /* Text color */
-    max-width: 800px; /* Optional: limit width for readability */
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .authorContainer {
-    display: flex; /* Use flexbox to align author image and quote */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    margin-top: 20px; /* Space above the author section */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 320px;
+    height: 320px;
+    background-color: #fff;
 }
 
 .authorImage {
-    border-radius: 50%; /* Make image circular */
-    margin-right: 20px; /* Space between image and quote */
+    border-radius: 50%;
+    margin-top: -50px;
 }
 
 .quoteContainer {
-    text-align: left; /* Left align text in quote container */
+    text-align: center;
 }
 
 .quoteContainer h3 {
-    margin: 0; /* Remove margin from author name */
+    margin: 0;
 }
 
 .quoteContainer blockquote {
-    font-style: italic; /* Italicize the quote */
-    color: #555; /* Quote text color */
-    margin: 10px 0; /* Space around quote */
+    font-style: italic;
+    color: #555;
+    margin: 10px 0;
+    padding: 20px;
 }
 
 .learnMore {
-    color: #e072a8; /* Color for the "Learn More" link */
-    text-decoration: underline; /* Underline the link */
-    cursor: pointer; /* Pointer cursor on hover */
+    color: #e072a8;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .learnMore:hover {
-    color: #d06097; /* Darker color on hover */
+    color: #d06097;
 }

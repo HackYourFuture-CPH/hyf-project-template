@@ -1,18 +1,17 @@
-// app/components/Header.jsx
 import React from "react";
-import Image from "next/image"; // Import the Image component from next/image
-import styles from "./Header.module.css"; // Import the CSS module
+import Image from "next/image";
+import styles from "./Header.module.css";
 
 const Header = () => {
     return (
         <header className={styles.header}>
             <div className={styles.logoContainer}>
                 <Image
-                    src="/logo.png" // Path to your logo in the public folder
+                    src="/logo.png"
                     alt="Leaf Notes Logo"
                     className={styles.logo}
-                    width={150} // Set the desired width
-                    height={50} // Set the desired height
+                    width={150}
+                    height={50}
                 />
             </div>
             <nav className={styles.nav}>

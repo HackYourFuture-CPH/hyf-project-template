@@ -1,20 +1,20 @@
-/* Header styles */
 .header {
     width: 100%;
-    background-color: transparent; /* Set background color as needed */
+    background-color: transparent;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center items horizontally */
-    padding: 20px 0; /* Add some padding around the header */
+    align-items: center;
+    padding: 20px 0;
+    z-index: 5;
 }
 
 .logoContainer {
-    margin-bottom: 10px; /* Space between logo and nav */
+    margin-bottom: 10px;
 }
 
 .logo {
-    max-width: 150px; /* Adjust size of the logo as needed */
-    height: auto; /* Maintain aspect ratio */
+    max-width: 150px;
+    height: auto;
 }
 
 .nav {
@@ -23,23 +23,25 @@
 
 .navList {
     display: flex;
-    justify-content: center; /* Center navigation items */
-    list-style-type: none; /* Remove default list styles */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .navItem {
-    margin: 0 15px; /* Space between navigation items */
+    margin: 0 15px;
 }
 
 .navItem a {
-    text-decoration: none; /* Remove underline from links */
-    color: #333; /* Change to desired text color */
-    font-family: "Lato", sans-serif; /* Use the Lato font */
-    font-weight: 400; /* Adjust font weight as needed */
+    text-decoration: none;
+    color: #333;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    letter-spacing: 5px;
+    transition: all 0.3s;
 }
 
 .navItem a:hover {
-    text-decoration: underline; /* Underline on hover */
+    color: #867070;
 }

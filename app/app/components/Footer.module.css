@@ -1,10 +1,8 @@
-/* Footer.module.css */
-
 .footer {
-    background-color: #d5b4b4; /* Background color */
-    color: #ffffff; /* Text color */
-    padding: 20px; /* Padding for the footer */
-    text-align: center; /* Center text */
+    background-color: #d5b4b4;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -13,55 +11,56 @@
 }
 
 .footerContent {
-    display: flex; /* Use flexbox for layout */
-    justify-content: space-around; /* Space between sections */
-    align-items: flex-start; /* Align items to the start */
-    flex-wrap: wrap; /* Allow wrapping */
-    margin-bottom: 20px; /* Space below content */
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 .socialMedia,
 .navigation,
 .contact {
-    flex: 1; /* Allow sections to grow */
-    min-width: 200px; /* Minimum width for each section */
-    margin: 10px; /* Margin between sections */
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
 }
 
 .footerHeading {
-    margin-bottom: 10px; /* Space below headings */
-    font-size: 1.2rem; /* Font size for headings */
+    margin-bottom: 10px;
+    font-size: 1.2rem;
 }
 
 .socialIcons {
-    display: flex; /* Flexbox for social icons */
-    justify-content: center; /* Center the icons */
+    display: flex;
+    justify-content: center;
 }
 
 .socialIcon {
-    margin: 0 10px; /* Space between icons */
+    margin: 0 10px;
 }
 
 .navigation ul {
-    list-style-type: none; /* Remove bullet points */
-    padding: 0; /* Remove padding */
+    list-style-type: none;
+    padding: 0;
 }
 
 .navigation ul li {
-    margin: 5px 0; /* Space between navigation items */
+    margin: 5px 0;
 }
 
 .navigation a {
-    color: #ffffff; /* Color for navigation links */
-    text-decoration: none; /* Remove underline */
+    color: #fff;
+    text-decoration: none;
 }
 
 .footerBottom {
-    margin-top: 20px; /* Space above the copyright section */
-    font-size: 0.8rem; /* Smaller font size for copyright */
-    color: #ffffff; /* Text color */
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #fff;
 }
+
 .dividerLine {
-    width: 600px; /* Width of the divider line */
-    border-bottom: 1px solid #867070; /* Divider line color */
+    width: 600px;
+    border-bottom: 1px solid #867070;
 }

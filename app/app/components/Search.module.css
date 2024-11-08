@@ -1,34 +1,36 @@
-/* Search.module.css */
-
-/* Search section styles */
 .search {
-    background-color: #f5ebeb; /* Background color to match the design */
-    padding: 40px 20px; /* Add padding around the section */
-    border-radius: 8px; /* Rounded corners */
-    text-align: center; /* Center the text */
-    margin: 40px 0; /* Space between sections */
+    background-color: #f5ebeb;
+    padding: 40px 20px;
+    text-align: center;
+    margin: 50px 0 0 0;
+    width: 970px;
 }
 
 .searchTitle {
-    font-size: 2rem; /* Larger font size for title */
-    margin-bottom: 10px; /* Space below title */
+    font-size: 2rem;
+    margin-bottom: 10px;
 }
 
 .searchDescription {
-    font-size: 1rem; /* Smaller font for description */
-    margin-bottom: 20px; /* Space below description */
-    color: #333; /* Dark text color */
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .searchContainer {
-    display: flex; /* Flexbox for input and button alignment */
-    justify-content: center; /* Center the items */
+    justify-content: center;
 }
 
 .searchInput {
-    padding: 10px; /* Padding inside input */
-    border: 1px solid #ccc; /* Border color */
-    border-radius: 5px; /* Rounded corners */
-    width: 300px; /* Width of the input */
-    margin-right: 10px; /* Space between input and button */
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 300px;
+    height: 50px;
+    transition: all 0.3s ease;
+}
+
+.searchInput:hover {
+    border-color: #867070;
+    box-shadow: 0 2px 5px rgba(134, 112, 112, 0.5);
+    cursor: pointer;
 }
