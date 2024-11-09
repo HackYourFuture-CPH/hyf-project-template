@@ -4,8 +4,6 @@ import fetch from "node-fetch";
 const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
 export const getBooks = async (req, res) => {
-  console.log("route is hit");
-
   try {
     const books = await knex("Books").select("*");
     res.json(books);
@@ -37,7 +35,6 @@ export const addBook = async (req, res) => {
       .json({ error: "Title, author, and genre are required" });
   }
   try {
-    // Check if the book already exists in the database
     const existingBook = await knex("Books").where({ title, author }).first();
     if (existingBook) {
       return res.status(409).json({ error: "Book already exists" });
