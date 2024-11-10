@@ -1,11 +1,20 @@
-const express = require("express");
-const userController = require("../controllers/userController");
+import express from "express";
+import {
+  createUser,
+  getUsers,
+  login,
+} from "../../controllers/userController.js";
 
-const router = express.Router();
-router.get("/", (req, res) => {
-  res.json({ message: "Hello users router" });
+const userRouter = express.Router();
+
+userRouter.get("/", (req, res) => {
+  res.json({ message: "Hello,this user router works" });
 });
 
-router.post("/users", userController.createUser); // Handle POST request to create user
+userRouter.get("/users", getUsers);
 
-module.exports = router;
+userRouter.post("/users", createUser);
+
+userRouter.post("/login", login);
+
+export default userRouter;

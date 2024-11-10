@@ -4,6 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 // import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
+import userRouter from "./routers/userRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
+apiRouter.use("/", userRouter);
 apiRouter.use("/nested", nestedRouter);
 
 app.use("/api", apiRouter);

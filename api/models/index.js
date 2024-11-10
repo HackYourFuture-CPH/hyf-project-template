@@ -60,13 +60,11 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-// Add sequelize instance and Sequelize class for easier access
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// Sync the models (optional, for development only, use migrations in production)
 sequelize
-  .sync({ force: false }) // force: false means not dropping tables
+  .sync({ force: false })
   .then(() => {
     console.log("Database & tables have been synchronized.");
   })
