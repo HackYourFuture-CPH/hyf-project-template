@@ -1,7 +1,6 @@
-// app/components/MemorableLines.jsx
 import React from "react";
-import Image from "next/image"; // Import Image from Next.js
-import styles from "./MemorableLines.module.css"; // Import the CSS module
+import Image from "next/image";
+import styles from "./MemorableLines.module.css";
 
 const MemorableLines = () => {
     return (

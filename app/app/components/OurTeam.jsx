@@ -1,8 +1,8 @@
-"use client"; // Mark this component as a client component
+"use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image"; // Import Image from Next.js
-import styles from "./OurTeam.module.css"; // Import the CSS module
+import Image from "next/image";
+import styles from "./OurTeam.module.css";
 
 const OurTeam = () => {
     const [members, setMembers] = useState([]); // State to hold the member data
@@ -10,9 +10,8 @@ const OurTeam = () => {
     const membersRef = useRef([]);
 
     useEffect(() => {
-        // Fetch members from JSON file
         const fetchMembers = async () => {
-            const response = await fetch("/q-code/qcode-members.json"); // Adjust path if necessary
+            const response = await fetch("/q-code/qcode-members.json");
             const data = await response.json();
             setMembers(data);
             setVisibleMembers(Array(data.length).fill(false)); // Initialize visibility based on member count
@@ -34,14 +33,13 @@ const OurTeam = () => {
                     // Optionally hide the member when it leaves the viewport
                     setVisibleMembers((prev) => {
                         const updated = [...prev];
-                        updated[index] = false; // Reset visibility when out of view
+                        updated[index] = false;
                         return updated;
                     });
                 }
             });
         });
 
-        // Observe each member element
         membersRef.current.forEach((member) => {
             if (member) {
                 observer.observe(member);
@@ -49,12 +47,11 @@ const OurTeam = () => {
         });
 
         return () => {
-            // Clean up the observer on component unmount
             if (observer) {
                 observer.disconnect();
             }
         };
-    }, [members]); // Rerun the effect if members change
+    }, [members]);
 
     return (
         <section className={styles.ourTeam}>
@@ -64,10 +61,10 @@ const OurTeam = () => {
                     <div
                         key={member.name}
                         className={`${styles.member} ${visibleMembers[index] ? styles.visible : ""}`}
-                        ref={(el) => (membersRef.current[index] = el)} // Assign reference
+                        ref={(el) => (membersRef.current[index] = el)}
                     >
                         <Image
-                            src={member.src} // Use the src from JSON
+                            src={member.src}
                             alt={member.name}
                             className={styles.memberImage}
                             width={300}
@@ -75,18 +72,17 @@ const OurTeam = () => {
                         />
                         <h3>{member.name.toUpperCase()}</h3>
 
-                        {/* Social media icons container */}
                         <div className={styles.socialMediaIcons}>
                             <a href={member.GitHub} target="_blank" rel="noopener noreferrer">
                                 <img
-                                    src="/social-media/github.png" // Ensure this path is correct
+                                    src="/social-media/github.png"
                                     alt="GitHub"
                                     className={styles.socialIcon}
                                 />
                             </a>
                             <a href={member.LinkedIn} target="_blank" rel="noopener noreferrer">
                                 <img
-                                    src="/social-media/linkedin.png" // Ensure this path is correct
+                                    src="/social-media/linkedin.png"
                                     alt="LinkedIn"
                                     className={styles.socialIcon}
                                 />

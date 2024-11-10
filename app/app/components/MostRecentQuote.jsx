@@ -1,9 +1,9 @@
 import React from "react";
-import styles from "./MostRecentQuote.module.css"; // Import styles for the component
-import profileData from "../data/profileData.json"; // Import the JSON data
+import styles from "./MostRecentQuote.module.css";
+import profileData from "../data/profileData.json";
 
 const MostRecentQuote = () => {
-    const mostRecentQuotes = profileData.mostRecentQuote; // Access the entire array of mostRecentQuote
+    const mostRecentQuotes = profileData.mostRecentQuote;
 
     return (
         <div>

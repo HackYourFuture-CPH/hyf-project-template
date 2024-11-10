@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Button from "../components/Button";
-import EditProfile from "../components/EditProfile"; // Import the EditProfile component
+import EditProfile from "../components/EditProfile";
 import styles from "./ProfileDetails.module.css";
 import profileData from "../data/profileData.json";
 

@@ -1,7 +1,6 @@
-// app/components/Search.jsx
 import React from "react";
-import styles from "./Search.module.css"; // Import the CSS module
-import Button from "./Button"; // Import the Button component
+import styles from "./Search.module.css";
+import Button from "./Button";
 
 const Search = () => {
     return (

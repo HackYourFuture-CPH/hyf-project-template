@@ -1,7 +1,6 @@
-// app/components/SignIn.jsx
 import React from "react";
-import styles from "./SignIn.module.css"; // Import the CSS module
-import Button from "./Button"; // Import the Button component
+import styles from "./SignIn.module.css";
+import Button from "./Button";
 
 const SignIn = () => {
     return (
