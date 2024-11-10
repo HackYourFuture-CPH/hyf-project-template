@@ -16,3 +16,5 @@ https://wflance-production.up.railway.app/api/nested/users
 -Separation of Concerns: Using separate operations from authentication operations
 -Modularity: With separate controllers, the code becomes more modular and easier to manage.
 -Scalability: This split allows each controller to grow independently, which is helpful as your application scales.
+
+-added JWT support, and coookie authentication

@@ -26,6 +26,10 @@ const createUser = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+    console.log("Cookies: ", req.cookies);
     res.status(200).json(users);
   } catch (err) {
     res
