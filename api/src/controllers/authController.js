@@ -2,9 +2,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import knex from "../database_client.js";
 
-export const registerUser = async (req, res) => {
-  console.log("The route is hit");
+const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
+export const registerUser = async (req, res) => {
   const { first_name, last_name, email, username, password } = req.body;
 
   if (!first_name || !last_name || !email || !username || !password) {
