@@ -3,7 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "engineStrict": true,
-
   "main": "src/index.js",
   "type": "module",
   "engines": {
@@ -11,8 +10,8 @@
     "npm": "^10.9.0"
   },
   "scripts": {
-    "dev": "nodemon src/index.mjs",
-    "start": "node src/index.mjs",
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
     "format": "npx prettier . --write",
     "check": "npx eslint . --fix"
   },
