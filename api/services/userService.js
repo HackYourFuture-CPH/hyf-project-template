@@ -1,14 +1,16 @@
-import db from "../config/db.js";
+// import db from "../config/db.js";
 import User from "../models/user.js";
 
 const createUserService = async (name, email, password, phone) => {
+  const createdAt = new Date();
   try {
     // Create a new user in the database
-    const user = await db.User.create({
+    const user = await User.create({
       name,
       email,
       password,
       phone,
+      createdAt,
     });
     return user;
   } catch (err) {
