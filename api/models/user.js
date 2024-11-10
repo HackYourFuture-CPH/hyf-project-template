@@ -1,7 +1,5 @@
-// models/user.js
-
 import { DataTypes } from "sequelize";
-import sequelize from "../config/db.js"; // Import the Sequelize instance
+import sequelize from "../config/db.js";
 
 const User = sequelize.define(
   "User",
@@ -38,12 +36,11 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "users", // Explicitly specify table name
-    timestamps: false, // Disable Sequelize's automatic timestamp handling
+    tableName: "users",
+    timestamps: false,
   }
 );
 
-// Sync the model with the database (you can call this manually or use migrations)
 sequelize
   .sync({ force: false })
   .then(() => {
