@@ -2,24 +2,31 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
+  "engineStrict": true,
+  "engines": {
+    "node": "^22.11.0",
+    "npm": "^10.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.6",
-    "next": "^15.0.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "^14.2.17"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
-    "eslint": "^8",
+    "eslint": "^8.57.1",
     "eslint-config-next": "^15.0.3"
   }
 }
