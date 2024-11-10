@@ -21,13 +21,12 @@
 }
 
 .bookImage {
-    width: 100px; /* Adjust size */
-    height: 150px; /* Adjust size */
+    width: 100px;
+    height: 150px;
     object-fit: cover;
     border-radius: 8px;
 }
 .bookshelf p {
     padding: 15px;
-    font-family: var(--font-lato), sans-serif; /* Default font */
     font-size: 1.2em;
 }

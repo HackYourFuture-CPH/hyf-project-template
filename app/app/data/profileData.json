@@ -18,15 +18,22 @@
     "about": "Lorem ipsum dolor sit amet, consectet null a ante et justo ut aliquet et justo mag et aliquet",
     "bookShelf": {
         "read": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1471552048i/30017549.jpg",
             "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1587724137i/1134122.jpg",
             "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
-            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1431013639i/4137.jpg"
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1431013639i/4137.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1328862427i/758283.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1275653256i/1775944.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1465731570i/30526430.jpg"
         ],
         "currentlyReading": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1709043680i/171942.jpg",
             "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1472027832i/51799.jpg"
         ],
         "wishToRead": [
-            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1315355292i/12541427.jpg"
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1315355292i/12541427.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1291999900i/9850443.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1496756079i/12995.jpg"
         ]
     },
     "monthlyProgress": {
@@ -43,10 +50,19 @@
     },
     "mostRecentQuote": [
         {
-            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1587724137i/1134122.jpg",
             "quoteText": "The only limit to our realization of tomorrow is our doubts of today.",
             "book": "The Power of Positive Thinking",
             "author": "Norman Vincent Peale"
+        },
+        {
+            "quoteText": "In three words I can sum up everything I've learned about life: it goes on.",
+            "book": "The Road Not Taken",
+            "author": "Robert Frost"
+        },
+        {
+            "quoteText": "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+            "book": "Self-Reliance",
+            "author": "Ralph Waldo Emerson"
         }
     ],
     "favoriteQuote": [

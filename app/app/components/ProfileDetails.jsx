@@ -1,5 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Button from "../components/Button";
+import EditProfile from "../components/EditProfile"; // Import the EditProfile component
 import styles from "./ProfileDetails.module.css";
 import profileData from "../data/profileData.json";
 
@@ -15,9 +18,14 @@ const ProfileDetails = () => {
         activity,
     } = profileData.user;
 
+    const [isModalOpen, setModalOpen] = useState(false); // State to control modal visibility
+
+    const openModal = () => setModalOpen(true); // Open modal
+    const closeModal = () => setModalOpen(false); // Close modal
+
     return (
         <div className={styles.profileDetails}>
-            <Button>Edit Profile</Button>
+            <Button onClick={openModal}>Edit Profile</Button>
             <div className={styles.imageContainer}>
                 <img alt="Profile" src={src} />
             </div>
@@ -49,6 +57,9 @@ const ProfileDetails = () => {
                     <strong>Favorite Author:</strong> {favoriteAuthor}
                 </div>
             </div>
+
+            {/* Render the EditProfile modal when isModalOpen is true */}
+            <EditProfile isOpen={isModalOpen} onClose={closeModal} />
         </div>
     );
 };
