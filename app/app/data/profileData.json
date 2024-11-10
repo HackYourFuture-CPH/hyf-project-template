@@ -1,0 +1,72 @@
+{
+    "user": {
+        "name": "Sam",
+        "email": "sam@example.com",
+        "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/authors/1696236573i/22302._UX200_CR0,0,200,200_.jpg",
+        "gender": "male",
+        "booksRead": 10,
+        "booksCurrentlyReading": 1,
+        "favoriteAuthor": "Stephen King",
+        "favoriteBooks": [
+            "To Kill A Mockingbird",
+            "1984",
+            "Pride and Prejudice",
+            "The Great Gatsby"
+        ],
+        "activity": "Joined in August 2009, Last Active in October 2024"
+    },
+    "about": "Lorem ipsum dolor sit amet, consectet null a ante et justo ut aliquet et justo mag et aliquet",
+    "bookShelf": {
+        "read": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1587724137i/1134122.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1431013639i/4137.jpg"
+        ],
+        "currentlyReading": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1472027832i/51799.jpg"
+        ],
+        "wishToRead": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1315355292i/12541427.jpg"
+        ]
+    },
+    "monthlyProgress": {
+        "booksRead": 6,
+        "pagesRead": 1200,
+        "goal": 10,
+        "goalPercentage": 60
+    },
+    "yearlyProgress": {
+        "booksRead": 10,
+        "pagesRead": 2100,
+        "goal": 50,
+        "goalPercentage": 50
+    },
+    "mostRecentQuote": [
+        {
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1587724137i/1134122.jpg",
+            "quoteText": "The only limit to our realization of tomorrow is our doubts of today.",
+            "book": "The Power of Positive Thinking",
+            "author": "Norman Vincent Peale"
+        }
+    ],
+    "favoriteQuote": [
+        {
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1387699784i/112937.jpg",
+            "quoteText": "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+            "book": "Winston Churchill: A Biography",
+            "author": "Winston Churchill"
+        },
+        {
+            "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1568307771i/19089._SY75_.jpg",
+            "quoteText": "It is never too late to be what you might have been.",
+            "book": "Middlemarch",
+            "author": "George Eliot"
+        },
+        {
+            "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1298438452i/92303._SY75_.jpg",
+            "quoteText": "Be yourself; everyone else is already taken.",
+            "book": "The Importance of Being Earnest",
+            "author": "Oscar Wilde"
+        }
+    ]
+}

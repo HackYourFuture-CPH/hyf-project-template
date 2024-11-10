@@ -1,0 +1,14 @@
+.aboutUser {
+    padding: 20px;
+    background-color: #f5ebeb;
+    border-radius: 0;
+}
+
+.aboutUser h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.aboutUser p {
+    font-size: 1rem;
+}

@@ -1,0 +1,135 @@
+/* app/profile/ProfilePage.module.css */
+
+.profilePage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0 100px;
+}
+
+.mainContent {
+    display: flex;
+    justify-content: center; /* Center the middle content */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.leftSide,
+.rightSide {
+    flex: 1; /* These divs will each take equal width */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f5ebeb;
+}
+
+.leftSide {
+    max-width: 300px;
+}
+.rightSide h3 {
+    padding: 20px;
+}
+.middleContent {
+    flex: 2; /* This div will take twice the space of the left and right divs */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profileDetails {
+    padding: 20px;
+    background-color: #f5ebeb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.profileDetails .imageContainer {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profileDetails .imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profileDetails .imageContainer .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileDetails .wordDiv {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-template-rows: repeat(7, 1fr); /* 7 rows */
+    gap: 10px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.profileDetails .wordDiv div {
+    padding: 5px;
+    background-color: #eee;
+}
+
+.aboutUser,
+.bookshelf,
+.mostRecentQuotes,
+.about,
+.progress {
+    padding: 20px;
+    background-color: #f5ebeb;
+    border-radius: 0;
+}
+
+.profileDetails h2,
+.aboutUser h3,
+.bookshelf h3,
+.mostRecentQuotes h3,
+.about h3,
+.progress h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.bookshelf ul li,
+.mostRecentQuotes ul li,
+.aboutUser ul li {
+    padding-left: 1rem;
+}
+
+.bookshelf ul,
+.mostRecentQuotes ul,
+.aboutUser ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        flex-direction: column; /* Stack columns vertically on smaller screens */
+        justify-content: flex-start;
+    }
+
+    .leftSide,
+    .middleContent,
+    .rightSide {
+        width: 100%; /* Make each section take full width on mobile */
+        margin-bottom: 20px;
+    }
+}

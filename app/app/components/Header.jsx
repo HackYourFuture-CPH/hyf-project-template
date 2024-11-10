@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./Header.module.css";
+import Link from "next/link";
 
 const Header = () => {
     return (
@@ -17,16 +18,16 @@ const Header = () => {
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
                     <li className={styles.navItem}>
-                        <a href="/about">ABOUT</a>
+                        <Link href="/about">ABOUT</Link> {/* Using Link for navigation */}
                     </li>
                     <li className={styles.navItem}>
-                        <a href="/search">SEARCH</a>
+                        <Link href="/search">SEARCH</Link> {/* Using Link for navigation */}
                     </li>
                     <li className={styles.navItem}>
-                        <a href="/contact">CONTACT</a>
+                        <Link href="/profile">PROFILE</Link> {/* Using Link for navigation */}
                     </li>
                     <li className={styles.navItem}>
-                        <a href="/signin">SIGN IN</a>
+                        <Link href="/signin">SIGN IN</Link> {/* Using Link for navigation */}
                     </li>
                 </ul>
             </nav>

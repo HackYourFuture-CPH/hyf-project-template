@@ -1,0 +1,46 @@
+.quoteContainer {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f5ebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.quoteImageContainer {
+    width: 100px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.quoteImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.quoteContent {
+    flex-grow: 1;
+}
+
+.quoteText {
+    font-size: 1.2rem;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.bookTitle,
+.author {
+    font-size: 1rem;
+    color: #555;
+}
+
+.bookTitle {
+    font-weight: bold;
+}
+
+.author {
+    margin-top: 5px;
+}
