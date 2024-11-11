@@ -6,6 +6,7 @@ import Bookshelf from "../components/Bookshelf";
 import Quote from "../components/Quote";
 import MostRecentQuote from "../components/MostRecentQuote";
 import UserProgress from "../components/UserProgress";
+import profileData from "../data/profileData.json";
 import styles from "./ProfilePage.module.css";
 
 export default function ProfilePage() {
@@ -26,7 +27,7 @@ export default function ProfilePage() {
 
                 <div className={styles.rightSide}>
                     <h3>Favorite Quotes:</h3>
-                    <Quote />
+                    <Quote favoriteQuotes={profileData.favoriteQuote} />
                 </div>
             </div>
         </AppLayoutContainer>

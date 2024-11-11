@@ -67,22 +67,30 @@
     ],
     "favoriteQuote": [
         {
-            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1387699784i/112937.jpg",
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1309212005i/143628.jpg",
             "quoteText": "Success is not final, failure is not fatal: It is the courage to continue that counts.",
             "book": "Winston Churchill: A Biography",
             "author": "Winston Churchill"
         },
         {
-            "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1568307771i/19089._SY75_.jpg",
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1568307771i/19089.jpg",
             "quoteText": "It is never too late to be what you might have been.",
             "book": "Middlemarch",
             "author": "George Eliot"
         },
         {
-            "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1298438452i/92303._SY75_.jpg",
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1298438452i/92303.jpg",
             "quoteText": "Be yourself; everyone else is already taken.",
             "book": "The Importance of Being Earnest",
             "author": "Oscar Wilde"
+        }
+    ],
+    "editFavoriteQuote": [
+        {
+            "src": "https://static01.nyt.com/images/2024/06/30/books/books-flat-slide-91FS/books-flat-slide-91FS-articleLarge.png",
+            "quoteText": "The quote",
+            "book": "The book title",
+            "author": "the author’s name"
         }
     ]
 }

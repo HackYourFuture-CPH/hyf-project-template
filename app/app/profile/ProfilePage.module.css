@@ -1,17 +1,9 @@
-.profilePage {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 0 100px;
-}
-
 .mainContent {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
     gap: 20px;
     padding: 20px;
-    flex-grow: 1;
+    margin: 0 200px;
 }
 
 .leftSide,

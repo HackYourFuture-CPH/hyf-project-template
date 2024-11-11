@@ -14,7 +14,7 @@ const Footer = () => {
                                 className={styles.socialIcon}
                                 width="50"
                                 height="50"
-                                src="social-media/instagram-new--v1.png"
+                                src="/social-media/instagram-new--v1.png"
                                 alt="instagram"
                             />
                         </a>
@@ -23,7 +23,7 @@ const Footer = () => {
                                 className={styles.socialIcon}
                                 width="50"
                                 height="50"
-                                src="social-media/facebook--v1.png"
+                                src="/social-media/facebook--v1.png"
                                 alt="facebook"
                             />
                         </a>
@@ -32,7 +32,7 @@ const Footer = () => {
                                 className={styles.socialIcon}
                                 width="50"
                                 height="50"
-                                src="social-media/twitterx--v1.png"
+                                src="/social-media/twitterx--v1.png"
                                 alt="twitter"
                             />
                         </a>
@@ -41,7 +41,7 @@ const Footer = () => {
                                 className={styles.socialIcon}
                                 width="50"
                                 height="50"
-                                src="social-media/youtube-squared.png"
+                                src="/social-media/youtube-squared.png"
                                 alt="youtube"
                             />
                         </a>

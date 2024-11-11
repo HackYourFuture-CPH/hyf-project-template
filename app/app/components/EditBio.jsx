@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./EditProfile.module.css";
+import styles from "./EditBio.module.css";
 import Button from "./Button";
 
 const EditProfile = ({ isOpen, onClose }) => {
@@ -36,7 +36,7 @@ const EditProfile = ({ isOpen, onClose }) => {
                 <button className={styles.closeButton} onClick={onClose}>
                     &times;
                 </button>
-                <h2>Edit Profile</h2>
+                <h2>Edit Bio</h2>
                 <form onSubmit={handleSubmit}>
                     {formData.profileImageUrl && (
                         <div className={styles.imagePreview}>

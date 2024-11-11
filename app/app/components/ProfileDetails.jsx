@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Button from "../components/Button";
-import EditProfile from "../components/EditProfile";
+import EditProfile from "./EditBio";
 import styles from "./ProfileDetails.module.css";
 import profileData from "../data/profileData.json";
 
@@ -25,7 +25,7 @@ const ProfileDetails = () => {
 
     return (
         <div className={styles.profileDetails}>
-            <Button onClick={openModal}>Edit Profile</Button>
+            <Button onClick={openModal}>Edit Bio</Button>
             <div className={styles.imageContainer}>
                 <img alt="Profile" src={src} />
             </div>

@@ -1,10 +1,7 @@
 import React from "react";
 import styles from "./Quote.module.css";
-import profileData from "../data/profileData.json";
 
-const Quote = () => {
-    const favoriteQuotes = profileData.favoriteQuote;
-
+const Quote = ({ favoriteQuotes }) => {
     return (
         <div>
             {favoriteQuotes.map((quote, idx) => (
