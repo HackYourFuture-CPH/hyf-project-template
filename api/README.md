@@ -86,3 +86,18 @@ it deletes the cookie
 POST
 
 https://wflance-production.up.railway.app/api/logout
+
+---
+
+https://wflance-production.up.railway.app/api/pj/ GET AllProjects
+
+https://wflance-production.up.railway.app/api/pj/5, GET ProjectById
+
+https://wflance-production.up.railway.app/api/pj/create" POST createProject
+
+https://wflance-production.up.railway.app/api/pj/5 POST updateProject
+
+https://wflance-production.up.railway.app/api/pj/5 DELETE deleteProject
+
+find and test all api documentation at:
+https://wflance-production.up.railway.app/docs/api-docs

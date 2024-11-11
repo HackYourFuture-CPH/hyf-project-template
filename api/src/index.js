@@ -10,6 +10,8 @@ import authRouter from "./routers/authRouter.js";
 import devRouter from "./routers/developerRouter.js";
 import projectRouter from "./routers/projectRouter.js";
 
+import swaggerController from "../controllers/swaggerController.js";
+
 const app = express();
 app.use(
   cors({
@@ -33,6 +35,8 @@ app.use("/api", apiRouter);
 app.get("/", (req, res) => {
   res.json({ message: "Hello, this API works" });
 });
+
+app.use("/docs", swaggerController);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
