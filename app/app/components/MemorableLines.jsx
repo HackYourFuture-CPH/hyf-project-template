@@ -1,47 +1,51 @@
-import React from "react";
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./MemorableLines.module.css";
 
-const MemorableLines = () => {
+const MemorableQuotes = () => {
+    const [quotes, setQuotes] = useState([]); // Store all quotes
+    const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0); // Track the index of the current quote
+    const [loading, setLoading] = useState(true); // Loading state
+
+    // Fetch quotes from the API
+    useEffect(() => {
+        axios
+            .get("https://api.allorigins.win/get?url=https://zenquotes.io/api/quotes")
+            .then((response) => {
+                const data = JSON.parse(response.data.contents);
+                setQuotes(data); // Store the quotes in state
+                setLoading(false);
+
+                // Set interval to change quote every 20 seconds
+                const intervalId = setInterval(() => {
+                    setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % data.length); // Loop through quotes
+                }, 20000); // Change every 20 seconds
+
+                // Clear the interval when component unmounts
+                return () => clearInterval(intervalId);
+            })
+            .catch((error) => {
+                console.error("Error fetching quotes:", error);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <p className={styles.loadingText}>Loading quotes...</p>;
+
+    // Get the current quote from the quotes array
+    const currentQuote = quotes[currentQuoteIndex];
+
     return (
-        <section className={styles.memorableLines}>
-            <h2>Memorable Lines from Literature</h2>
-            <div className={styles.linesContainer}>
-                <div className={styles.line}>
-                    <div className={styles.blockquoteContainer}>
-                        <Image
-                            src="/book-icon.png"
-                            alt="The Little Prince"
-                            className={styles.quoteImage}
-                            width={100}
-                            height={100}
-                        />
-                        <h6 className={styles.blockquote}>
-                            “You become responsible, forever, for what you have tamed.”
-                        </h6>
-                    </div>
-                    <p className={styles.bookTitle}>THE LITTLE PRINCE</p>
-                    <p className={styles.author}>ANTOINE DE SAINT-EXUPÉRY</p>
-                </div>
-                <div className={styles.line}>
-                    <div className={styles.blockquoteContainer}>
-                        <Image
-                            src="/book-icon.png"
-                            alt="Don Quixote"
-                            className={styles.quoteImage}
-                            width={100}
-                            height={100}
-                        />
-                        <h6 className={styles.blockquote}>
-                            “He who reads a lot and walks a lot sees a lot and knows a lot.”
-                        </h6>
-                    </div>
-                    <p className={styles.bookTitle}>DON QUIXOTE</p>
-                    <p className={styles.author}>MIGUEL DE CERVANTES</p>
-                </div>
+        <div className={styles.memorableContainer}>
+            <h2 className={styles.title}>Memorable Quotes</h2>
+            <div className={styles.quoteContainer}>
+                <blockquote className={styles.blockquote}>“{currentQuote.q}”</blockquote>
+                <p className={styles.author}>- {currentQuote.a}</p>
             </div>
-        </section>
+        </div>
     );
 };
 
-export default MemorableLines;
+export default MemorableQuotes;
