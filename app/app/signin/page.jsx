@@ -165,7 +165,7 @@ const SignUp = () => {
           </Typography>
 
           <Box sx={{ width: "500px", height: "auto" }}>
-            <img src="./books.jpg" style={{ width: "100%", height: "auto" }} />
+            <img src="./books.png" style={{ width: "100%", height: "auto" }} />
           </Box>
         </Container>
         <Container
