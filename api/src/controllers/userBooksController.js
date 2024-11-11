@@ -135,6 +135,32 @@ export const getUserBooks = async (req, res) => {
   }
 };
 
+export const updateBookDetails = async (req, res) => {
+  const userId = req.user.userId;
+  const { bookId, title, author, genre, description, cover_image } = req.body;
+
+  try {
+    const book = await knex("Books").where({ book_id: bookId }).first();
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+    await knex("Books")
+      .where({ book_id: bookId })
+      .update({
+        title: title || book.title,
+        author: author || book.author,
+        genre: genre || book.genre,
+        description: description || book.description,
+        cover_image: cover_image || book.cover_image,
+      });
+    const updatedBook = await knex("Books").where({ book_id: bookId }).first();
+    return res.status(200).json(updatedBook);
+  } catch (error) {
+    console.error("Error updating book details:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const updateUserBook = async (req, res) => {
   const userId = req.user.userId;
   const { bookId } = req.params;
