@@ -17,6 +17,7 @@ const SignUp = () => {
     firstName: "",
     lastName: "",
     email: "",
+    username: "",
     password: "",
   });
   const handleChange = (e) => {
@@ -24,6 +25,7 @@ const SignUp = () => {
       firstName: "",
       lastName: "",
       email: "",
+      username: "",
       password: "",
     });
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
@@ -33,6 +35,7 @@ const SignUp = () => {
     firstName: "",
     lastName: "",
     email: "",
+    username: "",
     password: "",
   });
 
@@ -54,6 +57,9 @@ const SignUp = () => {
       tempErrors.email = "Email is not valid";
       isValid = false;
     }
+    if (!data.username) {
+      tempErrors.username = "Username is required";
+    }
     if (!data.password) {
       tempErrors.password = "Password";
       isValid = false;
@@ -71,6 +77,7 @@ const SignUp = () => {
         firstName: "",
         lastName: "",
         email: "",
+        username: "",
         password: "",
       });
       alert("Welcome to LeafNotes");
@@ -215,6 +222,25 @@ const SignUp = () => {
           margin="normal"
           required
           fullWidth
+          id="username"
+          label="Username"
+          name="username"
+          autoComplete="username"
+          value={data.username}
+          onChange={handleChange}
+          error={!!errors.username}
+          helperText={errors.username}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 2,
+            },
+          }}
+        />{" "}
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
           name="password"
           label="Password"
           type="password"
@@ -254,77 +280,6 @@ const SignUp = () => {
             Login{" "}
           </a>{" "}
         </Typography>{" "}
-        <Box display="flex" alignItems="center" my={3}>
-          <Divider sx={{ flex: 1 }} /> {" "}
-          <Typography
-            variant="body1"
-            sx={{ mx: 2, color: "gray", fontFamily: "Barriecito" }}
-          >
-            OR{" "}
-          </Typography>
-          <Divider sx={{ flex: 1 }} /> {" "}
-        </Box>{" "}
-        <Box sx={{ width: "100%", marginBottom: "25px" }}>
-          {" "}
-          <Grid2 container spacing={2} sx={{ width: "100%" }}>
-            {" "}
-            <Grid2 sx={{ flexGrow: "1", maxWidth: "50%" }}>
-              {" "}
-              <a href="https://www.facebook.com/login.php/" target="_blank">
-                {" "}
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  color="grey"
-                  sx={{
-                    textTransform: "none",
-                    gap: 2,
-                    color: "grey",
-                    "&:hover": { borderColor: "black" },
-                  }}
-                >
-                  {" "}
-                  <img
-                    width="30"
-                    height="30"
-                    src="https://img.icons8.com/fluency/48/facebook-new.png"
-                    alt="facebook-new"
-                  />
-                  Signup with Facebook{" "}
-                </Button>{" "}
-              </a>{" "}
-            </Grid2>{" "}
-            <Grid2 sx={{ flexGrow: "1", maxWidth: "50%" }}>
-              {" "}
-              <a
-                href="https://www.instagram.com/accounts/login/?hl=en"
-                target="_blank"
-              >
-                {" "}
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  color="grey"
-                  sx={{
-                    color: "grey",
-                    "&:hover": { borderColor: "black" },
-                    textTransform: "none",
-                    gap: 2,
-                  }}
-                >
-                  {" "}
-                  <img
-                    width="30"
-                    height="30"
-                    src="https://img.icons8.com/3d-fluency/94/instagram-logo.png"
-                    alt="instagram-logo"
-                  />
-                  Signup with Instagram{" "}
-                </Button>{" "}
-              </a>{" "}
-            </Grid2>{" "}
-          </Grid2>{" "}
-        </Box>{" "}
       </Container>{" "}
     </Container>
   );
