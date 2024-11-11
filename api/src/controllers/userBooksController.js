@@ -197,3 +197,25 @@ export const updateUserBook = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const deleteUserBook = async (req, res) => {
+  const userId = req.user.userId;
+  const { bookId } = req.params;
+
+  try {
+    const userBook = await knex("UserBooks")
+      .where({ user_id: userId, book_id: bookId })
+      .first();
+
+    if (!userBook) {
+      return res.status(404).json({ error: "User book not found" });
+    }
+
+    await knex("UserBooks").where({ user_id: userId, book_id: bookId }).del();
+
+    return res.status(200).json({ message: "Book deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user book:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
