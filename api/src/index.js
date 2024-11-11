@@ -7,6 +7,9 @@ import userRouter from "./routers/userRoutes.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/authRouter.js";
 
+import devRouter from "./routers/developerRouter.js";
+import projectRouter from "./routers/projectRouter.js";
+
 const app = express();
 app.use(
   cors({
@@ -22,6 +25,8 @@ const apiRouter = express.Router();
 apiRouter.use("/", authRouter);
 apiRouter.use("/", userRouter);
 apiRouter.use("/nested", nestedRouter);
+apiRouter.use("/dev", devRouter);
+apiRouter.use("/pj", projectRouter);
 
 app.use("/api", apiRouter);
 
