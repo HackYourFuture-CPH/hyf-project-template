@@ -12,7 +12,7 @@ const MemorableQuotes = () => {
     // Fetch quotes from the API
     useEffect(() => {
         axios
-            .get("https://api.allorigins.win/get?url=https://zenquotes.io/api/quotes")
+            .get("https://cors-anywhere.herokuapp.com/https://zenquotes.io/api/quotes") // Using a different CORS proxy
             .then((response) => {
                 const data = JSON.parse(response.data.contents);
                 setQuotes(data); // Store the quotes in state
@@ -34,15 +34,21 @@ const MemorableQuotes = () => {
 
     if (loading) return <p className={styles.loadingText}>Loading quotes...</p>;
 
-    // Get the current quote from the quotes array
+    // Check if quotes are available and currentQuote is defined
     const currentQuote = quotes[currentQuoteIndex];
 
     return (
         <div className={styles.memorableContainer}>
             <h2 className={styles.title}>Memorable Quotes</h2>
             <div className={styles.quoteContainer}>
-                <blockquote className={styles.blockquote}>“{currentQuote.q}”</blockquote>
-                <p className={styles.author}>- {currentQuote.a}</p>
+                {currentQuote ? (
+                    <>
+                        <blockquote className={styles.blockquote}>“{currentQuote.q}”</blockquote>
+                        <p className={styles.author}>- {currentQuote.a}</p>
+                    </>
+                ) : (
+                    <p className={styles.errorText}>No quotes available at the moment.</p>
+                )}
             </div>
         </div>
     );
