@@ -6,11 +6,11 @@ node index.js
 
 # Thoughts behind the code
 
+-Structure: "MVC" (Model-View-Controller) - Layered Architecture.
 -Separation of Concerns: Using separate operations from authentication operations
 -Modularity: With separate controllers, the code becomes more modular and easier to manage.
 -Scalability: This split allows each controller to grow independently, which is helpful as your application scales.
-
--added JWT support, and coookie authentication
+-added JWT coookie authentication for 1hour
 
 # Endpoint log
 
@@ -32,13 +32,16 @@ POST
 
 https://wflance-production.up.railway.app/api/users
 
+role_name can be only “Client“ or “Developer”
+
 example request:
 
 {
-"name":"test",
-"email": "test@test.com",
+"name":"test8",
+"email": "test8@test.com",
 "password": "test",
-"phone": "12345678"
+"phone": "12345678",
+"role_name": "Client"
 }
 Example response:
 
@@ -50,7 +53,8 @@ Example response:
 "email": "test@test.com",
 "password": "$2b$10$t69sFWQgjc4Dlc0gyhmC4.oor9u2lMbd0nSoCuyv7znBUUr01Ut9u",
 "phone": "12345678",
-"createdAt": "2024-11-10T18:06:06.718Z"
+"createdAt": "2024-11-10T18:06:06.718Z",
+"role_id": 2
 }
 }
 
