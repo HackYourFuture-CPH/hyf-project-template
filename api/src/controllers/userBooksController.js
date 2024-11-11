@@ -3,36 +3,6 @@ import fetch from "node-fetch";
 
 const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
-export const searchGoogleBooks = async (req, res) => {
-  const { query } = req.query;
-
-  try {
-    const response = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=5&key=${googleBooksApiKey}`
-    );
-
-    const data = await response.json();
-
-    if (!data.items) {
-      return res.json([]);
-    }
-
-    const books = data.items.map((item) => ({
-      google_book_id: item.id,
-      title: item.volumeInfo.title,
-      authors: item.volumeInfo.authors ? item.volumeInfo.authors[0] : "Unknown",
-      description: item.volumeInfo.description || null,
-      genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : null,
-      cover_image: item.volumeInfo.imageLinks?.thumbnail || null,
-    }));
-
-    return res.json(books);
-  } catch (error) {
-    console.error("Error searching Google Books:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 export const addBookToUser = async (req, res) => {
   const userId = req.user.userId;
   const {
@@ -139,6 +109,65 @@ export const addBookToUser = async (req, res) => {
     if (error.message === "Missing required fields") {
       return res.status(400).json({ error: error.message });
     }
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getUserBooks = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const userBooks = await knex("Books")
+      .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
+      .where({ "UserBooks.user_id": userId })
+      .select(
+        "Books.*",
+        "UserBooks.status",
+        "UserBooks.rating",
+        "UserBooks.start_date",
+        "UserBooks.end_date"
+      );
+
+    return res.status(200).json(userBooks);
+  } catch (error) {
+    console.error("Error fetching user books:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const updateUserBook = async (req, res) => {
+  const userId = req.user.userId;
+  const { bookId } = req.params;
+  const { status, rating, start_date, end_date } = req.body;
+
+  try {
+    const userBook = await knex("UserBooks")
+      .where({ user_id: userId, book_id: bookId })
+      .first();
+
+    if (!userBook) {
+      return res.status(404).json({ error: "User book not found" });
+    }
+
+    await knex("UserBooks")
+      .where({ user_id: userId, book_id: bookId })
+      .update({ status, rating, start_date, end_date });
+
+    const updatedBook = await knex("Books")
+      .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
+      .where({ "UserBooks.user_id": userId, "Books.book_id": bookId })
+      .select(
+        "Books.*",
+        "UserBooks.status",
+        "UserBooks.rating",
+        "UserBooks.start_date",
+        "UserBooks.end_date"
+      )
+      .first();
+
+    return res.status(200).json(updatedBook);
+  } catch (error) {
+    console.error("Error updating user book:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
