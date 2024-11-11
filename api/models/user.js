@@ -29,6 +29,14 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    role_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "roles",
+        key: "id",
+      },
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -40,6 +48,11 @@ const User = sequelize.define(
     timestamps: false,
   }
 );
+
+User.associate = (models) => {
+  // A User belongs to one Role
+  User.belongsTo(models.Role, { foreignKey: "role_id", as: "role" });
+};
 
 sequelize
   .sync({ force: false })
