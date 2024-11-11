@@ -32,13 +32,16 @@ POST
 
 https://wflance-production.up.railway.app/api/users
 
+role_name can be only “Client“ or “Developer”
+
 example request:
 
 {
-"name":"test",
-"email": "test@test.com",
+"name":"test8",
+"email": "test8@test.com",
 "password": "test",
-"phone": "12345678"
+"phone": "12345678",
+"role_name": "Client"
 }
 Example response:
 
@@ -50,7 +53,8 @@ Example response:
 "email": "test@test.com",
 "password": "$2b$10$t69sFWQgjc4Dlc0gyhmC4.oor9u2lMbd0nSoCuyv7znBUUr01Ut9u",
 "phone": "12345678",
-"createdAt": "2024-11-10T18:06:06.718Z"
+"createdAt": "2024-11-10T18:06:06.718Z",
+"role_id": 2
 }
 }
 
