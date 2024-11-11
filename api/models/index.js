@@ -1,22 +1,28 @@
-"use strict";
+// models/index.js
+import fs from "fs";
+import path from "path";
+import { Sequelize, DataTypes } from "sequelize";
+import process from "process";
 
-const fs = require("fs");
-const path = require("path");
-const { Sequelize, DataTypes } = require("sequelize");
-const process = require("process");
-const basename = path.basename(__filename);
+const basename = path.basename(import.meta.url);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.json")[env];
+let configFile;
+
+try {
+  configFile = await import("../config/config.json");
+} catch (error) {
+  console.error("Failed to load config file:", error);
+  throw error;
+}
+
+const config = configFile.default[env];
 const db = {};
 
-let sequelize;
-
 // Database connection setup
+let sequelize;
 if (config.use_env_variable) {
-  // Using environment variable for database connection string
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  // Using configuration directly from config.json for PostgreSQL
   sequelize = new Sequelize(
     config.database,
     config.username,
@@ -25,33 +31,34 @@ if (config.use_env_variable) {
   );
 }
 
-// Test the connection (optional, but recommended for error handling)
-sequelize
-  .authenticate()
-  .then(() => {
+// Test the database connection (optional, but recommended for error handling)
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
     console.log(
       `Connection to the database (${config.database}) has been established successfully.`
     );
-  })
-  .catch((err) => {
-    console.error("Unable to connect to the database:", err);
-  });
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+}
+testConnection();
 
-// Read all files in the current directory (models) and dynamically import them
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (
-      file.indexOf(".") !== 0 && // Exclude hidden files like . or _ files
-      file !== basename && // Exclude the index.js file itself
-      file.slice(-3) === ".js" && // Only .js files
-      file.indexOf(".test.js") === -1 // Exclude test files
+// Load all models in the current directory dynamically
+const files = fs.readdirSync(path.resolve());
+for (const file of files) {
+  if (
+    file.indexOf(".") !== 0 && // Exclude hidden files
+    file !== basename && // Exclude the index.js file itself
+    file.slice(-3) === ".js" && // Only .js files
+    !file.includes(".test.") // Exclude test files
+  ) {
+    const model = await import(path.join(import.meta.url, file)).then(
+      (mod) => mod.default
     );
-  })
-  .forEach((file) => {
-    // Dynamically import each model and initialize it with Sequelize and DataTypes
-    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
-  });
+    db[model.name] = model(sequelize, DataTypes); // Initialize model with sequelize and DataTypes
+  }
+}
 
 // Setup associations (many-to-many, one-to-many, etc.)
 Object.keys(db).forEach((modelName) => {
@@ -60,16 +67,8 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+// Export the initialized sequelize instance and Sequelize class
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log("Database & tables have been synchronized.");
-  })
-  .catch((err) => {
-    console.error("Error syncing the database:", err);
-  });
-
-module.exports = db;
+export default db;
