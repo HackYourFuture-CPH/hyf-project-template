@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import { useState } from "react";
+import { makeRequest } from "../utils/makeRequest";
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -82,32 +83,23 @@ const SignUp = () => {
       };
 
       try {
-        const response = await fetch("http://localhost:3001/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
+        const result = await makeRequest(
+          "http://localhost:3001/auth/register",
+          userData
+        );
+
+        setData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          username: "",
+          password: "",
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          setData({
-            firstName: "",
-            lastName: "",
-            email: "",
-            username: "",
-            password: "",
-          });
-          alert("Welcome to LeafNotes");
-          router.push("/profile");
-        } else {
-          alert(result.error || "Something went wrong, please try again.");
-        }
+        alert("Welcome to LeafNotes");
+        router.push("http://localhost:3000/");
       } catch (error) {
         console.error("Error registering user:", error);
-        alert("Network error, please try again later.");
+        alert(error.message || "Something went wrong, please try again.");
       }
     }
   };
