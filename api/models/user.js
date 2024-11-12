@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
+import Role from "./role.js";
 
 const User = sequelize.define(
   "User",
@@ -46,13 +47,34 @@ const User = sequelize.define(
   {
     tableName: "users",
     timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ["role_id"] },
+      include: [
+        {
+          model: Role,
+          as: "role",
+          attributes: ["role_name"],
+        },
+      ],
+    },
   }
 );
 
-User.associate = (models) => {
-  // A User belongs to one Role
-  User.belongsTo(models.Role, { foreignKey: "role_id", as: "role" });
-};
+User.belongsTo(Role, { foreignKey: "role_id", as: "role" });
+
+User.addHook("afterFind", (users) => {
+  if (!users) return users;
+
+  const transform = (user) => {
+    if (user.role) {
+      user.role_name = user.role.role_name;
+      delete user.role;
+    }
+    return user;
+  };
+
+  return Array.isArray(users) ? users.map(transform) : transform(users);
+});
 
 sequelize
   .sync({ force: false })
