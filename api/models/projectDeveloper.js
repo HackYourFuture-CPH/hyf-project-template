@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
+import User from "./user.js";
 
 class ProjectDeveloper extends Model {}
 
@@ -34,9 +35,13 @@ ProjectDeveloper.init(
     modelName: "ProjectDeveloper",
     tableName: "project_developers",
     schema: "public",
-    timestamps: false, // No auto-generated timestamps as it's a join table
-    underscored: true, // Use snake_case column names
+    timestamps: false,
+    underscored: true,
   }
 );
+ProjectDeveloper.belongsTo(User, {
+  foreignKey: "developer_id",
+  as: "Developer",
+});
 
 export default ProjectDeveloper;

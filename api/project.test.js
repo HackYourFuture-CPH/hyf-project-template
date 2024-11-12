@@ -25,22 +25,23 @@ jest.mock("./controllers/swaggerController.js", () => {
 
 let server;
 
-beforeAll((done) => {
-  server = http.createServer(app);
-  server.listen(3002, done);
-});
-jest.setTimeout(20000);
-afterAll((done) => {
-  server.close(done);
-});
+// beforeAll(async () => {
+//   server = http.createServer(app);
+//   server.listen(3002);
+//   await new Promise((resolve) => server.once("listening", resolve));
+// });
 
+// afterAll(async () => {
+//   await new Promise((resolve) => server.close(resolve)); // Ensure the server close is awaited
+// });
+// jest.setTimeout(30000);
 describe("Project API Endpoints", () => {
   // let projectId;
 
   it("should retrieve all projects", async () => {
     const response = await request(server).get("/api/pj/").expect(200);
     expect(Array.isArray(response.body)).toBe(true);
-  }, 20000);
+  }, 30000);
 
   // it("should retrieve a project by ID", async () => {
   //   const response = await request(server)

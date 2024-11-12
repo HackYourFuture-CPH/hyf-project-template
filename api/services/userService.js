@@ -26,4 +26,15 @@ const getAllUsers = async () => {
   return await User.findAll();
 };
 
-export default { createUserService, getAllUsers };
+const getUserById = async (id) => {
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    throw new Error("Error fetching user: " + error.message);
+  }
+};
+export default { createUserService, getAllUsers, getUserById };
