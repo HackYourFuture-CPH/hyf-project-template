@@ -1,7 +1,6 @@
-// app/components/MainPart.jsx
 import React from "react";
-import styles from "./MainPart.module.css"; // Import the CSS module
-import Button from "./Button"; // Import the Button component
+import styles from "./MainPart.module.css";
+import Button from "./Button";
 
 const MainPart = () => {
     return (
