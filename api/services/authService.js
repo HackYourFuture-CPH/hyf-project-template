@@ -4,14 +4,15 @@ import User from "../models/user.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Cookie configuration object for better reusability and consistency
+const JWT_ISSUER = "YAR solutions";
+
 const COOKIE_CONFIG = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict",
   maxAge: 3600000, // 1 hour
-  path: "/", // Explicitly set cookie path
-  domain: process.env.COOKIE_DOMAIN || undefined, // Allow for different domains in different environments
+  path: "/",
+  domain: process.env.COOKIE_DOMAIN || undefined,
 };
 
 class AuthService {
@@ -49,18 +50,25 @@ class AuthService {
     }
   }
 
-  generateToken(userId) {
+  generateToken(userId, role) {
     return jwt.sign(
       {
-        id: userId,
-        timestamp: Date.now(), // Add timestamp for additional security
+        sub: userId,
+        role,
+        iat: Math.floor(Date.now() / 1000),
+        sessionId: this.generateSessionId(userId),
+        iss: JWT_ISSUER,
       },
       JWT_SECRET,
       {
         expiresIn: "1h",
-        algorithm: "HS256", // Explicitly specify the algorithm
+        algorithm: "HS256",
       }
     );
+  }
+
+  generateSessionId(userId) {
+    return `${userId}-${Date.now()}`;
   }
 
   verifyToken(token) {
