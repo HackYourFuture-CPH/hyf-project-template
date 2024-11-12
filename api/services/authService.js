@@ -9,7 +9,7 @@ const JWT_ISSUER = "YAR solutions";
 const COOKIE_CONFIG = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  sameSite: "lax",
   maxAge: 3600000, // 1 hour
   path: "/",
   domain: process.env.COOKIE_DOMAIN || undefined,
@@ -23,6 +23,7 @@ class AuthService {
       }
 
       const user = await User.findOne({ where: { email } });
+
       if (!user) {
         return { success: false, message: "User not found" };
       }
@@ -32,7 +33,7 @@ class AuthService {
         return { success: false, message: "Invalid password" };
       }
 
-      const token = this.generateToken(user.id);
+      const token = this.generateToken(user.id, user.role_name);
       return {
         success: true,
         message: "Login successful",
@@ -54,7 +55,7 @@ class AuthService {
     return jwt.sign(
       {
         sub: userId,
-        role,
+        role: role,
         iat: Math.floor(Date.now() / 1000),
         sessionId: this.generateSessionId(userId),
         iss: JWT_ISSUER,

@@ -28,11 +28,11 @@ const login = async (req, res) => {
     const cookieConfig = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // Changed to lax for easier testing
+      sameSite: "lax",
       maxAge: 3600000,
       path: "/",
     };
-    console.log("Setting cookie with config:", cookieConfig);
+    // console.log("Setting cookie with config:", cookieConfig);
 
     res.cookie("token", result.token, cookieConfig);
     //console.log("Response headers:", res.getHeaders());
@@ -44,6 +44,7 @@ const login = async (req, res) => {
       user: {
         id: result.user.id,
         email: result.user.email,
+        role: result.user.role,
       },
     });
   } catch (error) {
