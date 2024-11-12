@@ -2,6 +2,24 @@
 import ProjectDeveloperService from "../services/projectDeveloperService.js";
 
 class DeveloperController {
+  static async getAllDevelopers(req, res) {
+    try {
+      const developers = await ProjectDeveloperService.getAllDevelopers();
+      res.status(200).json(developers);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async getClients(req, res) {
+    try {
+      const allClients = await ProjectDeveloperService.getAllClients();
+      res.status(200).json(allClients);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   static async assignDeveloper(req, res) {
     const { pjId, devId } = req.body;
     try {
@@ -26,15 +44,6 @@ class DeveloperController {
     }
   }
 
-  static async getAllDevelopers(req, res) {
-    try {
-      const developers = await ProjectDeveloperService.getAllDevelopers();
-      res.status(200).json(developers);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
   static async removeDeveloper(req, res) {
     const { pjId: projectId, devId: developerId } = req.params;
     try {
@@ -43,15 +52,6 @@ class DeveloperController {
         developerId
       );
       res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  static async getClients(req, res) {
-    try {
-      const allClients = await ProjectDeveloperService.getAllClients();
-      res.status(200).json(allClients);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

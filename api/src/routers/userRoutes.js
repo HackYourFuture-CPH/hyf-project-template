@@ -1,5 +1,9 @@
 import express from "express";
-import { createUser, getUsers } from "../../controllers/userController.js";
+import {
+  createUser,
+  getUsers,
+  getUserById,
+} from "../../controllers/userController.js";
 import authenticateToken from "../../middlewares/authenticateToken.js";
 
 const userRouter = express.Router();
@@ -9,6 +13,9 @@ userRouter.get("/", (req, res) => {
 });
 
 userRouter.get("/users", authenticateToken, getUsers);
+
+// userRouter.get("/users/:id", authenticateToken, getUserById);
+userRouter.get("/users/:id", getUserById);
 
 userRouter.post("/users", createUser);
 
