@@ -4,6 +4,8 @@ import {
   getAllReviews,
   getReviewById,
   createReview,
+  updateReview,
+  deleteReview,
 } from "../controllers/reviewsController.js";
 
 const reviewsRouter = express.Router();
@@ -14,4 +16,7 @@ reviewsRouter.get("/:id", getReviewById);
 
 //protected routes
 reviewsRouter.post("/", authenticate, createReview);
+reviewsRouter.put("/:id", authenticate, updateReview);
+reviewsRouter.delete("/:id", authenticate, deleteReview);
+
 export default reviewsRouter;
