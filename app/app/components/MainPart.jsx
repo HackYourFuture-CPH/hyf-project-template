@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./MainPart.module.css";
 import Button from "./Button";
+import Link from "next/link";
 
 const MainPart = () => {
     return (
@@ -15,8 +16,12 @@ const MainPart = () => {
                     and set reading goals—all in one place.
                 </p>
                 <div className={styles.buttonContainer}>
-                    <Button variant="primary">GET STARTED</Button>
-                    <Button variant="secondary">LOG IN</Button>
+                    <Link href="/signup">
+                        <Button variant="primary">GET STARTED</Button>
+                    </Link>
+                    <Link href="/signin">
+                        <Button variant="secondary">LOG IN</Button>
+                    </Link>
                 </div>
             </div>
         </main>

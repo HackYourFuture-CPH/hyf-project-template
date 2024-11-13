@@ -1,10 +1,10 @@
-"use client"; // Ensure the component is a client component
+"use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation"; // Use next/navigation for client-side query params
+import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import AppLayoutContainer from "../components/AppLayoutContainer";
-import styles from "./SearchPage.module.css"; // Import the CSS styles
+import styles from "./SearchPage.module.css";
 
 const SearchPage = () => {
     const searchParams = useSearchParams(); // Use useSearchParams to get query params
@@ -20,14 +20,17 @@ const SearchPage = () => {
                 setLoading(true);
                 setError(null);
                 try {
-                    const response = await axios.get("https://www.googleapis.com/customsearch/v1", {
-                        params: {
-                            key: "AIzaSyBjgopHT_chdiy-WJ6Vsv2wFUVyJ8Ahlhw", // Replace with your Google API key
-                            cx: "b54c016a790c94e6d", // Replace with your Custom Search Engine ID
-                            q: q, // The query parameter from URL
-                        },
-                    });
-                    setSearchResults(response.data.items || []);
+                    const response = await axios.get(
+                        "http://localhost:3001/api/searchGoogleBooks",
+                        {
+                            params: {
+                                query: q, // Pass the search query to the API
+                                page: 1, // You can modify this to support pagination
+                                pageSize: 10, // Define the page size (default to 10)
+                            },
+                        }
+                    );
+                    setSearchResults(response.data || []);
                 } catch (err) {
                     setError("An error occurred while fetching the search results.");
                     console.error(err);
@@ -57,16 +60,25 @@ const SearchPage = () => {
                                             rel="noopener noreferrer"
                                             className={styles.resultLink}
                                         >
-                                            {result.pagemap?.cse_image?.[0]?.src && (
+                                            {result.cover_image && (
                                                 <img
-                                                    src={result.pagemap?.cse_image?.[0]?.src}
+                                                    src={result.cover_image}
                                                     alt={result.title}
                                                     className={styles.image}
                                                 />
                                             )}
                                             <div className={styles.resultContent}>
                                                 <h3 className={styles.title}>{result.title}</h3>
-                                                <p className={styles.snippet}>{result.snippet}</p>
+
+                                                <p className={styles.author}>
+                                                    {result.authors
+                                                        ? result.authors
+                                                        : "Unknown Author"}
+                                                </p>
+
+                                                <p className={styles.snippet}>
+                                                    {result.description}
+                                                </p>
                                             </div>
                                         </a>
                                     </li>

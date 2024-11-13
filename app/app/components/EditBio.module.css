@@ -38,10 +38,20 @@
     margin-bottom: 5px;
 }
 
-.inputGroup input,
-.inputGroup textarea {
+.inputGroup input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     font-size: 14px;
+}
+
+.imagePreview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.profileImage {
+    max-width: 100px;
+    border-radius: 50%;
 }
