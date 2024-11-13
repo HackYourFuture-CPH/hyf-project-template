@@ -5,7 +5,6 @@ import SignIn from "./components/SignIn";
 import OurTeam from "./components/OurTeam";
 import RandomBooks from "./components/RandomBooks";
 import MemorableLines from "./components/MemorableLines";
-import Login from "./login/login";
 
 export default function Home() {
   return (
@@ -16,7 +15,6 @@ export default function Home() {
       <RandomBooks />
       <OurTeam />
       <MemorableLines />
-      <Login />
     </AppLayoutContainer>
   );
 }
