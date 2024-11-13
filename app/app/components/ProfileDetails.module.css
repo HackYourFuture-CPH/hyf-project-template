@@ -27,18 +27,13 @@
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    max-width: 600px; /* Adjust the maximum width for a consistent layout */
+    max-width: 600px;
     font-size: 1rem;
     text-align: left;
 }
 
 .profileDetails .userDetailsContainer div {
     padding: 5px;
-}
-
-.profileDetails .userDetailsContainer div:first-child {
-    font-weight: bold; /* Labels like 'Name', 'Activity' */
-    color: #333;
 }
 
 .profileDetails .userDetailsContainer ul {
@@ -49,5 +44,5 @@
 
 .profileDetails .userDetailsContainer ul li {
     font-size: 1rem;
-    color: #666; /* Lighter color for the book titles */
+    color: #666;
 }
