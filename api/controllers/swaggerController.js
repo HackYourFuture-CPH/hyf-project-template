@@ -1,6 +1,5 @@
 import { Router } from "express";
-// import express from "express";
-// import swaggerUi from "swagger-ui-dist";
+
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -9,42 +8,52 @@ const __dirname = path.dirname(__filename);
 
 const swaggerController = Router();
 
-// swaggerController.use("/api-docs", express.static(swaggerUi.absolutePath()));
-
 swaggerController.get("/swagger.json", (req, res) => {
   const swaggerSpec = {
     openapi: "3.0.0",
     info: {
       title: "Project Management API",
       version: "1.0.0",
-      description: "API for managing projects in the system.",
+      description: "API for managing projects, users, and authentication.",
     },
     paths: {
-      "/api/pj": {
-        get: {
-          summary: "Get all projects",
-          operationId: "getAllProjects",
+      // Authentication
+      "/api/login": {
+        post: {
+          summary: "User login",
+          operationId: "login",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    email: { type: "string" },
+                    password: { type: "string" },
+                  },
+                  required: ["email", "password"],
+                },
+              },
+            },
+          },
           responses: {
             200: {
-              description: "List of all projects",
+              description: "Login successful",
               content: {
                 "application/json": {
                   schema: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "integer",
-                          description: "The ID of the project",
-                        },
-                        name: {
-                          type: "string",
-                          description: "The name of the project",
-                        },
-                        description: {
-                          type: "string",
-                          description: "The description of the project",
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean" },
+                      message: { type: "string" },
+                      redirectUrl: { type: "string" },
+                      user: {
+                        type: "object",
+                        properties: {
+                          id: { type: "integer" },
+                          email: { type: "string" },
+                          role: { type: "string" },
                         },
                       },
                     },
@@ -52,9 +61,133 @@ swaggerController.get("/swagger.json", (req, res) => {
                 },
               },
             },
-            500: {
-              description: "Internal server error",
+            400: { description: "Invalid input" },
+            401: { description: "Unauthorized" },
+          },
+        },
+      },
+      "/api/logout": {
+        post: {
+          summary: "User logout",
+          operationId: "logout",
+          responses: {
+            200: {
+              description: "Logged out successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      message: { type: "string" },
+                    },
+                  },
+                },
+              },
             },
+          },
+        },
+      },
+
+      // User Management
+      "/api/users": {
+        get: {
+          summary: "Get all users",
+          operationId: "getUsers",
+          responses: {
+            200: {
+              description: "List of users",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        email: { type: "string" },
+                        role: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        post: {
+          summary: "Create a new user",
+          operationId: "createUser",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    email: { type: "string" },
+                    password: { type: "string" },
+                    role: { type: "string" },
+                  },
+                  required: ["email", "password", "role"],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: "User created successfully" },
+            400: { description: "Invalid input" },
+          },
+        },
+      },
+      "/api/users/{id}": {
+        get: {
+          summary: "Get user by ID",
+          operationId: "getUserById",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+            },
+          ],
+          responses: {
+            200: { description: "User found" },
+            404: { description: "User not found" },
+          },
+        },
+      },
+
+      // Role-Based Access
+      "/api/dashboard/dev": {
+        get: {
+          summary: "Access Developer dashboard",
+          operationId: "getDeveloperDashboard",
+          responses: {
+            200: { description: "Developer dashboard content" },
+            403: { description: "Access denied" },
+          },
+        },
+      },
+      "/api/dashboard/client": {
+        get: {
+          summary: "Access Client dashboard",
+          operationId: "getClientDashboard",
+          responses: {
+            200: { description: "Client dashboard content" },
+            403: { description: "Access denied" },
+          },
+        },
+      },
+
+      // Project Management
+      "/api/pj": {
+        get: {
+          summary: "Get all projects",
+          operationId: "getAllProjects",
+          responses: {
+            200: { description: "List of all projects" },
+            500: { description: "Internal server error" },
           },
         },
       },
@@ -67,40 +200,12 @@ swaggerController.get("/swagger.json", (req, res) => {
               name: "id",
               in: "path",
               required: true,
-              schema: {
-                type: "integer",
-                description: "The ID of the project",
-              },
+              schema: { type: "integer" },
             },
           ],
           responses: {
-            200: {
-              description: "Project found",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "integer",
-                      },
-                      name: {
-                        type: "string",
-                      },
-                      description: {
-                        type: "string",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            404: {
-              description: "Project not found",
-            },
-            500: {
-              description: "Internal server error",
-            },
+            200: { description: "Project found" },
+            404: { description: "Project not found" },
           },
         },
         post: {
@@ -111,10 +216,7 @@ swaggerController.get("/swagger.json", (req, res) => {
               name: "id",
               in: "path",
               required: true,
-              schema: {
-                type: "integer",
-                description: "The ID of the project",
-              },
+              schema: { type: "integer" },
             },
           ],
           requestBody: {
@@ -124,42 +226,16 @@ swaggerController.get("/swagger.json", (req, res) => {
                 schema: {
                   type: "object",
                   properties: {
-                    name: {
-                      type: "string",
-                    },
-                    description: {
-                      type: "string",
-                    },
+                    name: { type: "string" },
+                    description: { type: "string" },
                   },
                 },
               },
             },
           },
           responses: {
-            200: {
-              description: "Project updated successfully",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: {
-                        type: "string",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            400: {
-              description: "Invalid input",
-            },
-            404: {
-              description: "Project not found",
-            },
-            500: {
-              description: "Internal server error",
-            },
+            200: { description: "Project updated successfully" },
+            404: { description: "Project not found" },
           },
         },
         delete: {
@@ -170,34 +246,12 @@ swaggerController.get("/swagger.json", (req, res) => {
               name: "id",
               in: "path",
               required: true,
-              schema: {
-                type: "integer",
-                description: "The ID of the project",
-              },
+              schema: { type: "integer" },
             },
           ],
           responses: {
-            200: {
-              description: "Project deleted successfully",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: {
-                        type: "string",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            404: {
-              description: "Project not found",
-            },
-            500: {
-              description: "Internal server error",
-            },
+            200: { description: "Project deleted successfully" },
+            404: { description: "Project not found" },
           },
         },
       },
@@ -212,14 +266,8 @@ swaggerController.get("/swagger.json", (req, res) => {
                 schema: {
                   type: "object",
                   properties: {
-                    name: {
-                      type: "string",
-                      description: "The name of the new project",
-                    },
-                    description: {
-                      type: "string",
-                      description: "A brief description of the new project",
-                    },
+                    name: { type: "string" },
+                    description: { type: "string" },
                   },
                   required: ["name", "description"],
                 },
@@ -227,36 +275,13 @@ swaggerController.get("/swagger.json", (req, res) => {
             },
           },
           responses: {
-            201: {
-              description: "Project created successfully",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "integer",
-                      },
-                      message: {
-                        type: "string",
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            400: {
-              description: "Invalid input",
-            },
-            500: {
-              description: "Internal server error",
-            },
+            201: { description: "Project created successfully" },
+            400: { description: "Invalid input" },
           },
         },
       },
     },
   };
-
   res.json(swaggerSpec);
 });
 
