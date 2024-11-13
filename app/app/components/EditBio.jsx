@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import styles from "./EditBio.module.css";
 import Button from "./Button";
 
-const EditProfile = ({ isOpen, onClose }) => {
+const EditBio = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({
         profileImageUrl: "",
-        name: "",
-        gender: "",
+        username: "",
+        booksReadCount: "",
         favoriteBooks: "",
-        favoriteAuthor: "",
-        about: "",
     });
 
     // Handle input change
@@ -36,7 +34,7 @@ const EditProfile = ({ isOpen, onClose }) => {
                 <button className={styles.closeButton} onClick={onClose}>
                     &times;
                 </button>
-                <h2>Edit Bio</h2>
+                <h2>Edit Profile</h2>
                 <form onSubmit={handleSubmit}>
                     {formData.profileImageUrl && (
                         <div className={styles.imagePreview}>
@@ -48,25 +46,16 @@ const EditProfile = ({ isOpen, onClose }) => {
                         </div>
                     )}
                     <div className={styles.inputGroup}>
-                        <label>Name</label>
+                        <label>Username</label>
                         <input
                             type="text"
-                            name="name"
-                            value={formData.name}
+                            name="username"
+                            value={formData.username}
                             onChange={handleChange}
-                            placeholder="Enter Name..."
+                            placeholder="Enter Username..."
                         />
                     </div>
-                    <div className={styles.inputGroup}>
-                        <label>Gender</label>
-                        <input
-                            type="text"
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleChange}
-                            placeholder="Enter Gender..."
-                        />
-                    </div>
+
                     <div className={styles.inputGroup}>
                         <label>Favorite Books</label>
                         <input
@@ -75,25 +64,6 @@ const EditProfile = ({ isOpen, onClose }) => {
                             value={formData.favoriteBooks}
                             onChange={handleChange}
                             placeholder="Enter Favorite Books..."
-                        />
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>Favorite Author</label>
-                        <input
-                            type="text"
-                            name="favoriteAuthor"
-                            value={formData.favoriteAuthor}
-                            onChange={handleChange}
-                            placeholder="Enter Favorite Author..."
-                        />
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>About</label>
-                        <textarea
-                            name="about"
-                            value={formData.about}
-                            onChange={handleChange}
-                            placeholder="Enter About..."
                         />
                     </div>
                     <div className={styles.inputGroup}>
@@ -116,4 +86,4 @@ const EditProfile = ({ isOpen, onClose }) => {
     );
 };
 
-export default EditProfile;
+export default EditBio;

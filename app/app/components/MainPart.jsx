@@ -3,6 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation"; // Import from next/navigation
 import styles from "./MainPart.module.css";
 import Button from "./Button";
+import Link from "next/link";
 
 const MainPart = () => {
   const router = useRouter(); // Initialize the router from next/navigation
