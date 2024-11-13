@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "./addBook.module.css";
+import styles from "./AddBookToBookshelf.module.css";
 
-const addBook = ({ category }) => {
+const AddBookToBookshelf = ({ category }) => {
     const [query, setQuery] = useState(""); // Search query
     const [searchResults, setSearchResults] = useState([]); // Store search results
     const [loading, setLoading] = useState(false); // Loading state for API request
@@ -54,12 +54,12 @@ const addBook = ({ category }) => {
     return (
         <div className={styles.addBookContainer}>
             <h2>
-                Add a Book to Your{" "}
+                Add Book to{" "}
                 {category === "read"
-                    ? "'Read' Shelf"
+                    ? "Read"
                     : category === "currentlyReading"
-                      ? "'Currently Reading' Shelf"
-                      : "'Wish to Read' Shelf"}
+                      ? "Currently Reading"
+                      : "Wish to Read"}
             </h2>
             <input
                 type="text"
@@ -114,4 +114,4 @@ const addBook = ({ category }) => {
     );
 };
 
-export default addBook;
+export default AddBookToBookshelf;

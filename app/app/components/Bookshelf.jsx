@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import styles from "./Bookshelf.module.css";
 import Button from "../components/Button";
 import profileData from "../data/profileData.json";
-import AddBook from "./AddBook"; // Import the new component
+import AddBookToBookshelf from "./AddBookToBookshelf"; // Import the new component
 
 const Bookshelf = () => {
     const { bookShelf } = profileData;
@@ -94,7 +94,8 @@ const Bookshelf = () => {
                         <button onClick={closeModal} className={styles.closeButton}>
                             &times;
                         </button>
-                        <AddBook category={currentCategory} /> {/* Pass the category as a prop */}
+                        <AddBookToBookshelf category={currentCategory} />{" "}
+                        {/* Pass the category as a prop */}
                     </div>
                 </div>
             )}
