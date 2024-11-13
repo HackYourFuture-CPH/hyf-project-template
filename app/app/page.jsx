@@ -7,14 +7,14 @@ import RandomBooks from "./components/RandomBooks";
 import MemorableLines from "./components/MemorableLines";
 
 export default function Home() {
-    return (
-        <AppLayoutContainer>
-            <MainPart />
-            <About />
-            <SignIn />
-            <RandomBooks />
-            <OurTeam />
-            <MemorableLines />
-        </AppLayoutContainer>
-    );
+  return (
+    <AppLayoutContainer>
+      <MainPart />
+      <About />
+      <SignIn />
+      <RandomBooks />
+      <OurTeam />
+      <MemorableLines />
+    </AppLayoutContainer>
+  );
 }
