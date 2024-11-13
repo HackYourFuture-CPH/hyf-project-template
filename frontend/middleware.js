@@ -1,51 +1,37 @@
-import { NextResponse } from "next/server";
-import { parseCookies } from "nookies";
+import { NextResponse } from 'next/server';
+import cookie from 'cookie';
+import jwt from 'jsonwebtoken';
 
 export function middleware(req) {
-  const { pathname } = req.nextUrl;
+  const cookies = cookie.parse(req.headers.get('cookie') || '');
 
-  const protectedRoutes = [
-    "/dev-dashboard",
-    "/client-dashboard",
-  ];
+  const token = cookies.token;
+  const pathname = req.nextUrl.pathname;
 
-  if (
-    protectedRoutes.some((route) =>
-      pathname.startsWith(route)
-    )
-  ) {
-    // Get the cookies
-    const cookies = parseCookies(req);
-    const userToken = cookies.userToken;
-    const userRole = cookies.userRole;
+  if (!token) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
-    if (!userToken) {
-      return NextResponse.redirect("/login");
+  try {
+    const decodedToken = jwt.decode(token);
+
+    const userRole = decodedToken.role;
+
+    if (pathname.startsWith('/dev-dashboard') && userRole !== 'Developer') {
+      return NextResponse.redirect(new URL('/client-dashboard', req.url));
     }
 
-    // redirect based on role to the correct dashboard if the role doesn't match
-    if (
-      pathname.startsWith("/dev-dashboard") &&
-      userRole !== "developer"
-    ) {
-      return NextResponse.redirect("/client-dashboard");
+    if (pathname.startsWith('/client-dashboard') && userRole !== 'Client') {
+      return NextResponse.redirect(new URL('/dev-dashboard', req.url));
     }
-
-    if (
-      pathname.startsWith("/client-dashboard") &&
-      userRole !== "client"
-    ) {
-      return NextResponse.redirect("/dev-dashboard");
-    }
+  } catch (error) {
+    console.error('JWT decoding failed:', error);
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();
 }
 
-// paths to be protected
 export const config = {
-  matcher: [
-    "/dev-dashboard/:path*",
-    "/client-dashboard/:path*",
-  ],
+  matcher: ['/dev-dashboard/:path*', '/client-dashboard/:path*'],
 };

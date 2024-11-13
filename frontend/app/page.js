@@ -1,10 +1,9 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import RoleSelection from "./_components/RoleSelection";
-import SignIn from "./_components/SignIn";
-import SignUp from "./_components/SignUp";
-import { handleSignUp, handleSignIn } from "./utils/auth";
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import RoleSelection from './components/RoleSelection';
+import SignIn from './components/LogIn';
+import SignUp from './components/SignUp';
 
 const Home = () => {
   const [role, setRole] = useState(null);
@@ -12,42 +11,6 @@ const Home = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleSignUpClick = async (
-    name,
-    email,
-    password,
-    phone
-  ) => {
-    const result = await handleSignUp(
-      name,
-      email,
-      password,
-      phone,
-      role
-    );
-    if (result.success) {
-      router.push(
-        role === "developer"
-          ? "/dev-dashboard"
-          : "/client-dashboard"
-      );
-    } else {
-      setError(result.message);
-    }
-  };
-
-  const handleSignInClick = async (email, password) => {
-    const result = await handleSignIn(email, password);
-    if (result.success) {
-      router.push(
-        result.role === "developer"
-          ? "/dev-dashboard"
-          : "/client-dashboard"
-      );
-    } else {
-      setError(result.message);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 p-4">
@@ -62,18 +25,10 @@ const Home = () => {
           !role ? (
             <RoleSelection setRole={setRole} />
           ) : (
-            <SignUp
-              handleSignUp={handleSignUpClick}
-              setRole={setRole}
-              error={error}
-              role={role}
-            />
+            <SignUp setRole={setRole} error={error} role={role} />
           )
         ) : (
-          <SignIn
-            handleSignIn={handleSignInClick}
-            error={error}
-          />
+          <SignIn error={error} role={role} />
         )}
 
         {error && (

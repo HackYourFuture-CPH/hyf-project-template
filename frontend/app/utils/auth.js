@@ -1,49 +1,58 @@
-import { setCookie, destroyCookie } from 'nookies';
-export const handleSignUp = async (name, email, password, phone, role) => {
+export const handleSignUp = async data => {
   try {
-    const response = await fetch('/api/users', {
+    const response = await fetch(`/api/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, phone, role }),
+      body: JSON.stringify(data),
     });
 
-    const data = await response.json();
+    const result = await response.json();
+    console.log(result);
+
     if (response.ok) {
-      return { success: true, role: data.role };
+      alert(result.message + ' Sign In again.');
+      window.location.href = '/';
+      return result;
     } else {
-      return { success: false, message: data.message || 'Sign up failed' };
+      alert(result.message);
     }
   } catch (error) {
-    return { success: false, message: 'Error creating user' };
+    alert('Error during sign-up: ' + error.message);
   }
 };
 
-export const handleSignIn = async (email, password) => {
+export const handleLogIn = async (email, password) => {
   try {
-    const response = await fetch('/api/users/login', {
+    const response = await fetch(`/api/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
+    const result = await response.json();
     if (response.ok) {
-      // Set info into cookies
-      setCookie(null, 'userToken', data.token, { path: '/' });
-      setCookie(null, 'userRole', data.role, { path: '/' });
-      setCookie(null, 'userName', data.name, { path: '/' });
-
-      return { success: true, role: data.role };
+      console.log(result.message);
     } else {
-      return { success: false, message: data.message || 'Sign in failed' };
+      alert(result.message);
     }
+    return result;
   } catch (error) {
-    return { success: false, message: 'Error signing in' };
+    alert('Error signing in' + error.message);
   }
 };
 
-export const handleSignOut = () => {
-  destroyCookie(null, 'userToken', { path: '/' });
-  destroyCookie(null, 'userRole', { path: '/' });
-  destroyCookie(null, 'userName', { path: '/' });
+export const handleLogOut = async () => {
+  try {
+    const response = await fetch(`/api/logout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      alert('Failed to sign out. Please try again.');
+    }
+  } catch (error) {
+    alert('An error occurred during sign-out: ' + error.message);
+  }
 };
