@@ -23,17 +23,20 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: "Username already exists" });
     }
 
-    const result = await knex("Users").insert({
+    const [userId] = await knex("Users").insert({
       first_name,
       last_name,
       email,
       username,
       password: hashedPassword,
     });
-    const userId = result[0];
-    const token = jwt.sign({ userId: userId }, JWT_SECRET, {
+
+    const token = jwt.sign({ userId }, JWT_SECRET, {
       expiresIn: "1h",
     });
+    const user = await knex("Users")
+      .where({ user_id: userId })
+      .select("user_id", "username", "email", "first_name", "last_name");
     res.status(201).json({ message: "User registered successfully", token });
   } catch (error) {
     console.error("Error registering user:", error.message);
@@ -67,7 +70,16 @@ export const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.user_id,
+        username: user.username,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+      },
+    });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ error: "Internal Server Error" });

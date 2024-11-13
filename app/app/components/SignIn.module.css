@@ -1,3 +1,9 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .signIn {
     background-color: #f5ebeb;
     padding: 40px 20px;

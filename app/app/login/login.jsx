@@ -1,15 +1,20 @@
-"use client";
 import { useState } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
+import { useRouter } from "next/router"; // Import useRouter from Next.js
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); // Initialize the router
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Username:", username);
     console.log("Password:", password);
+
+    // After successful login, redirect to home page or another route
+    // Here, we're redirecting to the home page
+    router.push("/"); // Use Next.js's router to navigate to the home page
   };
 
   return (

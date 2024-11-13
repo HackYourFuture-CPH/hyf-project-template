@@ -1,0 +1,32 @@
+.bookshelf {
+    padding: 20px;
+    background-color: #f5ebeb;
+    border-radius: 8px;
+}
+
+.bookshelfHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookshelfSection {
+    margin-top: 20px;
+}
+
+.bookshelfImages {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.bookImage {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.bookshelf p {
+    padding: 15px;
+    font-size: 1.2em;
+}

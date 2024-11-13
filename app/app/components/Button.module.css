@@ -1,3 +1,8 @@
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+}
+
 .button {
     padding: 12px 24px;
     border: none;
@@ -7,7 +12,7 @@
     cursor: pointer;
     transition:
         background-color 0.3s,
-        color 0.3s; /* Transition for background and text color */
+        color 0.3s;
 }
 
 .primary {
