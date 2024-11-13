@@ -5,7 +5,15 @@ import knex from "../database_client.js";
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 export const registerUser = async (req, res) => {
-  const { first_name, last_name, email, username, password } = req.body;
+  const {
+    first_name,
+    last_name,
+    email,
+    username,
+    password,
+    profile_image_url = null,
+    about = null,
+  } = req.body;
 
   if (!first_name || !last_name || !email || !username || !password) {
     return res.status(400).json({ error: "All fields are required" });
@@ -29,6 +37,8 @@ export const registerUser = async (req, res) => {
       email,
       username,
       password: hashedPassword,
+      profile_image_url,
+      about,
     });
 
     const token = jwt.sign({ userId }, JWT_SECRET, {
@@ -36,7 +46,15 @@ export const registerUser = async (req, res) => {
     });
     const user = await knex("Users")
       .where({ user_id: userId })
-      .select("user_id", "username", "email", "first_name", "last_name");
+      .select(
+        "user_id",
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "profile_image_url",
+        "about"
+      );
     res.status(201).json({ message: "User registered successfully", token });
   } catch (error) {
     console.error("Error registering user:", error.message);
@@ -78,6 +96,8 @@ export const loginUser = async (req, res) => {
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
+        profileImageUrl: user.profile_image_url,
+        about: user.about,
       },
     });
   } catch (error) {
