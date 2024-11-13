@@ -12,7 +12,7 @@ const COOKIE_CONFIG = {
   sameSite: "lax",
   maxAge: 3600000, // 1 hour
   path: "/",
-  domain: process.env.COOKIE_DOMAIN || undefined,
+  // domain: process.env.COOKIE_DOMAIN || undefined,
 };
 
 class AuthService {
@@ -34,15 +34,32 @@ class AuthService {
       }
 
       const token = this.generateToken(user.id, user.role_name);
+
+      let redirectUrl;
+      switch (user.role_name) {
+        case "Admin":
+          redirectUrl = "/admin-dashboard";
+          break;
+        case "Developer":
+          redirectUrl = "/dashboard/dev";
+          break;
+        case "Client":
+          redirectUrl = "/dashboard/client";
+          break;
+        default:
+          redirectUrl = "/";
+      }
+
       return {
         success: true,
         message: "Login successful",
+        role: user.role_name,
         user,
         token,
         cookieConfig: COOKIE_CONFIG,
+        redirectUrl,
       };
     } catch (error) {
-      // console.error("Login error:", error);
       return {
         success: false,
         message: "An error occurred during login",

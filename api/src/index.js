@@ -9,7 +9,7 @@ import authRouter from "./routers/authRouter.js";
 
 import devRouter from "./routers/developerRouter.js";
 import projectRouter from "./routers/projectRouter.js";
-
+import roleRouter from "./routers/roleRouter.js";
 import swaggerController from "../controllers/swaggerController.js";
 
 const app = express();
@@ -29,6 +29,7 @@ apiRouter.use("/", userRouter);
 apiRouter.use("/nested", nestedRouter);
 apiRouter.use("/dev", devRouter);
 apiRouter.use("/pj", projectRouter);
+apiRouter.use("/dashboard", roleRouter);
 
 app.use("/api", apiRouter);
 
