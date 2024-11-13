@@ -10,6 +10,7 @@ import authRouter from "./routers/authRouter.js";
 import userBooksRouter from "./routers/userBooksRouter.js";
 import searchRouter from "./routers/searchGoogleBooksRouter.js";
 import quotesRouter from "./routers/quotesRouter.js";
+import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/api/user-books", userBooksRouter);
 app.use("/quotes", quotesRouter);
+app.use("/api/quotes", apiQuotesRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
