@@ -1,8 +1,7 @@
-// routes/dashboard.js
-
 import express from "express";
 import authenticateToken from "../../middlewares/authenticateToken.js";
 import authorizeRole from "../../middlewares/authorizeRole.js";
+import path from "path";
 
 const roleRouter = express.Router();
 
@@ -11,7 +10,17 @@ roleRouter.get(
   authenticateToken,
   authorizeRole("Developer"),
   (req, res) => {
-    res.json({ message: "Welcome to the Developer dashboard!" });
+    try {
+      const filePath = path.join(
+        process.cwd(),
+        "/public",
+        "dev-dashboard.html"
+      );
+      res.sendFile(filePath);
+    } catch (error) {
+      console.error("Error serving file:", error.message);
+      res.status(500).send("An error occurred while serving the file.");
+    }
   }
 );
 
@@ -20,7 +29,17 @@ roleRouter.get(
   authenticateToken,
   authorizeRole("Client"),
   (req, res) => {
-    res.json({ message: "Welcome to the Client dashboard!" });
+    try {
+      const filePath = path.join(
+        process.cwd(),
+        "/public",
+        "client-dashboard.html"
+      );
+      res.sendFile(filePath);
+    } catch (error) {
+      console.error("Error serving file:", error.message);
+      res.status(500).send("An error occurred while serving the file.");
+    }
   }
 );
 

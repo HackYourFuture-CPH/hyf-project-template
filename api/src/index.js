@@ -21,6 +21,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(express.static("public"));
 
 const apiRouter = express.Router();
 
