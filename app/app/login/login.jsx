@@ -19,7 +19,7 @@ const Login = () => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
-      bgcolor="#87CEEB" // Warm, parchment-like background color
+      bgcolor="#E4D0D0" // Warm, parchment-like background color
       padding={3}
     >
       {/* Left Side: Book Stack Image */}
@@ -126,8 +126,8 @@ const Login = () => {
             sx={{
               mt: 2,
               borderRadius: "10px",
-              bgcolor: "#8B5E3C", // Warm brown button
-              color: "#FFFFFF",
+              bgcolor: "#D5B4B4", // Warm brown button
+              color: "#ffffff",
               ":hover": {
                 bgcolor: "#5A4A42", // Darker brown on hover
               },
