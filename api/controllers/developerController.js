@@ -1,4 +1,3 @@
-// src/controllers/developerController.js
 import ProjectDeveloperService from "../services/projectDeveloperService.js";
 
 class DeveloperController {
