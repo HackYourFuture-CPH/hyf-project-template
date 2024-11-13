@@ -65,3 +65,44 @@ export const updateUserDetails = async (req, res) => {
       .json({ error: "Internal Server Error", message: error.message });
   }
 };
+
+export const deleteUser = async (req, res) => {
+  const { user_id } = req.params;
+
+  if (parseInt(req.user.userId) !== parseInt(user_id))
+    return res.status(403).json({ error: "Forbidden" });
+
+  try {
+    await knex.transaction(async (trx) => {
+      const user = await trx("Users")
+        .where({ user_id: parseInt(user_id) })
+        .first();
+      if (!user) return res.status(404).json({ error: "User not found" });
+      await trx("Notes")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+      await trx("Quotes")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+      await trx("ReadingGoals")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+      await trx("Reviews")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+      await trx("UserBooks")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+      await trx("Users")
+        .where({ user_id: parseInt(user_id) })
+        .del();
+    });
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", message: error.message });
+  }
+};
