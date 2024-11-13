@@ -13,7 +13,6 @@ export const addBookToUser = async (req, res) => {
     cover_image,
     description,
     status = "read",
-    rating = null,
     start_date = null,
     end_date = null,
   } = req.body;
@@ -79,7 +78,6 @@ export const addBookToUser = async (req, res) => {
         user_id: userId,
         book_id: book.book_id,
         status,
-        rating,
         start_date,
         end_date,
       });
@@ -90,7 +88,6 @@ export const addBookToUser = async (req, res) => {
         .select(
           "Books.*",
           "UserBooks.status",
-          "UserBooks.rating",
           "UserBooks.start_date",
           "UserBooks.end_date"
         )
@@ -123,7 +120,6 @@ export const getUserBooks = async (req, res) => {
       .select(
         "Books.*",
         "UserBooks.status",
-        "UserBooks.rating",
         "UserBooks.start_date",
         "UserBooks.end_date"
       );
@@ -164,7 +160,7 @@ export const updateBookDetails = async (req, res) => {
 export const updateUserBook = async (req, res) => {
   const userId = req.user.userId;
   const { bookId } = req.params;
-  const { status, rating, start_date, end_date } = req.body;
+  const { status, start_date, end_date } = req.body;
 
   try {
     const userBook = await knex("UserBooks")
@@ -177,7 +173,7 @@ export const updateUserBook = async (req, res) => {
 
     await knex("UserBooks")
       .where({ user_id: userId, book_id: bookId })
-      .update({ status, rating, start_date, end_date });
+      .update({ status, start_date, end_date });
 
     const updatedBook = await knex("Books")
       .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
@@ -185,7 +181,6 @@ export const updateUserBook = async (req, res) => {
       .select(
         "Books.*",
         "UserBooks.status",
-        "UserBooks.rating",
         "UserBooks.start_date",
         "UserBooks.end_date"
       )
