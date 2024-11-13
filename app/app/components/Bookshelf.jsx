@@ -1,26 +1,28 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import styles from "./Bookshelf.module.css";
 import Button from "../components/Button";
 import profileData from "../data/profileData.json";
+import AddBook from "./AddBook"; // Import the new component
 
 const Bookshelf = () => {
     const { bookShelf } = profileData;
-    const router = useRouter(); // Initialize the useRouter hook for navigation
+    const [isModalOpen, setModalOpen] = useState(false); // State to control modal visibility
+    const [currentCategory, setCurrentCategory] = useState(""); // Track the category being added to
 
-    // Function to handle Edit Bookshelf button click
-    const handleEditBookshelf = () => {
-        router.push("/profile/edit-profile"); // Navigate to the edit bookshelf page
+    // Function to handle Add Book button click with category
+    const handleAddBookClick = (category) => {
+        setCurrentCategory(category); // Set the category
+        setModalOpen(true); // Open the modal
     };
+
+    const closeModal = () => setModalOpen(false); // Close the modal
 
     return (
         <div className={styles.bookshelf}>
             <div className={styles.bookshelfHeader}>
                 <h3>Sam's Bookshelf</h3>
-                <Button onClick={handleEditBookshelf}>Edit Profile</Button>{" "}
-                {/* On click, navigate to edit page */}
             </div>
 
             <div className={styles.bookshelfSection}>
@@ -34,6 +36,13 @@ const Bookshelf = () => {
                             className={styles.bookImage}
                         />
                     ))}
+
+                    <Button
+                        className={styles.addBookButton}
+                        onClick={() => handleAddBookClick("read")}
+                    >
+                        +
+                    </Button>
                 </div>
             </div>
 
@@ -48,6 +57,13 @@ const Bookshelf = () => {
                             className={styles.bookImage}
                         />
                     ))}
+
+                    <Button
+                        className={styles.addBookButton}
+                        onClick={() => handleAddBookClick("currentlyReading")}
+                    >
+                        +
+                    </Button>
                 </div>
             </div>
 
@@ -62,8 +78,26 @@ const Bookshelf = () => {
                             className={styles.bookImage}
                         />
                     ))}
+
+                    <Button
+                        className={styles.addBookButton}
+                        onClick={() => handleAddBookClick("wishToRead")}
+                    >
+                        +
+                    </Button>
                 </div>
             </div>
+
+            {isModalOpen && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <button onClick={closeModal} className={styles.closeButton}>
+                            &times;
+                        </button>
+                        <AddBook category={currentCategory} /> {/* Pass the category as a prop */}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

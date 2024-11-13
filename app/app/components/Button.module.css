@@ -19,7 +19,6 @@
     background-color: #d5b4b4;
     color: #867070;
     border: 2px solid #d5b4b4;
-    margin: 10px;
 }
 
 .primary:hover {
@@ -31,8 +30,6 @@
     background-color: #fff;
     color: #867070;
     border: 2px solid #867070;
-
-    margin: 10px;
 }
 
 .secondary:hover {
