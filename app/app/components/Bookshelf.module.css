@@ -1,7 +1,7 @@
 .bookshelf {
     padding: 20px;
     background-color: #f5ebeb;
-    border-radius: 8px;
+    min-width: 300px;
 }
 
 .bookshelfHeader {
