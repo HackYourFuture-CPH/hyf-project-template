@@ -31,7 +31,8 @@ export const getReviewById = async (req, res) => {
 };
 
 export const createReview = async (req, res) => {
-  const { book_id, rating, review_text } = req.body;
+  const { rating, review_text } = req.body;
+  const book_id = req.params.bookId;
   const user_id = req.user.userId; //from authenticate middleware
 
   if (!book_id || !rating || !review_text) {
@@ -95,8 +96,8 @@ export const updateReview = async (req, res) => {
         user_id: user_id,
       })
       .update({
-        rating: rating || existingReview.rating,
-        review_text: review_text || existingReview.review_text,
+        rating: rating ?? existingReview.rating,
+        review_text: review_text ?? existingReview.review_text,
         updated_at: new Date(),
       });
 

@@ -15,7 +15,7 @@ reviewsRouter.get("/", getAllReviews);
 reviewsRouter.get("/:id", getReviewById);
 
 //protected routes
-reviewsRouter.post("/", authenticate, createReview);
+reviewsRouter.post("/book/:id", authenticate, createReview);
 reviewsRouter.put("/:id", authenticate, updateReview);
 reviewsRouter.delete("/:id", authenticate, deleteReview);
 
