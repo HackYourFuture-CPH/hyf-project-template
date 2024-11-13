@@ -26,6 +26,10 @@
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
+    font-size: 10pt !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .bookshelf p {

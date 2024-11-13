@@ -41,7 +41,7 @@ const Bookshelf = () => {
                         className={styles.addBookButton}
                         onClick={() => handleAddBookClick("read")}
                     >
-                        +
+                        ADD BOOK
                     </Button>
                 </div>
             </div>
@@ -62,7 +62,7 @@ const Bookshelf = () => {
                         className={styles.addBookButton}
                         onClick={() => handleAddBookClick("currentlyReading")}
                     >
-                        +
+                        ADD BOOK
                     </Button>
                 </div>
             </div>
@@ -83,7 +83,7 @@ const Bookshelf = () => {
                         className={styles.addBookButton}
                         onClick={() => handleAddBookClick("wishToRead")}
                     >
-                        +
+                        ADD BOOK
                     </Button>
                 </div>
             </div>
@@ -94,7 +94,7 @@ const Bookshelf = () => {
                         <button onClick={closeModal} className={styles.closeButton}>
                             &times;
                         </button>
-                        <AddBookToBookshelf category={currentCategory} />{" "}
+                        <AddBookToBookshelf category={currentCategory} />
                         {/* Pass the category as a prop */}
                     </div>
                 </div>
