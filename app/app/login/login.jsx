@@ -1,20 +1,60 @@
+"use client";
 import { useState } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
-import { useRouter } from "next/router"; // Import useRouter from Next.js
+import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { makeRequest } from "../utils/makeRequest"; // Import the makeRequest function
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({ username: "", password: "" });
   const router = useRouter(); // Initialize the router
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
+  // Validate form fields
+  const isValid = () => {
+    let valid = true;
+    const tempErrors = { username: "", password: "" };
 
-    // After successful login, redirect to home page or another route
-    // Here, we're redirecting to the home page
-    router.push("/"); // Use Next.js's router to navigate to the home page
+    if (!username) {
+      tempErrors.username = "Username is required";
+      valid = false;
+    }
+    if (!password) {
+      tempErrors.password = "Password is required";
+      valid = false;
+    }
+
+    setErrors(tempErrors);
+    return valid;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isValid()) {
+      try {
+        // Prepare user data for login
+        const userData = { username, password };
+
+        // Make API call to login
+        const response = await makeRequest(
+          "http://localhost:3001/auth/login",
+          userData
+        );
+
+        // Assuming the response contains an authentication token (e.g., JWT)
+        localStorage.setItem("token", response.token); // Store the token for further API requests
+
+        alert("Login successful!");
+
+        // Redirect to homepage (or dashboard)
+        router.push("/"); // This will navigate to the homepage (or you can specify any other route)
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert(error.message || "Something went wrong, please try again.");
+      }
+    }
   };
 
   return (
@@ -87,6 +127,8 @@ const Login = () => {
             fullWidth
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            error={!!errors.username}
+            helperText={errors.username}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
@@ -109,6 +151,8 @@ const Login = () => {
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={!!errors.password}
+            helperText={errors.password}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
