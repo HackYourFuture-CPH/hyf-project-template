@@ -20,8 +20,9 @@ const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: result.message,
-      redirectUrl: result.redirectUrl,
+
       token: result.token,
+      //redirectUrl: result.redirectUrl,
       // user: {
       //   id: result.user.id,
       //   email: result.user.email,

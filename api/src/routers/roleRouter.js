@@ -1,14 +1,14 @@
 import express from "express";
-import authenticateToken from "../../middlewares/authenticateToken.js";
-import authorizeRole from "../../middlewares/authorizeRole.js";
+// import authenticateToken from "../../middlewares/authenticateToken.js";
+// import authorizeRole from "../../middlewares/authorizeRole.js";
 import path from "path";
 
 const roleRouter = express.Router();
 
 roleRouter.get(
   "/dev",
-  authenticateToken,
-  authorizeRole("Developer"),
+  // authenticateToken,
+  // authorizeRole("Developer"),
   (req, res) => {
     try {
       const filePath = path.join(
@@ -26,8 +26,8 @@ roleRouter.get(
 
 roleRouter.get(
   "/client",
-  authenticateToken,
-  authorizeRole("Client"),
+  // authenticateToken,
+  // authorizeRole("Client"),
   (req, res) => {
     try {
       const filePath = path.join(
@@ -45,8 +45,8 @@ roleRouter.get(
 
 roleRouter.get(
   "/admin",
-  authenticateToken,
-  authorizeRole("Admin"),
+  // authenticateToken,
+  // authorizeRole("Admin"),
   (req, res) => {
     try {
       const filePath = path.join(
