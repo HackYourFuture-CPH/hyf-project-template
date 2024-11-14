@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 import { handleLogIn } from '../utils/auth';
+import { decodeJWT } from '../utils/jwt';
 
-const SignIn = ({ setRole, role }) => {
+const LogIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState(null);
@@ -31,8 +31,8 @@ const SignIn = ({ setRole, role }) => {
 
       const token = result.token;
       Cookies.set('token', token);
+      const decoded = await decodeJWT(token);
 
-      const decoded = jwt.decode(token);
       const userRole = decoded.role;
 
       if (userRole === 'Developer') {
@@ -79,4 +79,4 @@ const SignIn = ({ setRole, role }) => {
   );
 };
 
-export default SignIn;
+export default LogIn;

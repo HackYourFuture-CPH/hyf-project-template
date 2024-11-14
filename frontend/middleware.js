@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import cookie from 'cookie';
-import jwt from 'jsonwebtoken';
+import { decodeJWT } from './app/utils/jwt';
 
-export function middleware(req) {
+export async function middleware(req) {
   const cookies = cookie.parse(req.headers.get('cookie') || '');
 
   const token = cookies.token;
@@ -13,7 +13,7 @@ export function middleware(req) {
   }
 
   try {
-    const decodedToken = jwt.decode(token);
+    const decodedToken = await decodeJWT(token);
 
     const userRole = decodedToken.role;
 

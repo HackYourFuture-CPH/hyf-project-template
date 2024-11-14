@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RoleSelection from './_components/RoleSelection';
-import SignIn from './_components/LogIn';
+import LogIn from './_components/LogIn';
 import SignUp from './_components/SignUp';
 
 const Home = () => {
@@ -25,7 +25,7 @@ const Home = () => {
             <SignUp setRole={setRole} error={error} role={role} />
           )
         ) : (
-          <SignIn error={error} role={role} />
+          <LogIn error={error} role={role} />
         )}
 
         {error && <p className='text-red-500 text-center mt-4'>{error}</p>}
