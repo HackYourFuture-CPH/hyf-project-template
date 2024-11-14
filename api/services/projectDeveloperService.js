@@ -1,6 +1,6 @@
 import User from "../models/user.js";
 import Role from "../models/role.js";
-
+import ProjectDevelopers from "../models/projectDeveloper.js";
 class ProjectDeveloperService {
   static async getAllDevelopers() {
     try {
@@ -36,6 +36,20 @@ class ProjectDeveloperService {
       throw new Error("Error fetching all clients: " + error.message);
     }
   }
+
+  static async getDevelopersForProject(projectId) {
+    try {
+      const projectDevelopers = await ProjectDevelopers.findAll({
+        where: { project_id: projectId },
+        include: ["Developer"],
+      });
+      return projectDevelopers;
+    } catch (error) {
+      throw new Error(
+        "Error fetching developers for project: " + error.message
+      );
+    }
+  }
 }
 
 //   static async assignDeveloperToProject(projectId, developerId) {
@@ -48,20 +62,6 @@ class ProjectDeveloperService {
 //       return { message: "Developer assigned to project successfully." };
 //     } catch (error) {
 //       throw new Error("Error assigning developer to project: " + error.message);
-//     }
-//   }
-
-//   static async getDevelopersForProject(projectId) {
-//     try {
-//       const projectDevelopers = await ProjectDeveloper.findAll({
-//         where: { project_id: projectId },
-//         include: ["Developer"],
-//       });
-//       return projectDevelopers;
-//     } catch (error) {
-//       throw new Error(
-//         "Error fetching developers for project: " + error.message
-//       );
 //     }
 //   }
 
