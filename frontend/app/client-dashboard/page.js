@@ -1,6 +1,6 @@
 'use client';
 
-import LogOutButton from '../components/LogOutButton';
+import LogOutButton from '../_components/LogOutButton';
 
 export default function ClientDashboard() {
   return (
