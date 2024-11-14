@@ -1,6 +1,7 @@
 // models/Role.js
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
+import originalUser from "./originalUser.js";
 
 class Project extends Model {}
 
@@ -60,8 +61,19 @@ Project.init(
     tableName: "projects",
     schema: "public",
     timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ["client_id"] },
+      include: [
+        {
+          model: originalUser,
+          as: "client",
+          attributes: ["name"],
+        },
+      ],
+    },
     underscored: true,
   }
 );
+Project.belongsTo(originalUser, { foreignKey: "client_id", as: "client" });
 
 export default Project;

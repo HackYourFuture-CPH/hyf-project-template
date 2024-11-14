@@ -9,10 +9,10 @@ class ProjectDeveloperService {
           {
             model: Role,
             as: "role",
-            attributes: ["role_name"], // Include only the role_name attribute
+            attributes: ["role_name"],
           },
         ],
-        where: { role_id: 1 }, // Adjust according to role_id for developers
+        where: { role_id: 1 },
       });
       return allDevelopers;
     } catch (error) {
@@ -26,10 +26,10 @@ class ProjectDeveloperService {
           {
             model: Role,
             as: "role",
-            attributes: ["role_name"], // Include only the role_name attribute
+            attributes: ["role_name"],
           },
         ],
-        where: { role_id: 2 }, // Adjust according to role_id for clients
+        where: { role_id: 2 },
       });
       return allClients;
     } catch (error) {
