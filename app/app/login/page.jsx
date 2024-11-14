@@ -43,9 +43,6 @@ const Login = () => {
           userData
         );
 
-        // Assuming the response contains an authentication token (e.g., JWT)
-        localStorage.setItem("token", response.token); // Store the token for further API requests
-
         alert("Login successful!");
 
         // Redirect to homepage (or dashboard)
