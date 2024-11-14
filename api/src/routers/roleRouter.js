@@ -43,4 +43,23 @@ roleRouter.get(
   }
 );
 
+roleRouter.get(
+  "/admin",
+  authenticateToken,
+  authorizeRole("Admin"),
+  (req, res) => {
+    try {
+      const filePath = path.join(
+        process.cwd(),
+        "/public",
+        "admin-dashboard.html"
+      );
+      res.sendFile(filePath);
+    } catch (error) {
+      console.error("Error serving file:", error.message);
+      res.status(500).send("An error occurred while serving the file.");
+    }
+  }
+);
+
 export default roleRouter;

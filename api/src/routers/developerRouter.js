@@ -11,13 +11,11 @@ devRouter.get("/allClients", DeveloperController.getClients);
 devRouter.get("/allDevelopers", DeveloperController.getAllDevelopers);
 
 // Route to get developers for a specific project
-devRouter.get("/project/:pjId", DeveloperController.getDevelopersForProject);
+devRouter.get("/project/:PJid", DeveloperController.getDevelopersForProject);
 
 devRouter.post("/assign", DeveloperController.assignDeveloper);
 
 // Route to remove a developer from a specific project
-devRouter.delete("/:pjId/devs/:devId", DeveloperController.removeDeveloper);
-
-devRouter.get("/client/:pjId", DeveloperController.getProjectClient);
+devRouter.delete("/:PJid/devs/:DEVid", DeveloperController.removeDeveloper);
 
 export default devRouter;

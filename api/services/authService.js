@@ -38,13 +38,13 @@ class AuthService {
       let redirectUrl;
       switch (user.role_name) {
         case "Admin":
-          redirectUrl = "/api/admin-dashboard";
+          redirectUrl = "/api/admin";
           break;
         case "Developer":
-          redirectUrl = "/api/dashboard/dev";
+          redirectUrl = "/api/dev";
           break;
         case "Client":
-          redirectUrl = "/api/dashboard/client";
+          redirectUrl = "/api/client";
           break;
         default:
           redirectUrl = "/";

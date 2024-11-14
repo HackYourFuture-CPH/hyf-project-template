@@ -20,11 +20,11 @@ class DeveloperController {
   }
 
   static async assignDeveloper(req, res) {
-    const { pjId, devId } = req.body;
+    const { PJid, DEVid } = req.body;
     try {
       const result = await ProjectDeveloperService.assignDeveloperToProject(
-        pjId,
-        devId
+        PJid,
+        DEVid
       );
       res.status(200).json(result);
     } catch (error) {
@@ -33,7 +33,7 @@ class DeveloperController {
   }
 
   static async getDevelopersForProject(req, res) {
-    const { pjId: projectId } = req.params;
+    const { PJid: projectId } = req.params;
     try {
       const developers =
         await ProjectDeveloperService.getDevelopersForProject(projectId);
@@ -44,24 +44,13 @@ class DeveloperController {
   }
 
   static async removeDeveloper(req, res) {
-    const { pjId: projectId, devId: developerId } = req.params;
+    const { PJid: projectId, DEVid: developerId } = req.params;
     try {
       const result = await ProjectDeveloperService.removeDeveloperFromProject(
         projectId,
         developerId
       );
       res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  static async getProjectClient(req, res) {
-    const { pjId: projectId } = req.params;
-    try {
-      const projectClients =
-        await ProjectDeveloperService.getProjectClient(projectId);
-      res.status(200).json(projectClients);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
