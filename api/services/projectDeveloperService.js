@@ -63,6 +63,22 @@ class ProjectDeveloperService {
       throw new Error("Error assigning developer to project: " + error.message);
     }
   }
+
+  static async removeDeveloperFromProject(projectId, developerId) {
+    try {
+      const deleted = await ProjectDevelopers.destroy({
+        where: { project_id: projectId, developer_id: developerId },
+      });
+      if (deleted) {
+        return { message: "Developer removed from project successfully." };
+      }
+      throw new Error("Developer not found in project.");
+    } catch (error) {
+      throw new Error(
+        "Error removing developer from project: " + error.message
+      );
+    }
+  }
 }
 
 //   static async getProjectClient(projectId) {
@@ -74,22 +90,6 @@ class ProjectDeveloperService {
 //       return projectDevelopers;
 //     } catch (error) {
 //       throw new Error("Error fetching client for project: " + error.message);
-//     }
-//   }
-
-//   static async removeDeveloperFromProject(projectId, developerId) {
-//     try {
-//       const deleted = await ProjectDeveloper.destroy({
-//         where: { project_id: projectId, developer_id: developerId },
-//       });
-//       if (deleted) {
-//         return { message: "Developer removed from project successfully." };
-//       }
-//       throw new Error("Developer not found in project.");
-//     } catch (error) {
-//       throw new Error(
-//         "Error removing developer from project: " + error.message
-//       );
 //     }
 //   }
 
