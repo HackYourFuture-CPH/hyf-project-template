@@ -31,6 +31,18 @@ class ProjectService {
     }
   }
 
+  static async getProjectsByDevId(id) {
+    try {
+      const project = await Project.findAll(id);
+      if (!project) {
+        throw new Error("Projects not found");
+      }
+      return project;
+    } catch (error) {
+      throw new Error("Error fetching projects: " + error.message);
+    }
+  }
+
   static async updateProject(id, updatedData) {
     try {
       const project = await Project.findByPk(id);

@@ -8,6 +8,9 @@ projectRouter.get("/", ProjectController.getAllProjects);
 
 projectRouter.get("/:id", ProjectController.getProjectById);
 
+//get all projects from that developer:
+projectRouter.get("/dev/:id", ProjectController.getProjectById);
+
 projectRouter.post("/create", ProjectController.createProject);
 
 projectRouter.post("/:id", ProjectController.updateProject);

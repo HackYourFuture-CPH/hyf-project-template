@@ -36,6 +36,9 @@ ProjectDeveloper.init(
     tableName: "project_developers",
     schema: "public",
     timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ["developer_id"] },
+    },
     underscored: true,
   }
 );

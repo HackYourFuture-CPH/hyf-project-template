@@ -44,7 +44,7 @@ const roleRouter = express.Router();
 // );
 
 roleRouter.get(
-  "/admin",
+  "/admin-dashboard",
   authenticateToken,
   authorizeRole("Admin"),
   (req, res) => {
