@@ -77,7 +77,7 @@ const SignUp = () => {
             };
 
             try {
-                const result = await makeRequest("http://localhost:3001/auth/register", userData);
+                const result = await makeRequest(`${process.env.NEXT_PUBLIC_APP_API_URL}/auth/register`, userData);
 
                 setData({
                     firstName: "",
@@ -87,7 +87,7 @@ const SignUp = () => {
                     password: "",
                 });
                 alert("Welcome to LeafNotes");
-                router.push("http://localhost:3000/");
+                router.push(`${process.env.NEXT_PUBLIC_APP_API_URL}`);
             } catch (error) {
                 console.error("Error registering user:", error);
                 alert(error.message || "Something went wrong, please try again.");
