@@ -31,11 +31,11 @@ class DeveloperController {
   }
 
   static async assignDeveloper(req, res) {
-    const { PJid, DEVid } = req.body;
+    const { project_id, developer_id } = req.body;
     try {
       const result = await ProjectDeveloperService.assignDeveloperToProject(
-        PJid,
-        DEVid
+        project_id,
+        developer_id
       );
       res.status(200).json(result);
     } catch (error) {

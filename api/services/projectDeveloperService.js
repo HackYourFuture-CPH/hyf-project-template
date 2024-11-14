@@ -50,20 +50,20 @@ class ProjectDeveloperService {
       );
     }
   }
-}
 
-//   static async assignDeveloperToProject(projectId, developerId) {
-//     try {
-//       await ProjectDeveloper.create({
-//         project_id: projectId,
-//         developer_id: developerId,
-//         assigned_date: new Date(),
-//       });
-//       return { message: "Developer assigned to project successfully." };
-//     } catch (error) {
-//       throw new Error("Error assigning developer to project: " + error.message);
-//     }
-//   }
+  static async assignDeveloperToProject(projectId, developerId) {
+    try {
+      await ProjectDevelopers.create({
+        project_id: projectId,
+        developer_id: developerId,
+        assigned_date: new Date(),
+      });
+      return { message: "Developer assigned to project successfully." };
+    } catch (error) {
+      throw new Error("Error assigning developer to project: " + error.message);
+    }
+  }
+}
 
 //   static async getProjectClient(projectId) {
 //     try {
