@@ -4,7 +4,7 @@
   "private": true,
   "engineStrict": true,
   "engines": {
-    "node": "^22.11.0",
+    "node": "18.x.x",
     "npm": "^10.9.0"
   },
   "scripts": {
