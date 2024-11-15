@@ -16,7 +16,7 @@ const ProfileDetails = () => {
 
     return (
         <div className={styles.profileDetails}>
-            <Button onClick={openModal}>Edit Bio</Button>
+            <Button onClick={openModal}>EDIT BIO</Button>
             <div className={styles.imageContainer}>
                 <img alt="Profile" src={src} />
             </div>

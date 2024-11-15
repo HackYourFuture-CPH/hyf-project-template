@@ -3,7 +3,7 @@
     justify-content: center;
     gap: 20px;
     padding: 20px;
-    margin: 0 200px;
+    margin: 0 100px;
 }
 
 .leftSide,
@@ -113,7 +113,9 @@
 @media (max-width: 768px) {
     .mainContent {
         flex-direction: column;
-        justify-content: flex-start;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
     }
 
     .leftSide,

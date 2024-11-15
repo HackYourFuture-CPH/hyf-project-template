@@ -5,18 +5,17 @@ import axios from "axios";
 import styles from "./AddBookToBookshelf.module.css";
 
 const AddBookToBookshelf = ({ category }) => {
-    const [query, setQuery] = useState(""); // Search query
-    const [searchResults, setSearchResults] = useState([]); // Store search results
-    const [loading, setLoading] = useState(false); // Loading state for API request
-    const [error, setError] = useState(null); // Error state
-    const [addedBooks, setAddedBooks] = useState([]); // Track added books
+    const [query, setQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [addedBooks, setAddedBooks] = useState([]);
 
     // Function to handle search input change
     const handleSearchChange = (e) => {
         setQuery(e.target.value);
     };
 
-    // Function to add a book to the bookshelf based on category
     const addBook = (book) => {
         // Example logic for adding the book to the appropriate category
         setAddedBooks((prev) => [...prev, { ...book, category }]); // Track added books by category
@@ -85,7 +84,7 @@ const AddBookToBookshelf = ({ category }) => {
                                     )}
                                     <div className={styles.bookDetails}>
                                         <h4>{result.title}</h4>
-                                        <p>{result.authors || "Unknown Author"}</p>
+                                        <p>{result.authors ?? "Unknown Author"}</p>
                                     </div>
                                     <button
                                         onClick={() => addBook(result)}
