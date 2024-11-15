@@ -1,4 +1,4 @@
-export const makeRequest = async (url, userData, method = "POST") => {
+export const makeRequest = async (url, userData = {}, method = "POST") => {
   try {
     const response = await fetch(url, {
       method: method,
