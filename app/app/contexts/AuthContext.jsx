@@ -10,7 +10,11 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const data = await makeRequest("/users/profile/self", {}, "GET");
+        const data = await makeRequest(
+          "http://localhost:3001/users/profile/self",
+          {},
+          "GET"
+        );
         setCurrentUser(data);
       } catch (error) {
         console.error("Not logged in:", error.message);
@@ -18,11 +22,20 @@ export const AuthContextProvider = ({ children }) => {
         setLoading(false);
       }
     };
-    fetchUser();
-  }, []);
+    if (!currentUser) {
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+  }, [currentUser]);
+
   const login = async (inputs) => {
     try {
-      const userData = await makeRequest("/auth/login", inputs, "POST");
+      const userData = await makeRequest(
+        "http://localhost:3001/auth/login",
+        inputs,
+        "POST"
+      );
       setCurrentUser(userData);
     } catch (error) {
       console.error("Login failed:", error.message);
@@ -31,7 +44,7 @@ export const AuthContextProvider = ({ children }) => {
   };
   const logout = async () => {
     try {
-      await makeRequest("/auth/logout", {}, "POST");
+      await makeRequest("http://localhost:3001/auth/logout", {}, "POST");
       setCurrentUser(null);
     } catch (error) {
       console.error("Logout failed:", error.message);
