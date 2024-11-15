@@ -5,6 +5,7 @@ import { makeRequest } from "../utils/makeRequest";
 const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -19,8 +20,23 @@ export const AuthContextProvider = ({ children }) => {
     };
     fetchUser();
   }, []);
-  const login = (userData) => setCurrentUser(userData);
-  const logout = () => setCurrentUser(null);
+  const login = async (inputs) => {
+    try {
+      const userData = await makeRequest("/auth/login", inputs, "POST");
+      setCurrentUser(userData);
+    } catch (error) {
+      console.error("Login failed:", error.message);
+      throw error;
+    }
+  };
+  const logout = async () => {
+    try {
+      await makeRequest("/auth/logout", {}, "POST");
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error.message);
+    }
+  };
   return (
     <AuthContext.Provider value={{ currentUser, loading, login, logout }}>
       {children}
