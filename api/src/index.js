@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 
 import booksRouter from "./routers/booksRouter.js";
 import usersRouter from "./routers/usersRouter.js";
@@ -15,10 +16,17 @@ import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 
 import reviewsRouter from "./routers/reviewsRouter.js";
 
-
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use("/api/searchGoogleBooks", searchRouter);
@@ -31,7 +39,6 @@ app.use("/quotes", quotesRouter);
 app.use("/api/quotes", apiQuotesRouter);
 
 app.use("/api/reviews", reviewsRouter);
-
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
