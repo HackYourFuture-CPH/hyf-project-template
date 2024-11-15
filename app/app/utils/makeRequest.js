@@ -1,11 +1,12 @@
-export const makeRequest = async (url, userData) => {
+export const makeRequest = async (url, userData = {}, method = "POST") => {
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      credentials: "include", //for cookie handling
+      body: method !== "GET" ? JSON.stringify(userData) : undefined,
     });
     const result = await response.json();
 

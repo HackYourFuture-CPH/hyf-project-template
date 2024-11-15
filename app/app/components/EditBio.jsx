@@ -34,7 +34,7 @@ const EditBio = ({ isOpen, onClose }) => {
                 <button className={styles.closeButton} onClick={onClose}>
                     &times;
                 </button>
-                <h2>Edit Profile</h2>
+                <h2>Edit Bio</h2>
                 <form onSubmit={handleSubmit}>
                     {formData.profileImageUrl && (
                         <div className={styles.imagePreview}>

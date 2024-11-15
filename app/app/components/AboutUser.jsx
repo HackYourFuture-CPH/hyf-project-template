@@ -6,7 +6,7 @@ const AboutUser = () => {
     const about = profileData.about;
     return (
         <div className={styles.aboutUser}>
-            <h3>About</h3>
+            <strong>About:</strong>
             <p>{about}</p>
         </div>
     );
