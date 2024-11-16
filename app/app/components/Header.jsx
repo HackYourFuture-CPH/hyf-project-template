@@ -37,10 +37,10 @@ const Header = () => {
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
                     <li className={styles.navItem}>
-                        <Link href="/profile">PROFILE</Link>
+                        <Link href="/dashboard">DASHBOARD</Link>
                     </li>
                     <li className={styles.navItem}>
-                        <Link href="/signin">SIGN IN</Link>
+                        <Link href="/login">LOG IN</Link>
                     </li>
                     <li className={styles.navItem}>
                         <Link href="/signup">SIGN UP</Link>
