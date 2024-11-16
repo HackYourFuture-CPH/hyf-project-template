@@ -3,7 +3,10 @@ import knex from "../database_client.js";
 export const getUserProfile = async (req, res) => {
   const { user_id } = req.params;
 
-  if (parseInt(req.user.userId) !== parseInt(user_id))
+  if (
+    parseInt(req.user.userId) !== parseInt(user_id) &&
+    req.user.role !== "admin"
+  )
     return res.status(403).json({ error: "Forbidden" });
 
   try {
