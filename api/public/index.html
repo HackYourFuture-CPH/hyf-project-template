@@ -14,7 +14,7 @@
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script>
       // Connect to the WebSocket server
-      const socket = io("http://127.0.0.1:3001");
+      const socket = io("http://127.0.0.1:3001/api/chat");
 
       // Listen for messages from the server
       socket.on("message", (message) => {

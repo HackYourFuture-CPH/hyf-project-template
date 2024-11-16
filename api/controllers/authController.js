@@ -22,12 +22,12 @@ const login = async (req, res) => {
       message: result.message,
 
       token: result.token,
-      redirectUrl: result.redirectUrl,
-      user: {
-        id: result.user.id,
-        email: result.user.email,
-        role: result.role,
-      },
+      // redirectUrl: result.redirectUrl,
+      // user: {
+      //   id: result.user.id,
+      //   email: result.user.email,
+      //   role: result.role,
+      // },
     });
   } catch (error) {
     return res.status(500).json({

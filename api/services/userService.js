@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import Role from "../models/role.js";
+import jwt from "jsonwebtoken";
 
 const createUserService = async (name, email, password, phone, roleName) => {
   const createdAt = new Date();
@@ -37,4 +38,35 @@ const getUserById = async (id) => {
     throw new Error("Error fetching user: " + error.message);
   }
 };
-export default { createUserService, getAllUsers, getUserById };
+
+const getUserFromToken = async (token) => {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const { sub: user_id } = decoded;
+  console.log("decoded: " + JSON.stringify(decoded));
+
+  try {
+    const user = await User.findByPk(user_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    console.log(
+      "user: " +
+        {
+          email: user.email,
+          role: user.role_name,
+        }
+    );
+    return {
+      email: user.email,
+      role: user.role_name,
+    };
+  } catch (error) {
+    throw new Error("Error fetching user: " + error.message);
+  }
+};
+export default {
+  createUserService,
+  getAllUsers,
+  getUserById,
+  getUserFromToken,
+};

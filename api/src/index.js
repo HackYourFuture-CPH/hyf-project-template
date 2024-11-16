@@ -44,9 +44,8 @@ apiRouter.use("/", roleRouter);
 apiRouter.use("/nested", nestedRouter);
 apiRouter.use("/dev", devRouter);
 apiRouter.use("/pj", projectRouter);
-
+apiRouter.use("/chat", chatRoutes);
 app.use("/api", apiRouter);
-app.use("/api/chat", chatRoutes);
 
 app.use("/docs", swaggerController);
 
