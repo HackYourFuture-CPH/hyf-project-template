@@ -6,8 +6,16 @@ export async function getUserInfo() {
 }
 
 const USER_ROUTER = { Developer: '/dev-dashboard', Client: '/client-dashboard' };
+
 export function getUserPathByRole(userRole) {
+  checkUserRole(userRole);
   return USER_ROUTER[userRole];
+}
+
+function checkUserRole(userRole) {
+  if (!(userRole in USER_ROUTER)) {
+    throw new Error('User role is neither Developer nor Client');
+  }
 }
 
 export function checkURLMatchUserRole(URL, userRole) {
