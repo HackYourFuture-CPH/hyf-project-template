@@ -5,6 +5,7 @@ const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
 export const addBookToUser = async (req, res) => {
   const userId = req.user.userId;
+  const userRole = req.user.role;
   const {
     google_books_id,
     title,
@@ -16,7 +17,11 @@ export const addBookToUser = async (req, res) => {
     start_date = null,
     end_date = null,
   } = req.body;
-
+  if (userRole !== "admin" && userRole !== "user") {
+    return res
+      .status(403)
+      .json({ error: "Forbidden: You do not have permission to add books." });
+  }
   if (!google_books_id) {
     return res.status(400).json({ error: "google_book_id is required" });
   }
@@ -112,8 +117,28 @@ export const addBookToUser = async (req, res) => {
 
 export const getUserBooks = async (req, res) => {
   const userId = req.user.userId;
+  const userRole = req.user.role;
 
   try {
+    if (userRole !== "admin" && userRole !== "user") {
+      return res
+        .status(403)
+        .json({
+          error: "Forbidden: You do not have permission to view books.",
+        });
+    }
+    if (userRole === "admin") {
+      const allUserBooks = await knex("Books")
+        .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
+        .select(
+          "Books.*",
+          "UserBooks.user_id",
+          "UserBooks.status",
+          "UserBooks.start_date",
+          "UserBooks.end_date"
+        );
+      return res.status(200).json(allUserBooks);
+    }
     const userBooks = await knex("Books")
       .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
       .where({ "UserBooks.user_id": userId })
