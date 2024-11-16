@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 dotenv.config();
 
 const password = process.env.ADMIN_PASSWORD;
-console.log(process.env.ADMIN_PASSWORD);
+
 const db = knex({
   client: "mysql2",
   connection: {
