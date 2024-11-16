@@ -73,6 +73,8 @@ export const updateUserDetails = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
+  console.log("Request started");
+
   const { user_id } = req.params;
 
   if (
