@@ -97,7 +97,7 @@ const SignUp = () => {
           password: "",
         });
         alert("Welcome to LeafNotes");
-        router.push(`${process.env.NEXT_PUBLIC_APP_API_URL}`);
+        router.push(`${process.env.NEXT_PUBLIC_APP_API_URL}/login`);
       } catch (error) {
         console.log("Error registering user:", error);
         alert(error.message || "Something went wrong, please try again.");
