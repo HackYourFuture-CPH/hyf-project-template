@@ -50,19 +50,9 @@
     },
     "mostRecentQuote": [
         {
-            "quoteText": "The only limit to our realization of tomorrow is our doubts of today.",
-            "book": "The Power of Positive Thinking",
-            "author": "Norman Vincent Peale"
-        },
-        {
-            "quoteText": "In three words I can sum up everything I've learned about life: it goes on.",
-            "book": "The Road Not Taken",
-            "author": "Robert Frost"
-        },
-        {
-            "quoteText": "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
-            "book": "Self-Reliance",
-            "author": "Ralph Waldo Emerson"
+            "quoteText": "",
+            "book": "",
+            "author": ""
         }
     ],
     "favoriteQuote": [

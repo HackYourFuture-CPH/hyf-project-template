@@ -14,10 +14,10 @@ export default function UserProfilePage({ params }) {
     const { id } = params; // Get the user ID from the URL using the params prop
     const [userData, setUserData] = useState(null); // State to store user data
     const [loading, setLoading] = useState(true); // State to track loading status
-    const [error, setError] = useState(null); // State to track errors
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!id) return; // If `id` is not yet available, do nothing
+        if (!id) return;
 
         // Fetch user data from the backend based on the `id` parameter
         const fetchUserData = async () => {
@@ -43,20 +43,17 @@ export default function UserProfilePage({ params }) {
     return (
         <AppLayoutContainer>
             <div className={styles.mainContent}>
-                {/* Left side of the dashboard page */}
                 <div className={styles.leftSide}>
                     <Profile userData={userData} /> {/* Pass user data to Profile */}
                 </div>
 
-                {/* Middle content of the dashboard page */}
                 <div className={styles.middleContent}>
-                    <Bookshelf books={userData.bookshelf} /> {/* Pass bookshelf data */}
+                    <Bookshelf userId={id} /> {/* Pass userId to Bookshelf */}
                     <h3>Most Recent Quotes:</h3>
                     <MostRecentQuote quotes={userData.recentQuotes} /> {/* Pass recent quotes */}
                     <UserProgress progress={userData.progress} /> {/* Pass user progress */}
                 </div>
 
-                {/* Right side of the dashboard page */}
                 <div className={styles.rightSide}>
                     <h3>Favorite Quotes:</h3>
                     <Quote favoriteQuotes={userData.favoriteQuotes} /> {/* Pass favorite quotes */}
