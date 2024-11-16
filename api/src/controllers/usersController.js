@@ -3,7 +3,10 @@ import knex from "../database_client.js";
 export const getUserProfile = async (req, res) => {
   const { user_id } = req.params;
 
-  if (parseInt(req.user.userId) !== parseInt(user_id))
+  if (
+    parseInt(req.user.userId) !== parseInt(user_id) &&
+    req.user.role !== "admin"
+  )
     return res.status(403).json({ error: "Forbidden" });
 
   try {
@@ -27,7 +30,10 @@ export const updateUserDetails = async (req, res) => {
   const { user_id } = req.params;
 
   const { first_name, last_name, email, username, about } = req.body;
-  if (parseInt(req.user.userId) !== parseInt(user_id))
+  if (
+    parseInt(req.user.userId) !== parseInt(user_id) &&
+    req.user.role !== "admin"
+  )
     return res.status(403).json({ error: "Forbidden" });
   try {
     const user = await knex("Users")
@@ -67,9 +73,14 @@ export const updateUserDetails = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
+  console.log("Request started");
+
   const { user_id } = req.params;
 
-  if (parseInt(req.user.userId) !== parseInt(user_id))
+  if (
+    parseInt(req.user.userId) !== parseInt(user_id) &&
+    req.user.role !== "admin"
+  )
     return res.status(403).json({ error: "Forbidden" });
 
   try {
