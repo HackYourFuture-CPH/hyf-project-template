@@ -13,6 +13,7 @@ export const registerUser = async (req, res) => {
     password,
     profile_image_url = null,
     about = null,
+    role = "user",
   } = req.body;
 
   if (!first_name || !last_name || !email || !username || !password) {
@@ -39,9 +40,10 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       profile_image_url,
       about,
+      role,
     });
 
-    const token = jwt.sign({ userId }, JWT_SECRET, {
+    const token = jwt.sign({ userId, role }, JWT_SECRET, {
       expiresIn: "1h",
     });
     const user = await knex("Users")
@@ -53,7 +55,8 @@ export const registerUser = async (req, res) => {
         "first_name",
         "last_name",
         "profile_image_url",
-        "about"
+        "about",
+        "role"
       );
     res.status(201).json({ message: "User registered successfully", token });
   } catch (error) {
@@ -84,9 +87,13 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const token = jwt.sign({ userId: user.user_id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { userId: user.user_id, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     //Set HTTP-only cookie
     res.cookie("token", token, {
@@ -105,6 +112,7 @@ export const loginUser = async (req, res) => {
         lastName: user.last_name,
         profileImageUrl: user.profile_image_url,
         about: user.about,
+        role: user.role,
       },
     });
   } catch (error) {
