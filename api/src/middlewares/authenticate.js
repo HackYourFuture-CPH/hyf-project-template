@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 
-export const authenticate =
-  (requiredRole = null) =>
-  (req, res, next) => {
+export function authenticate(requiredRole = null) {
+  return function (req, res, next) {
     const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ error: "Unauthorized" });
@@ -22,3 +21,4 @@ export const authenticate =
       return res.status(401).json({ error: "Unauthorized" });
     }
   };
+}
