@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { handleLogIn } from '../utils/auth';
-import { decodeJWT } from '../utils/jwt';
+import { getUserInfo, getUserPathByRole } from '../utils/userUtil';
 
 const LogIn = () => {
   const [email, setEmail] = useState('');
@@ -21,30 +21,12 @@ const LogIn = () => {
       return;
     }
 
-    try {
-      const result = await handleLogIn(email, password);
-
-      if (!result) {
-        setFormError('Sign-in failed. Please check your credentials.');
-        return;
-      }
-
-      const token = result.token;
-      Cookies.set('token', token);
-      const decoded = await decodeJWT(token);
-
-      const userRole = decoded.role;
-
-      if (userRole === 'Developer') {
-        router.push('/dev-dashboard');
-      } else if (userRole === 'Client') {
-        router.push('/client-dashboard');
-      } else {
-        setFormError('Invalid user role.');
-      }
-    } catch (err) {
-      setFormError('An error occurred during sign-in: ' + err.message);
-    }
+    await handleLogIn(email, password, async () => {
+      const userInfo = await getUserInfo();
+      const userRole = userInfo.role;
+      Cookies.set('userRole', userRole);
+      router.push(getUserPathByRole(userRole));
+    });
   };
 
   return (

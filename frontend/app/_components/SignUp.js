@@ -21,9 +21,7 @@ const SignUp = ({ setRole, error, role }) => {
 
   const onSubmit = async e => {
     e.preventDefault();
-
-    const result = await handleSignUp(formData);
-    console.log(result);
+    await handleSignUp(formData);
   };
 
   const inputFields = [

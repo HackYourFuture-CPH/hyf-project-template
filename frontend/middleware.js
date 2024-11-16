@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import cookie from 'cookie';
-import { decodeJWT } from './app/utils/jwt';
+import { checkURLMatchUserRole } from './app/utils/userUtil';
 
 export async function middleware(req) {
-  const cookies = cookie.parse(req.headers.get('cookie') || '');
+  const getFieldFromCookie = field => {
+    const cookies = cookie.parse(req.headers.get('cookie') || '');
+    return cookies[field];
+  };
 
-  const token = cookies.token;
+  const token = getFieldFromCookie('token');
   const pathname = req.nextUrl.pathname;
 
   if (!token) {
@@ -13,19 +16,9 @@ export async function middleware(req) {
   }
 
   try {
-    const decodedToken = await decodeJWT(token);
-
-    const userRole = decodedToken.role;
-
-    if (pathname.startsWith('/dev-dashboard') && userRole !== 'Developer') {
-      return NextResponse.redirect(new URL('/client-dashboard', req.url));
-    }
-
-    if (pathname.startsWith('/client-dashboard') && userRole !== 'Client') {
-      return NextResponse.redirect(new URL('/dev-dashboard', req.url));
-    }
+    checkURLMatchUserRole(pathname, getFieldFromCookie('userRole'));
   } catch (error) {
-    console.error('JWT decoding failed:', error);
+    console.error('match URL failed ', error);
     return NextResponse.redirect(new URL('/', req.url));
   }
 
