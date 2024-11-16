@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import styles from "./EditBio.module.css";
+import styles from "./EditProfile.module.css";
 import Button from "./Button";
 
-const EditBio = ({ isOpen, onClose }) => {
+const EditProfile = ({ isOpen, onClose }) => {
     const [formData, setFormData] = useState({
         profileImageUrl: "",
         username: "",
@@ -86,4 +86,4 @@ const EditBio = ({ isOpen, onClose }) => {
     );
 };
 
-export default EditBio;
+export default EditProfile;
