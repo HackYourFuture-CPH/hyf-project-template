@@ -56,4 +56,25 @@ const getUserById = async (req, res) => {
       .json({ message: "Error retrieving users", error: err.message });
   }
 };
-export { createUser, getUsers, getUserById };
+
+const getUserByEmailandRole = async (req, res) => {
+  const { email, role } = req.body;
+  if (!email || !role) {
+    return res.status(400).json({ message: "email and role are required" });
+  }
+
+  try {
+    const jwt = await userService.getUserByEmailandRole(email, role);
+
+    if (!jwt) {
+      return res.status(404).json({ message: "JWT not found" });
+    }
+    res.status(200).json(jwt);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error retrieving user", error: err.message });
+  }
+};
+
+export { createUser, getUsers, getUserById, getUserByEmailandRole };
