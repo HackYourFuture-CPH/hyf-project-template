@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
-    const [searchQuery, setSearchQuery] = useState(""); // State for search input
+    const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter(); // Use the router to navigate programmatically
 
     const handleSearchChange = (e) => {
@@ -44,18 +44,17 @@ const Header = () => {
                     </li>
                     <li className={styles.navItem}>
                         <Link href="/signup">SIGN UP</Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className={styles.searchInput}
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            onKeyDown={handleSearchKeyPress}
-                        />
-                    </li>
+                    </li>{" "}
                 </ul>
+
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    onKeyDown={handleSearchKeyPress}
+                />
             </nav>
         </header>
     );

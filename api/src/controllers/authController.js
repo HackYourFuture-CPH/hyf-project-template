@@ -88,8 +88,15 @@ export const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
 
+    //Set HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3600000,
+    });
+
     res.json({
-      token,
       user: {
         id: user.user_id,
         username: user.username,
@@ -102,6 +109,22 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Error logging in:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
+    });
+
+    res.status(200).json({ message: "Logged out successfully", user: null });
+  } catch (error) {
+    console.error("Error logging out:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

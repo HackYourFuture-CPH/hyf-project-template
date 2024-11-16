@@ -2,13 +2,14 @@
 import { useState } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
-import { makeRequest } from "../utils/makeRequest"; // Import the makeRequest function
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ username: "", password: "" });
   const router = useRouter(); // Initialize the router
+  const { login } = useAuth(); //Use Login from Auth context
 
   // Validate form fields
   const isValid = () => {
@@ -27,33 +28,30 @@ const Login = () => {
     setErrors(tempErrors);
     return valid;
   };
+  const loginUser = async (username, password) => {
+    try {
+      // Prepare user data for login
+      const userData = { username, password };
 
+      // Make API call to login
+      await login(userData);
+
+      alert("Login successful!");
+
+      // Redirect to homepage (or dashboard)
+      router.push("/test"); // This will navigate to the homepage (or you can specify any other route)
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert(error.message || "Something went wrong, please try again.");
+    }
+  };
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(username);
 
     if (isValid()) {
-      try {
-        // Prepare user data for login
-        const userData = { username, password };
-
-        // Make API call to login
-        const response = await makeRequest(
-          "http://localhost:3001/auth/login",
-          userData
-        );
-
-        // Assuming the response contains an authentication token (e.g., JWT)
-        localStorage.setItem("token", response.token); // Store the token for further API requests
-
-        alert("Login successful!");
-
-        // Redirect to homepage (or dashboard)
-        router.push("/"); // This will navigate to the homepage (or you can specify any other route)
-      } catch (error) {
-        console.error("Login failed:", error);
-        alert(error.message || "Something went wrong, please try again.");
-      }
+      loginUser(username, password);
     }
   };
 

@@ -34,6 +34,12 @@
 
 .profileDetails .userDetailsContainer div {
     padding: 5px;
+    color: #666;
+}
+
+.profileDetails .userDetailsContainer div strong {
+    padding: 5px;
+    color: #000;
 }
 
 .profileDetails .userDetailsContainer ul {
