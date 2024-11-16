@@ -62,15 +62,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", async (msg) => {
+    console.log("Received message:", msg);
+    if (!msg.sender_id || !msg.receiver_id) {
+      console.error("Invalid message data:", msg);
+      return;
+    }
     try {
       const message = await Message.create({
-        senderId: msg.senderId,
-        receiverId: msg.receiverId,
+        sender_id: msg.sender_id,
+        receiver_id: msg.receiver_id,
         message: msg.text,
-        timestamp: new Date(),
       });
 
-      io.emit("message", message);
+      socket.emit("message", message);
     } catch (error) {
       console.error("Error saving message:", error);
     }

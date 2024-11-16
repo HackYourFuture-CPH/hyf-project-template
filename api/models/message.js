@@ -5,11 +5,11 @@ class Message extends Model {}
 
 Message.init(
   {
-    senderId: {
+    sender_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    receiverId: {
+    receiver_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -24,7 +24,8 @@ Message.init(
   },
   {
     sequelize,
-    modelName: "Message",
+    modelName: "messages",
+    timestamps: true,
   }
 );
 
