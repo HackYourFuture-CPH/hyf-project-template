@@ -16,13 +16,11 @@ import reviewsRouter from "./routers/reviewsRouter.js";
 
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
-
-
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://leafnotes-1.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -41,7 +39,6 @@ app.use("/api/quotes", apiQuotesRouter);
 app.use("/api/reviews", reviewsRouter);
 
 app.use("/api/random-books", randomBooksRouter);
-
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
