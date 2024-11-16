@@ -18,5 +18,8 @@ userRouter.get("/users/:id", authenticateToken, getUserById);
 //userRouter.get("/users/:id", getUserById);
 
 userRouter.post("/users", createUser);
+userRouter.get("/user/:id", getUserById);
+// userRouter.get("/user", getUserByEmailandRole);
+// //userRouter.get("/users/:id", getUserById);
 
 export default userRouter;
