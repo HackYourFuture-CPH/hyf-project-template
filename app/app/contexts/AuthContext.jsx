@@ -11,13 +11,13 @@ export const AuthContextProvider = ({ children }) => {
     const fetchUser = async () => {
       try {
         const data = await makeRequest(
-          "http://localhost:3001/users/profile/self",
+          `${NEXT_PUBLIC_APP_API_URL}/users/profile/self`,
           {},
           "GET"
         );
         setCurrentUser(data);
       } catch (error) {
-        console.error("Not logged in:", error.message);
+        console.log("Not logged in:", error.message);
       } finally {
         setLoading(false);
       }
@@ -32,19 +32,19 @@ export const AuthContextProvider = ({ children }) => {
   const login = async (inputs) => {
     try {
       const userData = await makeRequest(
-        "http://localhost:3001/auth/login",
+        `${NEXT_PUBLIC_APP_API_URL}/auth/login`,
         inputs,
         "POST"
       );
       setCurrentUser(userData);
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.log("Login failed:", error.message);
       throw error;
     }
   };
   const logout = async () => {
     try {
-      await makeRequest("http://localhost:3001/auth/logout", {}, "POST");
+      await makeRequest(`${NEXT_PUBLIC_APP_API_URL}/auth/logout`, {}, "POST");
       setCurrentUser(null);
     } catch (error) {
       console.error("Logout failed:", error.message);

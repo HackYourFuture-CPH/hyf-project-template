@@ -18,7 +18,7 @@ const RandomBooks = () => {
       } else {
         try {
           const response = await fetch(
-            "http://localhost:3001/api/random-books"
+            `${NEXT_PUBLIC_APP_API_URL}/api/random-books`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch books");
