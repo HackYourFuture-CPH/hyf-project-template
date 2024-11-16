@@ -68,13 +68,13 @@ class AuthService {
     }
   }
 
-  generateToken(userId, role) {
+  generateToken(user_id, role) {
     return jwt.sign(
       {
-        sub: userId,
+        sub: user_id,
         role: role,
         iat: Math.floor(Date.now() / 1000),
-        sessionId: this.generateSessionId(userId),
+        sessionId: this.generateSessionId(user_id),
         iss: JWT_ISSUER,
       },
       JWT_SECRET,

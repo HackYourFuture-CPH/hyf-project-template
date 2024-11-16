@@ -6,14 +6,14 @@ const router = express.Router();
 
 // Route to fetch chat history between two users
 router.get("/history/:userId/:receiverId", async (req, res) => {
-  const { userId, receiverId } = req.params;
+  const { user_id, receiver_id } = req.params;
 
   try {
     const messages = await Message.findAll({
       where: {
         [sequelize.Op.or]: [
-          { senderId: userId, receiverId },
-          { senderId: receiverId, receiverId: userId },
+          { sender_id: user_id, receiver_id },
+          { sender_id: receiver_id, receiverId: user_id },
         ],
       },
       order: [["timestamp", "ASC"]],
@@ -27,12 +27,12 @@ router.get("/history/:userId/:receiverId", async (req, res) => {
 
 // Route to send a message (if using HTTP POST for messaging)
 router.post("/send", async (req, res) => {
-  const { senderId, receiverId, text } = req.body;
+  const { sender_id, receiver_id, text } = req.body;
 
   try {
     const message = await Message.create({
-      senderId,
-      receiverId,
+      sender_id,
+      receiver_id,
       message: text,
       timestamp: new Date(),
     });

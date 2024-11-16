@@ -57,19 +57,15 @@ const getUserById = async (req, res) => {
   }
 };
 
-const getUserByEmailandRole = async (req, res) => {
-  const { email, role } = req.body;
-  if (!email || !role) {
-    return res.status(400).json({ message: "email and role are required" });
-  }
-
+const getUserFromToken = async (req, res) => {
+  const token = req.cookies.token;
   try {
-    const jwt = await userService.getUserByEmailandRole(email, role);
+    const user = await userService.getUserFromToken(token);
 
-    if (!jwt) {
-      return res.status(404).json({ message: "JWT not found" });
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
     }
-    res.status(200).json(jwt);
+    res.status(200).json(user);
   } catch (err) {
     res
       .status(500)
@@ -77,4 +73,4 @@ const getUserByEmailandRole = async (req, res) => {
   }
 };
 
-export { createUser, getUsers, getUserById, getUserByEmailandRole };
+export { createUser, getUsers, getUserById, getUserFromToken };
