@@ -7,13 +7,7 @@ export async function middleware(req) {
     const cookies = cookie.parse(req.headers.get('cookie') || '');
     return cookies[field];
   };
-
-  const token = getFieldFromCookie('token');
   const pathname = req.nextUrl.pathname;
-
-  if (!token) {
-    return NextResponse.redirect(new URL('/', req.url));
-  }
 
   try {
     checkURLMatchUserRole(pathname, getFieldFromCookie('userRole'));
