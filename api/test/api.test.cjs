@@ -1,24 +1,17 @@
-//const { testGen } = require("swagger-test-templates");
-//const path = require("path");
 const supertest = require("supertest");
 const { describe, it, before } = require("mocha");
-//const jwt = require("jsonwebtoken");
 
 let chai;
 
-// Dynamically import Chai since it's an ES module
 (async () => {
   chai = await import("chai");
 })();
 
-// Swagger JSON URL from your server
-//const apiSpecPath = "http://localhost:3001/docs/swagger.json";
-
 const config = {
   assertionFormat: "chai",
   request: {
-    baseURL: "http://localhost:3001", // Base URL for your API
-    headers: {}, // Will include Authorization dynamically
+    baseURL: "http://localhost:3001",
+    headers: {},
   },
 };
 
