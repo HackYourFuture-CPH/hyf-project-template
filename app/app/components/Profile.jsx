@@ -6,12 +6,12 @@ import EditProfile from "./EditProfile";
 import styles from "./Profile.module.css";
 
 const Profile = ({ userData }) => {
-    const [isModalOpen, setModalOpen] = useState(false); // State to control modal visibility
+    const [isModalOpen, setModalOpen] = useState(false);
 
-    if (!userData) return null; // Render nothing if userData is not available
+    if (!userData) return null;
 
-    const openModal = () => setModalOpen(true); // Open modal
-    const closeModal = () => setModalOpen(false); // Close modal
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false);
 
     return (
         <div className={styles.Profile}>
@@ -19,7 +19,7 @@ const Profile = ({ userData }) => {
             <div className={styles.imageContainer}>
                 <img
                     alt="Profile"
-                    src={userData.profile_image_url || "/default-profile.png"} // Display user profile image or a default
+                    src={userData.profile_image_url || "/profile-default.svg"}
                     className={styles.profileImage}
                 />
             </div>
@@ -51,7 +51,6 @@ const Profile = ({ userData }) => {
                 </div>
             </div>
 
-            {/* Render the EditProfile modal when isModalOpen is true */}
             {isModalOpen && (
                 <EditProfile
                     isOpen={isModalOpen}
