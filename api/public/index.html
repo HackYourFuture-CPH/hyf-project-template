@@ -21,7 +21,7 @@
         console.log("Received message:", message);
         const messagesDiv = document.getElementById("messages");
         const messageElement = document.createElement("div");
-        messageElement.textContent = `${message.senderId}: ${message.message}`;
+        messageElement.textContent = `${message.sender_id}: ${message.message}`;
         messagesDiv.appendChild(messageElement);
       });
 
@@ -31,7 +31,7 @@
         const message = {
           sender_id: 8,
           receiver_id: 9,
-          text: messageInput.value,
+          message: messageInput.value,
         };
         socket.emit("message", message); // Send message to server
         messageInput.value = ""; // Clear input after sending

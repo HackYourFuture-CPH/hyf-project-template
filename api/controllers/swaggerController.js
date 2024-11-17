@@ -17,6 +17,205 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
+      "/api/user": {
+        get: {
+          summary: "Fetch user email and role",
+          description:
+            "Fetches the user's email and role based on the provided token.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          responses: {
+            200: {
+              description: "User details retrieved successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      email: { type: "string" },
+                      role: { type: "string" },
+                    },
+                  },
+                  example: {
+                    email: "user@example.com",
+                    role: "Client",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/chat/send": {
+        post: {
+          summary: "Send a chat message",
+          description: "Sends a chat message from one user to another.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    sender_id: { type: "integer" },
+                    receiver_id: { type: "integer" },
+                    message: { type: "string" },
+                  },
+                  required: ["sender_id", "receiver_id", "message"],
+                },
+                example: {
+                  sender_id: 8,
+                  receiver_id: 9,
+                  message: "This is a test message",
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: "Message sent successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean" },
+                      message_id: { type: "integer" },
+                    },
+                  },
+                  example: {
+                    success: true,
+                    message_id: 123,
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Bad Request - Missing or invalid fields",
+              content: {
+                "application/json": {
+                  example: {
+                    error:
+                      "Error sending messages: notNull Violation: messages.message cannot be null",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      // Add /api/chat/history/{sender_id}/{receiver_id}
+      "/api/chat/history/{sender_id}/{receiver_id}": {
+        get: {
+          summary: "Fetch chat history between users",
+          description:
+            "Retrieves the chat history between two users identified by their IDs.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          parameters: [
+            {
+              name: "sender_id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "ID of the sender user",
+            },
+            {
+              name: "receiver_id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "ID of the receiver user",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Chat history retrieved successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      history: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            id: { type: "integer" },
+                            sender_id: { type: "integer" },
+                            receiver_id: { type: "integer" },
+                            message: { type: "string" },
+                            timestamp: { type: "string", format: "date-time" },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  example: {
+                    history: [
+                      {
+                        id: 1,
+                        sender_id: 8,
+                        receiver_id: 9,
+                        message: "Hello!",
+                        timestamp: "2023-01-01T12:00:00Z",
+                      },
+                      {
+                        id: 2,
+                        sender_id: 9,
+                        receiver_id: 8,
+                        message: "Hi there!",
+                        timestamp: "2023-01-01T12:01:00Z",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       "/api/dev/allClients": {
         get: {
           summary: "Get all clients",

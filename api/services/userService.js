@@ -40,11 +40,14 @@ const getUserById = async (id) => {
 };
 
 const getUserFromToken = async (token) => {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const { sub: user_id } = decoded;
-  console.log("decoded: " + JSON.stringify(decoded));
-
   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded || !decoded.sub) {
+      throw new Error("Invalid token format");
+    }
+    const { sub: user_id } = decoded;
+    console.log("Decoded token: " + JSON.stringify(decoded));
+
     const user = await User.findByPk(user_id);
     if (!user) {
       throw new Error("User not found");
