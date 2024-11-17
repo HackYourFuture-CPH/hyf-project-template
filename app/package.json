@@ -25,7 +25,8 @@
     "axios": "^1.7.7",
     "knex": "^3.1.0",
     "mysql2": "^3.11.4",
-    "next": "^15.0.3"
+    "next": "^15.0.3",
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",

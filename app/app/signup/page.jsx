@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -97,7 +99,7 @@ const SignUp = () => {
           password: "",
         });
         alert("Welcome to LeafNotes");
-        router.push(`${process.env.NEXT_PUBLIC_APP_API_URL}/dashboard`);
+        router.push("/login");
       } catch (error) {
         console.log("Error registering user:", error);
         alert(error.message || "Something went wrong, please try again.");
