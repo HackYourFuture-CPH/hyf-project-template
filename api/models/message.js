@@ -5,12 +5,14 @@ class Message extends Model {}
 
 Message.init(
   {
-    sender_id: {
+    senderId: {
       type: DataTypes.INTEGER,
+      field: "sender_id",
       allowNull: false,
     },
-    receiver_id: {
+    receiverId: {
       type: DataTypes.INTEGER,
+      field: "receiver_id",
       allowNull: false,
     },
     message: {

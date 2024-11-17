@@ -9,7 +9,7 @@ class RoleService {
           {
             model: User,
             as: "Developer",
-            where: { role_id: 1 },
+            where: { roleId: 1 },
           },
         ],
       });
@@ -26,7 +26,7 @@ class RoleService {
           {
             model: User,
             as: "Client",
-            where: { role_id: 2 },
+            where: { roleId: 2 },
           },
         ],
       });

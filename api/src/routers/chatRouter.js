@@ -4,10 +4,7 @@ import ChatController from "../../controllers/chatController.js";
 
 const chatRouter = express.Router();
 
-chatRouter.get(
-  "/history/:user_id/:receiver_id",
-  ChatController.getChatMessages
-);
+chatRouter.get("/history/:userId/:receiverId", ChatController.getChatMessages);
 
 chatRouter.post("/send", ChatController.sendChatMessages);
 

@@ -7,6 +7,7 @@ authRouter.post("/login", login);
 
 authRouter.post("/logout", (req, res) => {
   res.clearCookie("token");
+  //add some invalidation logic
   res.json({ message: "Logged out successfully" });
 });
 export default authRouter;

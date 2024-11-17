@@ -3,13 +3,13 @@ import { Sequelize } from "sequelize";
 
 class ChatController {
   static async getChatMessages(req, res) {
-    const { user_id, receiver_id } = req.params;
+    const { userId, receiverId } = req.params;
     try {
       const getChats = await ChatService.getChatMessages({
         where: {
           [Sequelize.Op.or]: [
-            { sender_id: user_id, receiver_id },
-            { sender_id: receiver_id, receiver_id: user_id },
+            { senderId: userId, receiverId },
+            { senderId: receiverId, receiverId: userId },
           ],
         },
         order: [["timestamp", "ASC"]],
@@ -21,11 +21,11 @@ class ChatController {
   }
 
   static async sendChatMessages(req, res) {
-    const { sender_id, receiver_id, message } = req.body;
+    const { senderId, receiverId, message } = req.body;
     try {
       const sendChats = await ChatService.sendChatMessages({
-        sender_id,
-        receiver_id,
+        senderId,
+        receiverId,
         message,
         timestamp: new Date(),
       });

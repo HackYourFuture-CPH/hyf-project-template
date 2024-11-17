@@ -9,10 +9,10 @@ class ProjectDeveloperService {
           {
             model: Role,
             as: "role",
-            attributes: ["role_name"],
+            attributes: ["roleName"],
           },
         ],
-        where: { role_id: 1 },
+        where: { roleId: 1 },
       });
       return allDevelopers;
     } catch (error) {
@@ -26,10 +26,10 @@ class ProjectDeveloperService {
           {
             model: Role,
             as: "role",
-            attributes: ["role_name"],
+            attributes: ["roleName"],
           },
         ],
-        where: { role_id: 2 },
+        where: { roleId: 2 },
       });
       return allClients;
     } catch (error) {
@@ -40,7 +40,7 @@ class ProjectDeveloperService {
   static async getDevelopersForProject(projectId) {
     try {
       const projectDevelopers = await ProjectDevelopers.findAll({
-        where: { project_id: projectId },
+        where: { projectId: projectId },
         include: ["Developer"],
       });
       return projectDevelopers;
@@ -54,9 +54,9 @@ class ProjectDeveloperService {
   static async assignDeveloperToProject(projectId, developerId) {
     try {
       await ProjectDevelopers.create({
-        project_id: projectId,
-        developer_id: developerId,
-        assigned_date: new Date(),
+        projectId: projectId,
+        developerId: developerId,
+        assignedDate: new Date(),
       });
       return { message: "Developer assigned to project successfully." };
     } catch (error) {
@@ -67,7 +67,7 @@ class ProjectDeveloperService {
   static async removeDeveloperFromProject(projectId, developerId) {
     try {
       const deleted = await ProjectDevelopers.destroy({
-        where: { project_id: projectId, developer_id: developerId },
+        where: { projectId: projectId, developerId: developerId },
       });
       if (deleted) {
         return { message: "Developer removed from project successfully." };

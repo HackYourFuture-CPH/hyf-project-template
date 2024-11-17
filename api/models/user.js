@@ -30,8 +30,9 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    role_id: {
+    roleId: {
       type: DataTypes.INTEGER,
+      field: "role_id",
       allowNull: false,
       references: {
         model: "roles",
@@ -67,7 +68,7 @@ User.addHook("afterFind", (users) => {
 
   const transform = (user) => {
     if (user.role) {
-      user.role_name = user.role.role_name;
+      user.roleName = user.role.roleName;
       delete user.role;
     }
     return user;

@@ -21,7 +21,7 @@
         console.log("Received message:", message);
         const messagesDiv = document.getElementById("messages");
         const messageElement = document.createElement("div");
-        messageElement.textContent = `${message.sender_id}: ${message.message}`;
+        messageElement.textContent = `${message.senderId}: ${message.message}`;
         messagesDiv.appendChild(messageElement);
       });
 
@@ -29,8 +29,8 @@
       document.getElementById("sendButton").addEventListener("click", () => {
         const messageInput = document.getElementById("messageInput");
         const message = {
-          sender_id: 8,
-          receiver_id: 9,
+          senderId: 8,
+          receiverId: 9,
           message: messageInput.value,
         };
         socket.emit("message", message); // Send message to server
