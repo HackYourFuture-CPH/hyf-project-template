@@ -1,5 +1,5 @@
 import NodeCache from "node-cache";
-const quotesCache = new NodeCache({ stdTTL: 60 });
+const quotesCache = new NodeCache({ stdTTL: 600 });
 
 export const fetchQuote = async (req, res) => {
   try {
