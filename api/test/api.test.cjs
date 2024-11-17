@@ -131,14 +131,6 @@ describe("Manual API Tests", () => {
     chai.expect(response.status).to.equal(201);
   });
 
-  // it("/api/pj/{id} (DELETE) => should delete a project by ID", async () => {
-  //   const projectId = "7";
-  //   const response = await supertest(config.request.baseURL)
-  //     .delete(`/api/pj/${projectId}`)
-  //     .set("Authorization", `Bearer ${token}`);
-  //   chai.expect(response.status).to.equal(200);
-  // });
-
   it("/api/user => should fetch an user email and role based only in the token", async () => {
     const response = await supertest(config.request.baseURL)
       .get("/api/user")
@@ -171,4 +163,12 @@ describe("Manual API Tests", () => {
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
+
+  //  it("/api/projects/{id} (DELETE) => should delete a project by ID", async () => {
+  //   const projectId = "7";
+  //   const response = await supertest(config.request.baseURL)
+  //     .delete(`/api/projects/${projectId}`)
+  //     .set("Authorization", `Bearer ${token}`);
+  //   chai.expect(response.status).to.equal(200);
+  // });
 });
