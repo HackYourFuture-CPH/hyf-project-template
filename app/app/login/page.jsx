@@ -36,10 +36,8 @@ const Login = () => {
       // Make API call to login
       await login(userData);
 
-      alert("Login successful!");
-
       // Redirect to homepage (or dashboard)
-      router.push("/test"); // This will navigate to the homepage (or you can specify any other route)
+      router.push(`/dashboard`); // This will navigate to the homepage (or you can specify any other route)
     } catch (error) {
       console.error("Login failed:", error);
       alert(error.message || "Something went wrong, please try again.");
