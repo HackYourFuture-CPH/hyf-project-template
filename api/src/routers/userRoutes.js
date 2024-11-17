@@ -21,7 +21,5 @@ userRouter.get("/users/:id", authenticateToken, getUserById);
 userRouter.post("/users", createUser);
 
 userRouter.get("/user", authenticateToken, getUserFromToken);
-// userRouter.get("/user", getUserByEmailandRole);
-// //userRouter.get("/users/:id", getUserById);
 
 export default userRouter;

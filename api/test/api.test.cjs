@@ -2,6 +2,7 @@
 //const path = require("path");
 const supertest = require("supertest");
 const { describe, it, before } = require("mocha");
+const jwt = require("jsonwebtoken");
 
 let chai;
 
@@ -168,4 +169,37 @@ describe("Manual API Tests", () => {
   //     .set("Authorization", `Bearer ${token}`);
   //   chai.expect(response.status).to.equal(200);
   // });
+
+  it("/api/user => should fetch an user email and role based only in the token", async () => {
+    const response = await supertest(config.request.baseURL)
+      .get("/api/user")
+      .send({ token })
+      .set("Authorization", `Bearer ${token}`);
+
+    console.log(response.body);
+
+    chai.expect(response.status).to.equal(200);
+  });
+
+  it("/api/chat/send => should send a chat message", async () => {
+    const requestBody = {
+      sender_id: 8,
+      receiver_id: 9,
+      message: "This is a test message",
+    };
+
+    const response = await supertest(config.request.baseURL)
+      .post("/api/chat/send")
+      .set("Authorization", `Bearer ${token}`)
+      .send(requestBody);
+
+    chai.expect(response.status).to.equal(200);
+  });
+
+  it("/api/chat/history/8/9 => should fetch chat history", async () => {
+    const response = await supertest(config.request.baseURL)
+      .get("/api/chat/history/8/9")
+      .set("Authorization", `Bearer ${token}`);
+    chai.expect(response.status).to.equal(200);
+  });
 });

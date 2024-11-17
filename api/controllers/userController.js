@@ -58,7 +58,11 @@ const getUserById = async (req, res) => {
 };
 
 const getUserFromToken = async (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies.token || req.body.token;
+  if (!token) {
+    console.error("No token provided");
+    return res.status(401).json({ message: "JWT must be provided" });
+  }
   try {
     const user = await userService.getUserFromToken(token);
 
