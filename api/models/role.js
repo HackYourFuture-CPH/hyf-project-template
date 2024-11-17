@@ -10,8 +10,9 @@ const Role = sequelize.define(
       autoIncrement: true,
     },
 
-    role_name: {
+    roleName: {
       type: DataTypes.STRING(50),
+      field: "role_name",
       unique: true,
       allowNull: false,
     },

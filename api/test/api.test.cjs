@@ -40,70 +40,46 @@ before(async () => {
   config.request.headers.Authorization = `Bearer ${token}`;
 });
 
-// Generate tests based on Swagger template
-// const tests = testGen(apiSpecPath, config);
-
-// // Debug: Log generated tests to verify if they exist
-// console.log("Generated Tests:", tests);
-
-// if (tests.length === 0) {
-//   console.error(
-//     "No tests were generated. Check your Swagger JSON and configuration."
-//   );
-// }
-
-// // Execute generated tests
-// tests.forEach(({ name, scenarios }) => {
-//   describe(name, () => {
-//     scenarios.forEach(({ name: scenarioName, test }) => {
-//       it(scenarioName, (done) => {
-//         test(supertest, chai.expect, done);
-//       });
-//     });
-//   });
-// });
-
-// Manual test as a fallback to ensure the API works
 describe("Manual API Tests", () => {
-  it("/api/dev/allClients => should fetch all clients", async () => {
+  it("/api/developer/allClients => should fetch all clients", async () => {
     const response = await supertest(config.request.baseURL)
-      .get("/api/dev/allClients")
+      .get("/api/developer/allClients")
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/dev/allDevelopers => should fetch all developers", async () => {
+  it("/api/developer/allDevelopers => should fetch all developers", async () => {
     const response = await supertest(config.request.baseURL)
-      .get("/api/dev/allDevelopers")
+      .get("/api/developer/allDevelopers")
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/dev/project/{PJid} => should fetch developers for a specific project", async () => {
-    const project_id = 5;
+  it("/api/developer/project/{projectId} => should fetch developers for a specific project", async () => {
+    const projectId = 5;
     const response = await supertest(config.request.baseURL)
-      .get(`/api/dev/project/${project_id}`)
+      .get(`/api/developer/project/${projectId}`)
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/dev/assign => should assign a developer to a project", async () => {
+  it("/api/developer/assignProject => should assign a developer to a project", async () => {
     const requestBody = {
-      project_id: "2",
-      developer_id: "8",
+      projectId: "2",
+      developerId: "8",
     };
     const response = await supertest(config.request.baseURL)
-      .post("/api/dev/assign")
+      .post("/api/developer/assignProject")
       .set("Authorization", `Bearer ${token}`)
       .send(requestBody);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/dev/{DEVid}/project/{PJid} => should remove a developer from a project", async () => {
-    const developer_id = "8";
-    const project_id = "2";
+  it("/api/dev/{developerId}/project/{projectId} => should remove a developer from a project", async () => {
+    const developerId = "8";
+    const projectId = "2";
     const response = await supertest(config.request.baseURL)
-      .delete(`/api/dev/${developer_id}/project/${project_id}`)
+      .delete(`/api/developer/${developerId}/project/${projectId}`)
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
@@ -127,36 +103,36 @@ describe("Manual API Tests", () => {
   });
 
   it("/api/users/{id} => should fetch a specific user by ID", async () => {
-    const user_id = "8";
+    const userId = "8";
     const response = await supertest(config.request.baseURL)
-      .get(`/api/users/${user_id}`)
+      .get(`/api/users/${userId}`)
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/pj => should fetch all projects", async () => {
+  it("/api/projects => should fetch all projects", async () => {
     const response = await supertest(config.request.baseURL)
-      .get("/api/pj")
+      .get("/api/projects")
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/pj/{id} => should fetch a specific project by ID", async () => {
-    const project_id = "2";
+  it("/api/projects/{id} => should fetch a specific project by ID", async () => {
+    const projectId = "2";
     const response = await supertest(config.request.baseURL)
-      .get(`/api/pj/${project_id}`)
+      .get(`/api/projects/${projectId}`)
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/pj/create => should create a new project", async () => {
+  it("/api/projects/create => should create a new project", async () => {
     const requestBody = {
-      title: "New Project test",
+      title: "New Project tester",
       description: "Project description",
       budget: "15000",
     };
     const response = await supertest(config.request.baseURL)
-      .post("/api/pj/create")
+      .post("/api/projects/create")
       .set("Authorization", `Bearer ${token}`)
       .send(requestBody);
     chai.expect(response.status).to.equal(201);
@@ -183,8 +159,8 @@ describe("Manual API Tests", () => {
 
   it("/api/chat/send => should send a chat message", async () => {
     const requestBody = {
-      sender_id: 8,
-      receiver_id: 9,
+      senderId: 8,
+      receiverId: 9,
       message: "This is a test message",
     };
 

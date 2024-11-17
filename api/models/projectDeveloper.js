@@ -6,8 +6,9 @@ class ProjectDeveloper extends Model {}
 
 ProjectDeveloper.init(
   {
-    project_id: {
+    projectId: {
       type: DataTypes.INTEGER,
+      field: "project_id",
       primaryKey: true,
       allowNull: false,
       references: {
@@ -15,8 +16,9 @@ ProjectDeveloper.init(
         key: "id",
       },
     },
-    developer_id: {
+    developerId: {
       type: DataTypes.INTEGER,
+      field: "developer_id",
       primaryKey: true,
       allowNull: false,
       references: {
@@ -24,8 +26,9 @@ ProjectDeveloper.init(
         key: "id",
       },
     },
-    assigned_date: {
+    assignedDate: {
       type: DataTypes.DATE,
+      field: "assigned_date",
       defaultValue: DataTypes.NOW,
       allowNull: true,
     },

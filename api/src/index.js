@@ -42,8 +42,8 @@ apiRouter.use("/", authRouter);
 apiRouter.use("/", userRouter);
 apiRouter.use("/", roleRouter);
 apiRouter.use("/nested", nestedRouter);
-apiRouter.use("/dev", devRouter);
-apiRouter.use("/pj", projectRouter);
+apiRouter.use("/developer", devRouter);
+apiRouter.use("/projects", projectRouter);
 apiRouter.use("/chat", chatRoutes);
 app.use("/api", apiRouter);
 
@@ -62,15 +62,15 @@ io.on("connection", (socket) => {
 
   socket.on("message", async (msg) => {
     console.log("Received message:", msg);
-    if (!msg.sender_id || !msg.receiver_id) {
+    if (!msg.senderId || !msg.receiverId) {
       console.error("Invalid message data:", msg);
       return;
     }
     try {
       const message = await Message.create({
-        sender_id: msg.sender_id,
-        receiver_id: msg.receiver_id,
-        message: msg.text,
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+        message: msg.message,
       });
 
       socket.emit("message", message);

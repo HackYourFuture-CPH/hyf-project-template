@@ -13,8 +13,9 @@ Project.init(
       autoIncrement: true,
       allowNull: false,
     },
-    client_id: {
+    clientId: {
       type: DataTypes.INTEGER,
+      field: "client_id",
       references: {
         model: "users",
         key: "id",
@@ -38,20 +39,23 @@ Project.init(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
-    start_date: {
+    startDate: {
       type: DataTypes.DATEONLY,
+      field: "start_date",
       allowNull: true,
     },
-    end_date: {
+    endDate: {
       type: DataTypes.DATEONLY,
+      field: "end_date",
       allowNull: true,
     },
     deadline: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
+      field: "created_at",
       defaultValue: DataTypes.NOW,
     },
   },

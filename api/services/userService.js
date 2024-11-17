@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 const createUserService = async (name, email, password, phone, roleName) => {
   const createdAt = new Date();
   try {
-    const role = await Role.findOne({ where: { role_name: roleName } });
+    const role = await Role.findOne({ where: { roleName: roleName } });
     if (!role) throw new Error("Role not found");
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -16,7 +16,7 @@ const createUserService = async (name, email, password, phone, roleName) => {
       password: hashedPassword,
       phone,
       createdAt,
-      role_id: role.id,
+      roleId: role.id,
     });
     return user;
   } catch (err) {
@@ -56,12 +56,12 @@ const getUserFromToken = async (token) => {
       "user: " +
         {
           email: user.email,
-          role: user.role_name,
+          role: user.roleName,
         }
     );
     return {
       email: user.email,
-      role: user.role_name,
+      role: user.roleName,
     };
   } catch (error) {
     throw new Error("Error fetching user: " + error.message);

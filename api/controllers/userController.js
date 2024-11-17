@@ -1,8 +1,8 @@
 import userService from "../services/userService.js";
 
 const createUser = async (req, res) => {
-  const { name, email, password, phone, role_name } = req.body;
-  if (!name || !email || !password || !phone || !role_name) {
+  const { name, email, password, phone, roleName } = req.body;
+  if (!name || !email || !password || !phone || !roleName) {
     return res.status(400).json({ message: "All fields are required" });
   }
   try {
@@ -11,7 +11,7 @@ const createUser = async (req, res) => {
       email,
       password,
       phone,
-      role_name
+      roleName
     );
     res.status(201).json({
       message: "User created successfully!",
