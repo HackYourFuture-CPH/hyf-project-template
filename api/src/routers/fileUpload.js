@@ -4,12 +4,18 @@ import { bucket } from "../utils/cloudStorage.js";
 
 const router = express.Router();
 
+router.get("/upload-profile", (req, res) => {
+  res.status(200).send("Route is working!");
+});
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 router.post("/upload-profile", upload.single("profile"), async (req, res) => {
+  console.log("Endpoint hit");
+
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.");
