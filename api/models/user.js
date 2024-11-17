@@ -54,7 +54,7 @@ const User = sequelize.define(
         {
           model: Role,
           as: "role",
-          attributes: ["role_name"],
+          attributes: ["roleName"],
         },
       ],
     },

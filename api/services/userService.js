@@ -45,21 +45,16 @@ const getUserFromToken = async (token) => {
     if (!decoded || !decoded.sub) {
       throw new Error("Invalid token format");
     }
-    const { sub: user_id } = decoded;
-    console.log("Decoded token: " + JSON.stringify(decoded));
+    const { sub: userId } = decoded;
+    //console.log("Decoded token: " + JSON.stringify(decoded));
 
-    const user = await User.findByPk(user_id);
+    const user = await User.findByPk(userId);
     if (!user) {
       throw new Error("User not found");
     }
-    console.log(
-      "user: " +
-        {
-          email: user.email,
-          role: user.roleName,
-        }
-    );
+    console.log("user: " + JSON.stringify(user));
     return {
+      name: user.name,
       email: user.email,
       role: user.roleName,
     };
