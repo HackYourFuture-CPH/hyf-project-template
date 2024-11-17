@@ -19,7 +19,7 @@ const Profile = ({ userData }) => {
             <div className={styles.imageContainer}>
                 <img
                     alt="Profile"
-                    src={userData.profile_image_url || "/default-profile.png"} // Display user profile image or a default
+                    src={userData.profile_image_url || "/profile-default.svg"} // Display user profile image or a default
                     className={styles.profileImage}
                 />
             </div>
