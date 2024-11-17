@@ -2,8 +2,8 @@ import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 import booksRouter from "./routers/booksRouter.js";
 import usersRouter from "./routers/usersRouter.js";
@@ -18,6 +18,10 @@ import adminRouter from "./routers/adminRouter.js";
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
 const app = express();
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+  next();
+});
 
 app.use(
   cors({
@@ -29,6 +33,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/searchGoogleBooks", searchRouter);
 app.use("/api/books", booksRouter);
