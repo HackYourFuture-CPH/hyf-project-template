@@ -16,6 +16,168 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
+      "/api/projects/create": {
+        post: {
+          summary: "Create a new project",
+          description: "Create a new project with the specified details.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    budget: { type: "number" },
+                  },
+                  required: ["title", "description", "budget"],
+                },
+                example: {
+                  title: "New Project tester",
+                  description: "Project description",
+                  budget: 15000,
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: "Project created successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string" },
+                      title: { type: "string" },
+                      description: { type: "string" },
+                      budget: { type: "number" },
+                    },
+                  },
+                },
+              },
+            },
+            400: { description: "Invalid input" },
+          },
+        },
+      },
+      "/api/users": {
+        get: {
+          summary: "Fetch all users",
+          description: "Retrieve a list of all users.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of users",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "integer" },
+                        email: { type: "string" },
+                        role: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/users/{id}": {
+        get: {
+          summary: "Fetch user by ID",
+          description: "Retrieve details of a specific user by their ID.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "ID of the user",
+            },
+          ],
+          responses: {
+            200: {
+              description: "User details",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      id: { type: "integer" },
+                      email: { type: "string" },
+                      role: { type: "string" },
+                    },
+                  },
+                },
+              },
+            },
+            404: { description: "User not found" },
+          },
+        },
+      },
+      "/api/user": {
+        get: {
+          summary: "Fetch user email and role",
+          description:
+            "Fetch the user's email and role based on the provided token.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          responses: {
+            200: {
+              description: "User details retrieved successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      email: { type: "string" },
+                      role: { type: "string" },
+                    },
+                  },
+                  example: {
+                    email: "user@example.com",
+                    role: "Client",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       "/api/developer/allClients": {
         get: {
           summary: "Fetch all clients",
@@ -350,6 +512,65 @@ swaggerController.get("/swagger.json", (req, res) => {
                         timestamp: { type: "string", format: "date-time" },
                       },
                     },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/projects/{id}": {
+        delete: {
+          summary: "Delete a project by ID",
+          description:
+            "Deletes a specific project based on the provided project ID.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "ID of the project to delete",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Project deleted successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      message: { type: "string" },
+                    },
+                  },
+                  example: {
+                    message: "Project deleted successfully",
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Project not found",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "Project not found",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
                   },
                 },
               },
