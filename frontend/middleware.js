@@ -1,51 +1,24 @@
-import { NextResponse } from "next/server";
-import { parseCookies } from "nookies";
+import { NextResponse } from 'next/server';
+import cookie from 'cookie';
+import { checkURLMatchUserRole } from './app/utils/userUtil';
 
-export function middleware(req) {
-  const { pathname } = req.nextUrl;
+export async function middleware(req) {
+  const getFieldFromCookie = field => {
+    const cookies = cookie.parse(req.headers.get('cookie') || '');
+    return cookies[field];
+  };
+  const pathname = req.nextUrl.pathname;
 
-  const protectedRoutes = [
-    "/dev-dashboard",
-    "/client-dashboard",
-  ];
-
-  if (
-    protectedRoutes.some((route) =>
-      pathname.startsWith(route)
-    )
-  ) {
-    // Get the cookies
-    const cookies = parseCookies(req);
-    const userToken = cookies.userToken;
-    const userRole = cookies.userRole;
-
-    if (!userToken) {
-      return NextResponse.redirect("/login");
-    }
-
-    // redirect based on role to the correct dashboard if the role doesn't match
-    if (
-      pathname.startsWith("/dev-dashboard") &&
-      userRole !== "developer"
-    ) {
-      return NextResponse.redirect("/client-dashboard");
-    }
-
-    if (
-      pathname.startsWith("/client-dashboard") &&
-      userRole !== "client"
-    ) {
-      return NextResponse.redirect("/dev-dashboard");
-    }
+  try {
+    checkURLMatchUserRole(pathname, getFieldFromCookie('userRole'));
+  } catch (error) {
+    console.error('match URL failed ', error);
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();
 }
 
-// paths to be protected
 export const config = {
-  matcher: [
-    "/dev-dashboard/:path*",
-    "/client-dashboard/:path*",
-  ],
+  matcher: ['/dev-dashboard/:path*', '/client-dashboard/:path*'],
 };

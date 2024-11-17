@@ -1,19 +1,37 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { handleLogIn } from '../utils/auth';
+import { getUserInfo, getUserPathByRole } from '../utils/userUtil';
 
-const SignIn = ({ handleSignIn, setRole, error, role }) => {
+const LogIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState(null);
+  const router = useRouter();
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
-    handleSignIn(email, password);
+    setFormError(null);
+
+    if (!email || !password) {
+      setFormError('Please fill in both fields.');
+      return;
+    }
+
+    await handleLogIn(email, password, async () => {
+      const userInfo = await getUserInfo();
+      const userRole = userInfo.role;
+      Cookies.set('userRole', userRole);
+      router.push(getUserPathByRole(userRole));
+    });
   };
 
   return (
-    <div className='flex flex-col items-center p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto mt-10'>
-      <h2 className='text-2xl font-semibold text-primary-blue mb-4'>{role ? `Sign In as ${role}` : 'Sign In'}</h2>
+    <div className='flex flex-col items-center p-6 bg-white rounded-lg shadow-xl max-w-md mx-auto mt-10'>
+      <h2 className='text-2xl font-semibold text-primary-blue mb-4'>{'Sign In'}</h2>
       <form onSubmit={onSubmit} className='w-full space-y-4'>
         <input
           type='email'
@@ -38,12 +56,9 @@ const SignIn = ({ handleSignIn, setRole, error, role }) => {
           Sign In
         </button>
       </form>
-      {error && <p className='mt-4 text-red-500'>{error}</p>}
-      <button onClick={() => setRole(null)} className='mt-6 text-primary-blue hover:underline'>
-        Go Back
-      </button>
+      {formError && <p className='mt-4 text-red-500'>{formError}</p>}
     </div>
   );
 };
 
-export default SignIn;
+export default LogIn;
