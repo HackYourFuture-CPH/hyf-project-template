@@ -1,6 +1,6 @@
 import NodeCache from "node-cache";
 import fetch from "node-fetch";
-const RandomBooksCache = new NodeCache({ stdTTL: 600 });
+const RandomBooksCache = new NodeCache({ stdTTL: 5000 });
 
 export const fetchRandomBooks = async (req, res) => {
   try {
