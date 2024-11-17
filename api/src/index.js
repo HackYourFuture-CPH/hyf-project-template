@@ -18,9 +18,11 @@ import randomBooksRouter from "./routers/randomBooksRouter.js";
 
 const app = express();
 
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+
 app.use(
   cors({
-    origin: "https://leafnotes-1.onrender.com",
+    origin: allowedOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
