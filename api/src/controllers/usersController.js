@@ -1,24 +1,18 @@
 import knex from "../database_client.js";
 
 export const getUserProfile = async (req, res) => {
-  const { user_id } = req.params;
-
-  if (
-    parseInt(req.user.userId) !== parseInt(user_id) &&
-    req.user.role !== "admin"
-  )
-    return res.status(403).json({ error: "Forbidden" });
-
   try {
     const user = await knex("Users")
-      .where({ user_id: parseInt(user_id) })
+      .where({ user_id: parseInt(req.user.userId) })
       .first();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({
+      user_id: user.user_id,
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     res
@@ -27,17 +21,9 @@ export const getUserProfile = async (req, res) => {
   }
 };
 export const updateUserDetails = async (req, res) => {
-  const { user_id } = req.params;
-
-  const { first_name, last_name, email, username, about } = req.body;
-  if (
-    parseInt(req.user.userId) !== parseInt(user_id) &&
-    req.user.role !== "admin"
-  )
-    return res.status(403).json({ error: "Forbidden" });
   try {
     const user = await knex("Users")
-      .where({ user_id: parseInt(user_id) })
+      .where({ user_id: parseInt(req.user.userId) })
       .first();
     if (!user) return res.status(404).json({ error: "User not found" });
     if (username && user.username !== username) {
@@ -51,7 +37,7 @@ export const updateUserDetails = async (req, res) => {
         return res.status(400).json({ error: "Email already exists" });
     }
     await knex("Users")
-      .where({ user_id: parseInt(user_id) })
+      .where({ user_id: parseInt(req.user.userId) })
       .update({
         first_name: first_name ?? user.first_name,
         last_name: last_name ?? user.last_name,
@@ -61,7 +47,7 @@ export const updateUserDetails = async (req, res) => {
       });
 
     const updatedUser = await knex("Users")
-      .where({ user_id: parseInt(user_id) })
+      .where({ user_id: parseInt(req.user.userId) })
       .first();
     res.status(200).json({ message: "User updated successfully", updatedUser });
   } catch (error) {
@@ -73,39 +59,29 @@ export const updateUserDetails = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  console.log("Request started");
-
-  const { user_id } = req.params;
-
-  if (
-    parseInt(req.user.userId) !== parseInt(user_id) &&
-    req.user.role !== "admin"
-  )
-    return res.status(403).json({ error: "Forbidden" });
-
   try {
     await knex.transaction(async (trx) => {
       const user = await trx("Users")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .first();
       if (!user) return res.status(404).json({ error: "User not found" });
       await trx("Notes")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
       await trx("Quotes")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
       await trx("ReadingGoals")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
       await trx("Reviews")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
       await trx("UserBooks")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
       await trx("Users")
-        .where({ user_id: parseInt(user_id) })
+        .where({ user_id: parseInt(req.user.userId) })
         .del();
     });
 
