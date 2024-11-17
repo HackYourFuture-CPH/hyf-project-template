@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Bookshelf.module.css";
 import Button from "../components/Button";
-import AddBookToBookshelf from "./AddBookToBookshelf"; // Import the AddBook component
+import AddBookToBookshelf from "./AddBookToBookshelf";
 import axios from "axios";
 
 const Bookshelf = ({ userId }) => {
@@ -12,22 +12,20 @@ const Bookshelf = ({ userId }) => {
         currentlyReading: [],
         wishToRead: [],
     });
-    const [isModalOpen, setModalOpen] = useState(false); // State to control modal visibility
-    const [currentCategory, setCurrentCategory] = useState(""); // Track the category being added to
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [currentCategory, setCurrentCategory] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!userId) return; // Ensure userId is available before making the API call
+        if (!userId) return;
 
-        // Fetch books from the API
         const fetchBooks = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/user-books/list`, {
-                    withCredentials: true, // Send cookies for authentication if needed
+                    withCredentials: true,
                 });
 
-                // Group books by their status
                 const books = response.data.reduce(
                     (acc, book) => {
                         if (book.status === "READ") acc.read.push(book);
@@ -48,23 +46,21 @@ const Bookshelf = ({ userId }) => {
         };
 
         fetchBooks();
-    }, [userId]); // Re-fetch if userId changes
+    }, [userId]);
 
     const handleAddBookClick = (category) => {
-        setCurrentCategory(category); // Set the category
-        setModalOpen(true); // Open the modal
+        setCurrentCategory(category);
+        setModalOpen(true);
     };
 
-    const closeModal = () => setModalOpen(false); // Close the modal
+    const closeModal = () => setModalOpen(false);
 
     const handleRemoveBook = async (bookId, category) => {
         try {
-            // Call the API to delete the book
             await axios.delete(`http://localhost:3001/api/user-books/delete/${bookId}`, {
                 withCredentials: true,
             });
 
-            // Update the state to remove the book
             setBookShelf((prevShelf) => ({
                 ...prevShelf,
                 [category]: prevShelf[category].filter((book) => book.book_id !== bookId),
