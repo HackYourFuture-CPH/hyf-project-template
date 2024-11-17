@@ -11,7 +11,7 @@ swaggerController.get("/swagger.json", (req, res) => {
   const swaggerSpec = {
     openapi: "3.0.0",
     info: {
-      title: "Project Management API",
+      title: "YAR Solutions Project Management API",
       version: "1.0.0",
       description: "API for managing projects, users, and authentication.",
     },
@@ -463,6 +463,87 @@ swaggerController.get("/swagger.json", (req, res) => {
                       description: { type: "string" },
                       budget: { type: "number" },
                     },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/chat/send": {
+        post: {
+          summary: "Send a chat message",
+          description: "Sends a chat message from one user to another.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    senderId: {
+                      type: "integer",
+                      description: "ID of the sender",
+                    },
+                    receiverId: {
+                      type: "integer",
+                      description: "ID of the receiver",
+                    },
+                    message: {
+                      type: "string",
+                      description: "The message content",
+                    },
+                  },
+                  required: ["senderId", "receiverId", "message"],
+                },
+                example: {
+                  senderId: 8,
+                  receiverId: 9,
+                  message: "This is a test message",
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: "Message sent successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean" },
+                      messageId: { type: "integer" },
+                    },
+                  },
+                  example: {
+                    success: true,
+                    messageId: 123,
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Bad Request - Missing or invalid fields",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "Message content cannot be empty",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
                   },
                 },
               },
