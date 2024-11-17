@@ -15,8 +15,6 @@ import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 import reviewsRouter from "./routers/reviewsRouter.js";
 import adminRouter from "./routers/adminRouter.js";
 
-import fileUploadRouter from "./routers/fileUpload.js";
-
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
 const app = express();
@@ -47,7 +45,6 @@ app.use("/api/quotes", apiQuotesRouter);
 app.use("/api/reviews", reviewsRouter);
 
 app.use("/admin", adminRouter);
-app.use("/api", fileUploadRouter);
 
 app.use("/api/random-books", randomBooksRouter);
 
