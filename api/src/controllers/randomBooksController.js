@@ -9,10 +9,14 @@ export const fetchRandomBooks = async (req, res) => {
       return res.json(cachedBooks);
     }
 
-    const response = await fetch(
+    let data = await fetch(
       "https://www.googleapis.com/books/v1/volumes?q=book&maxResults=30"
     );
-    const data = await response.json();
+    data = await data.json();
+    if (!data.items || data.items.length === 0) {
+      const fallbackResponse = await fetch("http://localhost:3001/api/books");
+      data = await fallbackResponse.json();
+    }
 
     RandomBooksCache.set("books", data);
 

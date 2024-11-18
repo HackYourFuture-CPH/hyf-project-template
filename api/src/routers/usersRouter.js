@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import { authenticate } from "../middlewares/authenticate.js";
 
 import {
@@ -9,8 +10,19 @@ import {
 
 const usersRouter = express.Router();
 
-usersRouter.get("/profile/:user_id", authenticate(), getUserProfile);
-usersRouter.put("/update/:user_id/details", authenticate(), updateUserDetails);
-usersRouter.delete("/delete/:user_id", authenticate("admin"), deleteUser);
+//Set up multer for handling file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+usersRouter.put(
+  "/update/details",
+  authenticate(),
+  upload.single("profile"),
+  updateUserDetails
+);
+usersRouter.get("/profile", authenticate(), getUserProfile);
+usersRouter.delete("/delete", authenticate("admin"), deleteUser);
 
 export default usersRouter;

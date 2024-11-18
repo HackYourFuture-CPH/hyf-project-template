@@ -12,8 +12,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import { validateField } from "../utils/validation";
+import { isValidate } from "../utils/validation";
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -23,17 +24,6 @@ const SignUp = () => {
     username: "",
     password: "",
   });
-  const handleChange = (e) => {
-    setErrors({
-      firstName: "",
-      lastName: "",
-      email: "",
-      username: "",
-      password: "",
-    });
-    setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
-  };
-
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -42,68 +32,61 @@ const SignUp = () => {
     password: "",
   });
 
-  const isValidate = () => {
-    let isValid = true;
-    let tempErrors = {};
-    if (!data.firstName) {
-      tempErrors.firstName = "Firstname is required";
-      isValid = false;
-    }
-    if (!data.lastName) {
-      tempErrors.lastName = "Lastname is required";
-      isValid = false;
-    }
-    if (!data.email) {
-      tempErrors.email = "Email is required";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      tempErrors.email = "Email is not valid";
-      isValid = false;
-    }
-    if (!data.username) {
-      tempErrors.username = "Username is required";
-    }
-    if (!data.password) {
-      tempErrors.password = "Password";
-      isValid = false;
-    }
-    setErrors(tempErrors);
-    return isValid;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setData((prevData) => ({ ...prevData, [name]: value }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value) ? "" : prevErrors[name],
+    }));
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
   };
 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { isValid, errors: validationErrors } = isValidate(data);
 
-    if (isValidate()) {
-      const userData = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        username: data.username,
-        password: data.password,
-      };
+    if (!isValid) {
+      setErrors(validationErrors);
+      return;
+    }
 
-      try {
-        const result = await makeRequest(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/register`,
-          userData
-        );
+    const userData = {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+    };
 
-        setData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          username: "",
-          password: "",
-        });
-        alert("Welcome to LeafNotes");
-        router.push("/login");
-      } catch (error) {
-        console.log("Error registering user:", error);
-        alert(error.message || "Something went wrong, please try again.");
-      }
+    try {
+      const result = await makeRequest(
+        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/register`,
+        userData
+      );
+
+      setData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+        password: "",
+      });
+      router.push("/login");
+    } catch (error) {
+      console.error("Error registering user:", error);
+      alert(error.message || "Something went wrong, please try again.");
     }
   };
 
@@ -195,8 +178,9 @@ const SignUp = () => {
                     fullWidth
                     value={data.firstName}
                     onChange={handleChange}
-                    error={errors.firstName}
+                    error={!!errors.firstName}
                     helperText={errors.firstName}
+                    onBlur={handleBlur}
                   />{" "}
                 </Grid2>{" "}
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
@@ -213,6 +197,7 @@ const SignUp = () => {
                     onChange={handleChange}
                     error={!!errors.lastName}
                     helperText={errors.lastName}
+                    onBlur={handleBlur}
                   />{" "}
                 </Grid2>{" "}
               </Grid2>{" "}
@@ -230,6 +215,7 @@ const SignUp = () => {
               onChange={handleChange}
               error={!!errors.email}
               helperText={errors.email}
+              onBlur={handleBlur}
             />{" "}
             <TextField
               variant="outlined"
@@ -244,6 +230,7 @@ const SignUp = () => {
               onChange={handleChange}
               error={!!errors.username}
               helperText={errors.username}
+              onBlur={handleBlur}
             />{" "}
             <TextField
               variant="outlined"
@@ -259,6 +246,7 @@ const SignUp = () => {
               onChange={handleChange}
               error={!!errors.password}
               helperText={errors.password}
+              onBlur={handleBlur}
             />{" "}
             <Button
               type="submit"

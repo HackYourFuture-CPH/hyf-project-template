@@ -2,8 +2,8 @@ import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 import booksRouter from "./routers/booksRouter.js";
 import usersRouter from "./routers/usersRouter.js";
@@ -13,13 +13,16 @@ import searchRouter from "./routers/searchGoogleBooksRouter.js";
 import quotesRouter from "./routers/quotesRouter.js";
 import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 import reviewsRouter from "./routers/reviewsRouter.js";
+import adminRouter from "./routers/adminRouter.js";
 
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
 const app = express();
-
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+  next();
+});
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
-
 app.use(
   cors({
     origin: allowedOrigin,
@@ -30,6 +33,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/searchGoogleBooks", searchRouter);
 app.use("/api/books", booksRouter);
@@ -39,6 +43,8 @@ app.use("/api/user-books", userBooksRouter);
 app.use("/quotes", quotesRouter);
 app.use("/api/quotes", apiQuotesRouter);
 app.use("/api/reviews", reviewsRouter);
+
+app.use("/admin", adminRouter);
 
 app.use("/api/random-books", randomBooksRouter);
 

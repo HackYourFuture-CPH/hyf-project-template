@@ -1,41 +1,45 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { makeRequest } from "../utils/makeRequest";
 
 const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const refreshUserFromLocalStorage = () => {
+    const user = localStorage.getItem("user");
+    const parsedUser = JSON.parse(user);
+
+    console.log({ parsedUser });
+    setCurrentUser(parsedUser);
+    return parsedUser;
+  };
+
+  const saveUserToLocalStorage = (user) => {
+    localStorage.setItem("user", JSON.stringify(user));
+  };
+
+  const clearUserToLocalStorage = () => {
+    localStorage.removeItem("user");
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await makeRequest(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/users/profile/self`,
-          {},
-          "GET"
-        );
-        setCurrentUser(data);
-      } catch (error) {
-        console.log("Not logged in:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (!currentUser) {
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
-  }, [currentUser]);
+    refreshUserFromLocalStorage();
+  }, []);
 
   const login = async (inputs) => {
     try {
+      setLoading(true);
       const userData = await makeRequest(
         `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/login`,
         inputs,
         "POST"
       );
+      setLoading(false);
+      saveUserToLocalStorage(userData);
+
       setCurrentUser(userData);
     } catch (error) {
       console.log("Login failed:", error.message);
@@ -49,6 +53,9 @@ export const AuthContextProvider = ({ children }) => {
         {},
         "POST"
       );
+
+      clearUserToLocalStorage();
+
       setCurrentUser(null);
     } catch (error) {
       console.error("Logout failed:", error.message);

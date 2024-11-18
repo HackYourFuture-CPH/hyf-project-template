@@ -95,11 +95,13 @@ export const loginUser = async (req, res) => {
       }
     );
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     //Set HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      secure: isProduction, // Secure cookies only in production
+      sameSite: isProduction ? "None" : "Lax", // None for cross-site cookies; Lax for local development
       maxAge: 3600000,
     });
 
