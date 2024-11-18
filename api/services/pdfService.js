@@ -1,4 +1,3 @@
-// src/services/pdfService.js
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
@@ -6,82 +5,165 @@ import path from "path";
 export const generateInvoicePDF = (invoiceData) => {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument({ margin: 50 }); // Add margin for spacing
-      const outputPath = path.resolve("./output/invoice.pdf");
-      const writeStream = fs.createWriteStream(outputPath);
-
-      // Pipe the PDF stream to a file
-      doc.pipe(writeStream);
-
-      // Add header section
-      doc
-        .fontSize(20)
-        .font("Helvetica-Bold")
-        .text("Invoice", { align: "center" })
-        .moveDown(1);
-
-      doc
-        .fontSize(12)
-        .font("Helvetica")
-        .text(`Invoice Number: ${invoiceData.invoiceNumber}`, { align: "left" })
-        .text(`Date: ${invoiceData.date}`, { align: "left" })
-        .moveDown(1);
-
-      // Add line separator
-      doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke("#aaaaaa").moveDown(1);
-
-      // Add items table header
-      doc
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text("Description", 50, doc.y)
-        .text("Quantity", 300, doc.y, { width: 90, align: "right" })
-        .text("Price", 400, doc.y, { width: 90, align: "right" })
-        .text("Total", 500, doc.y, { width: 90, align: "right" })
-        .moveDown(0.5);
-
-      // Add another line separator
-      doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke("#000000");
-
-      // Add items table rows
-      doc.font("Helvetica");
-      invoiceData.items.forEach((item) => {
-        const itemTotal = (item.quantity * item.price).toFixed(2);
-        doc
-          .text(item.description, 50)
-          .text(item.quantity, 300, doc.y, { width: 90, align: "right" })
-          .text(`$${item.price.toFixed(2)}`, 400, doc.y, {
-            width: 90,
-            align: "right",
-          })
-          .text(`$${itemTotal}`, 500, doc.y, { width: 90, align: "right" });
+      // Create document with better default styling
+      const doc = new PDFDocument({
+        margin: 50,
+        size: "A4",
       });
 
-      // Add another line separator
-      doc
-        .moveTo(50, doc.y + 10)
-        .lineTo(550, doc.y + 10)
-        .stroke("#aaaaaa");
+      const outputPath = path.resolve("./output/invoice.pdf");
+      const writeStream = fs.createWriteStream(outputPath);
+      const logoPath = path.resolve("./public/logo.png");
 
-      // Add total amount
+      doc.image(logoPath, 50, 50, { width: 60 }); // Add logo at top left
+
+      doc.pipe(writeStream);
+
+      // Helper function for drawing lines
+      const drawLine = (yPosition) => {
+        doc
+          .strokeColor("#E5E7EB")
+          .lineWidth(1)
+          .moveTo(50, yPosition)
+          .lineTo(550, yPosition)
+          .stroke();
+      };
+
+      // Header section with proper spacing
+      const pageTop = 50; // Start from absolute position
       doc
-        .moveDown(1)
-        .fontSize(14)
         .font("Helvetica-Bold")
-        .text(`Total: $${invoiceData.total.toFixed(2)}`, { align: "right" });
+        .fontSize(28)
+        .text("INVOICE", { align: "center" })
+        .moveDown(0.5) // Reduced space between title and number
+        .fontSize(12)
+        .fillColor("#6B7280")
+        .text(`#${invoiceData.invoiceNumber}`, { align: "center" });
 
-      // Footer
+      // Invoice details section with fixed positioning
+      const detailsTop = pageTop + 100; // Fixed position for details section
+
+      // Left side - Date Issued
       doc
-        .moveDown(2)
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .fillColor("#374151")
+        .text("Date Issued", 50, detailsTop)
+        .font("Helvetica")
+        .fontSize(10)
+        .fillColor("#6B7280")
+        .text(invoiceData.date, 50, detailsTop + 15);
+
+      // Right side - Due Date
+      const dueDate = new Date(
+        new Date(invoiceData.date).getTime() + 30 * 24 * 60 * 60 * 1000
+      ).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .fillColor("#374151")
+        .text("Due Date", 400, detailsTop)
+        .font("Helvetica")
+        .fontSize(10)
+        .fillColor("#6B7280")
+        .text(dueDate, 400, detailsTop + 15);
+
+      // Items table header with fixed positioning
+      const tableTop = detailsTop + 60; // Fixed position for table
+      doc.fillColor("#F3F4F6").rect(50, tableTop, 500, 30).fill();
+
+      // Table headers with proper width allocation
+      const colDesc = 50;
+      const colQty = 350;
+      const colPrice = 420;
+      const colTotal = 490;
+
+      doc
+        .fillColor("#374151")
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .text("Description", colDesc + 15, tableTop + 10)
+        .text("Quantity", colQty, tableTop + 10)
+        .text("Price", colPrice, tableTop + 10)
+        .text("Total", colTotal, tableTop + 10);
+
+      // Items table rows with proper spacing
+      let yPosition = tableTop + 40;
+
+      invoiceData.items.forEach((item, index) => {
+        const itemTotal = (item.quantity * item.price).toFixed(2);
+
+        // Alternate row background
+        if (index % 2 === 0) {
+          doc
+            .fillColor("#F9FAFB")
+            .rect(50, yPosition - 10, 500, 30)
+            .fill();
+        }
+
+        doc
+          .fillColor("#374151")
+          .font("Helvetica")
+          .fontSize(10)
+          .text(item.description, colDesc + 15, yPosition, { width: 270 }) // Limited width for description
+          .text(item.quantity.toString(), colQty, yPosition)
+          .text(`$${item.price.toFixed(2)}`, colPrice, yPosition)
+          .text(`$${itemTotal}`, colTotal, yPosition);
+
+        yPosition += 30;
+      });
+
+      // Draw bottom line
+      drawLine(yPosition + 10);
+
+      // Totals section with fixed positioning
+      const totalsStartY = yPosition + 30;
+
+      // Subtotal
+      doc
+        .font("Helvetica")
+        .text("Subtotal:", 400, totalsStartY)
+        .text(`$${invoiceData.total.toFixed(2)}`, 490, totalsStartY);
+
+      // Tax
+      doc
+        .text("Tax (0%):", 400, totalsStartY + 20)
+        .text("$0.00", 490, totalsStartY + 20);
+
+      // Total line
+      drawLine(totalsStartY + 35);
+
+      // Final total with proper spacing
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(12)
+        .text("Total:", 400, totalsStartY + 50)
+        .text(`$${invoiceData.total.toFixed(2)}`, 490, totalsStartY + 50);
+
+      // Footer with fixed positioning
+      const footerTop = totalsStartY + 120;
+      doc
         .fontSize(10)
         .font("Helvetica")
-        .fillColor("gray")
-        .text("Thank you for your business!", { align: "center" });
+        .fillColor("#6B7280")
+        .text("Thank you for your business!", 50, footerTop, {
+          align: "center",
+          width: 500,
+        })
+        .moveDown(0.5)
+        .text("Questions? Email support@YARsolutions.com", 50, footerTop + 20, {
+          align: "center",
+          width: 500,
+        });
 
-      // Finalize and save
+      // Finalize PDF
       doc.end();
 
-      // Resolve the promise when the write stream finishes
       writeStream.on("finish", () => {
         resolve(outputPath);
       });
