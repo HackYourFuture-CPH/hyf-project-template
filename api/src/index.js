@@ -13,7 +13,7 @@ import projectRouter from "./routers/projectRouter.js";
 import roleRouter from "./routers/roleRouter.js";
 import swaggerController from "../controllers/swaggerController.js";
 import chatRoutes from "./routers/chatRouter.js";
-
+import invoiceRouter from "./routers/invoiceRouter.js";
 import setupSockets from "../sockets/index.js";
 
 const app = express();
@@ -35,6 +35,7 @@ const apiRouter = express.Router();
 apiRouter.use("/", authRouter);
 apiRouter.use("/", userRouter);
 apiRouter.use("/", roleRouter);
+apiRouter.use("/", invoiceRouter);
 apiRouter.use("/nested", nestedRouter);
 apiRouter.use("/developer", devRouter);
 apiRouter.use("/projects", projectRouter);
