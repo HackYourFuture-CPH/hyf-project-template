@@ -8,9 +8,9 @@ export const generateInvoice = async (req, res) => {
       invoiceNumber: "INV12345",
       date: new Date().toISOString().split("T")[0],
       items: [
-        { description: "Widget A", quantity: 2, price: 20.5 },
-        { description: "Widget B", quantity: 1, price: 15.0 },
-        { description: "Service C", quantity: 3, price: 10.0 },
+        { description: "Project A", quantity: 1, price: 2500 },
+        { description: "Project B", quantity: 1, price: 1500 },
+        { description: "Project C", quantity: 3, price: 5000 },
       ],
       total: 76.0,
     };
