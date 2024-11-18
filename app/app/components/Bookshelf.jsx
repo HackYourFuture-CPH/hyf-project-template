@@ -56,6 +56,9 @@ const Bookshelf = ({ userId }) => {
     const closeModal = () => setModalOpen(false);
 
     const handleRemoveBook = async (bookId, category) => {
+        const confirmed = window.confirm("Are you sure you want to delete this book?");
+        if (!confirmed) return;
+
         try {
             await axios.delete(`http://localhost:3001/api/user-books/delete/${bookId}`, {
                 withCredentials: true,
