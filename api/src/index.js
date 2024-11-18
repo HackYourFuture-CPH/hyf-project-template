@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: "https://leafnotes-1.onrender.com",
+    origin: `${process.env.FRONTEND_URL}`,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
