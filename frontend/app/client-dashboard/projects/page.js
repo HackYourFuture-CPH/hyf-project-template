@@ -36,11 +36,16 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchProjects = async () => {
       try {
-        const response = await fetch("/api/projects", {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `/api/projects/${userId}`,
+          {
+            credentials: "include",
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setProjects(data);
@@ -57,7 +62,7 @@ export default function Page() {
     };
 
     fetchProjects();
-  }, []);
+  }, [userId]);
 
   const handleDelete = async (id) => {
     try {
