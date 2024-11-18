@@ -1,5 +1,7 @@
-import knex from "../database_client.js";
 import fetch from "node-fetch";
+import knex from "../database_client.js";
+import { buildBookDto } from "../services/bookService.js";
+import { buildUserBookDto } from "../services/userBookService.js";
 
 const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
@@ -26,8 +28,12 @@ const fetchGoogleBooksDetails = async (googleBooksId) => {
 };
 
 export const addBookToUser = async (req, res) => {
-  const userId = req.user.userId;
-  const userRole = req.user.role;
+  if (req.user.role !== "admin" && req.user.role !== "user") {
+    return res
+      .status(403)
+      .json({ error: "Forbidden: You do not have permission to add books." });
+  }
+
   const {
     google_books_id,
     title,
@@ -40,29 +46,32 @@ export const addBookToUser = async (req, res) => {
     end_date = null,
   } = req.body;
 
-  if (userRole !== "admin" && userRole !== "user") {
-    return res
-      .status(403)
-      .json({ error: "Forbidden: You do not have permission to add books." });
-  }
   if (!google_books_id) {
     return res.status(400).json({ error: "google_book_id is required" });
   }
 
-  try {
-    let bookData = {
-      google_books_id,
-      title,
-      author,
-      genre,
-      cover_image,
-      description,
-    };
+  let bookData = {
+    google_books_id,
+    title,
+    author,
+    genre,
+    cover_image,
+    description,
+  };
 
+  try {
     if (!title || !author || !genre || !cover_image || !description) {
       const googleBooksDetails = await fetchGoogleBooksDetails(google_books_id);
       bookData = { ...bookData, ...googleBooksDetails };
     }
+  } catch (error) {
+    console.error("Error fetching book details from Google Books:", error);
+    return res
+      .status(404)
+      .json({ error: "Book not found in Google Books API" });
+  }
+
+  try {
     const result = await knex.transaction(async (trx) => {
       let book = await trx("Books")
         .where({ google_books_id: bookData.google_books_id })
@@ -72,20 +81,23 @@ export const addBookToUser = async (req, res) => {
         const [bookId] = await trx("Books").insert(bookData);
         book = await trx("Books").where({ book_id: bookId }).first();
       }
+
       const existingUserBook = await trx("UserBooks")
         .where({
-          user_id: userId,
+          user_id: req.user.userId,
           book_id: book.book_id,
         })
         .first();
 
       if (existingUserBook) {
-        return res
+        res
           .status(400)
           .json({ error: "Book already exists in user's library" });
+        return;
       }
+
       await trx("UserBooks").insert({
-        user_id: userId,
+        user_id: req.user.userId,
         book_id: book.book_id,
         status,
         start_date,
@@ -94,7 +106,10 @@ export const addBookToUser = async (req, res) => {
 
       return await trx("Books")
         .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
-        .where({ "UserBooks.user_id": userId, "Books.book_id": book.book_id })
+        .where({
+          "UserBooks.user_id": req.user.userId,
+          "Books.book_id": book.book_id,
+        })
         .select(
           "Books.*",
           "UserBooks.status",
@@ -103,21 +118,20 @@ export const addBookToUser = async (req, res) => {
         )
         .first();
     });
+    if (!result) {
+      // if result is undefined, it means the book already exists in the user's library, and we've already sent a response
+      return;
+    }
 
     return res.status(201).json({
       message: "Book added to user's library successfully",
-      book: result,
+      book: buildUserBookDto(result),
     });
   } catch (error) {
-    console.error("Error adding book to user:", error);
-    if (error.message === "Book already exists in user's library") {
-      return res.status(400).json({ error: error.message });
-    }
-    if (error.message === "Missing required fields") {
-      return res.status(400).json({ error: error.message });
-    }
+    console.error("Error adding book to user's library:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+
 };
 
 export const getUserBooks = async (req, res) => {
@@ -140,7 +154,7 @@ export const getUserBooks = async (req, res) => {
           "UserBooks.start_date",
           "UserBooks.end_date"
         );
-      return res.status(200).json(allUserBooks);
+      return res.status(200).json(allUserBooks.map(buildUserBookDto));
     }
     const userBooks = await knex("Books")
       .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
@@ -152,7 +166,7 @@ export const getUserBooks = async (req, res) => {
         "UserBooks.end_date"
       );
 
-    return res.status(200).json(userBooks);
+    return res.status(200).json(userBooks.map(buildUserBookDto));
   } catch (error) {
     console.error("Error fetching user books:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -160,7 +174,6 @@ export const getUserBooks = async (req, res) => {
 };
 
 export const updateBookDetails = async (req, res) => {
-  const userId = req.user.userId;
   const { bookId, title, author, genre, description, cover_image } = req.body;
 
   try {
@@ -178,7 +191,7 @@ export const updateBookDetails = async (req, res) => {
         cover_image: cover_image || book.cover_image,
       });
     const updatedBook = await knex("Books").where({ book_id: bookId }).first();
-    return res.status(200).json(updatedBook);
+    return res.status(200).json(buildBookDto(updatedBook));
   } catch (error) {
     console.error("Error updating book details:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -214,7 +227,7 @@ export const updateUserBook = async (req, res) => {
       )
       .first();
 
-    return res.status(200).json(updatedBook);
+    return res.status(200).json(buildUserBookDto(updatedBook));
   } catch (error) {
     console.error("Error updating user book:", error);
     return res.status(500).json({ error: "Internal Server Error" });
