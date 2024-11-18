@@ -15,7 +15,11 @@ const RandomBooks = () => {
         try {
           const randomBooks = JSON.parse(cachedBooks);
           console.log("Cached Books: ", randomBooks);
-          setBooks(Array.isArray(randomBooks) ? randomBooks : []);
+          if (Array.isArray(randomBooks) && randomBooks.length > 0) {
+            setBooks(randomBooks);
+          } else {
+            throw new Error("No books in cache, fetching from API");
+          }
         } catch (error) {
           console.error("Error parsing cached books:", error);
           localStorage.removeItem("books");
