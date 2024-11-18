@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Bookshelf.module.css";
 import Button from "../components/Button";
 import AddBookToBookshelf from "./AddBookToBookshelf";
+import FavoriteQuote from "./FavoriteQuote";
 import axios from "axios";
 
 const Bookshelf = ({ userId }) => {
@@ -13,7 +14,9 @@ const Bookshelf = ({ userId }) => {
         wishToRead: [],
     });
     const [isModalOpen, setModalOpen] = useState(false);
+    const [isQuoteModalOpen, setQuoteModalOpen] = useState(false);
     const [currentCategory, setCurrentCategory] = useState("");
+    const [selectedBookId, setSelectedBookId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -53,9 +56,21 @@ const Bookshelf = ({ userId }) => {
         setModalOpen(true);
     };
 
+    const handleAddQuoteClick = (bookId) => {
+        setSelectedBookId(bookId);
+        setQuoteModalOpen(true);
+    };
+
     const closeModal = () => setModalOpen(false);
 
+    const closeQuoteModal = () => {
+        setSelectedBookId(null);
+        setQuoteModalOpen(false);
+    };
+
     const handleRemoveBook = async (bookId, category) => {
+        const confirmed = window.confirm("Are you sure you want to delete this book?");
+        if (!confirmed) return;
         try {
             await axios.delete(`http://localhost:3001/api/user-books/delete/${bookId}`, {
                 withCredentials: true,
@@ -96,6 +111,12 @@ const Bookshelf = ({ userId }) => {
                             >
                                 &times;
                             </button>
+                            <button
+                                className={styles.quoteButton}
+                                onClick={() => handleAddQuoteClick(book.book_id)}
+                            >
+                                Add Quote
+                            </button>
                         </div>
                     ))}
 
@@ -123,6 +144,12 @@ const Bookshelf = ({ userId }) => {
                                 onClick={() => handleRemoveBook(book.book_id, "currentlyReading")}
                             >
                                 &times;
+                            </button>
+                            <button
+                                className={styles.quoteButton}
+                                onClick={() => handleAddQuoteClick(book.book_id)}
+                            >
+                                Add Quote
                             </button>
                         </div>
                     ))}
@@ -152,6 +179,12 @@ const Bookshelf = ({ userId }) => {
                             >
                                 &times;
                             </button>
+                            <button
+                                className={styles.quoteButton}
+                                onClick={() => handleAddQuoteClick(book.book_id)}
+                            >
+                                Add Quote
+                            </button>
                         </div>
                     ))}
 
@@ -173,6 +206,10 @@ const Bookshelf = ({ userId }) => {
                         <AddBookToBookshelf category={currentCategory} />
                     </div>
                 </div>
+            )}
+
+            {isQuoteModalOpen && (
+                <FavoriteQuote bookId={selectedBookId} userId={userId} onClose={closeQuoteModal} />
             )}
         </div>
     );
