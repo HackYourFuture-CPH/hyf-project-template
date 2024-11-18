@@ -1,7 +1,11 @@
 import ClientStatus from "./ClientStatus";
 import ClientCard from "./ClientCard";
 import ClientTable from "./ClientTable";
-function ProjectClient({ project, statusCounts }) {
+function ProjectClient({
+  project,
+  statusCounts,
+  onDelete,
+}) {
   const { title, client_id, status, deadline } = project;
 
   return (
@@ -21,6 +25,7 @@ function ProjectClient({ project, statusCounts }) {
           clientId={client_id}
           status={status}
           deadline={deadline}
+          onDelete={onDelete}
         />
       </div>
     </div>
