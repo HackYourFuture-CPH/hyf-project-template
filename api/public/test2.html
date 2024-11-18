@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Chat</title>
+  </head>
+  <body>
+    <h1>Real-Time WebSocket Chat</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type a message..." />
+    <button id="sendButton">Send</button>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+      // Connect to the WebSocket server
+      const socket = io("http://127.0.0.1:3001/");
+
+      // Listen for messages from the server
+      socket.on("message", (message) => {
+        console.log("Received message:", message);
+        const messagesDiv = document.getElementById("messages");
+        const messageElement = document.createElement("div");
+        messageElement.textContent = `${message.senderId}: ${message.message}`;
+        messagesDiv.appendChild(messageElement);
+      });
+
+      // Send a message to the server when the button is clicked
+      document.getElementById("sendButton").addEventListener("click", () => {
+        const messageInput = document.getElementById("messageInput");
+        const message = {
+          senderId: 8,
+          receiverId: 9,
+          message: messageInput.value,
+        };
+        socket.emit("message", message); // Send message to server
+        messageInput.value = ""; // Clear input after sending
+      });
+    </script>
+  </body>
+</html>

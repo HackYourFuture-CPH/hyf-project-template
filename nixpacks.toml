@@ -1,0 +1,8 @@
+[plan]
+provider = "nodejs"
+
+[phases.setup]
+working_directory = "api"
+
+[phases.start]
+cmd = "node src/index.js"
