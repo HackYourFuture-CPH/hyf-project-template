@@ -13,7 +13,7 @@ export const AuthContextProvider = ({ children }) => {
   const refreshUser = async () => {
     try {
       const userData = await makeRequest(
-        "http://localhost:3001/auth/me",
+        "http://localhost:3001/users/profile",
         {},
         "GET"
       );

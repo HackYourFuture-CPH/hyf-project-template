@@ -12,7 +12,16 @@ export const getUserProfile = async (req, res) => {
     }
 
     res.status(200).json({
-      user_id: user.user_id,
+      user: {
+        id: user.user_id,
+        username: user.username,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        profileImageUrl: user.profile_image_url,
+        about: user.about,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("Error fetching user:", error);
