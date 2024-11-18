@@ -7,57 +7,54 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const router = useRouter(); // Use the router to navigate programmatically
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter(); // Use the router to navigate programmatically
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value); // Update the search query
-    };
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); // Update the search query
+  };
 
-    // Handle pressing Enter to trigger search
-    const handleSearchKeyPress = (e) => {
-        if (e.key === "Enter" && searchQuery.trim() !== "") {
-            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); // Navigate to the search page with query
-        }
-    };
+  // Handle pressing Enter to trigger search
+  const handleSearchKeyPress = (e) => {
+    if (e.key === "Enter" && searchQuery.trim() !== "") {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); // Navigate to the search page with query
+    }
+  };
 
-    return (
-        <header className={styles.header}>
-            <div className={styles.logoContainer}>
-                <Link href="/">
-                    <Image
-                        src="/logo.png"
-                        alt="Leaf Notes Logo"
-                        className={styles.logo}
-                        width={150}
-                        height={50}
-                    />
-                </Link>
-            </div>
-            <nav className={styles.nav}>
-                <ul className={styles.navList}>
-                    <li className={styles.navItem}>
-                        <Link href="/dashboard">DASHBOARD</Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/login">LOG IN</Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/signup">SIGN UP</Link>
-                    </li>{" "}
-                </ul>
+  return (
+    <header className={styles.header}>
+      <div className={styles.logoContainer}>
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="Leaf Notes Logo"
+            className={styles.logo}
+            width={150}
+            height={50}
+          />
+        </Link>
+      </div>
+      <nav className={styles.nav}>
+        <ul className={styles.navList}>
+          <li className={styles.navItem}>
+            <Link href="/dashboard">DASHBOARD</Link>
+          </li>
+          <li className={styles.navItem}>
+            <Link href="/login">LOG OUT </Link>
+          </li>
+        </ul>
 
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    className={styles.searchInput}
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    onKeyDown={handleSearchKeyPress}
-                />
-            </nav>
-        </header>
-    );
+        <input
+          type="text"
+          placeholder="Search..."
+          className={styles.searchInput}
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onKeyDown={handleSearchKeyPress}
+        />
+      </nav>
+    </header>
+  );
 };
 
 export default Header;
