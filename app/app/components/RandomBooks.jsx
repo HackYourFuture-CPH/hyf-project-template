@@ -12,8 +12,14 @@ const RandomBooks = () => {
     const fetchBooks = async () => {
       const cachedBooks = localStorage.getItem("books");
       if (cachedBooks) {
-        const randomBooks = JSON.parse(cachedBooks);
-        setBooks(Array.isArray(randomBooks.items) ? randomBooks.items : []);
+        try {
+          const randomBooks = JSON.parse(cachedBooks);
+          console.log("Cached Books: ", randomBooks);
+          setBooks(Array.isArray(randomBooks) ? randomBooks : []);
+        } catch (error) {
+          console.error("Error parsing cached books:", error);
+          localStorage.removeItem("books");
+        }
         setLoading(false);
       } else {
         try {
@@ -23,12 +29,22 @@ const RandomBooks = () => {
           if (!response.ok) {
             throw new Error("Failed to fetch books");
           }
-          const data = await response.json();
+          let data = await response.json();
+
+          if (!data.items || data.items.length === 0) {
+            const fallbackResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_APP_API_URL}/api/books`
+            );
+            const fallbackData = await fallbackResponse.json();
+            data = { items: fallbackData };
+          }
+
           const booksData = Array.isArray(data.items) ? data.items : [];
-          localStorage.setItem("books", JSON.stringify(booksData));
+          console.log("Fetched Books: ", booksData);
+          localStorage.setItem("books", JSON.stringify({ items: booksData }));
           setBooks(booksData);
         } catch (error) {
-          console.log("Error on Fetching", error);
+          console.error("Error on Fetching", error);
           setError("Failed to load books, Please try again later.");
         } finally {
           setLoading(false);
@@ -48,7 +64,7 @@ const RandomBooks = () => {
       <h2 className={styles.title}>Popular Books of the Week</h2>
 
       <div className={styles.booksContainer}>
-        {books.length > 0 ? (
+        {books && books.length > 0 ? (
           books.map((book, index) => (
             <div key={index} className={styles.bookCard}>
               <a

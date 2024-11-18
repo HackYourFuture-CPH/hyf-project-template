@@ -22,10 +22,10 @@ app.use((req, res, next) => {
   console.log(`Received request: ${req.method} ${req.url}`);
   next();
 });
-const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: "https://leafnotes-1.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
