@@ -79,18 +79,19 @@ class ProjectDeveloperService {
       );
     }
   }
+  // static async getProjectClient(projectId) {
+  //   try {
+  //     const projectDevelopers = await ProjectDevelopers.findAll({
+  //       where: { projectId: projectId },
+  //       include: ["Client"],
+  //     });
+  //     return projectDevelopers;
+  //   } catch (error) {
+  //     throw new Error(
+  //       "Error fetching developers for project: " + error.message
+  //     );
+  //   }
+  // }
 }
-
-//   static async getProjectClient(projectId) {
-//     try {
-//       const projectDevelopers = await ProjectDeveloper.findAll({
-//         where: { project_id: projectId },
-//         include: ["Client"],
-//       });
-//       return projectDevelopers;
-//     } catch (error) {
-//       throw new Error("Error fetching client for project: " + error.message);
-//     }
-//   }
 
 export default ProjectDeveloperService;

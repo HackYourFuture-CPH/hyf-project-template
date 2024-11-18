@@ -31,11 +31,25 @@ class ProjectService {
     }
   }
 
-  static async getProjectsByDevId(id) {
+  // static async getProjectByDeveloperId(id) {
+  //   try {
+  //     const project = await Project.findAll(id);
+  //     if (!project) {
+  //       throw new Error("Projects not found");
+  //     }
+  //     return project;
+  //   } catch (error) {
+  //     throw new Error("Error fetching projects: " + error.message);
+  //   }
+  // }
+
+  static async getProjectsByClientId(clientId) {
     try {
-      const project = await Project.findAll(id);
+      const project = await Project.findAll({
+        where: { clientId: clientId },
+      });
       if (!project) {
-        throw new Error("Projects not found");
+        throw new Error("Project or client not found");
       }
       return project;
     } catch (error) {
