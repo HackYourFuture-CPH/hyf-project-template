@@ -16,6 +16,70 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
+      "/api/projects/client/{clientId}": {
+        get: {
+          summary: "Fetch all projects of a client",
+          description:
+            "Retrieves all projects associated with a specific client ID.",
+          parameters: [
+            {
+              name: "clientId",
+              in: "path",
+              required: true,
+              description: "The ID of the client",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of projects",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "integer",
+                          example: 1,
+                        },
+                        name: {
+                          type: "string",
+                          example: "Project Alpha",
+                        },
+                        client_id: {
+                          type: "integer",
+                          example: 8,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized. Missing or invalid token",
+            },
+          },
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
+        },
+      },
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
       "/api/projects/create": {
         post: {
           summary: "Create a new project",

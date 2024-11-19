@@ -164,6 +164,13 @@ describe("Manual API Tests", () => {
     chai.expect(response.status).to.equal(200);
   });
 
+  it("/api/projects/client/8 => should fetch all project of a client", async () => {
+    const response = await supertest(config.request.baseURL)
+      .get("/api/projects/client/8")
+      .set("Authorization", `Bearer ${token}`);
+    chai.expect(response.status).to.equal(200);
+  });
+
   //  it("/api/projects/{id} (DELETE) => should delete a project by ID", async () => {
   //   const projectId = "7";
   //   const response = await supertest(config.request.baseURL)
