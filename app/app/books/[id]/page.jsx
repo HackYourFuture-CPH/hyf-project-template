@@ -3,7 +3,7 @@
 import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Box, Grid2, CardMedia, Typography } from "@mui/material";
+import { Box, CardMedia, Typography, Button } from "@mui/material";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -47,9 +47,9 @@ const BookDetails = () => {
           backgroundColor: "#f5ebeb",
           height: "100vh",
           margin: "2% 5%",
+          overflow: "hidden",
         }}
       >
-        {/* Book Image */}
         <Box sx={{ flex: "3", maxWidth: "20%" }}>
           <CardMedia
             component="img"
@@ -64,14 +64,15 @@ const BookDetails = () => {
           />
         </Box>
 
-        {/* Book Details */}
         <Box
           sx={{
             flex: "2",
             paddingLeft: "2rem",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "start",
+            overflow: "auto",
+            maxHeight: "calc(100vh - 4rem)",
           }}
         >
           <Typography
@@ -94,10 +95,54 @@ const BookDetails = () => {
           <Typography
             variant="body1"
             component="p"
-            sx={{ fontSize: "1.2rem", lineHeight: "1.8" }}
+            sx={{
+              fontSize: "1.2rem",
+              lineHeight: "1.8",
+              paddingBottom: "2rem",
+            }}
           >
             {book.description}
           </Typography>
+
+          <Box
+            sx={{
+              display: "flex",
+              gap: "1rem",
+              marginTop: "1rem",
+              flexShrink: 0,
+            }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                fontSize: "20px",
+                padding: "0.5rem 2rem",
+                borderRadius: "35px",
+                backgroundColor: "#D5B4B4",
+                "&:hover": {
+                  backgroundColor: "#B49090",
+                },
+              }}
+            >
+              Reviews
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                fontSize: "20px",
+                padding: "0.5rem 2rem",
+                borderRadius: "35px",
+                backgroundColor: "#D5B4B4",
+                "&:hover": {
+                  backgroundColor: "#B49090",
+                },
+              }}
+            >
+              Notes
+            </Button>
+          </Box>
         </Box>
       </Box>
     </AppLayoutContainer>
