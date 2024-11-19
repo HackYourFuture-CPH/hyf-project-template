@@ -767,32 +767,6 @@ swaggerController.get("/swagger.json", (req, res) => {
           },
         },
       },
-      "/api/projects/client/{clientId}": {
-        get: {
-          summary: "Fetch all projects of a client",
-          parameters: [
-            {
-              name: "clientId",
-              in: "path",
-              required: true,
-              description: "ID of the client",
-              schema: {
-                type: "integer",
-              },
-            },
-          ],
-          responses: {
-            200: {
-              description: "A list of projects for the specified client",
-            },
-          },
-          security: [
-            {
-              BearerAuth: [],
-            },
-          ],
-        },
-      },
     },
   };
 
