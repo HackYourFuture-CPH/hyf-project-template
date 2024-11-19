@@ -1,4 +1,5 @@
 import knex from "../database_client.js";
+import { buildUserDto } from "../services/userService.js";
 import { bucket } from "../utils/cloudStorage.js";
 
 export const getUserProfile = async (req, res) => {
@@ -12,7 +13,7 @@ export const getUserProfile = async (req, res) => {
     }
 
     res.status(200).json({
-      user_id: user.user_id,
+      user: buildUserDto(user),
     });
   } catch (error) {
     console.error("Error fetching user:", error);
