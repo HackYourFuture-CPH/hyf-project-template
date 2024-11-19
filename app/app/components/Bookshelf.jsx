@@ -6,7 +6,6 @@ import Button from "../components/Button";
 import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 const Bookshelf = ({ userId }) => {
   const [bookShelf, setBookShelf] = useState({
@@ -101,10 +100,7 @@ const Bookshelf = ({ userId }) => {
   if (loading) return <p>Loading bookshelf...</p>;
   if (error) return <p>{error}</p>;
 
-  const router = useRouter();
-
   const handleBookClick = (book_id) => {
-    //router.push(`/books/${book_id}`);
     const url = `/books/${book_id}`;
     window.open(url, "noopener noreferrer");
   };
