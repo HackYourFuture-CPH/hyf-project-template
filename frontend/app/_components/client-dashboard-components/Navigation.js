@@ -14,10 +14,10 @@ export default function Navigation() {
         </li>
         <li>
           <Link
-            href=""
+            href="/client-dashboard/timeline"
             className="hover:text-accent-400 transition-colors"
           >
-            Timeline
+            timeline
           </Link>
         </li>
         <li>

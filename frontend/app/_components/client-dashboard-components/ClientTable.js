@@ -23,17 +23,13 @@ function ClientTable({ project, onDelete }) {
           <td className="px-4 py-2 border-b">{status}</td>
           <td className="px-4 py-2 border-b">{deadline}</td>
           <td className="px-4 py-2 border-b">
-            <div className="project-item">
-              {/* <h3>{project.name}</h3> */}
-              {/* <Link */}
-              {/* // href={`/client-dashboard/projects/edit/${project.id}`} */}
-              {/* > */}
-              <button className="edit-button">Edit</button>
-              {/* </Link> */}
-            </div>
-            <button className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+            <Link
+              href={`/client-dashboard/edit/${id}`}
+              className="px-3 py-1 bg-blue-500 text-white rounded"
+            >
               Edit
-            </button>
+            </Link>
+
             <button
               onClick={() => onDelete(id)}
               className="px-3 py-1 bg-red-500 text-white rounded"
