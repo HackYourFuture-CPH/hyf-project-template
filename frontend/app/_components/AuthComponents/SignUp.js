@@ -1,13 +1,13 @@
-'use client';
-import React, { useState } from 'react';
-import { handleSignUp } from '../utils/auth';
+"use client";
+import React, { useState } from "react";
+import { handleSignUp } from "../../utils/auth";
 
 const SignUp = ({ setRole, error, role }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
     role_name: role,
   });
 
@@ -25,10 +25,10 @@ const SignUp = ({ setRole, error, role }) => {
   };
 
   const inputFields = [
-    { name: 'name', type: 'text', placeholder: 'Name', required: true },
-    { name: 'email', type: 'email', placeholder: 'Email', required: true },
-    { name: 'password', type: 'password', placeholder: 'Password', required: true },
-    { name: 'phone', type: 'text', placeholder: 'Phone', required: false },
+    { name: "name", type: "text", placeholder: "Name", required: true },
+    { name: "email", type: "email", placeholder: "Email", required: true },
+    { name: "password", type: "password", placeholder: "Password", required: true },
+    { name: "phone", type: "text", placeholder: "Phone", required: false },
   ];
 
   return (
