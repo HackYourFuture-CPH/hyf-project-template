@@ -1,6 +1,6 @@
 export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  console.log(baseUrl);
+
   if (!baseUrl) {
     throw new Error("Base URL not found");
   }
