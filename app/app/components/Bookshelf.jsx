@@ -104,7 +104,9 @@ const Bookshelf = ({ userId }) => {
   const router = useRouter();
 
   const handleBookClick = (book_id) => {
-    router.push(`/books/${book_id}`);
+    //router.push(`/books/${book_id}`);
+    const url = `/books/${book_id}`;
+    window.open(url, "noopener noreferrer");
   };
 
   return (
@@ -118,12 +120,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.read.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-                onClick={() => handleBookClick(book.book_id)}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() => handleRemoveBook(book.book_id, "read")}
@@ -153,12 +158,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.currentlyReading.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-                onClick={() => handleBookClick(book.book_id)}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() =>
@@ -190,12 +198,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.wishToRead.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-                onClick={() => handleBookClick(book.book_id)}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() => handleRemoveBook(book.book_id, "wishToRead")}
