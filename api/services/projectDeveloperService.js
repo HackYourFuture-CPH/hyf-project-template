@@ -79,6 +79,21 @@ class ProjectDeveloperService {
       );
     }
   }
+
+  static async getProjectsByDeveloperId(id) {
+    try {
+      const project = await ProjectDevelopers.findAll({
+        where: { developerId: id },
+      });
+      if (!project) {
+        throw new Error("Projects not found");
+      }
+      return project;
+    } catch (error) {
+      throw new Error("Error fetching projects: " + error.message);
+    }
+  }
+
   // static async getProjectClient(projectId) {
   //   try {
   //     const projectDevelopers = await ProjectDevelopers.findAll({

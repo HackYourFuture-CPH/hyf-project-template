@@ -31,18 +31,6 @@ class ProjectService {
     }
   }
 
-  // static async getProjectByDeveloperId(id) {
-  //   try {
-  //     const project = await Project.findAll(id);
-  //     if (!project) {
-  //       throw new Error("Projects not found");
-  //     }
-  //     return project;
-  //   } catch (error) {
-  //     throw new Error("Error fetching projects: " + error.message);
-  //   }
-  // }
-
   static async getProjectsByClientId(clientId) {
     try {
       const project = await Project.findAll({

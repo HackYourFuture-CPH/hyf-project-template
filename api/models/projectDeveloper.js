@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
-import User from "./user.js";
+import UserModel from "./user.js";
+import ProjectModel from "./projects.js";
 
 class ProjectDeveloper extends Model {}
 
@@ -39,15 +40,27 @@ ProjectDeveloper.init(
     tableName: "project_developers",
     schema: "public",
     timestamps: false,
+
     defaultScope: {
-      attributes: { exclude: ["developer_id"] },
+      attributes: { exclude: ["developer_id", "developerId", "projectId"] },
+
+      include: [
+        {
+          model: ProjectModel,
+          as: "projects",
+        },
+      ],
     },
     underscored: true,
   }
 );
-ProjectDeveloper.belongsTo(User, {
+ProjectDeveloper.belongsTo(UserModel, {
   foreignKey: "developer_id",
   as: "Developer",
+});
+ProjectDeveloper.belongsTo(ProjectModel, {
+  foreignKey: "project_id",
+  as: "projects",
 });
 
 export default ProjectDeveloper;
