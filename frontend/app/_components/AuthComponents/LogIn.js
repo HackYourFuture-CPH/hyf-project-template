@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { handleLogIn } from "../utils/auth";
-import { getUserInfo, getUserPathByRole } from "../utils/userUtil";
+import { handleLogIn } from "../../utils/auth";
+import { getUserInfo, getUserPathByRole } from "../../utils/userUtil";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");

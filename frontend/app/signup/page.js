@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import RoleSelection from "../_components/RoleSelection";
-import SignUp from "../_components/SignUp";
+import RoleSelection from "../_components/AuthComponents/RoleSelection";
+import SignUp from "../_components/AuthComponents/SignUp";
 
 const SignUpPage = () => {
   const [role, setRole] = useState(null);

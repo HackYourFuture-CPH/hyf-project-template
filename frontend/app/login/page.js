@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import LogIn from "../_components/LogIn";
+import LogIn from "../_components/AuthComponents/LogIn";
 
 const LogInPage = () => {
   const [role, setRole] = useState(null);

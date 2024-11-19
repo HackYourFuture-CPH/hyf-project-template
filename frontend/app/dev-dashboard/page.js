@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import LogOutButton from "../_components/LogOutButton";
+import LogOutButton from "../_components/AuthComponents/LogOutButton";
 
 export default function DevDashboard() {
   const router = useRouter();

@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 
-import { handleLogOut } from "../utils/auth";
+import { handleLogOut } from "../../utils/auth";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
