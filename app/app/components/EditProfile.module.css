@@ -8,6 +8,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .modal {
@@ -16,6 +17,7 @@
     width: 400px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     position: relative;
+    z-index: 1010;
 }
 
 .closeButton {
@@ -26,6 +28,7 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
+    z-index: 1020;
 }
 
 .inputGroup {
@@ -45,6 +48,11 @@
     font-size: 14px;
 }
 
+.inputGroup textarea {
+    width: 100%;
+    min-height: 100px;
+}
+
 .imagePreview {
     display: flex;
     justify-content: center;
@@ -53,5 +61,4 @@
 
 .profileImage {
     max-width: 100px;
-    border-radius: 50%;
 }

@@ -39,7 +39,7 @@ const Profile = ({ userId }) => {
 
     return (
         <div className={styles.Profile}>
-            <Button onClick={openModal}>EDIT BIO</Button>
+            <Button onClick={openModal}>EDIT PROFILE</Button>
             <div className={styles.imageContainer}>
                 <img
                     alt="Profile"
