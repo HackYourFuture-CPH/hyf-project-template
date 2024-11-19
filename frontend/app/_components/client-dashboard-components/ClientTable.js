@@ -2,7 +2,6 @@ import { sendPostJsonRequest } from "@/app/utils/resHandler";
 import Link from "next/link";
 
 function ClientTable({ project, onDelete }) {
-  console.log(project);
   const { title, status, deadline, id } = project;
 
   return (

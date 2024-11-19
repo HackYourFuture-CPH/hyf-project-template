@@ -6,27 +6,23 @@ import { useRouter } from "next/navigation";
 export default function EditProject({ params }) {
   const router = useRouter();
 
-  // State for project data
   const [projectData, setProjectData] = useState({
     name: "",
     status: "",
   });
   const [error, setError] = useState(null);
 
-  // Handle unwrapping params
   const [projectId, setProjectId] = useState(null);
 
   useEffect(() => {
-    // Unwrap the params Promise
     async function getParams() {
-      const unwrappedParams = await params; // Unwrap params
-      setProjectId(unwrappedParams.id); // Set the ID for further operations
+      const unwrappedParams = await params;
+      setProjectId(unwrappedParams.id);
     }
 
     getParams();
   }, [params]);
 
-  // Fetch project data after params are resolved
   useEffect(() => {
     if (!projectId) return;
 
@@ -41,7 +37,7 @@ export default function EditProject({ params }) {
         );
         if (response.ok) {
           const data = await response.json();
-          setProjectData(data); // Update state with fetched data
+          setProjectData(data);
         } else {
           setError("Failed to fetch project data.");
           console.error(
@@ -62,7 +58,7 @@ export default function EditProject({ params }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Clear errors before submitting
+    setError(null);
     try {
       const response = await fetch(
         `/api/projects/${projectId}`,
@@ -74,7 +70,7 @@ export default function EditProject({ params }) {
       );
 
       if (response.ok) {
-        router.push("/client-dashboard/projects"); // Navigate after successful edit
+        router.push("/client-dashboard/projects");
       } else {
         setError("Failed to update project.");
         console.error(
@@ -90,10 +86,9 @@ export default function EditProject({ params }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProjectData((prev) => ({ ...prev, [name]: value })); // State updates are safe here
+    setProjectData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Render loading state until params and data are ready
   if (!projectId) {
     return <div>Loading...</div>;
   }
@@ -108,7 +103,7 @@ export default function EditProject({ params }) {
         <input
           type="text"
           name="name"
-          value={projectData.name || ""} // Ensure value is not undefined
+          value={projectData.name || ""}
           onChange={handleChange}
           required
         />
@@ -117,7 +112,7 @@ export default function EditProject({ params }) {
         Status:
         <select
           name="status"
-          value={projectData.status || ""} // Ensure value is not undefined
+          value={projectData.status || ""}
           onChange={handleChange}
           required
         >
