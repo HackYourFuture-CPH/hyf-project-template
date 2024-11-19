@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import axios from "axios";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 import styles from "./SearchPage.module.css";
-
 const SearchPage = () => {
+  return (
+    <Suspense>
+      <SearchPageContent />
+    </Suspense>
+  );
+};
+const SearchPageContent = () => {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
 
