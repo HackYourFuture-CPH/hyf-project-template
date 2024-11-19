@@ -9,6 +9,7 @@ import ProjectClient from "@/app/_components/client-dashboard-components/Project
 export default function Page() {
   const [projects, setProjects] = useState([]);
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -20,8 +21,9 @@ export default function Page() {
 
         if (response.ok) {
           const userData = await response.json();
-          console.log(userData);
+
           setUserName(userData.name);
+          setUserId(userData.id);
         } else {
           setError("Failed to fetch user data");
         }
@@ -41,14 +43,14 @@ export default function Page() {
     const fetchProjects = async () => {
       try {
         const response = await fetch(
-          `/api/projects/${userId}`,
+          `/api/projects/client/${userId}`,
           {
             credentials: "include",
           }
         );
         if (response.ok) {
-          const data = await response.json();
-          setProjects(data);
+          const projectData = await response.json();
+          setProjects(projectData);
         } else {
           setError(
             `Failed to fetch projects: ${response.statusText}`
@@ -66,11 +68,14 @@ export default function Page() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/project/${id}`, {
+      const response = await fetch(`/api/projects/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
+
       if (response.ok) {
+        const projectData = await response.json();
+        console.log(projectData);
         setProjects((prevProjects) =>
           prevProjects.filter(
             (project) => project.id !== id
@@ -114,8 +119,8 @@ export default function Page() {
             <ProjectClient
               key={project.id}
               project={project}
-              onDelete={handleDelete}
               statusCounts={statusCounts}
+              onDelete={handleDelete}
             />
           ))}
         </div>

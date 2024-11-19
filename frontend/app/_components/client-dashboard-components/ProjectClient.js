@@ -6,12 +6,10 @@ function ProjectClient({
   statusCounts,
   onDelete,
 }) {
-  const { title, client_id, status, deadline } = project;
-
   return (
     <div className="grid grid-cols-10 grid-rows-5 gap-4">
       <div className="col-span-2 row-span-2">
-        <ClientCard />
+        <ClientCard project={project} />
       </div>
       <div className="col-span-2 row-span-2 col-start-1 row-start-3">
         <ClientStatus statusCounts={statusCounts} />
@@ -21,10 +19,7 @@ function ProjectClient({
           Planning across your Projects
         </h2>
         <ClientTable
-          title={title}
-          clientId={client_id}
-          status={status}
-          deadline={deadline}
+          project={project}
           onDelete={onDelete}
         />
       </div>

@@ -1,33 +1,9 @@
 import { sendPostJsonRequest } from "@/app/utils/resHandler";
 import Link from "next/link";
 
-function ClientTable({
-  title,
-  clientId,
-  status,
-  deadline,
-  onDelete,
-}) {
-  const handleDelete = async () => {
-    const confirmed = confirm(
-      `Are you sure you want to delete "${project.name}"?`
-    );
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(
-        `/api/project/${project.id}`,
-        { method: "DELETE" }
-      );
-      if (response.ok) {
-        onDelete(project.id); // Notify parent to update the UI
-      } else {
-        console.error("Failed to delete project");
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
-    }
-  };
+function ClientTable({ project, onDelete }) {
+  console.log(project);
+  const { title, status, deadline, id } = project;
 
   return (
     <table className="min-w-full border border-gray-300">
@@ -54,18 +30,12 @@ function ClientTable({
               {/* > */}
               <button className="edit-button">Edit</button>
               {/* </Link> */}
-              <button
-                onClick={onDelete}
-                className="delete-button"
-              >
-                Delete
-              </button>
             </div>
             <button className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
               Edit
             </button>
             <button
-              onClick={handleDelete}
+              onClick={() => onDelete(id)}
               className="px-3 py-1 bg-red-500 text-white rounded"
             >
               Delete

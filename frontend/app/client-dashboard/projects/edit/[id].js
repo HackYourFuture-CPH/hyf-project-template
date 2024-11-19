@@ -14,7 +14,7 @@ export default function EditProject() {
       try {
         const response = await fetch(
           `/api/projects/${id}`,
-          { credentials: "include" }
+          { method: "post", credentials: "include" }
         );
         if (response.ok) {
           const data = await response.json();
