@@ -21,9 +21,10 @@ class ChatController {
   }
 
   static async sendChatMessages(req, res) {
-    const { senderId, receiverId, message } = req.body;
+    const { conversationId, senderId, receiverId, message } = req.body;
     try {
       const sendChats = await ChatService.sendChatMessages({
+        conversationId,
         senderId,
         receiverId,
         message,
