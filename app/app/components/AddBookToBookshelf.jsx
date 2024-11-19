@@ -23,7 +23,7 @@ const AddBookToBookshelf = ({ category, onBookAdded }) => {
     try {
       const status = mapCategoryToStatus(category);
       await axios.post(
-        "http://localhost:3001/api/user-books/add",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
         {
           google_books_id: book.google_book_id,
           title: book.title,
@@ -48,7 +48,7 @@ const AddBookToBookshelf = ({ category, onBookAdded }) => {
         setError(null);
         try {
           const response = await axios.get(
-            "http://localhost:3001/api/searchGoogleBooks",
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
             {
               params: { query, page: 1, pageSize: 10 },
             }

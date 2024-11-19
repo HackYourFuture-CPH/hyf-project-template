@@ -12,11 +12,7 @@ export const AuthContextProvider = ({ children }) => {
   // Check if the user is authenticated when the app loads (for page refresh)
   const refreshUser = async () => {
     try {
-      const userData = await makeRequest(
-        "http://localhost:3001/users/profile",
-        {},
-        "GET"
-      );
+      const userData = await makeRequest("/users/profile", {}, "GET");
       setCurrentUser(userData); // Set the currentUser with the response
     } catch (error) {
       setCurrentUser(null); // If authentication fails, no user is logged in
@@ -28,11 +24,7 @@ export const AuthContextProvider = ({ children }) => {
   const login = async (inputs) => {
     try {
       setLoading(true);
-      const userData = await makeRequest(
-        "http://localhost:3001/auth/login",
-        inputs,
-        "POST"
-      );
+      const userData = await makeRequest("/auth/login", inputs, "POST");
       setCurrentUser(userData);
       setLoading(false);
     } catch (error) {
@@ -44,7 +36,7 @@ export const AuthContextProvider = ({ children }) => {
   const logout = async () => {
     try {
       setLoading(true);
-      await makeRequest("http://localhost:3001/auth/logout", {}, "POST");
+      await makeRequest("/auth/logout", {}, "POST");
       setCurrentUser(null);
       setLoading(false);
     } catch (error) {
