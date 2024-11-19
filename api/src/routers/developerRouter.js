@@ -7,9 +7,8 @@ devRouter.get("/", (req, res) => {
   res.json({ message: "Hello from devRouter" });
 });
 
-// Route to get all clients
 devRouter.get("/allClients", DeveloperController.getClients);
-// Route to get all developers
+
 devRouter.get("/allDevelopers", DeveloperController.getAllDevelopers);
 
 // Route to get developers of a specific project
@@ -25,6 +24,11 @@ devRouter.post("/assignProject", DeveloperController.assignDeveloper);
 devRouter.delete(
   "/:developerId/project/:projectId",
   DeveloperController.removeDeveloper
+);
+
+devRouter.get(
+  "/getAllProjectsFromDeveloper/:id",
+  DeveloperController.getProjectsByDeveloperId
 );
 
 export default devRouter;
