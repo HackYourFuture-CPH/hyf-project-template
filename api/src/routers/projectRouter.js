@@ -8,8 +8,8 @@ projectRouter.get("/", ProjectController.getAllProjects);
 
 projectRouter.get("/:id", ProjectController.getProjectById);
 
-//get all projects from that developer:
-// projectRouter.get("/developer/:id", ProjectController.getProjectByDeveloperId);
+// get all projects from that developer:
+projectRouter.get("/developer/:id", ProjectController.getProjectByDeveloperId);
 
 projectRouter.get("/client/:id", ProjectController.getProjectsByClientId);
 
