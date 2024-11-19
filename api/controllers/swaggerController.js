@@ -16,17 +16,15 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
-      "/api/projects/client/{clientId}": {
+      "/api/generate-invoice-project/{projectId}": {
         get: {
-          summary: "Fetch all projects of a client",
-          description:
-            "Retrieves all projects associated with a specific client ID.",
+          summary: "Generate an invoice for a project",
           parameters: [
             {
-              name: "clientId",
+              name: "projectId",
               in: "path",
               required: true,
-              description: "The ID of the client",
+              description: "ID of the project",
               schema: {
                 type: "integer",
               },
@@ -34,101 +32,14 @@ swaggerController.get("/swagger.json", (req, res) => {
           ],
           responses: {
             200: {
-              description: "A list of projects",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "integer",
-                          example: 1,
-                        },
-                        name: {
-                          type: "string",
-                          example: "Project Alpha",
-                        },
-                        client_id: {
-                          type: "integer",
-                          example: 8,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            401: {
-              description: "Unauthorized. Missing or invalid token",
+              description: "Invoice successfully generated",
             },
           },
-          security: [
-            {
-              bearerAuth: [],
-            },
-          ],
-        },
-      },
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-      "/api/projects/create": {
-        post: {
-          summary: "Create a new project",
-          description: "Create a new project with the specified details.",
           security: [
             {
               BearerAuth: [],
             },
           ],
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    title: { type: "string" },
-                    description: { type: "string" },
-                    budget: { type: "number" },
-                  },
-                  required: ["title", "description", "budget"],
-                },
-                example: {
-                  title: "New Project tester",
-                  description: "Project description",
-                  budget: 15000,
-                },
-              },
-            },
-          },
-          responses: {
-            201: {
-              description: "Project created successfully",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      id: { type: "string" },
-                      title: { type: "string" },
-                      description: { type: "string" },
-                      budget: { type: "number" },
-                    },
-                  },
-                },
-              },
-            },
-            400: { description: "Invalid input" },
-          },
         },
       },
       "/api/users": {
@@ -343,6 +254,32 @@ swaggerController.get("/swagger.json", (req, res) => {
           },
         },
       },
+      "/api/developer/getAllProjectsFromDeveloper/{developerId}": {
+        get: {
+          summary: "Fetch all projects assigned to a developer",
+          parameters: [
+            {
+              name: "developerId",
+              in: "path",
+              required: true,
+              description: "ID of the developer",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of projects for the specified developer",
+            },
+          },
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+        },
+      },
       "/api/developer/assignProject": {
         post: {
           summary: "Assign a developer to a project",
@@ -534,6 +471,172 @@ swaggerController.get("/swagger.json", (req, res) => {
           },
         },
       },
+      "/api/projects/client/{clientId}": {
+        get: {
+          summary: "Fetch all projects of a client",
+          description:
+            "Retrieves all projects associated with a specific client ID.",
+          parameters: [
+            {
+              name: "clientId",
+              in: "path",
+              required: true,
+              description: "The ID of the client",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of projects",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "integer",
+                          example: 1,
+                        },
+                        name: {
+                          type: "string",
+                          example: "Project Alpha",
+                        },
+                        client_id: {
+                          type: "integer",
+                          example: 8,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized. Missing or invalid token",
+            },
+          },
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
+        },
+      },
+
+      "/api/projects/create": {
+        post: {
+          summary: "Create a new project",
+          description: "Create a new project with the specified details.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    budget: { type: "number" },
+                  },
+                  required: ["title", "description", "budget"],
+                },
+                example: {
+                  title: "New Project tester",
+                  description: "Project description",
+                  budget: 15000,
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: "Project created successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string" },
+                      title: { type: "string" },
+                      description: { type: "string" },
+                      budget: { type: "number" },
+                    },
+                  },
+                },
+              },
+            },
+            400: { description: "Invalid input" },
+          },
+        },
+      },
+      "/api/projects/{id}": {
+        delete: {
+          summary: "Delete a project by ID",
+          description:
+            "Deletes a specific project based on the provided project ID.",
+          security: [
+            {
+              BearerAuth: [],
+            },
+          ],
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "integer" },
+              description: "ID of the project to delete",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Project deleted successfully",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      message: { type: "string" },
+                    },
+                  },
+                  example: {
+                    message: "Project deleted successfully",
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Project not found",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "Project not found",
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized - Invalid or missing token",
+              content: {
+                "application/json": {
+                  example: {
+                    error: "jwt must be provided",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       "/api/chat/send": {
         post: {
           summary: "Send a chat message",
@@ -664,67 +767,35 @@ swaggerController.get("/swagger.json", (req, res) => {
           },
         },
       },
-      "/api/projects/{id}": {
-        delete: {
-          summary: "Delete a project by ID",
-          description:
-            "Deletes a specific project based on the provided project ID.",
+      "/api/projects/client/{clientId}": {
+        get: {
+          summary: "Fetch all projects of a client",
+          parameters: [
+            {
+              name: "clientId",
+              in: "path",
+              required: true,
+              description: "ID of the client",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of projects for the specified client",
+            },
+          },
           security: [
             {
               BearerAuth: [],
             },
           ],
-          parameters: [
-            {
-              name: "id",
-              in: "path",
-              required: true,
-              schema: { type: "integer" },
-              description: "ID of the project to delete",
-            },
-          ],
-          responses: {
-            200: {
-              description: "Project deleted successfully",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      message: { type: "string" },
-                    },
-                  },
-                  example: {
-                    message: "Project deleted successfully",
-                  },
-                },
-              },
-            },
-            404: {
-              description: "Project not found",
-              content: {
-                "application/json": {
-                  example: {
-                    error: "Project not found",
-                  },
-                },
-              },
-            },
-            401: {
-              description: "Unauthorized - Invalid or missing token",
-              content: {
-                "application/json": {
-                  example: {
-                    error: "jwt must be provided",
-                  },
-                },
-              },
-            },
-          },
         },
       },
     },
   };
+
   res.json(swaggerSpec);
 });
 
