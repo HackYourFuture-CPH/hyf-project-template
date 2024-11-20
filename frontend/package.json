@@ -9,20 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
     "@heroicons/react": "^2.1.5",
-    "heroicons": "^2.1.5",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",
-    "next": "15.0.2",
+    "next": "^14.2.18",
     "next-auth": "^5.0.0-beta.25",
     "nookies": "^2.5.2",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-toastify": "^10.0.6",
-    "react-vertical-timeline-component": "^3.6.0"
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.11",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }
