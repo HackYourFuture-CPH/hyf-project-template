@@ -75,7 +75,7 @@ export default function Page() {
 
       if (response.ok) {
         const projectData = await response.json();
-
+        console.log(projectData);
         setProjects((prevProjects) =>
           prevProjects.filter(
             (project) => project.id !== id
