@@ -4,30 +4,26 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { makeRequest } from "../utils/makeRequest";
 
 const AuthContext = createContext();
+
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const refreshUserFromLocalStorage = () => {
-    const user = localStorage.getItem("user");
-    const parsedUser = JSON.parse(user);
-
-    console.log({ parsedUser });
-    setCurrentUser(parsedUser);
-    return parsedUser;
+  // Check if the user is authenticated when the app loads (for page refresh)
+  const refreshUser = async () => {
+    try {
+      const userData = await makeRequest(
+        "http://localhost:3001/users/profile",
+        {},
+        "GET"
+      );
+      setCurrentUser(userData); // Set the currentUser with the response
+    } catch (error) {
+      setCurrentUser(null); // If authentication fails, no user is logged in
+    } finally {
+      setLoading(false); // Once check is done, stop loading
+    }
   };
-
-  const saveUserToLocalStorage = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const clearUserToLocalStorage = () => {
-    localStorage.removeItem("user");
-  };
-
-  useEffect(() => {
-    refreshUserFromLocalStorage();
-  }, []);
 
   const login = async (inputs) => {
     try {
@@ -37,25 +33,30 @@ export const AuthContextProvider = ({ children }) => {
         inputs,
         "POST"
       );
-      setLoading(false);
-      saveUserToLocalStorage(userData);
-
       setCurrentUser(userData);
+      setLoading(false);
     } catch (error) {
       console.error("Login failed:", error.message);
+      setLoading(false);
       throw error;
     }
   };
   const logout = async () => {
     try {
+      setLoading(true);
       await makeRequest("http://localhost:3001/auth/logout", {}, "POST");
-
-      clearUserToLocalStorage();
       setCurrentUser(null);
+      setLoading(false);
     } catch (error) {
       console.error("Logout failed:", error.message);
+      setLoading(false);
     }
   };
+  // Check the user's authentication status when the component mounts (or page refreshes)
+  useEffect(() => {
+    refreshUser(); // Call to check if the user is still logged in
+  }, []); // Empty dependency array means it runs once after component mounts
+
   return (
     <AuthContext.Provider value={{ currentUser, loading, login, logout }}>
       {children}

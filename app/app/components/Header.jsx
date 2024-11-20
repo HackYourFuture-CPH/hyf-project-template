@@ -6,23 +6,31 @@ import styles from "./Header.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Placeholder for user name. Replace this with actual user data (e.g., from context or state).
+const userName = "John Doe"; // Replace this with actual user name from context or API
+
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter(); // Use the router to navigate programmatically
+  const router = useRouter();
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update the search query
+    setSearchQuery(e.target.value);
   };
 
-  // Handle pressing Enter to trigger search
   const handleSearchKeyPress = (e) => {
     if (e.key === "Enter" && searchQuery.trim() !== "") {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); // Navigate to the search page with query
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
   return (
     <header className={styles.header}>
+      {/* Left Section: Greeting */}
+      <div className={styles.leftNav}>
+        <p className={styles.greeting}>Hello, {userName}!</p>
+      </div>
+
+      {/* Center Section: Logo */}
       <div className={styles.logoContainer}>
         <Link href="/">
           <Image
@@ -34,16 +42,17 @@ const Header = () => {
           />
         </Link>
       </div>
-      <nav className={styles.nav}>
+
+      {/* Right Section: Links and Search */}
+      <div className={styles.rightNav}>
         <ul className={styles.navList}>
           <li className={styles.navItem}>
             <Link href="/dashboard">DASHBOARD</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/login">LOG OUT </Link>
+            <Link href="/login">LOG OUT</Link>
           </li>
         </ul>
-
         <input
           type="text"
           placeholder="Search..."
@@ -52,7 +61,7 @@ const Header = () => {
           onChange={handleSearchChange}
           onKeyDown={handleSearchKeyPress}
         />
-      </nav>
+      </div>
     </header>
   );
 };
