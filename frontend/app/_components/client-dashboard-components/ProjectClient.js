@@ -1,13 +1,15 @@
 import ClientStatus from "./ClientStatus";
 import ClientCard from "./ClientCard";
 import ClientTable from "./ClientTable";
-function ProjectClient({ project, statusCounts }) {
-  const { title, client_id, status, deadline } = project;
-
+function ProjectClient({
+  project,
+  statusCounts,
+  onDelete,
+}) {
   return (
     <div className="grid grid-cols-10 grid-rows-5 gap-4">
       <div className="col-span-2 row-span-2">
-        <ClientCard />
+        <ClientCard project={project} />
       </div>
       <div className="col-span-2 row-span-2 col-start-1 row-start-3">
         <ClientStatus statusCounts={statusCounts} />
@@ -17,10 +19,8 @@ function ProjectClient({ project, statusCounts }) {
           Planning across your Projects
         </h2>
         <ClientTable
-          title={title}
-          clientId={client_id}
-          status={status}
-          deadline={deadline}
+          project={project}
+          onDelete={onDelete}
         />
       </div>
     </div>

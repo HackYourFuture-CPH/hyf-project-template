@@ -1,7 +1,7 @@
 // import { UsersIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
-function ClientCard({ client }) {
+function ClientCard({ project }) {
   // const { id, name, email, phone, createdAt, image } =
   //   client;
 
@@ -21,7 +21,7 @@ function ClientCard({ client }) {
         /> */}
       </div>
       <h3 className="col-span-5 row-start-4 flex justify-center items-center text-accent-500 font-semibold text-2xl  bg-primary-50">
-        Clark
+        {project.title}
       </h3>
     </div>
   );

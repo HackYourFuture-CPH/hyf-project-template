@@ -1,11 +1,13 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function ClientDashboard() {
   return (
     <main className="mt-24">
       <div className="relative z-10 text-center">
         <h1 className="text-8xl text-primary-50 mb-10 tracking-tight font-normal">
-          Welcome to your dashbord.
+          Welcome to your dashbord .
         </h1>
         <Link
           href="client-dashboard/projects"
