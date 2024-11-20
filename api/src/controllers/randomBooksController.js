@@ -9,20 +9,21 @@ export const fetchRandomBooks = async (req, res) => {
       return res.json(cachedBooks);
     }
 
-    let data = await fetch(
+    let response = await fetch(
       "https://www.googleapis.com/books/v1/volumes?q=book&maxResults=30"
     );
-    data = await data.json();
-    if (!data.items || data.items.length === 0) {
-      const fallbackResponse = await fetch("http://localhost:3001/api/books");
-      data = await fallbackResponse.json();
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch books");
     }
+
+    let data = await response.json();
 
     RandomBooksCache.set("books", data);
 
     res.json(data);
   } catch (error) {
-    console.log("Error fetching books:", error);
+    console.log(error);
     res.status(500).json({ error: "Error fetching books" });
   }
 };

@@ -26,7 +26,7 @@ const Bookshelf = ({ userId }) => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/list`,
+          `http://localhost:3001/api/user-books/list`,
           {
             withCredentials: true,
           }
@@ -72,18 +72,6 @@ const Bookshelf = ({ userId }) => {
     setQuoteModalOpen(false);
   };
 
-  const handleBookAdded = (newBook) => {
-    // Update the shelf based on the current category
-    setBookShelf((prevShelf) => ({
-      ...prevShelf,
-      [currentCategory]: [...prevShelf[currentCategory], newBook],
-    }));
-    setModalOpen(false);
-  };
-
-  if (loading) return <p>Loading bookshelf</p>;
-  if (error) return <p>{error}</p>;
-
   const handleRemoveBook = async (bookId, category) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this book?"
@@ -112,6 +100,11 @@ const Bookshelf = ({ userId }) => {
   if (loading) return <p>Loading bookshelf...</p>;
   if (error) return <p>{error}</p>;
 
+  const handleBookClick = (book_id) => {
+    const url = `/books/${book_id}`;
+    window.open(url, "noopener noreferrer");
+  };
+
   return (
     <div className={styles.bookshelf}>
       <div className={styles.bookshelfHeader}>
@@ -123,11 +116,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.read.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() => handleRemoveBook(book.book_id, "read")}
@@ -157,11 +154,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.currentlyReading.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() =>
@@ -193,11 +194,15 @@ const Bookshelf = ({ userId }) => {
         <div className={styles.bookshelfImages}>
           {bookShelf.wishToRead.map((book) => (
             <div key={book.book_id} className={styles.bookContainer}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className={styles.bookImage}
-              />
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className={styles.bookImage}
+                  onClick={() => handleBookClick(book.book_id)}
+                />
+                <span className={styles.newTabIcon}>🔗</span>
+              </div>
               <button
                 className={styles.closeButton}
                 onClick={() => handleRemoveBook(book.book_id, "wishToRead")}
@@ -228,11 +233,7 @@ const Bookshelf = ({ userId }) => {
             <button onClick={closeModal} className={styles.closeButton}>
               &times;
             </button>
-            <AddBookToBookshelf
-              category={currentCategory}
-              onBookAdded={handleBookAdded}
-              bookShelf={bookShelf}
-            />
+            <AddBookToBookshelf category={currentCategory} />
           </div>
         </div>
       )}

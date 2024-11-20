@@ -12,23 +12,43 @@ const RandomBooks = () => {
     const fetchBooks = async () => {
       const cachedBooks = localStorage.getItem("books");
       if (cachedBooks) {
-        const randomBooks = JSON.parse(cachedBooks);
-        setBooks(Array.isArray(randomBooks.items) ? randomBooks.items : []);
+        try {
+          const randomBooks = JSON.parse(cachedBooks);
+          console.log("Cached Books: ", randomBooks);
+          if (Array.isArray(randomBooks) && randomBooks.length > 0) {
+            setBooks(randomBooks);
+          } else {
+            throw new Error("No books in cache, fetching from API");
+          }
+        } catch (error) {
+          console.error("Error parsing cached books:", error);
+          localStorage.removeItem("books");
+        }
         setLoading(false);
       } else {
         try {
           const response = await fetch(
-            "http://localhost:3001/api/random-books"
+            `http://localhost:3001/api/random-books`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch books");
           }
-          const data = await response.json();
+          let data = await response.json();
+
+          if (!data.items || data.items.length === 0) {
+            const fallbackResponse = await fetch(
+              `http://localhost:3001/api/books`
+            );
+            const fallbackData = await fallbackResponse.json();
+            data = { items: fallbackData };
+          }
+
           const booksData = Array.isArray(data.items) ? data.items : [];
-          localStorage.setItem("books", JSON.stringify(booksData));
+          console.log("Fetched Books: ", booksData);
+          localStorage.setItem("books", JSON.stringify({ items: booksData }));
           setBooks(booksData);
         } catch (error) {
-          console.log("Error on Fetching", error);
+          console.error("Error on Fetching", error);
           setError("Failed to load books, Please try again later.");
         } finally {
           setLoading(false);
