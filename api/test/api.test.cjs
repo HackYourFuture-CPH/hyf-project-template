@@ -172,9 +172,9 @@ describe("Manual API Tests", () => {
     chai.expect(response.status).to.equal(200);
   });
 
-  it("/api/generate-invoice-project/2 => should generate an invoice", async () => {
+  it("/api/projects/8/invoice => should generate an invoice", async () => {
     const response = await supertest(config.request.baseURL)
-      .get("/api/generate-invoice-project/2")
+      .get("/api/projects/8/invoice")
       .set("Authorization", `Bearer ${token}`);
     chai.expect(response.status).to.equal(200);
   });
