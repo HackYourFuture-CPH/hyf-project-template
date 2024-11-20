@@ -31,7 +31,7 @@ export default function EditProject({ params }) {
         const response = await fetch(
           `/api/projects/${projectId}`,
           {
-            method: "GET",
+            method: "POST",
             credentials: "include",
           }
         );
@@ -63,7 +63,7 @@ export default function EditProject({ params }) {
       const response = await fetch(
         `/api/projects/${projectId}`,
         {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(projectData),
         }
