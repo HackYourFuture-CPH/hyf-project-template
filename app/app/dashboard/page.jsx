@@ -19,7 +19,7 @@ export default function ProfilePage() {
             <div className={styles.mainContent}>
                 <>
                     <div className={styles.leftSide}>
-                        <Profile userData={currentUser.user} />
+                        <Profile userId={currentUser.user.id} />
                     </div>
                     <div className={styles.middleContent}>
                         <Bookshelf userId={currentUser.user.id} />
