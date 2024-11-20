@@ -26,7 +26,7 @@ const Bookshelf = ({ userId }) => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/user-books/list`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/list`,
           {
             withCredentials: true,
           }
@@ -58,6 +58,7 @@ const Bookshelf = ({ userId }) => {
   const handleAddBookClick = (category) => {
     setCurrentCategory(category);
     setModalOpen(true);
+    setError(null);
   };
 
   const handleAddQuoteClick = (bookId) => {
@@ -79,7 +80,7 @@ const Bookshelf = ({ userId }) => {
     if (!confirmed) return;
     try {
       await axios.delete(
-        `http://localhost:3001/api/user-books/delete/${bookId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/delete/${bookId}`,
         {
           withCredentials: true,
         }
@@ -97,13 +98,19 @@ const Bookshelf = ({ userId }) => {
     }
   };
 
-  if (loading) return <p>Loading bookshelf...</p>;
-  if (error) return <p>{error}</p>;
-
   const handleBookClick = (book_id) => {
     const url = `/books/${book_id}`;
     window.open(url, "noopener noreferrer");
   };
+  const onBookAdded = (newBook) => {
+    setBookShelf((prevShelf) => ({
+      ...prevShelf,
+      [currentCategory]: [...prevShelf[currentCategory], newBook],
+    }));
+  };
+
+  if (loading) return <p>Loading bookshelf...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className={styles.bookshelf}>
@@ -233,7 +240,12 @@ const Bookshelf = ({ userId }) => {
             <button onClick={closeModal} className={styles.closeButton}>
               &times;
             </button>
-            <AddBookToBookshelf category={currentCategory} />
+            <AddBookToBookshelf
+              category={currentCategory}
+              onBookAdded={onBookAdded}
+              bookShelf={bookShelf}
+              closeModal={closeModal}
+            />
           </div>
         </div>
       )}
@@ -242,7 +254,7 @@ const Bookshelf = ({ userId }) => {
         <FavoriteQuote
           bookId={selectedBookId}
           userId={userId}
-          onClose={closeQuoteModal}
+          closeModal={closeQuoteModal}
         />
       )}
     </div>

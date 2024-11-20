@@ -36,6 +36,7 @@ export const addBookToUser = async (req, res) => {
 
   const {
     google_books_id,
+    isbn,
     title,
     author,
     genre,
@@ -46,12 +47,15 @@ export const addBookToUser = async (req, res) => {
     end_date = null,
   } = req.body;
 
-  if (!google_books_id) {
-    return res.status(400).json({ error: "google_book_id is required" });
+  if (!google_books_id && !isbn) {
+    return res
+      .status(400)
+      .json({ error: "google_book_id or isbn is required" });
   }
 
   let bookData = {
     google_books_id,
+    isbn,
     title,
     author,
     genre,
@@ -74,7 +78,13 @@ export const addBookToUser = async (req, res) => {
   try {
     const result = await knex.transaction(async (trx) => {
       let book = await trx("Books")
-        .where({ google_books_id: bookData.google_books_id })
+        .where(function () {
+          if (bookData.isbn) {
+            this.where({ isbn: bookData.isbn });
+          } else if (bookData.google_books_id) {
+            this.where({ google_books_id: bookData.google_books_id });
+          }
+        })
         .first();
 
       if (!book) {

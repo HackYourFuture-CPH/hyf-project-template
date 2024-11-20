@@ -14,7 +14,12 @@ const isBookInCategory = (book, bookShelf) => {
   );
 };
 
-const AddBookToBookshelf = ({ category, onBookAdded, bookShelf }) => {
+const AddBookToBookshelf = ({
+  category,
+  onBookAdded,
+  bookShelf,
+  closeModal,
+}) => {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,6 +71,10 @@ const AddBookToBookshelf = ({ category, onBookAdded, bookShelf }) => {
   const handleAddBook = async (book) => {
     if (isBookInCategory(book, bookShelf)) {
       setError("This book is already in your library with the same status.");
+      console.log(
+        "Error set: This book is already in your library with the same status."
+      );
+      closeModal();
       return;
     }
 
@@ -91,15 +100,25 @@ const AddBookToBookshelf = ({ category, onBookAdded, bookShelf }) => {
       if (response.status === 201) {
         setSuccessMessage(`${book.title} added to your ${category} bookshelf.`);
         onBookAdded(book); // Notify parent to refresh bookshelf
+        closeModal();
       }
     } catch (err) {
       // Handle error (e.g., book already exists)
-      if (err.response?.status === 400) {
-        setError("This book is already in your library with the same status.");
+      if (err.response && err.response.data.error) {
+        // Check for specific backend error
+        if (
+          err.response.data.error === "Book already exists in user's library"
+        ) {
+          setError(
+            "This book is already in your library under a different status."
+          );
+        } else {
+          setError(`Error: ${err.response.data.error || "An error occurred."}`);
+        }
       } else {
         setError("An error occurred while adding the book.");
       }
-      console.error("Error adding book:", err);
+      closeModal();
     }
   };
 
@@ -114,6 +133,7 @@ const AddBookToBookshelf = ({ category, onBookAdded, bookShelf }) => {
         className={styles.searchInput}
       />
       {loading && <p className={styles.loading}>Loading...</p>}
+
       {error && <p className={styles.error}>{error}</p>}
       {successMessage && <p className={styles.success}>{successMessage}</p>}
       {!loading && !error && query && (
