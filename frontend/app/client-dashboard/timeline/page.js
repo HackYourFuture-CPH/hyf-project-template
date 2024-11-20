@@ -1,5 +1,11 @@
+import Calendar from "@/app/_components/client-dashboard-components/Calendar";
+
 function page() {
-  return <div>hello timeline</div>;
+  return (
+    <div>
+      <Calendar />
+    </div>
+  );
 }
 
 export default page;
