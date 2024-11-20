@@ -24,7 +24,9 @@ const FavoriteQuote = ({ bookId, userId, onClose }) => {
             });
 
             setSuccess(true);
-            setTimeout(onClose, 1500); // Close modal after success
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500); // Optionally delay to show success message
         } catch (err) {
             console.error("Error adding quote:", err);
             setError("Failed to add quote.");
@@ -46,13 +48,7 @@ const FavoriteQuote = ({ bookId, userId, onClose }) => {
                     onChange={(e) => setQuoteText(e.target.value)}
                     className={styles.textarea}
                 />
-                <input
-                    type="text"
-                    placeholder="Author (optional)"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    className={styles.input}
-                />
+
                 <Button onClick={handleSubmit} className={styles.submitButton}>
                     Add Quote
                 </Button>

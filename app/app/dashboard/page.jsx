@@ -1,12 +1,11 @@
 "use client";
 
 import React from "react";
+import { useAuth } from "../contexts/AuthContext";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 import Profile from "../components/Profile";
 import Bookshelf from "../components/Bookshelf";
-import Quote from "../components/Quote";
-import MostRecentQuote from "../components/MostRecentQuote";
-import { useAuth } from "../contexts/AuthContext";
+import QuotesList from "../components/QuotesList";
 import styles from "./Dashboard.module.css";
 
 export default function ProfilePage() {
@@ -23,12 +22,9 @@ export default function ProfilePage() {
                     </div>
                     <div className={styles.middleContent}>
                         <Bookshelf userId={currentUser.user.id} />
-                        <h3>Most Recent Quotes:</h3>
-                        <MostRecentQuote />
                     </div>
                     <div className={styles.rightSide}>
-                        <h3>Favorite Quotes:</h3>
-                        <Quote userId={currentUser.user.id} />
+                        <QuotesList userId={currentUser.user.id} />
                     </div>
                 </>
             </div>
