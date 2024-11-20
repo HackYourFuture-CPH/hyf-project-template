@@ -49,7 +49,6 @@ const QuotesList = ({ userId }) => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
-    console.log(quotes);
     return (
         <div className={styles.QuotesList}>
             <h2>Favorite Quotes</h2>
