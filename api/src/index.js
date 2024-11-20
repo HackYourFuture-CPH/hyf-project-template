@@ -35,10 +35,11 @@ const apiRouter = express.Router();
 apiRouter.use("/", authRouter);
 apiRouter.use("/", userRouter);
 apiRouter.use("/", roleRouter);
-apiRouter.use("/", invoiceRouter);
+
 apiRouter.use("/nested", nestedRouter);
 apiRouter.use("/developer", devRouter);
 apiRouter.use("/projects", projectRouter);
+apiRouter.use("/projects", invoiceRouter);
 apiRouter.use("/chat", chatRoutes);
 app.use("/api", apiRouter);
 

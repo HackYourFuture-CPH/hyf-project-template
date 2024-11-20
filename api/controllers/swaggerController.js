@@ -16,7 +16,7 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
-      "/api/generate-invoice-project/{projectId}": {
+      "/api/projects/{projectId}/invoice": {
         get: {
           summary: "Generate an invoice for a project",
           parameters: [
