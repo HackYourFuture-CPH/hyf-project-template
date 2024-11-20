@@ -4,6 +4,7 @@ import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
+import Notes from "@/app/components/Notes";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -11,6 +12,10 @@ const BookDetails = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showNotes, setShowNotes] = useState(false);
+
+  const handleOpenNotes = () => setShowNotes(true);
+  const handleCloseNotes = () => setShowNotes(false);
 
   useEffect(() => {
     if (!id) return;
@@ -127,6 +132,7 @@ const BookDetails = () => {
             >
               Reviews
             </Button>
+
             <Button
               variant="contained"
               sx={{
@@ -139,9 +145,15 @@ const BookDetails = () => {
                   backgroundColor: "#B49090",
                 },
               }}
+              onClick={handleOpenNotes}
             >
               Notes
             </Button>
+            <Notes
+              open={showNotes}
+              handleClose={handleCloseNotes}
+              bookId={id}
+            />
           </Box>
         </Box>
       </Box>
