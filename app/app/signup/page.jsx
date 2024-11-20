@@ -72,10 +72,7 @@ const SignUp = () => {
     };
 
     try {
-      const result = await makeRequest(
-        "http://localhost:3001/auth/register",
-        userData
-      );
+      const result = await makeRequest("/auth/register", userData);
 
       setData({
         firstName: "",
