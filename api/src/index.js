@@ -15,6 +15,7 @@ import swaggerController from "../controllers/swaggerController.js";
 import chatRoutes from "./routers/chatRouter.js";
 import invoiceRouter from "./routers/invoiceRouter.js";
 import setupSockets from "../sockets/index.js";
+import eventRouter from "./routers/eventRouter.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -41,6 +42,8 @@ apiRouter.use("/developer", devRouter);
 apiRouter.use("/projects", projectRouter);
 apiRouter.use("/projects", invoiceRouter);
 apiRouter.use("/chat", chatRoutes);
+apiRouter.use("/events", eventRouter);
+
 app.use("/api", apiRouter);
 
 app.use("/docs", swaggerController);
