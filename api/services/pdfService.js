@@ -2,7 +2,7 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 
-export const generateInvoicePDF = (invoiceData) => {
+export const generateInvoicePDF = (invoiceData, filePath) => {
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({
@@ -10,8 +10,9 @@ export const generateInvoicePDF = (invoiceData) => {
         size: "A4",
       });
 
-      const outputPath = path.resolve("./output/invoice.pdf");
-      const writeStream = fs.createWriteStream(outputPath);
+      // const outputPath = path.resolve("./output/invoice.pdf");
+      // const writeStream = fs.createWriteStream(outputPath);
+      const writeStream = fs.createWriteStream(filePath);
       const logoPath = path.resolve("./public/logo.png");
 
       doc.image(logoPath, 50, 50, { width: 60 }); // Add logo at top left
@@ -174,7 +175,7 @@ export const generateInvoicePDF = (invoiceData) => {
       doc.end();
 
       writeStream.on("finish", () => {
-        resolve(outputPath);
+        resolve(filePath);
       });
 
       writeStream.on("error", (err) => {
