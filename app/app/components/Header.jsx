@@ -1,40 +1,24 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
-import styles from "./Header.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode"; // Correct import
+import { useAuth } from "../contexts/AuthContext";
+import styles from "./Header.module.css";
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [userName, setUserName] = useState(""); // State to store the username
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { currentUser } = useAuth();
 
-  // Retrieve the token from cookies and decode it
-  useEffect(() => {
-    const token = Cookies.get("token"); // Get token from cookies
-    console.log("Token from cookies:", token); // Log the token
+  // Conditional greeting message: Show username if logged in, or 'Guest' if not
+  const userName = useMemo(
+    () => currentUser?.firstName || "Guest",
+    [currentUser]
+  );
 
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token); // Correct decoding method
-        console.log("Decoded token:", decodedToken); // Log the decoded token
-
-        if (decodedToken.username) {
-          setUserName(decodedToken.username); // Set the username if it exists
-        } else {
-          setUserName("Guest"); // Fallback if no username in token
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        setUserName("Guest"); // Fallback if there's an error decoding the token
-      }
-    } else {
-      setUserName("Guest"); // Fallback if no token is found
-    }
-  }, []); // Empty dependency array means this runs once when the component mounts
+  // For debugging purposes
+  console.log(`currentUser: ${JSON.stringify(currentUser, null, 2)}`);
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -50,9 +34,10 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      {/* Left Section: Greeting */}
+      {/* Left Section: Greeting (only show when logged in) */}
       <div className={styles.leftNav}>
-        <p className={styles.greeting}>Hello, {userName}!</p>
+        {/* Only display greeting if currentUser exists */}
+        {currentUser && <p className={styles.greeting}>Hello, {userName}!</p>}
       </div>
 
       {/* Center Section: Logo */}
@@ -74,10 +59,19 @@ const Header = () => {
           <li className={styles.navItem}>
             <Link href="/dashboard">DASHBOARD</Link>
           </li>
-          <li className={styles.navItem}>
-            <Link href="/login">LOG OUT</Link>
-          </li>
+          {/* Log out link */}
+          {currentUser ? (
+            <li className={styles.navItem}>
+              <Link href="/login">LOG OUT</Link>
+            </li>
+          ) : (
+            <li className={styles.navItem}>
+              <Link href="/login">LOG IN</Link>
+            </li>
+          )}
         </ul>
+
+        {/* Search bar */}
         <input
           type="text"
           placeholder="Search..."
