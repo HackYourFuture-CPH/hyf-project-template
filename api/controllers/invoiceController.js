@@ -1,6 +1,8 @@
 import { generateInvoicePDF } from "../services/pdfService.js";
 import fs from "fs";
 import ProjectService from "../services/projectService.js";
+import os from "os";
+import path from "path";
 
 export const generateInvoice = async (req, res) => {
   try {
@@ -15,7 +17,17 @@ export const generateInvoice = async (req, res) => {
       total: project.budget,
     };
 
-    const filePath = await generateInvoicePDF(invoiceData);
+    const tempDir = os.tmpdir();
+    //const filePath = await generateInvoicePDF(invoiceData);
+    const filePath = path.join(tempDir, `invoice-${project.id}.pdf`);
+    await generateInvoicePDF(invoiceData, filePath);
+
+    console.log("Generated PDF file path:", filePath); // Debugging line
+
+    // Ensure file exists before streaming
+    if (!fs.existsSync(filePath)) {
+      return res.status(500).json({ error: "File not found" });
+    }
 
     res.setHeader("Content-Type", "application/pdf");
     // eslint-disable-next-line quotes
@@ -24,6 +36,7 @@ export const generateInvoice = async (req, res) => {
     fileStream.pipe(res);
 
     fileStream.on("end", () => {
+      console.log("File stream ended, deleting the temporary file");
       fs.unlinkSync(filePath);
     });
   } catch (error) {
