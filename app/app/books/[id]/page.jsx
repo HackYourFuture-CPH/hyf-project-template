@@ -4,7 +4,8 @@ import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
-import Notes from "@/app/components/Notes";
+import Notes from "@/app/components/Notes.jsx";
+import Reviews from "@/app/components/Reviews.jsx";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -67,6 +68,9 @@ const BookDetails = () => {
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
             }}
           />
+          <Box>
+            <Reviews />
+          </Box>
         </Box>
 
         <Box
