@@ -4,30 +4,50 @@ import Button from "./Button";
 import EditProfile from "./EditProfile";
 import styles from "./Profile.module.css";
 
-const Profile = ({ userId }) => {
+const Profile = ({ userId, booksReadCount }) => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [favoriteGenre, setFavoriteGenre] = useState(null);
 
     useEffect(() => {
         if (!userId) return;
 
         const fetchUserProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/users/profile/`, {
-                    withCredentials: true, // For cookies or token-based authentication
-                });
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/profile/`,
+                    {
+                        withCredentials: true,
+                    }
+                );
                 setUserData(response.data.user);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching user profile:", err);
                 setError("Error fetching user profile.");
+            } finally {
                 setLoading(false);
             }
         };
 
+        const fetchFavoriteGenre = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/favorite-genre`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+                setFavoriteGenre(response.data.favoriteGenre);
+            } catch (err) {
+                console.error("Error fetching favorite genre:", err);
+                setFavoriteGenre("Not available.");
+            }
+        };
+
         fetchUserProfile();
+        fetchFavoriteGenre();
     }, [userId]);
 
     const openModal = () => setModalOpen(true);
@@ -61,17 +81,15 @@ const Profile = ({ userId }) => {
                     <strong>About:</strong> {userData.about || "No information available."}
                 </div>
                 <div>
-                    <strong>Favorite Books:</strong>
+                    <strong>Favorite Genre:</strong> {favoriteGenre || "Not available"}
                 </div>
                 <ul>
-                    {userData.favoriteBooks && userData.favoriteBooks.length > 0 ? (
-                        userData.favoriteBooks.map((book, idx) => <li key={idx}>{book}</li>)
-                    ) : (
-                        <li>No favorite books added.</li>
-                    )}
+                    {userData.favoriteBooks &&
+                        userData.favoriteBooks.length > 0 &&
+                        userData.favoriteBooks.map((book, idx) => <li key={idx}>{book}</li>)}
                 </ul>
                 <div>
-                    <strong>Books Read:</strong> {userData.booksRead || 0}
+                    <strong>Books Read:</strong> {booksReadCount}
                 </div>
             </div>
 

@@ -3,9 +3,9 @@ import axios from "axios";
 import Button from "./Button";
 import styles from "./FavoriteQuote.module.css";
 
-const FavoriteQuote = ({ bookId, userId, onClose }) => {
+const FavoriteQuote = ({ bookId, userId, closeModal }) => {
     const [quoteText, setQuoteText] = useState("");
-    const [author, setAuthor] = useState("");
+
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
@@ -16,11 +16,10 @@ const FavoriteQuote = ({ bookId, userId, onClose }) => {
         }
 
         try {
-            await axios.post("http://localhost:3001/quotes/add-quote", {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/add-quote`, {
                 bookId,
                 userId,
                 quoteText,
-                author,
             });
 
             setSuccess(true);
@@ -36,7 +35,7 @@ const FavoriteQuote = ({ bookId, userId, onClose }) => {
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
-                <button onClick={onClose} className={styles.closeButton}>
+                <button onClick={closeModal} className={styles.closeButton}>
                     &times;
                 </button>
                 <h2>Add Favorite Quote</h2>

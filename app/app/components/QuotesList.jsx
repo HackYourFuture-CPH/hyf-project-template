@@ -12,9 +12,12 @@ const QuotesList = ({ userId }) => {
 
         const fetchQuotes = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/quotes/user/${userId}`, {
-                    withCredentials: true,
-                });
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/user/${userId}`,
+                    {
+                        withCredentials: true,
+                    }
+                );
                 setQuotes(response.data.quotes);
                 setLoading(false);
             } catch (err) {
@@ -36,7 +39,7 @@ const QuotesList = ({ userId }) => {
         }
 
         try {
-            await axios.delete(`http://localhost:3001/quotes/${quoteId}`, {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/${quoteId}`, {
                 withCredentials: true,
             });
             // Remove the deleted quote from the local state
@@ -49,7 +52,6 @@ const QuotesList = ({ userId }) => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
-    console.log(quotes);
     return (
         <div className={styles.QuotesList}>
             <h2>Favorite Quotes</h2>
@@ -67,10 +69,8 @@ const QuotesList = ({ userId }) => {
                         <li key={quote.quote_id} className={styles.quoteItem}>
                             <blockquote>
                                 <p>"{quote.quote_text}"</p>
-                                <div>
-                                    - {quote.book_author || "Unknown"},{" "}
-                                    {quote.book_title || "Unknown Book"}
-                                </div>
+                                <div>- {quote.book_author || "Unknown"} </div>
+                                <div>{quote.book_title || "Unknown Book"}</div>
                             </blockquote>
                             <button
                                 className={styles.closeButton}
