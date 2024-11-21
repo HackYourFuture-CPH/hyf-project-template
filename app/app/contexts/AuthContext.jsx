@@ -4,63 +4,51 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { makeRequest } from "../utils/makeRequest";
 
 const AuthContext = createContext();
+
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const refreshUserFromLocalStorage = () => {
-    const user = localStorage.getItem("user");
-    const parsedUser = JSON.parse(user);
-
-    console.log({ parsedUser });
-    setCurrentUser(parsedUser);
-    return parsedUser;
+  // Check if the user is authenticated when the app loads (for page refresh)
+  const refreshUser = async () => {
+    try {
+      const userData = await makeRequest("/users/profile", {}, "GET");
+      setCurrentUser(userData); // Set the currentUser with the response
+    } catch (error) {
+      setCurrentUser(null); // If authentication fails, no user is logged in
+    } finally {
+      setLoading(false); // Once check is done, stop loading
+    }
   };
-
-  const saveUserToLocalStorage = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const clearUserToLocalStorage = () => {
-    localStorage.removeItem("user");
-  };
-
-  useEffect(() => {
-    refreshUserFromLocalStorage();
-  }, []);
 
   const login = async (inputs) => {
     try {
       setLoading(true);
-      const userData = await makeRequest(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/login`,
-        inputs,
-        "POST"
-      );
-      setLoading(false);
-      saveUserToLocalStorage(userData);
-
+      const userData = await makeRequest("/auth/login", inputs, "POST");
       setCurrentUser(userData);
+      setLoading(false);
     } catch (error) {
-      console.log("Login failed:", error.message);
+      console.error("Login failed:", error.message);
+      setLoading(false);
       throw error;
     }
   };
   const logout = async () => {
     try {
-      await makeRequest(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/logout`,
-        {},
-        "POST"
-      );
-
-      clearUserToLocalStorage();
-
+      setLoading(true);
+      await makeRequest("/auth/logout", {}, "POST");
       setCurrentUser(null);
+      setLoading(false);
     } catch (error) {
       console.error("Logout failed:", error.message);
+      setLoading(false);
     }
   };
+  // Check the user's authentication status when the component mounts (or page refreshes)
+  useEffect(() => {
+    refreshUser(); // Call to check if the user is still logged in
+  }, []); // Empty dependency array means it runs once after component mounts
+
   return (
     <AuthContext.Provider value={{ currentUser, loading, login, logout }}>
       {children}

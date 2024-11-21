@@ -1,12 +1,12 @@
 import knex from "../database_client.js";
 import fetch from "node-fetch";
-
+import { buildBookDto } from "../services/bookService.js";
 const googleBooksApiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
 export const getBooks = async (req, res) => {
   try {
     const books = await knex("Books").select("*");
-    res.json(books);
+    res.json(books.map((book) => buildBookDto(book)));
   } catch (error) {
     console.error("Error fetching books:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -20,7 +20,7 @@ export const getBookById = async (req, res) => {
     if (!book) {
       return res.status(404).json({ error: "Book not found" });
     }
-    res.json(book);
+    res.json(buildBookDto(book));
   } catch (error) {
     console.error("Error fetching book by ID:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -68,7 +68,7 @@ export const addBook = async (req, res) => {
     });
 
     const newBook = await knex("Books").where({ book_id: newBookId }).first();
-    res.status(201).json(newBook);
+    res.status(201).json(buildBookDto(newBook));
   } catch (error) {
     console.error("Error adding book:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -135,7 +135,7 @@ export const updateBook = async (req, res) => {
       return res.status(404).json({ error: "Book not found" });
     }
     const updatedBook = await knex("Books").where({ book_id: id }).first();
-    res.json(updatedBook);
+    res.json(buildBookDto(updatedBook));
   } catch (error) {
     console.error("Error updating book:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -176,7 +176,7 @@ export const searchBooks = async (req, res) => {
       query = query.orderBy(sortBy, sortOrder);
     }
     const books = await query;
-    res.json(books);
+    res.json(books.map((book) => buildBookDto(book)));
   } catch (error) {
     console.error("Error searching books:", error);
     res.status(500).json({ error: "Internal Server Error" });

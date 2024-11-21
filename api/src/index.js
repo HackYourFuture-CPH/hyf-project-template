@@ -14,6 +14,7 @@ import quotesRouter from "./routers/quotesRouter.js";
 import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 import reviewsRouter from "./routers/reviewsRouter.js";
 import adminRouter from "./routers/adminRouter.js";
+import notesRouter from "./routers/notesRouter.js";
 
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
@@ -47,6 +48,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/admin", adminRouter);
 
 app.use("/api/random-books", randomBooksRouter);
+app.use("/api/notes", notesRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
