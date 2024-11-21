@@ -1,19 +1,17 @@
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center everything horizontally */
+    justify-content: center; /* Center vertically (if necessary) */
+    padding: 20px;
     background-color: transparent;
     width: 100%;
     z-index: 5;
 }
 
-/* Center: Logo */
+/* Center Section: Logo */
 .logoContainer {
-    flex-grow: 1; /* Center the logo by making it flexible */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-bottom: 20px; /* Add space below the logo */
 }
 
 .logo {
@@ -24,14 +22,16 @@
 /* Right Section: Links and Search */
 .rightNav {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Align links and search input to the right */
-    gap: 10px; /* Add spacing between links and the search input */
+    flex-direction: column; /* Stack dashboard and log out vertically */
+    align-items: center; /* Center them horizontally */
+    gap: 15px; /* Space between buttons and search input */
 }
 
 .navList {
     display: flex;
-    gap: 20px; /* Space between "DASHBOARD" and "LOG OUT" */
+    flex-direction: column; /* Stack the navigation links vertically */
+    align-items: center; /* Center the links horizontally */
+    gap: 10px; /* Space between "DASHBOARD" and "LOG OUT" */
     padding: 0;
     margin: 0;
     list-style: none;
@@ -65,36 +65,11 @@
 
 /* Responsive Design: Adjust layout for smaller screens */
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .rightNav {
-        align-items: center;
-    }
-
-    .navList {
-        gap: 10px;
-    }
-
     .searchInput {
         width: 150px;
     }
 
     .searchInput:focus {
-        width: 250px;
-    }
-}
-
-@media (max-width: 576px) {
-    .navList {
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    .searchInput {
-        width: 100%;
-        max-width: 300px;
+        width: 200px;
     }
 }
