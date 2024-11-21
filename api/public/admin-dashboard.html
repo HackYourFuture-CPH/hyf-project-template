@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <!-- Add Bootstrap for quick styling -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Additional custom styling */
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .sidebar {
+        height: 100vh;
+        width: 200px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #343a40;
+        color: white;
+        padding-top: 20px;
+      }
+      .sidebar a {
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+        display: block;
+      }
+      .sidebar a:hover {
+        background-color: #495057;
+      }
+      .content {
+        margin-left: 220px;
+        padding: 20px;
+      }
+      .card {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar for Navigation -->
+    <div class="sidebar">
+      <h4 class="text-center">Admin Dashboard</h4>
+      <a href="#clients-section">Clients</a>
+      <a href="#developers-section">Developers</a>
+      <a href="#projects-section">Projects</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content">
+      <h2>Admin Dashboard</h2>
+      <p>Manage clients, developers, and projects in this admin interface.</p>
+
+      <!-- Clients Section -->
+      <section id="clients-section">
+        <div class="card">
+          <div class="card-header">
+            <h5>Clients</h5>
+          </div>
+          <div class="card-body">
+            <button class="btn btn-primary mb-3">Add New Client</button>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Sample client data -->
+                <tr>
+                  <td>1</td>
+                  <td>Client A</td>
+                  <td>clienta@example.com</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Client B</td>
+                  <td>clientb@example.com</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Developers Section -->
+      <section id="developers-section">
+        <div class="card">
+          <div class="card-header">
+            <h5>Developers</h5>
+          </div>
+          <div class="card-body">
+            <button class="btn btn-primary mb-3">Add New Developer</button>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Skills</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Sample developer data -->
+                <tr>
+                  <td>1</td>
+                  <td>Dev A</td>
+                  <td>deva@example.com</td>
+                  <td>JavaScript, Python</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Dev B</td>
+                  <td>devb@example.com</td>
+                  <td>Java, PHP</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects-section">
+        <div class="card">
+          <div class="card-header">
+            <h5>Projects</h5>
+          </div>
+          <div class="card-body">
+            <button class="btn btn-primary mb-3">Add New Project</button>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Project Name</th>
+                  <th>Client</th>
+                  <th>Assigned Developer</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Sample project data -->
+                <tr>
+                  <td>1</td>
+                  <td>Project Alpha</td>
+                  <td>Client A</td>
+                  <td>Dev A</td>
+                  <td>In Progress</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Project Beta</td>
+                  <td>Client B</td>
+                  <td>Dev B</td>
+                  <td>Completed</td>
+                  <td>
+                    <button class="btn btn-info btn-sm">Edit</button>
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Add Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

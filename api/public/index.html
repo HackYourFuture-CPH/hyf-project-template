@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Chat</title>
+    <style>
+      #messages {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 300px;
+        overflow-y: scroll;
+        margin-bottom: 10px;
+      }
+      #messageInput {
+        width: 70%;
+        padding: 10px;
+        margin-right: 10px;
+      }
+      #sendButton {
+        padding: 10px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Real-Time WebSocket Chat</h1>
+    <div>
+      <label for="receiverId">Receiver ID:</label>
+      <input type="number" id="receiverId" placeholder="Enter receiver ID" />
+      <button id="joinRoomButton">Join Room</button>
+    </div>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type a message..." />
+    <button id="sendButton">Send</button>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://127.0.0.1:3001/");
+
+      let senderId = 8; // Replace with the logged-in user's ID dynamically
+      let receiverId = null; // Set when joining a room
+      let roomName = null; // The unique room for the chat
+
+      // Join a room
+      document
+        .getElementById("joinRoomButton")
+        .addEventListener("click", () => {
+          receiverId = document.getElementById("receiverId").value;
+          if (!receiverId) {
+            alert("Please enter a receiver ID!");
+            return;
+          }
+
+          roomName = [senderId, receiverId].sort().join("_"); // Unique room name
+          socket.emit("joinRoom", { senderId, receiverId });
+
+          const messagesDiv = document.getElementById("messages");
+          messagesDiv.innerHTML = `<div>Joined room: ${roomName}</div>`;
+        });
+
+      // Listen for incoming messages
+      socket.on("receiveMessage", (message) => {
+        const messagesDiv = document.getElementById("messages");
+        const messageElement = document.createElement("div");
+        messageElement.textContent = `${message.senderId}: ${message.message}`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the latest message
+      });
+
+      // Send a message
+      document.getElementById("sendButton").addEventListener("click", () => {
+        if (!receiverId) {
+          alert("Please join a room first!");
+          return;
+        }
+
+        const messageInput = document.getElementById("messageInput");
+        const message = {
+          senderId,
+          receiverId,
+          message: messageInput.value,
+        };
+        socket.emit("sendMessage", message); // Emit message to server
+        messageInput.value = ""; // Clear input after sending
+
+        // Append sent message locally
+        const messagesDiv = document.getElementById("messages");
+        const messageElement = document.createElement("div");
+        messageElement.textContent = `You: ${message.message}`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll
+      });
+    </script>
+  </body>
+</html>

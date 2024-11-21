@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LogOutButton from "../LogOutButton";
+import LogOutButton from "../AuthComponents/LogOutButton";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 
@@ -39,7 +39,7 @@ function Header() {
         <LogOutButton />
       </div>
       <div className="flex justify-between items-end text-primary-800 text-3xl px-10 h-40">
-        <p>{error ? error : `Welcome ${userName}`}</p>
+        <p>Welcome {userName}</p>
         <Navigation />
       </div>
     </header>
