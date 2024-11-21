@@ -5,7 +5,7 @@ import styles from "./Header.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode"; // Use default import for jwt-decode
+import { jwtDecode } from "jwt-decode"; // Correct import
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,7 +19,7 @@ const Header = () => {
 
     if (token) {
       try {
-        const decodedToken = jwt_decode(token);
+        const decodedToken = jwtDecode(token); // Correct decoding method
         console.log("Decoded token:", decodedToken); // Log the decoded token
 
         if (decodedToken.username) {
