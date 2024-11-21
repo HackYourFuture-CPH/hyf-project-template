@@ -7,7 +7,7 @@ import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
 import axios from "axios";
 
-const Bookshelf = ({ userId }) => {
+const Bookshelf = ({ userId, updateBooksReadCount }) => {
     const [bookShelf, setBookShelf] = useState({
         read: [],
         currentlyReading: [],
@@ -25,9 +25,12 @@ const Bookshelf = ({ userId }) => {
 
         const fetchBooks = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/user-books/list`, {
-                    withCredentials: true,
-                });
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/list`,
+                    {
+                        withCredentials: true,
+                    }
+                );
 
                 const books = response.data.reduce(
                     (acc, book) => {
@@ -40,6 +43,7 @@ const Bookshelf = ({ userId }) => {
                 );
 
                 setBookShelf(books);
+                updateBooksReadCount(books.read.length);
                 setLoading(false);
             } catch (err) {
                 console.error("Error fetching bookshelf data:", err);
@@ -49,11 +53,12 @@ const Bookshelf = ({ userId }) => {
         };
 
         fetchBooks();
-    }, [userId]);
+    }, [userId, updateBooksReadCount]);
 
     const handleAddBookClick = (category) => {
         setCurrentCategory(category);
         setModalOpen(true);
+        setError(null);
     };
 
     const handleAddQuoteClick = (bookId) => {
@@ -72,9 +77,12 @@ const Bookshelf = ({ userId }) => {
         const confirmed = window.confirm("Are you sure you want to delete this book?");
         if (!confirmed) return;
         try {
-            await axios.delete(`http://localhost:3001/api/user-books/delete/${bookId}`, {
-                withCredentials: true,
-            });
+            await axios.delete(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/delete/${bookId}`,
+                {
+                    withCredentials: true,
+                }
+            );
 
             setBookShelf((prevShelf) => ({
                 ...prevShelf,
@@ -84,6 +92,17 @@ const Bookshelf = ({ userId }) => {
             console.error("Error removing book:", err);
             setError("Error removing book.");
         }
+    };
+
+    const handleBookClick = (book_id) => {
+        const url = `/books/${book_id}`;
+        window.open(url, "noopener noreferrer");
+    };
+    const onBookAdded = (newBook) => {
+        setBookShelf((prevShelf) => ({
+            ...prevShelf,
+            [currentCategory]: [...prevShelf[currentCategory], newBook],
+        }));
     };
 
     if (loading) return <p>Loading bookshelf...</p>;
@@ -100,11 +119,15 @@ const Bookshelf = ({ userId }) => {
                 <div className={styles.bookshelfImages}>
                     {bookShelf.read.map((book) => (
                         <div key={book.book_id} className={styles.bookContainer}>
-                            <img
-                                src={book.cover_image}
-                                alt={book.title}
-                                className={styles.bookImage}
-                            />
+                            <div className={styles.bookImageWrapper}>
+                                <img
+                                    src={book.cover_image}
+                                    alt={book.title}
+                                    className={styles.bookImage}
+                                    onClick={() => handleBookClick(book.book_id)}
+                                />
+                                <span className={styles.newTabIcon}>🔗</span>
+                            </div>
                             <button
                                 className={styles.closeButton}
                                 onClick={() => handleRemoveBook(book.book_id, "read")}
@@ -134,11 +157,15 @@ const Bookshelf = ({ userId }) => {
                 <div className={styles.bookshelfImages}>
                     {bookShelf.currentlyReading.map((book) => (
                         <div key={book.book_id} className={styles.bookContainer}>
-                            <img
-                                src={book.cover_image}
-                                alt={book.title}
-                                className={styles.bookImage}
-                            />
+                            <div className={styles.bookImageWrapper}>
+                                <img
+                                    src={book.cover_image}
+                                    alt={book.title}
+                                    className={styles.bookImage}
+                                    onClick={() => handleBookClick(book.book_id)}
+                                />
+                                <span className={styles.newTabIcon}>🔗</span>
+                            </div>
                             <button
                                 className={styles.closeButton}
                                 onClick={() => handleRemoveBook(book.book_id, "currentlyReading")}
@@ -168,11 +195,15 @@ const Bookshelf = ({ userId }) => {
                 <div className={styles.bookshelfImages}>
                     {bookShelf.wishToRead.map((book) => (
                         <div key={book.book_id} className={styles.bookContainer}>
-                            <img
-                                src={book.cover_image}
-                                alt={book.title}
-                                className={styles.bookImage}
-                            />
+                            <div className={styles.bookImageWrapper}>
+                                <img
+                                    src={book.cover_image}
+                                    alt={book.title}
+                                    className={styles.bookImage}
+                                    onClick={() => handleBookClick(book.book_id)}
+                                />
+                                <span className={styles.newTabIcon}>🔗</span>
+                            </div>
                             <button
                                 className={styles.closeButton}
                                 onClick={() => handleRemoveBook(book.book_id, "wishToRead")}
@@ -203,13 +234,22 @@ const Bookshelf = ({ userId }) => {
                         <button onClick={closeModal} className={styles.closeButton}>
                             &times;
                         </button>
-                        <AddBookToBookshelf category={currentCategory} />
+                        <AddBookToBookshelf
+                            category={currentCategory}
+                            onBookAdded={onBookAdded}
+                            bookShelf={bookShelf}
+                            closeModal={closeModal}
+                        />
                     </div>
                 </div>
             )}
 
             {isQuoteModalOpen && (
-                <FavoriteQuote bookId={selectedBookId} userId={userId} onClose={closeQuoteModal} />
+                <FavoriteQuote
+                    bookId={selectedBookId}
+                    userId={userId}
+                    closeModal={closeQuoteModal}
+                />
             )}
         </div>
     );

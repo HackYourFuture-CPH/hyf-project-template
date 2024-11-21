@@ -1,34 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 import Profile from "../components/Profile";
 import Bookshelf from "../components/Bookshelf";
-import Quote from "../components/Quote";
-import MostRecentQuote from "../components/MostRecentQuote";
-import { useAuth } from "../contexts/AuthContext";
+import QuotesList from "../components/QuotesList";
 import styles from "./Dashboard.module.css";
 
-export default function ProfilePage() {
+export default function DashboardPage() {
     const { currentUser } = useAuth();
+    const [booksReadCount, setBooksReadCount] = useState(0);
+
     if (!currentUser) {
         return <p>Loading user data...</p>;
     }
+
     return (
         <AppLayoutContainer>
             <div className={styles.mainContent}>
                 <>
                     <div className={styles.leftSide}>
-                        <Profile userData={currentUser.user} />
+                        <Profile userId={currentUser.user.id} booksReadCount={booksReadCount} />
                     </div>
                     <div className={styles.middleContent}>
-                        <Bookshelf userId={currentUser.user.id} />
-                        <h3>Most Recent Quotes:</h3>
-                        <MostRecentQuote />
+                        <Bookshelf
+                            userId={currentUser.user.id}
+                            updateBooksReadCount={setBooksReadCount}
+                        />
                     </div>
                     <div className={styles.rightSide}>
-                        <h3>Favorite Quotes:</h3>
-                        <Quote userId={currentUser.user.id} />
+                        <QuotesList userId={currentUser.user.id} />
                     </div>
                 </>
             </div>

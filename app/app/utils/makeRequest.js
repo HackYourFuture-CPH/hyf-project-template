@@ -1,6 +1,11 @@
-export const makeRequest = async (url, userData = {}, method = "POST") => {
+export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error("Base URL not found");
+  }
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       method: method,
       headers: {
         "Content-Type": "application/json",

@@ -13,20 +13,20 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: #f5ebeb;
 }
 
 .leftSide {
     max-width: 300px;
+    background-color: #f5ebeb;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
-.rightSide h3 {
-    padding: 20px;
-}
+
 .middleContent {
     flex: 2;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profileDetails {
