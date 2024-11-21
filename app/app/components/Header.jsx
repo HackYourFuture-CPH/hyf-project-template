@@ -5,7 +5,7 @@ import styles from "./Header.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-//import jwt_decode from "jwt-decode"; // Use default import for jwt-decode
+import jwt_decode from "jwt-decode"; // Use default import for jwt-decode
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
