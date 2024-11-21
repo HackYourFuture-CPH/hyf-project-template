@@ -12,9 +12,12 @@ const QuotesList = ({ userId }) => {
 
         const fetchQuotes = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/quotes/user/${userId}`, {
-                    withCredentials: true,
-                });
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/user/${userId}`,
+                    {
+                        withCredentials: true,
+                    }
+                );
                 setQuotes(response.data.quotes);
                 setLoading(false);
             } catch (err) {
@@ -36,7 +39,7 @@ const QuotesList = ({ userId }) => {
         }
 
         try {
-            await axios.delete(`http://localhost:3001/quotes/${quoteId}`, {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/${quoteId}`, {
                 withCredentials: true,
             });
             // Remove the deleted quote from the local state

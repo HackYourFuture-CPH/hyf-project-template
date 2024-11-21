@@ -44,7 +44,7 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
             setUploading(true);
 
             const response = await axios.put(
-                `http://localhost:3001/users/update/details`,
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/update/details`,
                 formDataToSend,
                 {
                     withCredentials: true,
@@ -54,7 +54,6 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
                 }
             );
 
-            console.log("Profile updated:", response.data);
             onSave(response.data.updatedUser); // Pass updated user data to parent
             window.location.reload();
             onClose(); // Close the modal
