@@ -66,10 +66,8 @@ const QuotesList = ({ userId }) => {
                         <li key={quote.quote_id} className={styles.quoteItem}>
                             <blockquote>
                                 <p>"{quote.quote_text}"</p>
-                                <div>
-                                    - {quote.book_author || "Unknown"},{" "}
-                                    {quote.book_title || "Unknown Book"}
-                                </div>
+                                <div>- {quote.book_author || "Unknown"} </div>
+                                <div>{quote.book_title || "Unknown Book"}</div>
                             </blockquote>
                             <button
                                 className={styles.closeButton}

@@ -4,7 +4,7 @@ import Button from "./Button";
 import EditProfile from "./EditProfile";
 import styles from "./Profile.module.css";
 
-const Profile = ({ userId }) => {
+const Profile = ({ userId, booksReadCount }) => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const Profile = ({ userId }) => {
                         userData.favoriteBooks.map((book, idx) => <li key={idx}>{book}</li>)}
                 </ul>
                 <div>
-                    <strong>Books Read:</strong> {userData.booksRead || 0}
+                    <strong>Books Read:</strong> {booksReadCount}
                 </div>
             </div>
 
