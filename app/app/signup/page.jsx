@@ -71,10 +71,7 @@ const SignUp = () => {
     };
 
     try {
-      const result = await makeRequest(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/register`,
-        userData
-      );
+      const result = await makeRequest(`/auth/register`, userData);
 
       setData({
         firstName: "",
