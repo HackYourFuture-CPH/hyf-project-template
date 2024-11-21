@@ -24,7 +24,11 @@ export const AuthContextProvider = ({ children }) => {
   const login = async (inputs) => {
     try {
       setLoading(true);
-      const userData = await makeRequest("/auth/login", inputs, "POST");
+      const userData = await makeRequest(
+        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/login`,
+        inputs,
+        "POST"
+      );
       setCurrentUser(userData);
       setLoading(false);
     } catch (error) {
@@ -36,7 +40,11 @@ export const AuthContextProvider = ({ children }) => {
   const logout = async () => {
     try {
       setLoading(true);
-      await makeRequest("/auth/logout", {}, "POST");
+      await makeRequest(
+        `${process.env.NEXT_PUBLIC_APP_API_URL}/auth/logout`,
+        {},
+        "POST"
+      );
       setCurrentUser(null);
       setLoading(false);
     } catch (error) {
