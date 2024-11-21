@@ -5,7 +5,7 @@ export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
     throw new Error("Base URL not found");
   }
   try {
-    const response = await fetch(`${baseUrl}${endpoint}`, {
+    const response = await fetch(`${baseUrl}`, {
       method: method,
       headers: {
         "Content-Type": "application/json",
