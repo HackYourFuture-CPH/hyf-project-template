@@ -44,7 +44,9 @@ export const getUserQuotes = async (req, res) => {
                 "b.title as book_title",
                 "b.author as book_author"
             )
-            .where("q.user_id", userId);
+            .where("q.user_id", userId)
+            .orderBy("q.quote_id", "desc")
+            .limit(4);
 
         if (!quotes || quotes.length === 0) {
             return res.status(200).json({ quotes: [] });

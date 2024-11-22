@@ -6,6 +6,7 @@ import {
     deleteUserBook,
     getUserBooks,
     getFavoriteGenre,
+    toggleFavorite,
 } from "../controllers/userBooksController.js";
 import { authenticate } from "../middlewares/authenticate.js";
 
@@ -17,5 +18,6 @@ userBooksRouter.put("/update-details", authenticate(), updateBookDetails);
 userBooksRouter.put("/update/:bookId", authenticate(), updateUserBook);
 userBooksRouter.delete("/delete/:bookId", authenticate(), deleteUserBook);
 userBooksRouter.get("/favorite-genre", authenticate(), getFavoriteGenre);
+userBooksRouter.put("/favorite/:bookId", authenticate(), toggleFavorite);
 
 export default userBooksRouter;
