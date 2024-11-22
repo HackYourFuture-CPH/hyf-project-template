@@ -26,7 +26,7 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/api/user-books/list`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/list`,
           {
             withCredentials: true,
           }
@@ -81,7 +81,7 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
     if (!confirmed) return;
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/api/user-books/delete/${bookId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/delete/${bookId}`,
         {
           withCredentials: true,
         }

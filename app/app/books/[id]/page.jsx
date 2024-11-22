@@ -23,7 +23,7 @@ const BookDetails = () => {
     const fetchBookDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/api/books/${id}`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books/${id}`
         );
         if (!response.ok) throw new Error("Failed to fetch book details");
 

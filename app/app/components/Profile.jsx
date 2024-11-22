@@ -17,7 +17,7 @@ const Profile = ({ userId, booksReadCount }) => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/users/profile/`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/profile/`,
           {
             withCredentials: true,
           }
@@ -34,7 +34,7 @@ const Profile = ({ userId, booksReadCount }) => {
     const fetchFavoriteGenre = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/api/user-books/favorite-genre`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/favorite-genre`,
           {
             withCredentials: true,
           }

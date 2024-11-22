@@ -33,7 +33,7 @@ const AddBookToBookshelf = ({
       setError(null);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/api/searchGoogleBooks`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
           {
             params: { query, page: 1, pageSize: 10 },
           }
@@ -84,7 +84,7 @@ const AddBookToBookshelf = ({
       setError(null);
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/api/user-books/add`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
         {
           google_books_id: book.google_book_id,
           title: book.title,

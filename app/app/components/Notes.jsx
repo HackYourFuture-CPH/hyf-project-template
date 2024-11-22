@@ -27,7 +27,7 @@ const Notes = ({ open, handleClose, bookId }) => {
       const fetchNotes = async () => {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_API_URL}/api/notes/notes?book_id=${bookId}&user_id=${currentUser.user.id}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes?book_id=${bookId}&user_id=${currentUser.user.id}`
           );
           const data = await response.json();
           setNotes(data);
@@ -55,7 +55,7 @@ const Notes = ({ open, handleClose, bookId }) => {
     try {
       if (editingNoteId) {
         await fetch(
-          `${process.env.NEXT_PUBLIC_APP_API_URL}/api/notes/notes/${editingNoteId}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes/${editingNoteId}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ const Notes = ({ open, handleClose, bookId }) => {
           }
         );
       } else {
-        await fetch(`${process.env.NEXT_PUBLIC_APP_API_URL}/api/notes/notes`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(noteData),
@@ -75,7 +75,7 @@ const Notes = ({ open, handleClose, bookId }) => {
       setShowAddNote(false);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/api/notes/notes?book_id=${bookId}&user_id=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes?book_id=${bookId}&user_id=${userId}`
       );
       const updatedNotes = await response.json();
       setNotes(updatedNotes);
@@ -93,7 +93,7 @@ const Notes = ({ open, handleClose, bookId }) => {
   const handleDeleteNote = async (noteId) => {
     try {
       await fetch(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/api/notes/notes/${noteId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes/${noteId}`,
         {
           method: "DELETE",
         }

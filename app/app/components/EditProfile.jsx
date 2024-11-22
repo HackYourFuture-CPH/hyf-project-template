@@ -44,7 +44,7 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
       setUploading(true);
 
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/users/update/details`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/update/details`,
         formDataToSend,
         {
           withCredentials: true,

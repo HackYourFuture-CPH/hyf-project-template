@@ -28,7 +28,7 @@ const RandomBooks = () => {
       } else {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_API_URL}/api/random-books`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/random-books`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch books");
@@ -37,7 +37,7 @@ const RandomBooks = () => {
 
           if (!data.items || data.items.length === 0) {
             const fallbackResponse = await fetch(
-              `${process.env.NEXT_PUBLIC_APP_API_URL}/api/books`
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books`
             );
             const fallbackData = await fallbackResponse.json();
             data = { items: fallbackData };

@@ -17,7 +17,7 @@ const FavoriteQuote = ({ bookId, userId, closeModal }) => {
 
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_API_URL}/quotes/add-quote`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/add-quote`,
         {
           bookId,
           userId,
