@@ -1,4 +1,7 @@
 import knex from "knex";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const connection = knex({
   client: process.env.DB_CLIENT,
