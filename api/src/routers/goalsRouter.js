@@ -16,3 +16,5 @@ goalsRouter.get("/", getUserGoals);
 goalsRouter.post("/add", addGoal);
 goalsRouter.put("/:goalId", updateGoal);
 goalsRouter.delete("/:goalId", deleteGoal);
+
+export default goalsRouter;

@@ -15,7 +15,7 @@ import apiQuotesRouter from "./routers/apiQuotesRouter.js";
 import reviewsRouter from "./routers/reviewsRouter.js";
 import adminRouter from "./routers/adminRouter.js";
 import notesRouter from "./routers/notesRouter.js";
-
+import goalsRouter from "./routers/goalsRouter.js";
 import randomBooksRouter from "./routers/randomBooksRouter.js";
 
 const app = express();
@@ -49,6 +49,8 @@ app.use("/admin", adminRouter);
 
 app.use("/api/random-books", randomBooksRouter);
 app.use("/api/notes", notesRouter);
+
+app.use("/api/goals", goalsRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);

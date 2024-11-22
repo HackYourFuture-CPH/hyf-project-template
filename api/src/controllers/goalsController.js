@@ -1,5 +1,5 @@
 import knex from "../database_client.js";
-import { buildGoalDto } from "../services/goalsService.js";
+import { buildGoalDto } from "../services/goalService.js";
 
 export const getUserGoals = async (req, res) => {
   try {
@@ -30,7 +30,7 @@ export const addGoal = async (req, res) => {
   }
 
   try {
-    const existingGoal = await knex("Goals")
+    const existingGoal = await knex("ReadingGoals")
       .where({
         user_id: req.user.userId,
         goal_type: goal_type,
@@ -41,7 +41,7 @@ export const addGoal = async (req, res) => {
       return res.status(400).json({ error: "Goal already exists" });
     }
 
-    const [goalId] = await knex("Goals").insert({
+    const [goalId] = await knex("ReadingGoals").insert({
       user_id: req.user.userId,
       goal_type,
       goal_count,
