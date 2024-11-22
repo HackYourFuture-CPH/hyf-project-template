@@ -21,7 +21,7 @@ const MemorableQuotes = () => {
       } else {
         try {
           const response = await fetch(
-            "http://localhost:3001/api/quotes/all-quotes"
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quotes/all-quotes`
           );
           const data = await response.json();
 

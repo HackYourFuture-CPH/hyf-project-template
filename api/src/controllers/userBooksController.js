@@ -150,15 +150,22 @@ export const getUserBooks = async (req, res) => {
                     "UserBooks.user_id",
                     "UserBooks.status",
                     "UserBooks.start_date",
-                    "UserBooks.end_date"
+                    "UserBooks.end_date",
+                    "UserBooks.is_favorite"
                 );
             return res.status(200).json(allUserBooks.map(buildUserBookDto));
         }
         const userBooks = await knex("Books")
             .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
             .where({ "UserBooks.user_id": userId })
-            .select("Books.*", "UserBooks.status", "UserBooks.start_date", "UserBooks.end_date");
-
+            .select(
+                "Books.*",
+                "UserBooks.status",
+                "UserBooks.start_date",
+                "UserBooks.end_date",
+                "UserBooks.is_favorite"
+            );
+        console.log(userBooks);
         return res.status(200).json(userBooks.map(buildUserBookDto));
     } catch (error) {
         console.error("Error fetching user books:", error);
@@ -267,6 +274,31 @@ export const getFavoriteGenre = async (req, res) => {
         return res.status(200).json({ favoriteGenre: favoriteGenre.genre });
     } catch (error) {
         console.error("Error fetching favorite genre:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const toggleFavorite = async (req, res) => {
+    const { bookId } = req.params;
+    const { userId } = req.user; // Assuming `userId` is available from the authenticated user
+    const { is_favorite } = req.body;
+
+    try {
+        // Check if the book exists in the UserBooks table for the user
+        const userBook = await knex("UserBooks")
+            .where({ book_id: bookId, user_id: userId })
+            .first();
+
+        if (!userBook) {
+            return res.status(404).json({ error: "Book not found in user's bookshelf" });
+        }
+
+        // Update the is_favorite status
+        await knex("UserBooks").where({ book_id: bookId, user_id: userId }).update({ is_favorite });
+
+        return res.status(200).json({ message: "Favorite status updated successfully." });
+    } catch (error) {
+        console.error("Error toggling favorite status:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };

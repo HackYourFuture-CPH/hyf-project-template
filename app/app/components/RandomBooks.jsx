@@ -28,7 +28,7 @@ const RandomBooks = () => {
       } else {
         try {
           const response = await fetch(
-            `http://localhost:3001/api/random-books`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/random-books`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch books");
@@ -37,7 +37,7 @@ const RandomBooks = () => {
 
           if (!data.items || data.items.length === 0) {
             const fallbackResponse = await fetch(
-              `http://localhost:3001/api/books`
+              `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books`
             );
             const fallbackData = await fallbackResponse.json();
             data = { items: fallbackData };
@@ -68,7 +68,7 @@ const RandomBooks = () => {
       <h2 className={styles.title}>Popular Books of the Week</h2>
 
       <div className={styles.booksContainer}>
-        {books.length > 0 ? (
+        {books && books.length > 0 ? (
           books.map((book, index) => (
             <div key={index} className={styles.bookCard}>
               <a

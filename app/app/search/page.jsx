@@ -28,7 +28,7 @@ const SearchPageContent = () => {
         setError(null);
         try {
           const response = await axios.get(
-            "http://localhost:3001/api/searchGoogleBooks",
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
             {
               params: {
                 query: q,

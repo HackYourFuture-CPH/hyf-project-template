@@ -27,7 +27,7 @@ const Notes = ({ open, handleClose, bookId }) => {
       const fetchNotes = async () => {
         try {
           const response = await fetch(
-            `http://localhost:3001/api/notes/notes?book_id=${bookId}&user_id=${currentUser.user.id}`
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes?book_id=${bookId}&user_id=${currentUser.user.id}`
           );
           const data = await response.json();
           setNotes(data);
@@ -54,13 +54,16 @@ const Notes = ({ open, handleClose, bookId }) => {
 
     try {
       if (editingNoteId) {
-        await fetch(`http://localhost:3001/api/notes/notes/${editingNoteId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, content: noteContent }),
-        });
+        await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes/${editingNoteId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId, content: noteContent }),
+          }
+        );
       } else {
-        await fetch("http://localhost:3001/api/notes/notes", {
+        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(noteData),
@@ -72,7 +75,7 @@ const Notes = ({ open, handleClose, bookId }) => {
       setShowAddNote(false);
 
       const response = await fetch(
-        `http://localhost:3001/api/notes/notes?book_id=${bookId}&user_id=${userId}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes?book_id=${bookId}&user_id=${userId}`
       );
       const updatedNotes = await response.json();
       setNotes(updatedNotes);
@@ -89,9 +92,12 @@ const Notes = ({ open, handleClose, bookId }) => {
 
   const handleDeleteNote = async (noteId) => {
     try {
-      await fetch(`http://localhost:3001/api/notes/notes/${noteId}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes/notes/${noteId}`,
+        {
+          method: "DELETE",
+        }
+      );
       setNotes(notes.filter((note) => note.id !== noteId));
     } catch (error) {
       console.error("Error deleting note:", error);

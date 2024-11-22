@@ -10,8 +10,9 @@ import {
 import { useRouter } from "next/navigation";
 
 import { useState } from "react";
-import { makeRequest } from "../utils/makeRequest";
+import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
+
 import { validateField } from "../utils/validation";
 import { isValidate } from "../utils/validation";
 
@@ -23,7 +24,6 @@ const SignUp = () => {
     username: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -55,7 +55,6 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { isValid, errors: validationErrors } = isValidate(data);
 
     if (!isValid) {
@@ -72,7 +71,7 @@ const SignUp = () => {
     };
 
     try {
-      const result = await makeRequest("/auth/register", userData);
+      const result = await makeRequest(`/auth/register`, userData);
 
       setData({
         firstName: "",
