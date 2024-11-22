@@ -11,5 +11,6 @@ export const buildUserBookDto = (book) => {
         status: book.status,
         start_date: book.start_date,
         end_date: book.end_date,
-      }
-}
+        is_favorite: book.is_favorite,
+    };
+};
