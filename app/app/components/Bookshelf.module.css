@@ -1,71 +1,8 @@
 .bookshelf {
-    padding: 20px;
-    background-color: #f5ebeb;
-    min-width: 300px;
-    min-height: 600px;
+    padding: 10px;
 }
 
 .bookshelfHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.bookshelfSection {
-    margin-top: 20px;
-}
-
-.bookshelfImages {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.bookContainer {
-    position: relative;
-    display: inline-block;
-}
-
-.bookImage,
-.addBookButton {
-    width: 100px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    font-size: 10pt !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.closeButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    border: none;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    font-size: 14px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.bookContainer:hover .closeButton {
-    display: flex;
-}
-
-.closeButton:hover {
-    background-color: #867070;
-}
-
-.bookshelf p {
     padding: 15px;
     font-size: 1.2em;
 }
@@ -100,49 +37,4 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-}
-
-.quoteButton {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.quoteButton:hover {
-    background-color: rgba(0, 0, 0, 0.9);
-}
-
-.bookContainer:hover .quoteButton {
-    opacity: 1;
-}
-
-.bookImageWrapper {
-    position: relative;
-}
-
-.newTabIcon {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 50%;
-    padding: 3px;
-    font-size: 12px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.bookImageWrapper:hover .newTabIcon {
-    opacity: 1;
 }

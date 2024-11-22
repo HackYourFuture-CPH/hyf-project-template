@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import styles from "./Bookshelf.module.css";
-import Button from "../components/Button";
+import axios from "axios";
+import BookshelfSection from "./BookshelfSection";
 import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
-import axios from "axios";
 
 const Bookshelf = ({ userId, updateBooksReadCount }) => {
     const [bookShelf, setBookShelf] = useState({
@@ -37,6 +35,12 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
                         if (book.status === "READ") acc.read.push(book);
                         if (book.status === "CURRENTLY READING") acc.currentlyReading.push(book);
                         if (book.status === "WISH TO READ") acc.wishToRead.push(book);
+
+                        if (book.is_favorite) {
+                            acc.favorites = acc.favorites || [];
+                            acc.favorites.push(book);
+                        }
+
                         return acc;
                     },
                     { read: [], currentlyReading: [], wishToRead: [] }
@@ -54,6 +58,31 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
 
         fetchBooks();
     }, [userId, updateBooksReadCount]);
+
+    const toggleFavorite = async (bookId, category) => {
+        try {
+            const book = bookShelf[category].find((b) => b.book_id === bookId);
+            const updatedIsFavorite = !book.is_favorite;
+
+            await axios.put(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/favorite/${bookId}`,
+                { is_favorite: updatedIsFavorite },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            setBookShelf((prevShelf) => ({
+                ...prevShelf,
+                [category]: prevShelf[category].map((b) =>
+                    b.book_id === bookId ? { ...b, is_favorite: updatedIsFavorite } : b
+                ),
+            }));
+        } catch (err) {
+            console.error("Error toggling favorite:", err);
+            setError("Error updating favorite status.");
+        }
+    };
 
     const handleAddBookClick = (category) => {
         setCurrentCategory(category);
@@ -98,6 +127,7 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
         const url = `/books/${book_id}`;
         window.open(url, "noopener noreferrer");
     };
+
     const onBookAdded = (newBook) => {
         setBookShelf((prevShelf) => ({
             ...prevShelf,
@@ -114,119 +144,38 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
                 <h3>Bookshelf</h3>
             </div>
 
-            <div className={styles.bookshelfSection}>
-                <p>Read:</p>
-                <div className={styles.bookshelfImages}>
-                    {bookShelf.read.map((book) => (
-                        <div key={book.book_id} className={styles.bookContainer}>
-                            <div className={styles.bookImageWrapper}>
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className={styles.bookImage}
-                                    onClick={() => handleBookClick(book.book_id)}
-                                />
-                                <span className={styles.newTabIcon}>🔗</span>
-                            </div>
-                            <button
-                                className={styles.closeButton}
-                                onClick={() => handleRemoveBook(book.book_id, "read")}
-                            >
-                                &times;
-                            </button>
-                            <button
-                                className={styles.quoteButton}
-                                onClick={() => handleAddQuoteClick(book.book_id)}
-                            >
-                                Add Quote
-                            </button>
-                        </div>
-                    ))}
+            <BookshelfSection
+                title="Read"
+                books={bookShelf.read}
+                category="read"
+                onAddBookClick={handleAddBookClick}
+                onBookClick={handleBookClick}
+                onToggleFavorite={toggleFavorite}
+                onAddQuoteClick={handleAddQuoteClick}
+                onRemoveBook={handleRemoveBook}
+            />
 
-                    <Button
-                        className={styles.addBookButton}
-                        onClick={() => handleAddBookClick("read")}
-                    >
-                        ADD BOOK
-                    </Button>
-                </div>
-            </div>
+            <BookshelfSection
+                title="Currently Reading"
+                books={bookShelf.currentlyReading}
+                category="currentlyReading"
+                onAddBookClick={handleAddBookClick}
+                onBookClick={handleBookClick}
+                onToggleFavorite={toggleFavorite}
+                onAddQuoteClick={handleAddQuoteClick}
+                onRemoveBook={handleRemoveBook}
+            />
 
-            <div className={styles.bookshelfSection}>
-                <p>Currently Reading:</p>
-                <div className={styles.bookshelfImages}>
-                    {bookShelf.currentlyReading.map((book) => (
-                        <div key={book.book_id} className={styles.bookContainer}>
-                            <div className={styles.bookImageWrapper}>
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className={styles.bookImage}
-                                    onClick={() => handleBookClick(book.book_id)}
-                                />
-                                <span className={styles.newTabIcon}>🔗</span>
-                            </div>
-                            <button
-                                className={styles.closeButton}
-                                onClick={() => handleRemoveBook(book.book_id, "currentlyReading")}
-                            >
-                                &times;
-                            </button>
-                            <button
-                                className={styles.quoteButton}
-                                onClick={() => handleAddQuoteClick(book.book_id)}
-                            >
-                                Add Quote
-                            </button>
-                        </div>
-                    ))}
-
-                    <Button
-                        className={styles.addBookButton}
-                        onClick={() => handleAddBookClick("currentlyReading")}
-                    >
-                        ADD BOOK
-                    </Button>
-                </div>
-            </div>
-
-            <div className={styles.bookshelfSection}>
-                <p>Wish to Read:</p>
-                <div className={styles.bookshelfImages}>
-                    {bookShelf.wishToRead.map((book) => (
-                        <div key={book.book_id} className={styles.bookContainer}>
-                            <div className={styles.bookImageWrapper}>
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className={styles.bookImage}
-                                    onClick={() => handleBookClick(book.book_id)}
-                                />
-                                <span className={styles.newTabIcon}>🔗</span>
-                            </div>
-                            <button
-                                className={styles.closeButton}
-                                onClick={() => handleRemoveBook(book.book_id, "wishToRead")}
-                            >
-                                &times;
-                            </button>
-                            <button
-                                className={styles.quoteButton}
-                                onClick={() => handleAddQuoteClick(book.book_id)}
-                            >
-                                Add Quote
-                            </button>
-                        </div>
-                    ))}
-
-                    <Button
-                        className={styles.addBookButton}
-                        onClick={() => handleAddBookClick("wishToRead")}
-                    >
-                        ADD BOOK
-                    </Button>
-                </div>
-            </div>
+            <BookshelfSection
+                title="Wish to Read"
+                books={bookShelf.wishToRead}
+                category="wishToRead"
+                onAddBookClick={handleAddBookClick}
+                onBookClick={handleBookClick}
+                onToggleFavorite={toggleFavorite}
+                onAddQuoteClick={handleAddQuoteClick}
+                onRemoveBook={handleRemoveBook}
+            />
 
             {isModalOpen && (
                 <div className={styles.modalOverlay}>

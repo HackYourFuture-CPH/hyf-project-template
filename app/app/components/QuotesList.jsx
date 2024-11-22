@@ -54,7 +54,7 @@ const QuotesList = ({ userId }) => {
     if (error) return <div>{error}</div>;
     return (
         <div className={styles.QuotesList}>
-            <h2>Favorite Quotes</h2>
+            <h2>Recent Quotes</h2>
             {quotes.length === 0 ? (
                 <div className={styles.emptyState}>
                     <p>No quotes available yet!</p>
