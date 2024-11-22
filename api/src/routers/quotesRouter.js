@@ -1,10 +1,10 @@
 import express from "express";
 import { authenticate } from "../middlewares/authenticate.js";
 import {
-    getQuotes,
-    addQuote,
-    getUserQuotes,
-    deleteQuote,
+  getQuotes,
+  addQuote,
+  getUserQuotes,
+  deleteQuote,
 } from "../controllers/quotesController.js";
 
 const quotesRouter = express.Router();
