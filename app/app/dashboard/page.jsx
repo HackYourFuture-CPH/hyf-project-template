@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 import Profile from "../components/Profile";
@@ -9,37 +9,31 @@ import QuotesList from "../components/QuotesList";
 import styles from "./Dashboard.module.css";
 
 export default function DashboardPage() {
-  const { currentUser } = useAuth();
-  const [booksReadCount, setBooksReadCount] = useState(0);
+    const { currentUser } = useAuth();
+    const [booksReadCount, setBooksReadCount] = useState(0);
 
-  //memoized function to avoid unnecessary re-renders
-  const updateBooksReadCount = useCallback((count) => {
-    setBooksReadCount(count);
-  }, []);
+    if (!currentUser) {
+        return <p>Loading user data...</p>;
+    }
 
-  if (!currentUser) {
-    return <p>Loading user data...</p>;
-  }
-
-  return (
-    <AppLayoutContainer>
-      <div className={styles.mainContent}>
-        <div className={styles.leftSide}>
-          <Profile
-            userId={currentUser.user.id}
-            booksReadCount={booksReadCount}
-          />
-        </div>
-        <div className={styles.middleContent}>
-          <Bookshelf
-            userId={currentUser.user.id}
-            updateBooksReadCount={updateBooksReadCount}
-          />
-        </div>
-        <div className={styles.rightSide}>
-          <QuotesList userId={currentUser.user.id} />
-        </div>
-      </div>
-    </AppLayoutContainer>
-  );
+    return (
+        <AppLayoutContainer>
+            <div className={styles.mainContent}>
+                <>
+                    <div className={styles.leftSide}>
+                        <Profile userId={currentUser.user.id} booksReadCount={booksReadCount} />
+                    </div>
+                    <div className={styles.middleContent}>
+                        <Bookshelf
+                            userId={currentUser.user.id}
+                            updateBooksReadCount={setBooksReadCount}
+                        />
+                    </div>
+                    <div className={styles.rightSide}>
+                        <QuotesList userId={currentUser.user.id} />
+                    </div>
+                </>
+            </div>
+        </AppLayoutContainer>
+    );
 }
