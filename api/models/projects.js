@@ -31,7 +31,7 @@ Project.init(
       allowNull: true,
     },
     status: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.ENUM("completed", "pending", "in-progress"),
       allowNull: false,
       defaultValue: "pending",
     },
