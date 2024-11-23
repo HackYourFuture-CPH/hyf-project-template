@@ -1,6 +1,7 @@
 import ClientStatus from "./ClientStatus";
 import ClientCard from "./ClientCard";
 import ClientTable from "./ClientTable";
+import ClientNewTable from "./ClientNewTable";
 function ProjectClient({
   project,
   statusCounts,
@@ -18,7 +19,7 @@ function ProjectClient({
         <h2 className="text-4xl mb-5 text-accent-400 font-medium">
           Planning across your Projects
         </h2>
-        <ClientTable
+        <ClientNewTable
           project={project}
           onDelete={onDelete}
         />
