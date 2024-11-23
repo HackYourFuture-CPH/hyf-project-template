@@ -280,7 +280,7 @@ export const getFavoriteGenre = async (req, res) => {
 
 export const toggleFavorite = async (req, res) => {
     const { bookId } = req.params;
-    const { userId } = req.user; // Assuming `userId` is available from the authenticated user
+    const { userId } = req.user;
     const { is_favorite } = req.body;
 
     try {
@@ -299,6 +299,57 @@ export const toggleFavorite = async (req, res) => {
         return res.status(200).json({ message: "Favorite status updated successfully." });
     } catch (error) {
         console.error("Error toggling favorite status:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const getTopBooks = async (req, res) => {
+    try {
+        const topBooksQuery = `
+            SELECT 
+                (SELECT JSON_OBJECT('book_id', b.book_id, 'title', b.title, 'author', b.author, 'cover_image', b.cover_image)
+                 FROM UserBooks ub
+                 JOIN Books b ON ub.book_id = b.book_id
+                 WHERE ub.is_favorite = 1
+                 GROUP BY ub.book_id
+                 ORDER BY COUNT(*) DESC
+                 LIMIT 1) AS most_favorite_book,
+
+                (SELECT JSON_OBJECT('book_id', b.book_id, 'title', b.title, 'author', b.author, 'cover_image', b.cover_image)
+                 FROM UserBooks ub
+                 JOIN Books b ON ub.book_id = b.book_id
+                 WHERE ub.status = 'READ'
+                 GROUP BY ub.book_id
+                 ORDER BY COUNT(*) DESC
+                 LIMIT 1) AS most_read_book,
+
+                (SELECT JSON_OBJECT('book_id', b.book_id, 'title', b.title, 'author', b.author, 'cover_image', b.cover_image)
+                 FROM UserBooks ub
+                 JOIN Books b ON ub.book_id = b.book_id
+                 WHERE ub.status = 'CURRENTLY READING'
+                 GROUP BY ub.book_id
+                 ORDER BY COUNT(*) DESC
+                 LIMIT 1) AS most_currently_reading_book,
+
+                (SELECT JSON_OBJECT('book_id', b.book_id, 'title', b.title, 'author', b.author, 'cover_image', b.cover_image)
+                 FROM UserBooks ub
+                 JOIN Books b ON ub.book_id = b.book_id
+                 WHERE ub.status = 'WISH TO READ'
+                 GROUP BY ub.book_id
+                 ORDER BY COUNT(*) DESC
+                 LIMIT 1) AS most_wish_list_book;
+        `;
+
+        const [result] = await knex.raw(topBooksQuery);
+
+        return res.status(200).json({
+            most_favorite_book: result[0].most_favorite_book || {},
+            most_read_book: result[0].most_read_book || {},
+            most_currently_reading_book: result[0].most_currently_reading_book || {},
+            most_wish_list_book: result[0].most_wish_list_book || {},
+        });
+    } catch (error) {
+        console.error("Error fetching top books:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
