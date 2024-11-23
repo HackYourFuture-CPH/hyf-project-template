@@ -17,12 +17,9 @@ import {
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { makeRequest } from "../utils/makeRequest.js";
+import { useBookshelf } from "../contexts/BooksReadCountContext.jsx";
 
-export default function GoalsWidget({
-  booksReadCount,
-  activeGoal,
-  setActiveGoal,
-}) {
+export default function GoalsWidget({ activeGoal, setActiveGoal }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [goalData, setGoalData] = useState({
     goal_type: activeGoal?.goal_type || "MONTHLY",
@@ -30,6 +27,8 @@ export default function GoalsWidget({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const { booksCount } = useBookshelf();
 
   useEffect(() => {
     if (isEditMode && activeGoal) {
@@ -51,7 +50,7 @@ export default function GoalsWidget({
     try {
       const newGoal = await makeRequest("/api/goals/add", {
         ...goalData,
-        current_count: booksReadCount,
+        current_count: booksCount,
       });
 
       setActiveGoal(newGoal);
@@ -106,7 +105,7 @@ export default function GoalsWidget({
 
     const refreshedGoal = {
       ...activeGoal,
-      current_count: booksReadCount,
+      current_count: booksCount,
     };
 
     setActiveGoal(refreshedGoal);
@@ -171,7 +170,7 @@ export default function GoalsWidget({
               <CircularProgress
                 variant="determinate"
                 value={Math.min(
-                  (booksReadCount / activeGoal.goal_count) * 100,
+                  (booksCount / activeGoal.goal_count) * 100,
                   100
                 )}
                 size={80}
@@ -190,15 +189,13 @@ export default function GoalsWidget({
                 }}
               >
                 <Typography variant="caption" component="div">
-                  {`${Math.round(
-                    (booksReadCount / activeGoal.goal_count) * 100
-                  )}%`}
+                  {`${Math.round((booksCount / activeGoal.goal_count) * 100)}%`}
                 </Typography>
               </Box>
             </Box>
 
             <Typography variant="body2" color="text.secondary">
-              {booksReadCount} of {activeGoal.goal_count} books read
+              {booksCount} of {activeGoal.goal_count} books read
             </Typography>
             <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
               <Button
