@@ -1,21 +1,25 @@
-import { makeRequest } from "./makeRequest";
+import { makeRequest } from "./makeRequest.js";
 
 // Fetch Review by ID
 export const getReviewById = async (id) => {
-  return makeRequest(`/reviews/${id}`, {}, "GET");
+  return makeRequest(`/api/reviews/${id}`, {}, "GET");
+};
+
+export const getUserReview = async (bookId) => {
+  return makeRequest(`/api/reviews/book/${bookId}/my-review`, {}, "GET");
 };
 
 // Create Review
 export const createReview = async (bookId, reviewData) => {
-  return makeRequest(`/reviews/book/${bookId}`, reviewData, "POST");
+  return makeRequest(`/api/reviews/book/${bookId}`, reviewData, "POST");
 };
 
 // Update Review
 export const updateReview = async (id, reviewData) => {
-  return makeRequest(`/reviews/${id}`, reviewData, "PUT");
+  return makeRequest(`/api/reviews/${id}`, reviewData, "PUT");
 };
 
 // Delete Review
 export const deleteReview = async (id) => {
-  return makeRequest(`/reviews/${id}`, {}, "DELETE");
+  return makeRequest(`/api/reviews/${id}`, {}, "DELETE");
 };

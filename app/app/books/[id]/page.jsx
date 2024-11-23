@@ -18,6 +18,11 @@ const BookDetails = () => {
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
 
+  const handleReviewSuccess = (response) => {
+    console.log("Review added successfully:", response);
+    // Optionally refresh the reviews or display a success message
+  };
+
   useEffect(() => {
     if (!id) return;
 
@@ -71,7 +76,7 @@ const BookDetails = () => {
             }}
           />
           <Box>
-            <Reviews />
+            <Reviews bookId={id} onSuccess={handleReviewSuccess} />
           </Box>
         </Box>
 
@@ -136,7 +141,7 @@ const BookDetails = () => {
                 },
               }}
             >
-              Reviews
+              Quotes
             </Button>
 
             <Button
