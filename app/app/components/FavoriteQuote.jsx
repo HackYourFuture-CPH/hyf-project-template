@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Button from "./Button";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "./FavoriteQuote.module.css";
 
-const FavoriteQuote = ({ bookId, userId, closeModal }) => {
+const FavoriteQuote = ({ bookId, closeModal }) => {
+  const { currentUser } = useAuth();
   const [quoteText, setQuoteText] = useState("");
 
   const [error, setError] = useState(null);
@@ -20,7 +22,7 @@ const FavoriteQuote = ({ bookId, userId, closeModal }) => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/add-quote`,
         {
           bookId,
-          userId,
+          userId: currentUser.user.id,
           quoteText,
         }
       );

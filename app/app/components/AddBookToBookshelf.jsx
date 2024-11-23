@@ -98,8 +98,8 @@ const AddBookToBookshelf = ({
       );
       // Handle success
       if (response.status === 201) {
-        setSuccessMessage(`${book.title} added to your ${category} bookshelf.`);
-        onBookAdded(book); // Notify parent to refresh bookshelf
+        setSuccessMessage(`${response.data.book.title} added to your ${category} bookshelf.`);
+        onBookAdded(response.data.book); // Notify parent to refresh bookshelf
         closeModal();
       }
     } catch (err) {
