@@ -17,8 +17,6 @@ function ProjectsPage() {
       const userId = getFieldFromCookie('userId');
 
       const allProjects = await getAllProjectsFromDeveloper(userId);
-      console.log(allProjects);
-      // const allProjects = await getAllProjects();
 
       if (Array.isArray(allProjects)) {
         setProjects(allProjects);

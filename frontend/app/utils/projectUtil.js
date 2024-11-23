@@ -15,14 +15,14 @@ export const getProjectById = async id => {
   });
 };
 
-// ----- fake
-export const getAllProjects = async () => {
-  const response = await sendGetRequest(`/api/projects`);
-  return handleResponse(response, defaultSuccessCallback, () => {
-    toast.error('Failed to fetch projects');
-  });
-};
-// ----- fake
+// // ----- testing endpoint
+// export const getAllProjects = async () => {
+//   const response = await sendGetRequest(`/api/projects`);
+//   return handleResponse(response, defaultSuccessCallback, () => {
+//     toast.error('Failed to fetch projects');
+//   });
+// };
+// // ----- testing endpoint
 
 export const handleDeleteProject = async (projectId, deleteCallBack) => {
   const response = await sendDeleteRequest(`/api/projects/${projectId}`, {}, { method: 'DELETE' });

@@ -1,19 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { handleLogIn } from "../../utils/auth";
 import {
   getUserInfo,
   getUserPathByRole,
 } from "../../utils/userUtil";
+import { toast } from "react-toastify";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState(null);
-  const router = useRouter();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -23,17 +22,18 @@ const LogIn = () => {
       setFormError("Please fill in both fields.");
       return;
     }
-    try {
+
       await handleLogIn(email, password, async () => {
         const userInfo = await getUserInfo();
         const userRole = userInfo.role;
         Cookies.set("userRole", userRole);
+        Cookies.set("userId", userInfo.id);
+        toast.success("Logged in successfully! 🎉");
+
         const dashboardPath = getUserPathByRole(userRole);
         window.location.replace(dashboardPath);
       });
-    } catch (error) {
-      setFormError("Login failed. Please try again.");
-    }
+
   };
 
   return (

@@ -34,7 +34,6 @@ export default function ProjectsTableDesktop({ projects, setProjects }) {
         {projects.length > 0 ? (
           projects.map(project => {
             const formattedProject = formatProjectData(project);
-            console.log(formattedProject);
             const statusColor = statusColors[formattedProject.status.toLowerCase()] || statusColors.default;
             return (
               <tr key={formattedProject.id} className='border-b text-sm'>
