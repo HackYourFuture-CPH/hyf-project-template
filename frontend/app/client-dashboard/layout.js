@@ -13,15 +13,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <div className="grid grid-cols-12 grid-rows-11 min-h-screen">
+    <div className="grid grid-cols-12 grid-rows-12 gap-1 min-h-screen">
       <Header />
-      <SideNavigation />
-      <main className="col-span-9 row-span-7 col-start-4 row-start-4 overflow-auto max-h-[calc(100vh-20rem)]">
+      <main className="col-span-12 row-span-10 row-start-3 overflow-hidden relative">
         {children}
       </main>
-      <footer className="col-span-9 col-start-4 row-start-11 h-[10rem]">
-        Copyright By The WFlance
-      </footer>
     </div>
   );
 }
