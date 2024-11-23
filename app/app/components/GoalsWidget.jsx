@@ -27,6 +27,7 @@ export default function GoalsWidget({ activeGoal, setActiveGoal }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [error, setError] = useState(null);
 
   const { booksCount } = useBookshelf();
 

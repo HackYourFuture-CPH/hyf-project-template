@@ -3,22 +3,16 @@ import Button from "./Button";
 import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
 import GoalsWidget from "./GoalsWidget";
-import Bookshelf from "./Bookshelf";
+import { useBookshelf } from "../contexts/BooksReadCountContext";
 import { makeRequest } from "../utils/makeRequest";
 import styles from "./Profile.module.css";
 
-const Profile = ({ booksReadCount }) => {
+const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
   const [activeGoal, setActiveGoal] = useState(null);
-  const [bookShelf, setBookShelf] = useState({
-    read: [],
-    currentlyReading: [],
-    wishToRead: [],
-  });
+  const { bookShelf, booksCount, loading, error } = useBookshelf();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -28,8 +22,6 @@ const Profile = ({ booksReadCount }) => {
       } catch (err) {
         console.error("Error fetching user profile:", err);
         setError("Error fetching user profile.");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -67,18 +59,6 @@ const Profile = ({ booksReadCount }) => {
     fetchFavoriteGenre();
     fetchActiveGoal();
   }, []);
-
-  // Memoize updateBooksReadCount to prevent unnecessary re-renders
-  const updateBooksReadCount = useCallback(
-    (count) => {
-      setBookShelf((prev) =>
-        prev.read.length === count
-          ? prev
-          : { ...prev, read: prev.read.slice(0, count) }
-      );
-    },
-    [setBookShelf]
-  );
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -124,7 +104,7 @@ const Profile = ({ booksReadCount }) => {
               ))}
           </ul>
           <div>
-            <strong>Books Read:</strong> {booksReadCount}
+            <strong>Books Read:</strong> {booksCount}
           </div>
         </div>
 
@@ -141,7 +121,7 @@ const Profile = ({ booksReadCount }) => {
         )}
       </div>
       <GoalsWidget
-        booksReadCount={bookShelf.read.length}
+        booksReadCount={booksCount}
         activeGoal={activeGoal}
         setActiveGoal={setActiveGoal}
       />

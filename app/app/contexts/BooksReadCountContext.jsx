@@ -30,12 +30,17 @@ export const BookshelfProvider = ({ children }) => {
 
         const books = response.data.reduce(
           (acc, book) => {
-            if (book.status === "READ") acc.read.push(book);
-            if (book.status === "CURRENTLY READING")
-              acc.currentlyReading.push(book);
-            if (book.status === "WISH TO READ") acc.wishToRead.push(book);
-
-            return acc;
+            return {
+              read: book.status === "READ" ? [...acc.read, book] : acc.read,
+              currentlyReading:
+                book.status === "CURRENTLY READING"
+                  ? [...acc.currentlyReading, book]
+                  : acc.currentlyReading,
+              wishToRead:
+                book.status === "WISH TO READ"
+                  ? [...acc.wishToRead, book]
+                  : acc.wishToRead,
+            };
           },
           { read: [], currentlyReading: [], wishToRead: [] }
         );
