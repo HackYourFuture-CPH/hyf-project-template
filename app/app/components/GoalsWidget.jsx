@@ -13,34 +13,40 @@ import {
   TextField,
   MenuItem,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { makeRequest } from "../utils/makeRequest.js";
 
-export default function GoalsWidget({ booksReadCount }) {
-  const [activeGoal, setActiveGoal] = useState(null);
+export default function GoalsWidget({
+  booksReadCount,
+  activeGoal,
+  setActiveGoal,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [goalData, setGoalData] = useState({
-    goal_type: "MONTHLY",
-    goal_count: "",
+    goal_type: activeGoal?.goal_type || "MONTHLY",
+    goal_count: activeGoal?.goal_count || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  // Fetch active goal
   useEffect(() => {
-    const fetchActiveGoal = async () => {
-      try {
-        const goals = await makeRequest(`/api/goals`, {}, "GET");
-        const active = goals.find((g) => g.status === "IN_PROGRESS");
-        setActiveGoal(active || null);
-      } catch (error) {
-        console.error("Failed to fetch goals:", error);
-      }
-    };
-    fetchActiveGoal();
-  }, []);
+    if (isEditMode && activeGoal) {
+      setGoalData({
+        goal_type: activeGoal.goal_type,
+        goal_count: Number(activeGoal.goal_count),
+      });
+    }
+  }, [isEditMode, activeGoal]);
 
   const handleSetGoal = async (e) => {
     e.preventDefault();
+
+    if (isNaN(goalData.goal_count) || goalData.goal_count <= 0) {
+      console.error("Invalid goal count");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const newGoal = await makeRequest("/api/goals/add", {
@@ -56,6 +62,54 @@ export default function GoalsWidget({ booksReadCount }) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditGoal = () => {
+    if (!activeGoal) return;
+    setIsEditMode(true);
+    setIsModalOpen(true);
+  };
+
+  const handleUpdateGoal = async (e) => {
+    e.preventDefault();
+
+    if (isNaN(goalData.goal_count) || goalData.goal_count <= 0) {
+      console.error("Invalid goal count");
+      return;
+    }
+    if (!activeGoal) return;
+    setIsSubmitting(true);
+    try {
+      const updatedGoal = await makeRequest(
+        `/api/goals/${activeGoal.goal_id}`,
+        { goal_count: goalData.goal_count, goal_type: goalData.goal_type },
+        "PUT"
+      );
+      console.log("Updated goal:", updatedGoal);
+      setActiveGoal({
+        ...activeGoal,
+        goal_count: goalData.goal_count,
+        goal_type: goalData.goal_type,
+        current_count: updatedGoal.current_count || activeGoal.current_count,
+      });
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to reset goal:", error);
+    } finally {
+      setIsSubmitting(false);
+      setIsEditMode(false);
+    }
+  };
+
+  const handleRefreshProgress = () => {
+    if (!activeGoal) return;
+
+    const refreshedGoal = {
+      ...activeGoal,
+      current_count: booksReadCount,
+    };
+
+    setActiveGoal(refreshedGoal);
   };
 
   return (
@@ -104,8 +158,8 @@ export default function GoalsWidget({ booksReadCount }) {
               }}
             >
               <Typography variant="body2">
-                {activeGoal.goal_type.charAt(0) +
-                  activeGoal.goal_type.slice(1).toLowerCase()}{" "}
+                {activeGoal?.goal_type?.charAt(0) +
+                  activeGoal?.goal_type?.slice(1).toLowerCase()}{" "}
                 Goal
               </Typography>
               <Typography variant="body2" color="primary">
@@ -146,18 +200,40 @@ export default function GoalsWidget({ booksReadCount }) {
             <Typography variant="body2" color="text.secondary">
               {booksReadCount} of {activeGoal.goal_count} books read
             </Typography>
+            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={handleEditGoal}
+              >
+                Edit Goal
+              </Button>
+              <IconButton
+                color="primary"
+                onClick={handleRefreshProgress}
+                title="Refresh Progress"
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Box>
           </Box>
         )}
       </CardContent>
 
       <Dialog
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setIsEditMode(false);
+        }}
         maxWidth="xs"
         fullWidth
       >
-        <form onSubmit={handleSetGoal}>
-          <DialogTitle>Set Reading Goal</DialogTitle>
+        <form onSubmit={isEditMode ? handleUpdateGoal : handleSetGoal}>
+          <DialogTitle>
+            {isEditMode ? "Edit Reading Goal" : "Set Reading Goal"}
+          </DialogTitle>
           <DialogContent>
             <Box
               sx={{
@@ -189,7 +265,7 @@ export default function GoalsWidget({ booksReadCount }) {
                 onChange={(e) =>
                   setGoalData((prev) => ({
                     ...prev,
-                    goal_count: e.target.value,
+                    goal_count: Number(e.target.value),
                   }))
                 }
                 fullWidth
@@ -198,13 +274,26 @@ export default function GoalsWidget({ booksReadCount }) {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                setIsModalOpen(false);
+                setIsEditMode(false);
+              }}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="contained"
               disabled={isSubmitting || !goalData.goal_count}
             >
-              {isSubmitting ? "Setting..." : "Set Goal"}
+              {isSubmitting
+                ? isEditMode
+                  ? "Updating..."
+                  : "Setting..."
+                : isEditMode
+                ? "Update Goal"
+                : "Set Goal"}
             </Button>
           </DialogActions>
         </form>

@@ -5,6 +5,7 @@ export const getUserGoals = async (req, res) => {
   try {
     const goals = await knex("ReadingGoals")
       .where({ user_id: req.user.userId })
+      .andWhereNot({ status: "RESET" })
       .orderBy("created_at", "desc");
 
     res.status(200).json({
@@ -82,9 +83,9 @@ export const updateGoal = async (req, res) => {
     await knex("ReadingGoals")
       .where({ goal_id: goalId })
       .update({
-        status: status || goal.status,
-        goal_count: goal_count || goal.goal_count,
-        end_date: status === "COMPLETED" ? new Date() : goal.end_date,
+        status: status === "RESET" ? "RESET" : goal.status,
+        goal_count: status === "RESET" ? 0 : goal_count || goal.goal_count,
+        end_date: status === "RESET" ? null : goal.end_date,
       });
 
     const updatedGoal = await knex("ReadingGoals")

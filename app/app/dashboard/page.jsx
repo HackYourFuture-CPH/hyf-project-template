@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 import Profile from "../components/Profile";
@@ -11,6 +11,11 @@ import styles from "./Dashboard.module.css";
 export default function DashboardPage() {
   const { currentUser } = useAuth();
   const [booksReadCount, setBooksReadCount] = useState(0);
+
+  //memoized function to avoid unnecessary re-renders
+  const updateBooksReadCount = useCallback((count) => {
+    setBooksReadCount(count);
+  }, []);
 
   if (!currentUser) {
     return <p>Loading user data...</p>;
@@ -28,7 +33,7 @@ export default function DashboardPage() {
         <div className={styles.middleContent}>
           <Bookshelf
             userId={currentUser.user.id}
-            updateBooksReadCount={setBooksReadCount}
+            updateBooksReadCount={updateBooksReadCount}
           />
         </div>
         <div className={styles.rightSide}>

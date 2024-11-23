@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Button from "./Button";
+import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
 import GoalsWidget from "./GoalsWidget";
 import { makeRequest } from "../utils/makeRequest";
@@ -11,11 +12,12 @@ const Profile = ({ booksReadCount }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
+  const [activeGoal, setActiveGoal] = useState(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await makeRequest("/users/profile", {}, "GET");
+        const response = await makeRequest(`/users/profile`, {}, "GET");
         setUserData(response.user);
       } catch (err) {
         console.error("Error fetching user profile:", err);
@@ -39,8 +41,25 @@ const Profile = ({ booksReadCount }) => {
       }
     };
 
+    const fetchActiveGoal = async () => {
+      try {
+        const response = await makeRequest(`/api/goals`, {}, "GET");
+        const goalsArray = response.goals;
+
+        if (Array.isArray(goalsArray)) {
+          const active = goalsArray.find((g) => g.status === "IN_PROGRESS");
+          setActiveGoal(active || null);
+        } else {
+          console.error("Goals data is not an array:", response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch goals:", error);
+      }
+    };
+
     fetchUserProfile();
     fetchFavoriteGenre();
+    fetchActiveGoal();
   }, []);
 
   const openModal = () => setIsModalOpen(true);
@@ -103,7 +122,11 @@ const Profile = ({ booksReadCount }) => {
           />
         )}
       </div>
-      <GoalsWidget booksReadCount={booksReadCount} />
+      <GoalsWidget
+        booksReadCount={booksReadCount}
+        activeGoal={activeGoal}
+        setActiveGoal={setActiveGoal}
+      />
     </Box>
   );
 };
