@@ -10,6 +10,7 @@ import {
 
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
 function ClientNewTable({ project, onDelete }) {
   const { title, status, deadline, id } = project;
   return (
@@ -39,7 +40,9 @@ function ClientNewTable({ project, onDelete }) {
             <TableCell>{status}</TableCell>
             <TableCell>{deadline}</TableCell>
             <TableCell className="">
-              <PencilSquareIcon className="h-6 w-6 text-blue-600" />
+              <Link href={`/client-dashboard/edit/${id}`}>
+                <PencilSquareIcon className="h-6 w-6 text-blue-600" />
+              </Link>
             </TableCell>
             <TableCell className="flex justify-end">
               <TrashIcon className="h-6 w-6 text-red-500" />
