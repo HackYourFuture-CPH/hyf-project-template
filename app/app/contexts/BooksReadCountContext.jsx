@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { createContext, useState, useContext, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 
@@ -8,13 +9,11 @@ export const useBookshelf = () => useContext(BookshelfContext);
 
 export const BookshelfProvider = ({ children }) => {
   const { currentUser } = useAuth();
-  const [bookShelf, setBookShelf] = useState([
-    {
-      read: [],
-      currentlyReading: [],
-      wishToRead: [],
-    },
-  ]);
+  const [bookShelf, setBookShelf] = useState({
+    read: [],
+    currentlyReading: [],
+    wishToRead: [],
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
