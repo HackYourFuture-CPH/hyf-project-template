@@ -61,7 +61,7 @@ export const BookshelfProvider = ({ children }) => {
 
   return (
     <BookshelfContext.Provider
-      value={{ bookShelf, booksCount, loading, error }}
+      value={{ bookShelf, setBookShelf, booksCount, loading, error }}
     >
       {children}
     </BookshelfContext.Provider>

@@ -1,64 +1,28 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import styles from "./Bookshelf.module.css";
 import axios from "axios";
 import BookshelfSection from "./BookshelfSection";
 import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
+import { useBookshelf } from "../contexts/BooksReadCountContext";
 
-const Bookshelf = ({ userId, updateBooksReadCount }) => {
-  const [bookShelf, setBookShelf] = useState({
-    read: [],
-    currentlyReading: [],
-    wishToRead: [],
-  });
+const Bookshelf = () => {
+  const { bookShelf, setBookShelf, loading, error } = useBookshelf();
+  const [favorites, setFavorites] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isQuoteModalOpen, setQuoteModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("");
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!userId) return;
-
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/list`,
-          {
-            withCredentials: true,
-          }
-        );
-
-        const books = response.data.reduce(
-          (acc, book) => {
-            if (book.status === "READ") acc.read.push(book);
-            if (book.status === "CURRENTLY READING")
-              acc.currentlyReading.push(book);
-            if (book.status === "WISH TO READ") acc.wishToRead.push(book);
-
-            if (book.is_favorite) {
-              acc.favorites = acc.favorites || [];
-              acc.favorites.push(book);
-            }
-
-            return acc;
-          },
-          { read: [], currentlyReading: [], wishToRead: [] }
-        );
-
-        setBookShelf(books);
-        updateBooksReadCount(books.read.length);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching bookshelf data:", err);
-        setError("Error fetching bookshelf data.");
-        setLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, [userId, updateBooksReadCount]);
+    const allFavorites = [
+      ...bookShelf.read.filter((book) => book.is_favorite),
+      ...bookShelf.currentlyReading.filter((book) => book.is_favorite),
+      ...bookShelf.wishToRead.filter((book) => book.is_favorite),
+    ];
+    setFavorites(allFavorites);
+  }, [bookShelf]);
 
   const toggleFavorite = async (bookId, category) => {
     try {
@@ -73,6 +37,17 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
         }
       );
 
+      setFavorites((prevFavorites) => {
+        if (updatedIsFavorite) {
+          return [
+            ...prevFavorites,
+            { ...book, is_favorite: updatedIsFavorite },
+          ];
+        } else {
+          return prevFavorites.filter((b) => b.book_id !== bookId);
+        }
+      });
+
       setBookShelf((prevShelf) => ({
         ...prevShelf,
         [category]: prevShelf[category].map((b) =>
@@ -81,14 +56,12 @@ const Bookshelf = ({ userId, updateBooksReadCount }) => {
       }));
     } catch (err) {
       console.error("Error toggling favorite:", err);
-      setError("Error updating favorite status.");
     }
   };
 
   const handleAddBookClick = (category) => {
     setCurrentCategory(category);
     setModalOpen(true);
-    setError(null);
   };
 
   const handleAddQuoteClick = (bookId) => {
