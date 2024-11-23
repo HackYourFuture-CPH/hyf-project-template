@@ -19,7 +19,7 @@ const About = () => {
             </div>
             <div className={styles.authorContainer}>
                 <Image
-                    src="/person-icon.webp"
+                    src="/dr.seuss.jpg"
                     alt="Dr. Seuss"
                     className={styles.authorImage}
                     width={100}
@@ -31,7 +31,7 @@ const About = () => {
                         The more that you read, the more things you will know. The more that you
                         learn, the more places you'll go.
                     </blockquote>
-                    <a href="#" className={styles.learnMore}>
+                    <a href="https://en.wikipedia.org/wiki/Dr._Seuss" className={styles.learnMore}>
                         More About Dr. Seuss
                     </a>
                 </div>
