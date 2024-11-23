@@ -97,7 +97,6 @@ const Bookshelf = () => {
       }));
     } catch (err) {
       console.error("Error removing book:", err);
-      setError("Error removing book.");
     }
   };
 
@@ -172,11 +171,7 @@ const Bookshelf = () => {
       )}
 
       {isQuoteModalOpen && (
-        <FavoriteQuote
-          bookId={selectedBookId}
-          userId={userId}
-          closeModal={closeQuoteModal}
-        />
+        <FavoriteQuote bookId={selectedBookId} closeModal={closeQuoteModal} />
       )}
     </div>
   );
