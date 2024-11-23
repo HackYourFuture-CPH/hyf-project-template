@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "./Bookshelf.module.css";
 import axios from "axios";
 import BookshelfSection from "./BookshelfSection";
@@ -24,40 +24,43 @@ const Bookshelf = () => {
     setFavorites(allFavorites);
   }, [bookShelf]);
 
-  const toggleFavorite = async (bookId, category) => {
-    try {
-      const book = bookShelf[category].find((b) => b.book_id === bookId);
-      const updatedIsFavorite = !book.is_favorite;
+  const toggleFavorite = useCallback(
+    async (bookId, category) => {
+      try {
+        const book = bookShelf[category].find((b) => b.book_id === bookId);
+        const updatedIsFavorite = !book.is_favorite;
 
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/favorite/${bookId}`,
-        { is_favorite: updatedIsFavorite },
-        {
-          withCredentials: true,
-        }
-      );
+        await axios.put(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/favorite/${bookId}`,
+          { is_favorite: updatedIsFavorite },
+          {
+            withCredentials: true,
+          }
+        );
 
-      setFavorites((prevFavorites) => {
-        if (updatedIsFavorite) {
-          return [
-            ...prevFavorites,
-            { ...book, is_favorite: updatedIsFavorite },
-          ];
-        } else {
-          return prevFavorites.filter((b) => b.book_id !== bookId);
-        }
-      });
+        setFavorites((prevFavorites) => {
+          if (updatedIsFavorite) {
+            return [
+              ...prevFavorites,
+              { ...book, is_favorite: updatedIsFavorite },
+            ];
+          } else {
+            return prevFavorites.filter((b) => b.book_id !== bookId);
+          }
+        });
 
-      setBookShelf((prevShelf) => ({
-        ...prevShelf,
-        [category]: prevShelf[category].map((b) =>
-          b.book_id === bookId ? { ...b, is_favorite: updatedIsFavorite } : b
-        ),
-      }));
-    } catch (err) {
-      console.error("Error toggling favorite:", err);
-    }
-  };
+        setBookShelf((prevShelf) => ({
+          ...prevShelf,
+          [category]: prevShelf[category].map((b) =>
+            b.book_id === bookId ? { ...b, is_favorite: updatedIsFavorite } : b
+          ),
+        }));
+      } catch (err) {
+        console.error("Error toggling favorite:", err);
+      }
+    },
+    [bookShelf, setBookShelf]
+  );
 
   const handleAddBookClick = (category) => {
     setCurrentCategory(category);
