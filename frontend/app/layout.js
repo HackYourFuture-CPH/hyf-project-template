@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* notification library */}
         <ToastContainer
-          position='top-center'
+          position='bottom-left'
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
