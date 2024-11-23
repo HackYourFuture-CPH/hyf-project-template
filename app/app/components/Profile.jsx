@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Button from "./Button";
 import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
 import GoalsWidget from "./GoalsWidget";
+import Bookshelf from "./Bookshelf";
 import { makeRequest } from "../utils/makeRequest";
 import styles from "./Profile.module.css";
 
@@ -13,6 +14,11 @@ const Profile = ({ booksReadCount }) => {
   const [error, setError] = useState(null);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
   const [activeGoal, setActiveGoal] = useState(null);
+  const [bookShelf, setBookShelf] = useState({
+    read: [],
+    currentlyReading: [],
+    wishToRead: [],
+  });
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -61,6 +67,18 @@ const Profile = ({ booksReadCount }) => {
     fetchFavoriteGenre();
     fetchActiveGoal();
   }, []);
+
+  // Memoize updateBooksReadCount to prevent unnecessary re-renders
+  const updateBooksReadCount = useCallback(
+    (count) => {
+      setBookShelf((prev) =>
+        prev.read.length === count
+          ? prev
+          : { ...prev, read: prev.read.slice(0, count) }
+      );
+    },
+    [setBookShelf]
+  );
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -123,7 +141,7 @@ const Profile = ({ booksReadCount }) => {
         )}
       </div>
       <GoalsWidget
-        booksReadCount={booksReadCount}
+        booksReadCount={bookShelf.read.length}
         activeGoal={activeGoal}
         setActiveGoal={setActiveGoal}
       />
