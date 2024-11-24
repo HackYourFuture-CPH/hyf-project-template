@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-import { Monoton } from "next/font/google";
+import { Nabla } from "next/font/google";
 import Image from "next/image";
 
 import logo from "@/public/logo.png";
 
-const monoton = Monoton({
+const nabla = Nabla({
   subsets: ["latin"],
   display: "swap",
   weight: ["400"],
@@ -15,7 +15,7 @@ function Logo() {
   return (
     <Link
       href="/"
-      className={`${monoton.className} flex items-center gap-2 z-10`}
+      className={`${nabla.className} flex items-center gap-2 z-10`}
     >
       <Image
         src={logo}
