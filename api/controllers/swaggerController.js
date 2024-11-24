@@ -578,6 +578,202 @@ swaggerController.get("/swagger.json", (req, res) => {
           },
         },
       },
+      "api/projects/{projectId}": {
+        post: {
+          summary: "Update Project by ID",
+          description:
+            "Updates the details of an existing project identified by `projectId`.",
+          parameters: [
+            {
+              name: "projectId",
+              in: "path",
+              required: true,
+              description: "The ID of the project to update.",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          requestBody: {
+            description: "Project details to update.",
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    clientId: {
+                      type: "integer",
+                      example: 9,
+                    },
+                    title: {
+                      type: "string",
+                      example: "Project tester modificated now",
+                    },
+                    description: {
+                      type: "string",
+                      example: "Project description modificated",
+                    },
+                    status: {
+                      type: "string",
+                      enum: [
+                        "not-started",
+                        "in-progress",
+                        "completed",
+                        "cancelled",
+                      ],
+                      example: "in-progress",
+                    },
+                    budget: {
+                      type: "string",
+                      format: "decimal",
+                      example: "20000.00",
+                    },
+                    startDate: {
+                      type: "string",
+                      format: "date",
+                      example: "2024-10-15",
+                    },
+                    endDate: {
+                      type: "string",
+                      format: "date",
+                      example: "2025-02-28",
+                    },
+                    deadline: {
+                      type: "string",
+                      format: "date",
+                      example: "2025-01-15",
+                    },
+                  },
+                  required: [
+                    "clientId",
+                    "title",
+                    "status",
+                    "budget",
+                    "startDate",
+                    "endDate",
+                    "deadline",
+                  ],
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: "Project updated successfully.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: {
+                        type: "boolean",
+                        example: true,
+                      },
+                      message: {
+                        type: "string",
+                        example: "Project updated successfully.",
+                      },
+                      data: {
+                        type: "object",
+                        description: "Updated project details.",
+                        properties: {
+                          projectId: {
+                            type: "integer",
+                            example: 1,
+                          },
+                          clientId: {
+                            type: "integer",
+                            example: 9,
+                          },
+                          title: {
+                            type: "string",
+                            example: "Project tester modificated now",
+                          },
+                          description: {
+                            type: "string",
+                            example: "Project description modificated",
+                          },
+                          status: {
+                            type: "string",
+                            example: "in-progress",
+                          },
+                          budget: {
+                            type: "string",
+                            example: "20000.00",
+                          },
+                          startDate: {
+                            type: "string",
+                            example: "2024-10-15",
+                          },
+                          endDate: {
+                            type: "string",
+                            example: "2025-02-28",
+                          },
+                          deadline: {
+                            type: "string",
+                            example: "2025-01-15",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Invalid input or validation error.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: {
+                        type: "boolean",
+                        example: false,
+                      },
+                      message: {
+                        type: "string",
+                        example: "Invalid input data.",
+                      },
+                      errors: {
+                        type: "array",
+                        items: {
+                          type: "string",
+                        },
+                        example: [
+                          "Title is required.",
+                          "Start date must be a valid date.",
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Project not found.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: {
+                        type: "boolean",
+                        example: false,
+                      },
+                      message: {
+                        type: "string",
+                        example: "Project not found.",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       "/api/projects/{id}": {
         delete: {
           summary: "Delete a project by ID",

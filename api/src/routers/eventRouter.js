@@ -6,4 +6,6 @@ const eventRouter = express.Router();
 
 eventRouter.post("/", EventController.createEvents);
 
+//adda column for userid, and add that user id in the frontend
+eventRouter.get("/:id", EventController.getEventsByUserId);
 export default eventRouter;
