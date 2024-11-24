@@ -54,6 +54,7 @@ const getUserFromToken = async (token) => {
     }
     console.log("user: " + JSON.stringify(user));
     return {
+      id: user.id,
       name: user.name,
       email: user.email,
       role: user.roleName,

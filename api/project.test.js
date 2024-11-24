@@ -39,7 +39,7 @@ describe("Project API Endpoints", () => {
   // let projectId;
 
   it("should retrieve all projects", async () => {
-    const response = await request(server).get("/api/pj/").expect(200);
+    const response = await request(server).get("/api/projects/").expect(200);
     expect(Array.isArray(response.body)).toBe(true);
   }, 30000);
 

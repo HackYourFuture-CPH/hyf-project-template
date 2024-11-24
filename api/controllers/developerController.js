@@ -55,5 +55,16 @@ class DeveloperController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  static async getProjectsByDeveloperId(req, res) {
+    try {
+      const projects = await ProjectDeveloperService.getProjectsByDeveloperId(
+        req.params.id
+      );
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
 }
 export default DeveloperController;

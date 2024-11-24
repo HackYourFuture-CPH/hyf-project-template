@@ -13,7 +13,7 @@
     "start": "node src/index.mjs",
     "format": "npx prettier . --write",
     "check": "npx eslint . --fix",
-    "test": "jest"
+    "test": "jest; npx mocha test/api.test.cjs"
   },
   "dependencies": {
     "aws-sdk": "^2.1692.0",

@@ -19,9 +19,9 @@ class ProjectController {
     }
   }
 
-  static async getProjectsByDevId(req, res) {
+  static async getProjectsByClientId(req, res) {
     try {
-      const project = await ProjectService.getProjectsByDevId(req.params.id);
+      const project = await ProjectService.getProjectsByClientId(req.params.id);
       res.status(200).json(project);
     } catch (error) {
       res.status(404).json({ error: error.message });

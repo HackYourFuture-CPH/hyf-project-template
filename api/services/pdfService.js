@@ -2,17 +2,17 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 
-export const generateInvoicePDF = (invoiceData) => {
+export const generateInvoicePDF = (invoiceData, filePath) => {
   return new Promise((resolve, reject) => {
     try {
-      // Create document with better default styling
       const doc = new PDFDocument({
         margin: 50,
         size: "A4",
       });
 
-      const outputPath = path.resolve("./output/invoice.pdf");
-      const writeStream = fs.createWriteStream(outputPath);
+      // const outputPath = path.resolve("./output/invoice.pdf");
+      // const writeStream = fs.createWriteStream(outputPath);
+      const writeStream = fs.createWriteStream(filePath);
       const logoPath = path.resolve("./public/logo.png");
 
       doc.image(logoPath, 50, 50, { width: 60 }); // Add logo at top left
@@ -79,9 +79,9 @@ export const generateInvoicePDF = (invoiceData) => {
 
       // Table headers with proper width allocation
       const colDesc = 50;
-      const colQty = 350;
-      const colPrice = 420;
-      const colTotal = 490;
+      const colQty = 320;
+      const colPrice = 400;
+      const colTotal = 470;
 
       doc
         .fillColor("#374151")
@@ -96,7 +96,9 @@ export const generateInvoicePDF = (invoiceData) => {
       let yPosition = tableTop + 40;
 
       invoiceData.items.forEach((item, index) => {
-        const itemTotal = (item.quantity * item.price).toFixed(2);
+        const itemTotal = formatCurrencyDKK(
+          Number(item.quantity) * Number(item.price)
+        );
 
         // Alternate row background
         if (index % 2 === 0) {
@@ -110,10 +112,10 @@ export const generateInvoicePDF = (invoiceData) => {
           .fillColor("#374151")
           .font("Helvetica")
           .fontSize(10)
-          .text(item.description, colDesc + 15, yPosition, { width: 270 }) // Limited width for description
+          .text(item.description, colDesc + 15, yPosition, { width: 270 })
           .text(item.quantity.toString(), colQty, yPosition)
-          .text(`$${item.price.toFixed(2)}`, colPrice, yPosition)
-          .text(`$${itemTotal}`, colTotal, yPosition);
+          .text(`${formatCurrencyDKK(Number(item.price))}`, colPrice, yPosition)
+          .text(`${itemTotal}`, colTotal, yPosition);
 
         yPosition += 30;
       });
@@ -128,12 +130,16 @@ export const generateInvoicePDF = (invoiceData) => {
       doc
         .font("Helvetica")
         .text("Subtotal:", 400, totalsStartY)
-        .text(`$${invoiceData.total.toFixed(2)}`, 490, totalsStartY);
+        .text(
+          `${formatCurrencyDKK(Number(invoiceData.total))}`,
+          470,
+          totalsStartY
+        );
 
       // Tax
       doc
         .text("Tax (0%):", 400, totalsStartY + 20)
-        .text("$0.00", 490, totalsStartY + 20);
+        .text("0.00", 470, totalsStartY + 20);
 
       // Total line
       drawLine(totalsStartY + 35);
@@ -143,7 +149,11 @@ export const generateInvoicePDF = (invoiceData) => {
         .font("Helvetica-Bold")
         .fontSize(12)
         .text("Total:", 400, totalsStartY + 50)
-        .text(`$${invoiceData.total.toFixed(2)}`, 490, totalsStartY + 50);
+        .text(
+          `${formatCurrencyDKK(Number(invoiceData.total))}`,
+          470,
+          totalsStartY + 50
+        );
 
       // Footer with fixed positioning
       const footerTop = totalsStartY + 120;
@@ -165,7 +175,7 @@ export const generateInvoicePDF = (invoiceData) => {
       doc.end();
 
       writeStream.on("finish", () => {
-        resolve(outputPath);
+        resolve(filePath);
       });
 
       writeStream.on("error", (err) => {
@@ -175,4 +185,13 @@ export const generateInvoicePDF = (invoiceData) => {
       reject(error);
     }
   });
+};
+
+const formatCurrencyDKK = (amount) => {
+  return new Intl.NumberFormat("da-DK", {
+    style: "currency",
+    currency: "DKK",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
 };
