@@ -29,7 +29,7 @@ function Header() {
     fetchUserData();
   }, []);
   return (
-    <header className="col-span-12 row-span-2  h-[13rem] bg-gray-200">
+    <header className="w-full h-[13rem] bg-primary-600 text-slate-50 shadow-md">
       <NewNavigation userName={userName} />
     </header>
   );

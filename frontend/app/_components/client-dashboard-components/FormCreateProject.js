@@ -69,9 +69,6 @@ function FormCreateProject() {
       if (response.ok) {
         const result = await response.json();
 
-        console.log("Client ID:", clientId);
-        console.log("Form Data:", formData);
-
         alert("Project created successfully!");
 
         setFormData({
@@ -96,17 +93,20 @@ function FormCreateProject() {
   };
 
   return (
-    <div className="scale-[1.01] text-primary-300 w-11/12 h-full">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-10 lg:py-16 bg-white shadow-md rounded-md">
       <div className="bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center">
         <p>Logged in as</p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+        className="bg-primary-900 text-primary-100 py-6 px-8 space-y-6 rounded-b-md"
       >
         <div className="space-y-2">
-          <label htmlFor="title">
+          <label
+            htmlFor="title"
+            className="block text-sm md:text-base font-medium"
+          >
             What is your project title?
           </label>
           <input
@@ -118,7 +118,10 @@ function FormCreateProject() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="budget">
+          <label
+            htmlFor="budget"
+            className="block text-sm md:text-base font-medium"
+          >
             How much is your budget?
           </label>
           <input
@@ -132,7 +135,10 @@ function FormCreateProject() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="startDate">
+          <label
+            htmlFor="startDate"
+            className="block text-sm md:text-base font-medium"
+          >
             When do you want to start?
           </label>
           <input
@@ -146,7 +152,10 @@ function FormCreateProject() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="startDate">
+          <label
+            htmlFor="startDate"
+            className="block text-sm md:text-base font-medium"
+          >
             When do you want finish this project?
           </label>
           <input
@@ -160,7 +169,12 @@ function FormCreateProject() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="deadline">Deadline</label>
+          <label
+            htmlFor="deadline"
+            className="block text-sm md:text-base font-medium"
+          >
+            Deadline
+          </label>
           <input
             name="deadline"
             value={formData.deadline}
@@ -171,7 +185,10 @@ function FormCreateProject() {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor="status">
+          <label
+            htmlFor="status"
+            className="block text-sm md:text-base font-medium"
+          >
             Select your project status
           </label>
           <select
@@ -188,7 +205,10 @@ function FormCreateProject() {
           </select>
         </div>
         <div className="space-y-2">
-          <label htmlFor="description">
+          <label
+            htmlFor="description"
+            className="block text-sm md:text-base font-medium"
+          >
             Anything we should know about your project?
           </label>
           <textarea
@@ -205,7 +225,7 @@ function FormCreateProject() {
           </p>
           <button
             type="submit"
-            className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300"
+            className="bg-accent-500 text-primary-800 font-semibold py-2 px-6 rounded-lg hover:bg-amber-200 transition-all"
           >
             Create now
           </button>

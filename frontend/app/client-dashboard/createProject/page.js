@@ -2,7 +2,7 @@ import FormCreateProject from "@/app/_components/client-dashboard-components/For
 
 function page() {
   return (
-    <div>
+    <div className="flex items-center justify-center ">
       <FormCreateProject />
     </div>
   );

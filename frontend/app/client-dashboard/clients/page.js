@@ -6,7 +6,7 @@ export const metadata = {
 
 function Page() {
   return (
-    <div>
+    <div className="bg-accent-600">
       <ClientList />
 
       <p>This is a client-side only page.</p>
