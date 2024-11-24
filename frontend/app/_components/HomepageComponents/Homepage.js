@@ -122,7 +122,14 @@ const HomePage = () => {
           </div>
         </div>
       </motion.nav>
-
+      {isDemoVisible && (
+        <img
+          src="/images/demo.gif"
+          alt="Developer working"
+          className="rounded-lg shadow-2xl"
+          loading="lazy"
+        />
+      )}
       {/* Hero Section */}
       <div className="relative pt-32 pb-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,7 +167,7 @@ const HomePage = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-                  onClick={() => router.push("/login")}
+                  onClick={() => router.push("/signup")}
                 >
                   Get Started <ChevronRight className="w-4 h-4" />
                 </motion.button>
@@ -171,7 +178,7 @@ const HomePage = () => {
                   className="bg-white/10 text-white px-8 py-3 rounded-lg hover:bg-white/20 transition-colors"
                   onClick={handleClick}
                 >
-                  Watch Demo
+                  {isDemoVisible ? "Hide Demo" : "Watch Demo"}
                 </motion.button>
               </motion.div>
             </motion.div>
@@ -313,7 +320,7 @@ const HomePage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/signup")}
           >
             Get Started Now
           </motion.button>
