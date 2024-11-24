@@ -18,7 +18,7 @@ function LogOutButton({}) {
           toast.success("Successfully logged out.");
         });
       }}
-      className='px-4 py-2 m-6 bg-red-500 text-white rounded hover:bg-red-600'
+      className="px-4 py-2 m-6 bg-red-500 text-white rounded hover:bg-red-600"
     >
       Sign Out
     </button>

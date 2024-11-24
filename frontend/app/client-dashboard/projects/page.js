@@ -1,5 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import ProjectClient from "@/app/_components/client-dashboard-components/ProjectClient";
 
 // export const metadata = {
@@ -50,6 +59,7 @@ export default function Page() {
         );
         if (response.ok) {
           const projectData = await response.json();
+          console.log(projectData);
           setProjects(projectData);
         } else {
           setError(
@@ -75,7 +85,7 @@ export default function Page() {
 
       if (response.ok) {
         const projectData = await response.json();
-        console.log(projectData);
+
         setProjects((prevProjects) =>
           prevProjects.filter(
             (project) => project.id !== id
@@ -112,9 +122,12 @@ export default function Page() {
   };
 
   return (
-    <div className="">
+    <div>
       {projects.length > 0 && (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-5">
+          <h2 className=" text-4xl mb-5 text-accent-400 font-medium">
+            Planning across your Projects
+          </h2>
           {projects.map((project) => (
             <ProjectClient
               key={project.id}
