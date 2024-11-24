@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import LogOutButton from "../AuthComponents/LogOutButton";
-import Logo from "./Logo";
-import Navigation from "./Navigation";
 import NewNavigation from "./NewNavigation";
 
 function Header() {

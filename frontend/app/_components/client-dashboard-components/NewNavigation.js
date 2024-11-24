@@ -45,7 +45,7 @@ function NewNavigation({ userName }) {
           </li>
           <li>
             <Link
-              href="/client-dashboard/timeline"
+              href="/client-dashboard/calendar"
               className="hover:text-accent-400 hover:border-b-4 hover:border-lime-500 transition-colors"
             >
               Calendar
