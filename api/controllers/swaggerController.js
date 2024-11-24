@@ -16,6 +16,126 @@ swaggerController.get("/swagger.json", (req, res) => {
       description: "API for managing projects, users, and authentication.",
     },
     paths: {
+      "/api/events/{userId}": {
+        get: {
+          summary: "Get all calendar events for a specific user",
+          description: "Returns all events associated with a given userId.",
+          parameters: [
+            {
+              name: "userId",
+              in: "path",
+              required: true,
+              description:
+                "The ID of the user whose events are being retrieved.",
+              schema: {
+                type: "integer",
+              },
+            },
+          ],
+          responses: {
+            200: {
+              description: "A list of events.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", format: "date-time" },
+                        title: { type: "string" },
+                        start: { type: "string", format: "date-time" },
+                        end: { type: "string", format: "date-time" },
+                        allDay: { type: "boolean" },
+                        userId: { type: "integer" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            401: {
+              description: "Unauthorized. Missing or invalid token.",
+            },
+            404: {
+              description: "User not found.",
+            },
+          },
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
+        },
+      },
+      "/api/events/": {
+        post: {
+          summary: "Create a new calendar event for a user",
+          description:
+            "Creates a new event for a user specified in the request body.",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string", format: "date-time" },
+                    title: { type: "string" },
+                    start: { type: "string", format: "date-time" },
+                    end: { type: "string", format: "date-time" },
+                    allDay: { type: "boolean" },
+                    userId: { type: "integer" },
+                  },
+                  required: ["id", "title", "start", "end", "allDay", "userId"],
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: "Event created successfully.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string", format: "date-time" },
+                      title: { type: "string" },
+                      start: { type: "string", format: "date-time" },
+                      end: { type: "string", format: "date-time" },
+                      allDay: { type: "boolean" },
+                      userId: { type: "integer" },
+                    },
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Invalid request body.",
+            },
+            401: {
+              description: "Unauthorized. Missing or invalid token.",
+            },
+          },
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
+        },
+      },
+
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
+
       "/api/projects/{projectId}/invoice": {
         get: {
           summary: "Generate an invoice for a project",
