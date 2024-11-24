@@ -1,9 +1,9 @@
-function ClientTable({
-  title,
-  clientId,
-  status,
-  deadline,
-}) {
+import { sendPostJsonRequest } from "@/app/utils/resHandler";
+import Link from "next/link";
+
+function ClientTable({ project, onDelete }) {
+  const { title, status, deadline, id } = project;
+
   return (
     <table className="min-w-full border border-gray-300">
       <thead>
@@ -22,10 +22,17 @@ function ClientTable({
           <td className="px-4 py-2 border-b">{status}</td>
           <td className="px-4 py-2 border-b">{deadline}</td>
           <td className="px-4 py-2 border-b">
-            <button className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+            <Link
+              href={`/client-dashboard/edit/${id}`}
+              className="px-3 py-1 bg-blue-500 text-white rounded"
+            >
               Edit
-            </button>
-            <button className="px-3 py-1 bg-red-500 text-white rounded">
+            </Link>
+
+            <button
+              onClick={() => onDelete(id)}
+              className="px-3 py-1 bg-red-500 text-white rounded"
+            >
               Delete
             </button>
           </td>
