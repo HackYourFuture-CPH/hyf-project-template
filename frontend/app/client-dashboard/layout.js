@@ -1,6 +1,5 @@
 import "@/app/_styles/globals.css";
 
-import SideNavigation from "@/app/_components/client-dashboard-components/SideNavigation";
 import Header from "../_components/client-dashboard-components/Header";
 
 export const metadata = {
@@ -13,9 +12,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <div className="grid grid-cols-12 grid-rows-12 gap-1 min-h-screen">
+    <div className="flex flex-col  ">
       <Header />
-      <main className="col-span-12 row-span-10 row-start-3 overflow-hidden relative">
+      <main className=" overflow-hidden min-h-screen relative">
         {children}
       </main>
     </div>

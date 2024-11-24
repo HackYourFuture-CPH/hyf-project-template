@@ -8,6 +8,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
@@ -16,9 +28,6 @@ function ClientNewTable({ project, onDelete }) {
   return (
     <div>
       <Table>
-        <TableCaption>
-          A list of your recent invoices.
-        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">
@@ -26,7 +35,7 @@ function ClientNewTable({ project, onDelete }) {
             </TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Deadline</TableHead>
-            <TableHead className="">Edit</TableHead>
+            <TableHead>Edit</TableHead>
             <TableHead className="text-right">
               Delete
             </TableHead>
@@ -45,7 +54,32 @@ function ClientNewTable({ project, onDelete }) {
               </Link>
             </TableCell>
             <TableCell className="flex justify-end">
-              <TrashIcon className="h-6 w-6 text-red-500" />
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <TrashIcon className="h-6 w-6 text-red-500" />
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-slate-100 text-primary-900">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This
+                      will permanently delete your project.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => onDelete(id)}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </TableCell>
           </TableRow>
         </TableBody>

@@ -11,7 +11,7 @@ export default function ClientDashboard() {
         quality={80}
         placeholder="blur"
         alt="dashboard-design"
-        className="object-cover object-top"
+        className="object-cover object-top min-h-screen"
       />
       <div className="relative z-10 text-center flex flex-col items-center justify-center h-full">
         <h1 className="text-8xl text-emerald-200 mb-20 tracking-tight font-normal">
