@@ -30,10 +30,30 @@ export const getReviewById = async (req, res) => {
   }
 };
 
+export const getMyReview = async (req, res) => {
+  const book_id = req.params.id;
+  const user_id = req.user.userId;
+
+  try {
+    const existingReview = await knex("Reviews")
+      .where({ book_id, user_id })
+      .first();
+
+    if (!existingReview) {
+      return res.status(404).json({ error: "No review found for this user." });
+    }
+
+    res.status(200).json(existingReview);
+  } catch (error) {
+    console.error("Error fetching review:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const createReview = async (req, res) => {
   const { rating, review_text } = req.body;
-  const book_id = req.params.bookId;
-  const user_id = req.user.userId; //from authenticate middleware
+  const book_id = req.params.id;
+  const user_id = req.user.userId;
 
   if (!book_id || !rating || !review_text) {
     return res.status(400).json({ error: "Missing required fields" });

@@ -4,7 +4,8 @@ import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
-import Notes from "@/app/components/Notes";
+import Notes from "@/app/components/Notes.jsx";
+import Reviews from "@/app/components/Reviews.jsx";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -16,6 +17,11 @@ const BookDetails = () => {
 
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
+
+  const handleReviewSuccess = (response) => {
+    console.log("Review added successfully:", response);
+    // Optionally refresh the reviews or display a success message
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -69,6 +75,9 @@ const BookDetails = () => {
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
             }}
           />
+          <Box>
+            <Reviews bookId={id} onSuccess={handleReviewSuccess} />
+          </Box>
         </Box>
 
         <Box
@@ -132,7 +141,7 @@ const BookDetails = () => {
                 },
               }}
             >
-              Reviews
+              Quotes
             </Button>
 
             <Button
