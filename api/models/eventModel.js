@@ -27,6 +27,11 @@ const Events = sequelize.define(
       allowNull: false,
       field: "all_day",
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "user_id",
+    },
   },
   {
     modelName: "Events",
