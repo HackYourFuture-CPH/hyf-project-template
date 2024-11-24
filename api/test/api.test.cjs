@@ -201,6 +201,28 @@ describe("Manual API Tests", () => {
     chai.expect(response.status).to.equal(200);
   });
 
+  it("/api/events/6 => returns all events from a userId", async () => {
+    const response = await supertest(config.request.baseURL)
+      .get("/api/events/6")
+      .set("Authorization", `Bearer ${token}`);
+    chai.expect(response.status).to.equal(200);
+  });
+
+  it("/api/events/ => should create a new event from a userId in the request", async () => {
+    const requestBody = {
+      id: "2024-11-20T23:00:00.000Z",
+      title: "test from mocha tester",
+      start: "2024-11-20T23:00:00.000Z",
+      end: "2024-11-20T23:00:00.000Z",
+      allDay: true,
+      userId: 6,
+    };
+    const response = await supertest(config.request.baseURL)
+      .post("/api/events/")
+      .set("Authorization", `Bearer ${token}`)
+      .send(requestBody);
+    chai.expect(response.status).to.equal(201);
+  });
   //  it("/api/projects/{id} (DELETE) => should delete a project by ID", async () => {
   //   const projectId = "7";
   //   const response = await supertest(config.request.baseURL)
