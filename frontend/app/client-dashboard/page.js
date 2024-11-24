@@ -23,7 +23,7 @@ export default function ClientDashboard() {
         <Link
           href="client-dashboard/projects"
           className="bg-accent-500 px-6 py-4 sm:px-8 sm:py-5 md:px-10 md:py-6 text-base sm:text-lg md:text-xl lg:text-2xl text-primary-800 font-semibold
-           hover:bg-accent-600 transition-all rounded-lg shadow-lg"
+           hover:bg-yellow-300 transition-all rounded-lg shadow-lg"
         >
           Explore your Project
         </Link>
