@@ -19,12 +19,10 @@ function ClientStatus({ project }) {
     endDate,
   } = project;
 
-
   const start = dayjs(startDate);
-  const end = dayjs(deadline || endDate); 
+  const end = dayjs(deadline || endDate);
   const today = dayjs();
 
-  
   if (!start.isValid() || !end.isValid()) {
     return (
       <div className="flex justify-center items-center text-red-500">
@@ -34,8 +32,8 @@ function ClientStatus({ project }) {
   }
 
   const totalDays = end.diff(start, "day");
-  const elapsedDays = Math.max(today.diff(start, "day"), 0); 
-  const remainingDays = Math.max(end.diff(today, "day"), 0); 
+  const elapsedDays = Math.max(today.diff(start, "day"), 0);
+  const remainingDays = Math.max(end.diff(today, "day"), 0);
 
   if (totalDays <= 0) {
     return (
@@ -45,16 +43,15 @@ function ClientStatus({ project }) {
     );
   }
 
-  const pendingDays = Math.min(elapsedDays, totalDays); 
-  const remainingPendingDays = totalDays - pendingDays; 
-  const inProgressDays = Math.max(remainingDays, 1); 
-
+  const pendingDays = Math.min(elapsedDays, totalDays);
+  const remainingPendingDays = totalDays - pendingDays;
+  const inProgressDays = Math.max(remainingDays, 1);
 
   const data = {
     labels: ["Completed", "In Progress", "Pending"],
     datasets: [
       {
-        data: [0, 0, 0], 
+        data: [0, 0, 0],
         backgroundColor: ["#36A2EB", "#4BC0C0", "#FFCE56"],
         hoverBackgroundColor: [
           "#36A2EB",
@@ -65,21 +62,20 @@ function ClientStatus({ project }) {
     ],
   };
 
-
   if (status === "completed") {
-    data.datasets[0].data = [0, 0, 1]; 
+    data.datasets[0].data = [0, 0, 1];
   } else if (status === "pending") {
     data.datasets[0].data = [
       pendingDays,
       remainingPendingDays,
       0,
-    ]; 
+    ];
   } else if (status === "in-progress") {
     data.datasets[0].data = [
       pendingDays,
       inProgressDays,
       0,
-    ]; 
+    ];
   }
 
   return (
@@ -94,7 +90,7 @@ function ClientStatus({ project }) {
         <FlagIcon className="w-6 h-6 text-primary-purple-light" />
       </div>
       <div className="col-start-5 row-start-5 flex items-center justify-center text-xl font-semibold">
-        {remainingDays} days left
+        {remainingDays}
       </div>
     </div>
   );
