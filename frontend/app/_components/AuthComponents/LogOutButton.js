@@ -1,8 +1,8 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-import { handleLogOut } from "../../utils/auth";
-import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { handleLogOut } from '../../utils/auth';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 function LogOutButton({}) {
   const router = useRouter();
@@ -11,14 +11,15 @@ function LogOutButton({}) {
     <button
       onClick={() => {
         handleLogOut(() => {
-          Cookies.remove("token", { path: "/" });
-          Cookies.remove("userRole", { path: "/" });
+          Cookies.remove('userRole', { path: '/' });
+          Cookies.remove('userId', { path: '/' });
+          Cookies.remove('projectTitle', { path: '/' });
 
-          router.push("/");
-          toast.success("Successfully logged out.");
+          router.push('/');
+          toast.success('Signed out successfully! 🔐');
         });
       }}
-      className="px-4 py-2 m-6 bg-red-500 text-white rounded hover:bg-red-600"
+      className='px-2 py-1 min-w-20 bg-red-500 text-white rounded hover:bg-red-600'
     >
       Sign Out
     </button>

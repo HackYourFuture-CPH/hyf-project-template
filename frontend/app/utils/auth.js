@@ -1,8 +1,5 @@
-import {
-  sendPostJsonRequest,
-  handleResponse,
-} from "./resHandler";
-import cookie from "cookie";
+import { sendPostJsonRequest, handleResponse } from './resHandler';
+import cookie from 'cookie';
 
 export const handleSignUp = async (data) => {
   const response = await sendPostJsonRequest(
@@ -10,7 +7,7 @@ export const handleSignUp = async (data) => {
     data
   );
   return await handleResponse(response, () => {
-    window.location.href = "/";
+    window.location.href = '/login';
   });
 };
 
@@ -33,7 +30,7 @@ export const handleLogOut = async (logoutCallBack) => {
   return handleResponse(response, logoutCallBack);
 };
 
-export const getFieldFromCookie = (field) => {
-  const cookies = cookie.parse(document.cookie || "");
+export const getFieldFromCookie = field => {
+  const cookies = cookie.parse(document.cookie || '');
   return cookies[field];
 };

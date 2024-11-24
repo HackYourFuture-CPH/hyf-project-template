@@ -9,6 +9,7 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
+			// ------ Only for Dev Dashboard, plz don't delete. ------
   			'primary-blue': {
   				light: '#A5B4FC',
   				DEFAULT: '#6366F1',
@@ -19,6 +20,18 @@ module.exports = {
   				DEFAULT: '#8B5CF6',
   				dark: '#6D28D9'
   			},
+			'primary-accent': {
+          		light: "#818CF8",
+          		DEFAULT: "#4F46E5",
+          		dark: "#3730A3",
+        	},
+			'primary-neutral': {
+				light: "#E0E7FF",
+				DEFAULT: "#CBD5E1",
+				dark: "#94A3B8",
+			},
+			// ------ Only for Dev Dashboard, plz don't delete. ------
+
   			accent: {
   				'50': '#a8e6db',
   				'100': '#72cbbc',
@@ -91,8 +104,15 @@ module.exports = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
-  },
-  plugins: [require("tailwindcss-animate")],
+  		},
+		screens: {
+			sm: '640px',
+			md: '768px',
+			lg: '1024px',
+		},
+	  },
+	},
+	plugins: [],
 };
+
+//   plugins: [require("tailwindcss-animate")],
