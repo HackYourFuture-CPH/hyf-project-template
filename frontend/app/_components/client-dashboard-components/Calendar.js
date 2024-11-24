@@ -8,6 +8,7 @@ import {
 } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 import {
@@ -17,33 +18,51 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { useEffect, useState } from "react";
+import { getFieldFromCookie } from "@/app/utils/auth";
 
 function Calender() {
   const [currentEvent, setCurrentEvent] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState("");
   const [selectDate, setSelectDate] = useState(null);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedEvent = localStorage.getItem("event");
-      if (savedEvent) {
-        setCurrentEvent(JSON.parse(savedEvent));
+    const fetchUserData = async () => {
+      const userId = getFieldFromCookie("userId");
+      setUserId(userId);
+      try {
+        const response = await fetch(
+          `/api/events/${userId}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (response.ok) {
+          const contentType =
+            response.headers.get("Content-Type");
+          if (
+            contentType &&
+            contentType.includes("application/json")
+          ) {
+            const result = await response.json();
+
+            setCurrentEvent(result);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching event:", error);
       }
-    }
-  }, []);
+    };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "event",
-        JSON.stringify(currentEvent)
-      );
-    }
-  }, [currentEvent]);
+    fetchUserData();
+  }, []);
 
   const HandleDateClick = (selected) => {
     console.log("Date selected:", selected);
+
     setSelectDate(selected);
     setIsDialogOpen(true);
   };
@@ -63,7 +82,7 @@ function Calender() {
     }
   };
 
-  const handleAddEvent = (e) => {
+  const handleAddEvent = async (e) => {
     e.preventDefault();
     if (newEventTitle && selectDate) {
       const calendarApi = selectDate.view.calendar;
@@ -75,10 +94,37 @@ function Calender() {
         start: selectDate.start,
         end: selectDate.end,
         allDay: selectDate.allDay,
+        userId: `${userId}`,
       };
+      try {
+        // POST the newEvent to the server
+        const response = await fetch("/api/events", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newEvent),
+        });
 
-      calendarApi.addEvent(newEvent);
-      handleCloseDialog();
+        if (response.ok) {
+          // Optionally process the server's response
+          const result = await response.json();
+          console.log("Event successfully added:", result);
+
+          // Add the event to the calendar locally
+          calendarApi.addEvent(newEvent);
+
+          // Close the dialog or reset state
+          handleCloseDialog();
+        } else {
+          console.error(
+            "Failed to add event:",
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error adding event:", error);
+      }
     }
   };
 
@@ -150,7 +196,7 @@ function Calender() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
       >
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Add Event</DialogTitle>
           </DialogHeader>
