@@ -1,10 +1,13 @@
 "use client";
 import React, { useState } from "react";
 
-import { useRouter } from "next/navigation";
+import HomePage from "./_components/HomepageComponents/Homepage";
 const Home = () => {
-  const router = useRouter();
-  return <button onClick={() => router.push("/login")}>Login</button>;
+  return (
+    <>
+      <HomePage />
+    </>
+  );
 };
 
 export default Home;
