@@ -1,4 +1,5 @@
 "use client";
+import { getFieldFromCookie } from "@/app/utils/auth";
 import React, { useEffect, useState } from "react";
 
 function FormCreateProject() {
@@ -16,29 +17,8 @@ function FormCreateProject() {
   });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("/api/user", {
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          const userData = await response.json();
-          setClientId(userData.id);
-        } else {
-          console.error("Failed to fetch user data");
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching user data: " + error.message
-        );
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
+    const clientId = getFieldFromCookie("userId");
+    setClientId(clientId);
     if (clientId) {
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -82,9 +62,12 @@ function FormCreateProject() {
           description: "",
         });
       } else {
-        console.error(
-          "Failed to create project:",
-          response.statusText
+        const error = await response.json();
+        console.error("Error details:", error);
+        alert(
+          `Failed to create project: ${
+            error.details || response.statusText
+          }`
         );
       }
     } catch (error) {
@@ -199,9 +182,9 @@ function FormCreateProject() {
             required
           >
             <option value="">Choose Status</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
           </select>
         </div>
         <div className="space-y-2">
