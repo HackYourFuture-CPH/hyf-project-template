@@ -8,7 +8,15 @@ import {
   Button,
   Card,
   CardContent,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getUserReview,
   createReview,
@@ -22,8 +30,10 @@ const Reviews = ({ bookId, onSuccess }) => {
   const [reviewText, setReviewText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [action, setAction] = useState("");
+  const [isDeleted, setIsDeleted] = useState(false);
 
-  // Fetch the user's existing review when the component mounts
   useEffect(() => {
     const fetchUserReview = async () => {
       try {
@@ -31,6 +41,7 @@ const Reviews = ({ bookId, onSuccess }) => {
         setExistingReview(review);
         setRating(review.rating);
         setReviewText(review.review_text);
+        setIsDeleted(false);
       } catch (error) {
         console.log("No existing review found.");
         setExistingReview(null);
@@ -44,13 +55,11 @@ const Reviews = ({ bookId, onSuccess }) => {
       const reviewData = { rating, review_text: reviewText };
 
       if (existingReview) {
-        console.log("Updating Review:", existingReview.review_id);
         await updateReview(existingReview.review_id, reviewData);
       } else {
-        console.log("Creating Review for Book:", bookId);
-        await createReview(bookId, reviewData);
+        const newReview = await createReview(bookId, reviewData);
+        setExistingReview(newReview);
       }
-
       onSuccess();
       setIsEditing(false);
     } catch (error) {
@@ -61,51 +70,81 @@ const Reviews = ({ bookId, onSuccess }) => {
 
   const handleDelete = async () => {
     try {
-      console.log("Deleting Review:", existingReview.review_id);
-      await deleteReview(existingReview.review_id);
       setExistingReview(null);
       setRating(0);
       setReviewText("");
+
+      await deleteReview(existingReview.review_id);
     } catch (error) {
-      console.error("Error deleting review:", error);
       setError(error.message || "Failed to delete the review.");
     }
+  };
+
+  const openDialog = (actionType) => {
+    setAction(actionType);
+    setDialogOpen(true);
+  };
+
+  const confirmAction = () => {
+    if (action === "edit") {
+      setIsEditing(true);
+    } else if (action === "delete") {
+      handleDelete();
+    }
+    setDialogOpen(false);
   };
 
   return (
     <Box sx={{ mt: 2 }}>
       {existingReview && !isEditing ? (
-        <Card sx={{ mb: 2 }}>
+        <Card sx={{ mb: 2, position: "relative" }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Your Review
             </Typography>
-            <Rating value={rating} readOnly />
-            <Typography variant="body1" sx={{ mt: 1 }}>
-              {reviewText}
-            </Typography>
-            <Button
-              variant="outlined"
-              color="primary"
-              sx={{ mt: 2, mr: 1 }}
-              onClick={() => setIsEditing(true)}
+            <Box
+              sx={{
+                position: "relative",
+                "&:hover .hover-icons": {
+                  opacity: 1,
+                },
+              }}
             >
-              Edit
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              sx={{ mt: 2 }}
-              onClick={handleDelete}
-            >
-              Delete
-            </Button>
+              <Rating value={rating} readOnly />
+              <Typography variant="body1" sx={{ mt: 1 }}>
+                {reviewText}
+              </Typography>
+
+              <Box
+                className="hover-icons"
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  display: "flex",
+                  gap: 1,
+                  opacity: 0,
+                  transition: "opacity 0.3s",
+                }}
+              >
+                <IconButton color="primary" onClick={() => openDialog("edit")}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton color="error" onClick={() => openDialog("delete")}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
       ) : (
         <Box>
           <Typography variant="h6" gutterBottom>
-            {existingReview ? "Edit Your Review" : "Add Your Review"}
+            {isDeleted
+              ? "Add Your Review"
+              : existingReview
+              ? "Edit Your Review"
+              : "Add Your Review"}
           </Typography>
           <Rating
             value={rating}
@@ -140,6 +179,26 @@ const Reviews = ({ bookId, onSuccess }) => {
           </Button>
         </Box>
       )}
+
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {action === "edit"
+              ? "Are you sure you want to edit this review?"
+              : "Are you sure you want to delete this review?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={confirmAction}
+            color={action === "delete" ? "error" : "primary"}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
