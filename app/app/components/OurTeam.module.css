@@ -1,46 +1,53 @@
 .ourTeam {
     width: 100%;
     background-color: #f5ebeb;
-    padding: 40px 20px;
+    padding: 20px 10px;
     text-align: center;
-    margin: 50px 0;
+    justify-self: center;
 }
 
 .teamMembers {
     display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
 .member {
-    max-width: 400px;
+    width: 200px;
     margin: 10px;
     background-color: #fff;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
     transition: transform 0.3s ease;
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(20px);
     transition:
-        opacity 2s ease,
-        transform 2s ease;
+        opacity 1s ease,
+        transform 1s ease;
 }
 
 .member:hover {
     transform: scale(1.05);
 }
 
+.member p {
+    font-size: 9pt;
+}
+
 .memberImage {
     margin-bottom: 10px;
+    width: 100%;
+    height: auto;
     transition: transform 0.3s ease;
+    border-radius: 50%;
 }
 
 .socialMediaIcons {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
     display: flex;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -51,12 +58,95 @@
 }
 
 .socialIcon {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
     background-color: white;
+    border-radius: 40%;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .ourTeam {
+        width: 90%;
+        padding: 15px 5px;
+    }
+
+    .teamMembers {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .member {
+        width: 150px;
+        padding: 10px;
+        margin: 10px auto;
+    }
+    .member {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .visible {
+        opacity: 1;
+        transform: none;
+    }
+    .member p {
+        font-size: 8pt;
+    }
+
+    .socialIcon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .memberImage {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .ourTeam {
+        padding: 10px;
+    }
+
+    .teamMembers {
+        gap: 10px;
+    }
+
+    .member {
+        width: 120px;
+        padding: 8px;
+    }
+
+    .member p {
+        font-size: 7pt;
+    }
+
+    .socialIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .memberImage {
+        width: 100%;
+        height: auto;
+    }
+
+    .member {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .visible {
+        opacity: 1;
+        transform: none;
+    }
 }

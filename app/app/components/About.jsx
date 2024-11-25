@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./About.module.css";
+import OurTeam from "./OurTeam";
 
 const About = () => {
     return (
@@ -13,9 +14,8 @@ const About = () => {
                     provide a space where readers can document, reflect, and connect with the books
                     that shape their lives.
                 </p>
-                <a href="#" className={styles.learnMore}>
-                    LEARN MORE
-                </a>
+
+                <OurTeam />
             </div>
             <div className={styles.authorContainer}>
                 <Image

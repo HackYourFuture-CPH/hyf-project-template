@@ -10,9 +10,14 @@ export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", //for cookie handling
+      credentials: "include",
       body: method !== "GET" ? JSON.stringify(userData) : undefined,
     });
+
+    if (response.status === 204) {
+      return null; // Return null or any appropriate value for no content
+    }
+
     const result = await response.json();
 
     if (!response.ok) {

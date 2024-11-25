@@ -6,13 +6,11 @@
     padding: 40px;
     width: 100%;
     margin: 50px 0 0 0;
-    height: 450px;
 }
 
 .textContainer {
-    flex: 1;
     margin-right: 20px;
-    max-width: 500px;
+    max-width: 700px;
 }
 
 .aboutTitle {
@@ -42,6 +40,8 @@
 
 .quoteContainer {
     text-align: center;
+    height: auto;
+    min-width: 200px;
 }
 
 .quoteContainer h3 {
@@ -63,4 +63,72 @@
 
 .learnMore:hover {
     color: #d06097;
+}
+
+@media (max-width: 768px) {
+    .about {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 20px;
+    }
+
+    .textContainer {
+        margin-right: 0;
+        max-width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .aboutTitle {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+    }
+
+    .aboutDescription {
+        font-size: 0.9rem;
+    }
+
+    .authorContainer {
+        width: 260px;
+        height: auto;
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .authorImage {
+        width: 80px;
+        height: 80px;
+        margin-top: -40px;
+    }
+
+    .quoteContainer blockquote {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .learnMore {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .aboutTitle {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+    }
+
+    .authorImage {
+        width: 70px;
+        height: 70px;
+    }
+
+    .quoteContainer blockquote {
+        font-size: 0.8rem;
+    }
+
+    .learnMore {
+        font-size: 0.8rem;
+    }
 }

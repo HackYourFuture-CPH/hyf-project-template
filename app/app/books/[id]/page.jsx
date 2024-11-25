@@ -20,7 +20,6 @@ const BookDetails = () => {
 
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
-    // Optionally refresh the reviews or display a success message
   };
 
   useEffect(() => {
@@ -36,7 +35,6 @@ const BookDetails = () => {
         const data = await response.json();
         setBook(data);
       } catch (err) {
-        console.error(err);
         setError("Could not load book details.");
       } finally {
         setLoading(false);
@@ -54,66 +52,86 @@ const BookDetails = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
-          alignItems: "start",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: { xs: "center", md: "start" },
           padding: "2rem",
           backgroundColor: "#f5ebeb",
-          height: "100vh",
-          margin: "2% 5%",
-          overflow: "hidden",
+          height: "auto",
+          margin: { xs: "2% 5%", md: "2% 10%" },
+          gap: { xs: "2rem", md: "0" },
         }}
       >
-        <Box sx={{ flex: "3", maxWidth: "20%" }}>
+        <Box
+          sx={{
+            flex: { xs: "1", md: "3" },
+            maxWidth: { xs: "100%", md: "20%" },
+            textAlign: { xs: "center", md: "left" },
+          }}
+        >
           <CardMedia
             component="img"
             image={book.cover_image}
             alt={book.title}
             sx={{
-              width: "100%",
+              width: { xs: "70%", md: "100%" },
               height: "auto",
               borderRadius: "8px",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
+              margin: { xs: "0 auto", md: "0" },
             }}
           />
-          <Box>
+          <Box sx={{ marginTop: "1rem" }}>
             <Reviews bookId={id} onSuccess={handleReviewSuccess} />
           </Box>
         </Box>
 
         <Box
           sx={{
-            flex: "2",
-            paddingLeft: "2rem",
+            flex: { xs: "1", md: "2" },
+            paddingLeft: { xs: "0", md: "2rem" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "start",
-            overflow: "auto",
-            maxHeight: "calc(100vh - 4rem)",
+            textAlign: { xs: "center", md: "left" },
           }}
         >
           <Typography
-            variant="h3"
+            variant="h4"
             component="h1"
-            sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+            sx={{
+              fontWeight: "bold",
+              marginBottom: "1rem",
+              fontSize: { xs: "1.5rem", md: "2rem" },
+            }}
           >
             {book.title}
           </Typography>
           <Typography
-            variant="h5"
+            variant="h6"
             component="p"
-            sx={{ marginBottom: "0.5rem" }}
+            sx={{
+              marginBottom: "0.5rem",
+              fontSize: { xs: "1rem", md: "1.25rem" },
+            }}
           >
             Author: {book.author}
           </Typography>
-          <Typography variant="h6" component="p" sx={{ marginBottom: "1rem" }}>
+          <Typography
+            variant="h6"
+            component="p"
+            sx={{
+              marginBottom: "1rem",
+              fontSize: { xs: "1rem", md: "1.25rem" },
+            }}
+          >
             Genre: {book.genre}
           </Typography>
           <Typography
             variant="body1"
             component="p"
             sx={{
-              fontSize: "1.2rem",
-              lineHeight: "1.8",
+              fontSize: { xs: "0.9rem", md: "1.2rem" },
+              lineHeight: "1.6",
               paddingBottom: "2rem",
             }}
           >
@@ -123,16 +141,17 @@ const BookDetails = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               gap: "1rem",
               marginTop: "1rem",
-              flexShrink: 0,
+              justifyContent: { xs: "center", md: "flex-start" },
             }}
           >
             <Button
               variant="contained"
               sx={{
                 textTransform: "none",
-                fontSize: "20px",
+                fontSize: { xs: "16px", md: "20px" },
                 padding: "0.5rem 2rem",
                 borderRadius: "35px",
                 backgroundColor: "#D5B4B4",
@@ -148,7 +167,7 @@ const BookDetails = () => {
               variant="contained"
               sx={{
                 textTransform: "none",
-                fontSize: "20px",
+                fontSize: { xs: "16px", md: "20px" },
                 padding: "0.5rem 2rem",
                 borderRadius: "35px",
                 backgroundColor: "#D5B4B4",

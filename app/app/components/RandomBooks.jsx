@@ -14,7 +14,6 @@ const RandomBooks = () => {
       if (cachedBooks) {
         try {
           const randomBooks = JSON.parse(cachedBooks);
-          console.log("Cached Books: ", randomBooks);
           if (Array.isArray(randomBooks) && randomBooks.length > 0) {
             setBooks(randomBooks);
           } else {
