@@ -184,10 +184,16 @@ const Reviews = ({ bookId, onSuccess }) => {
           )}
           <Button
             variant="contained"
-            color="primary"
             onClick={handleSubmit}
             fullWidth
-            sx={{ fontWeight: "bold", textTransform: "none" }}
+            sx={{
+              fontWeight: "bold",
+              textTransform: "none",
+              bgcolor: "#d5b4b4",
+              "&:hover": {
+                bgcolor: "#867070",
+              },
+            }}
           >
             {existingReview ? "Update Review" : "Submit Review"}
           </Button>
