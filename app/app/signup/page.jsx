@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Container,
   TextField,
@@ -6,6 +7,7 @@ import {
   Typography,
   Grid2,
   Box,
+  useMediaQuery,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 
@@ -13,8 +15,7 @@ import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 
-import { validateField } from "../utils/validation";
-import { isValidate } from "../utils/validation";
+import { validateField, isValidate } from "../utils/validation";
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -31,6 +32,9 @@ const SignUp = () => {
     username: "",
     password: "",
   });
+
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,8 +54,6 @@ const SignUp = () => {
       [name]: validateField(name, value),
     }));
   };
-
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,51 +104,53 @@ const SignUp = () => {
           sx={{
             display: "flex",
             background: "#F0D2D6",
+            flexDirection: isMobile ? "column" : "row",
           }}
         >
-          <Container
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: 5,
-            }}
-          >
-            <Typography
-              variant="h5"
+          {!isMobile && (
+            <Container
               sx={{
-                fontFamily: "jacques Francois",
-                marginBottom: 2,
-                color: "#3C3C3C",
-                fontWeight: "500",
-                whiteSpace: "pre-line",
-                letterSpacing: "0.5px",
-                lineHeight: 1.5,
-                padding: "10px 20px",
-                backgroundColor: "#F5ECE8",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: 5,
               }}
             >
-              <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                Welcome to LeafNotes {"\n"}
-              </Box>
-              Track what you've read and {"\n"}what's next.
-            </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontFamily: "jacques Francois",
+                  marginBottom: 2,
+                  color: "#3C3C3C",
+                  fontWeight: "500",
+                  whiteSpace: "pre-line",
+                  letterSpacing: "0.5px",
+                  lineHeight: 1.5,
+                  padding: "10px 20px",
+                  backgroundColor: "#F5ECE8",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
+                  Welcome to LeafNotes {"\n"}
+                </Box>
+                Track what you've read and {"\n"}what's next.
+              </Typography>
 
-            <Box sx={{ width: "500px", height: "auto" }}>
-              <img
-                src="./books.png"
-                style={{ width: "100%", height: "auto" }}
-              />
-            </Box>
-          </Container>
+              <Box sx={{ width: "500px", height: "auto" }}>
+                <img
+                  src="./books.png"
+                  style={{ width: "100%", height: "auto" }}
+                />
+              </Box>
+            </Container>
+          )}
           <Container
             maxWidth="md"
             sx={{
               padding: 3,
               background: "#EAD3C4",
-
-              marginRight: "-25px",
+              marginRight: isMobile ? "0" : "-25px", // Adjust margin for mobile
             }}
           >
             <Typography
@@ -157,14 +161,11 @@ const SignUp = () => {
                 fontFamily: "jacques Francois",
               }}
             >
-              Create Account{" "}
-            </Typography>{" "}
+              Create Account
+            </Typography>
             <Box sx={{ display: "flex", width: "100%", mb: 1 }}>
-              {" "}
               <Grid2 container spacing={2} sx={{ width: "100%" }}>
-                {" "}
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
-                  {" "}
                   <TextField
                     variant="outlined"
                     required
@@ -178,10 +179,9 @@ const SignUp = () => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     onBlur={handleBlur}
-                  />{" "}
-                </Grid2>{" "}
+                  />
+                </Grid2>
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
-                  {" "}
                   <TextField
                     variant="outlined"
                     required
@@ -195,10 +195,10 @@ const SignUp = () => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     onBlur={handleBlur}
-                  />{" "}
-                </Grid2>{" "}
-              </Grid2>{" "}
-            </Box>{" "}
+                  />
+                </Grid2>
+              </Grid2>
+            </Box>
             <TextField
               variant="outlined"
               margin="normal"
@@ -213,7 +213,7 @@ const SignUp = () => {
               error={!!errors.email}
               helperText={errors.email}
               onBlur={handleBlur}
-            />{" "}
+            />
             <TextField
               variant="outlined"
               margin="normal"
@@ -228,7 +228,7 @@ const SignUp = () => {
               error={!!errors.username}
               helperText={errors.username}
               onBlur={handleBlur}
-            />{" "}
+            />
             <TextField
               variant="outlined"
               margin="normal"
@@ -244,7 +244,7 @@ const SignUp = () => {
               error={!!errors.password}
               helperText={errors.password}
               onBlur={handleBlur}
-            />{" "}
+            />
             <Button
               type="submit"
               fullWidth
@@ -260,15 +260,15 @@ const SignUp = () => {
               }}
               onClick={handleSubmit}
             >
-              Submit{" "}
-            </Button>{" "}
+              Submit
+            </Button>
             <Typography variant="h8">
-              Already have an account?{" "}
+              Already have an account?
               <a href="/login" target="_blank" style={{ color: "blueviolet" }}>
-                Login{" "}
-              </a>{" "}
-            </Typography>{" "}
-          </Container>{" "}
+                Login
+              </a>
+            </Typography>
+          </Container>
         </Container>
       </Container>
     </AppLayoutContainer>
