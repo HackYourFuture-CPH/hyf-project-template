@@ -26,16 +26,22 @@ import Link from "next/link";
 function ClientNewTable({ project, onDelete }) {
   const { title, status, deadline, id } = project;
   return (
-    <div>
-      <Table>
+    <div className="overflow-x-auto">
+      <Table className="min-w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">
+            <TableHead className="w-[150px] text-left">
               Project
             </TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Deadline</TableHead>
-            <TableHead>Edit</TableHead>
+            <TableHead className="text-left">
+              Status
+            </TableHead>
+            <TableHead className="text-left">
+              Deadline
+            </TableHead>
+            <TableHead className="text-left">
+              Edit
+            </TableHead>
             <TableHead className="text-right">
               Delete
             </TableHead>
@@ -49,14 +55,17 @@ function ClientNewTable({ project, onDelete }) {
             <TableCell>{status}</TableCell>
             <TableCell>{deadline}</TableCell>
             <TableCell className="">
-              <Link href={`/client-dashboard/edit/${id}`}>
-                <PencilSquareIcon className="h-6 w-6 text-blue-600" />
+              <Link
+                href={`/client-dashboard/edit/${id}`}
+                className="flex items-center"
+              >
+                <PencilSquareIcon className="h-6 w-6 hover:text-blue-800 transition duration-200" />
               </Link>
             </TableCell>
             <TableCell className="flex justify-end">
               <AlertDialog>
                 <AlertDialogTrigger>
-                  <TrashIcon className="h-6 w-6 text-red-500" />
+                  <TrashIcon className="h-6 w-6 hover:text-red-700 transition duration-200 cursor-pointer" />
                 </AlertDialogTrigger>
                 <AlertDialogContent className="bg-slate-100 text-primary-900">
                   <AlertDialogHeader>

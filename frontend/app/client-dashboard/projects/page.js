@@ -1,16 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import ProjectClient from "@/app/_components/client-dashboard-components/ProjectClient";
 
+import ProjectClient from "@/app/_components/client-dashboard-components/ProjectClient";
+import { useRouter } from "next/navigation";
 // export const metadata = {
 //   title: "projects",
 // };
@@ -20,6 +12,8 @@ export default function Page() {
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -107,35 +101,43 @@ export default function Page() {
   }
 
   if (projects.length === 0) {
-    return <div>You do not have any projects.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          You do not have any projects.
+        </h2>
+        <p className="text-gray-600 text-center mb-6">
+          Start organizing your work by creating a new
+          project. Once you create one, it will appear here.
+        </p>
+        <button
+          onClick={() =>
+            router.push("/client-dashboard/create-project")
+          }
+          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Create a New Project
+        </button>
+      </div>
+    );
   }
 
-  const statusCounts = {
-    completed: projects.filter(
-      (p) => p.status === "completed"
-    ).length,
-    inProgress: projects.filter(
-      (p) => p.status === "in-progress"
-    ).length,
-    pending: projects.filter((p) => p.status === "pending")
-      .length,
-  };
-
   return (
-    <div>
+    <div className="px-4 sm:px-6 lg:px-8 py-8">
       {projects.length > 0 && (
-        <div className="flex flex-col gap-5">
-          <h2 className=" text-4xl mb-5 text-accent-400 font-medium">
+        <div className="space-y-6">
+          <h2 className="text-2xl sm:text-4xl font-medium text-accent-400">
             Planning across your Projects
           </h2>
-          {projects.map((project) => (
-            <ProjectClient
-              key={project.id}
-              project={project}
-              statusCounts={statusCounts}
-              onDelete={handleDelete}
-            />
-          ))}
+          <div className="grid grid-cols-1  lg:grid-cols-2 gap-11">
+            {projects.map((project) => (
+              <ProjectClient
+                key={project.id}
+                project={project}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
