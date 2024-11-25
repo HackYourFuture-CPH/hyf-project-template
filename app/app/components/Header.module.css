@@ -1,14 +1,16 @@
 .header {
     width: 100%;
-    background-color: transparent;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    padding: 10px 20px;
+    background-color: transparent;
     z-index: 5;
 }
 
 .logoContainer {
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -17,100 +19,50 @@
 }
 
 .nav {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.navList {
-    display: flex;
-    justify-content: center;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.navItem {
-    margin: 0 15px;
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 
-.navItem a,
-.nav input {
+.navButton {
     text-decoration: none;
-    color: #333;
     font-family: "Lato", sans-serif;
     font-weight: 400;
-    letter-spacing: 5px;
+    padding: 10px 15px;
+    background-color: transparent;
     transition: all 0.3s;
+    cursor: pointer;
+    letter-spacing: 5px;
+    border: none;
 }
 
-.navItem a:hover,
-.navItem input:hover {
+.navButton:hover {
     color: #867070;
 }
 
-.searchInput {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    outline: none;
-    width: 200px;
-    transition: width 0.3s ease-in-out;
+.themeButton {
+    padding: 10px 15px;
+    font-size: 24px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 5px;
+    border: none;
 }
 
-.searchInput:focus {
-    width: 300px;
+.themeButton:hover {
+    color: #867070;
 }
 
-/* For tablets and smaller devices (widths up to 768px) */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .header {
-        padding: 10px 20px;
-    }
-
-    .searchInput {
-        width: 150px;
-    }
-
-    .searchInput:focus {
-        width: 300px;
-    }
-}
-
-/* For mobile devices (widths up to 576px) */
-@media (max-width: 576px) {
     .header {
         flex-direction: column;
         align-items: center;
-        padding: 15px;
     }
 
     .nav {
-        flex-direction: column;
-        align-items: center;
-    }
-    .navList {
         flex-direction: row;
-        align-items: center;
-        margin-top: 10px;
-    }
-
-    .navItem {
-        margin: 5px 0;
-        font-size: 0.75rem;
-        padding: 0 15px;
-    }
-
-    .nav .searchInput {
-        width: 150px;
-        padding: 8px;
-        margin-top: 10px;
-    }
-
-    .searchInput:focus {
-        width: 300px;
+        gap: 10px;
     }
 }
