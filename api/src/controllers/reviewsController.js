@@ -152,7 +152,7 @@ export const deleteReview = async (req, res) => {
 
     await knex("Reviews").where("review_id", id).del();
 
-    res.status(204).send();
+    res.status(204).end();
   } catch (error) {
     console.log("Error deleting review", error);
     res.status(500).json({ error: error.message });
