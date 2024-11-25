@@ -1,20 +1,23 @@
 "use client";
 import { createContext, useState, useContext, useEffect } from "react";
 import { makeRequest } from "../utils/makeRequest";
+import { useAuth } from "./AuthContext";
 import { useBookshelf } from "./BooksReadCountContext";
 
 const GoalContext = createContext();
 export const useGoal = () => useContext(GoalContext);
 
 export const GoalProvider = ({ children }) => {
+  const { currentUser } = useAuth();
   const [activeGoal, setActiveGoal] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { bookShelf } = useBookshelf();
 
   useEffect(() => {
+    if (!currentUser) return;
     const fetchGoal = async () => {
       try {
-        const response = await makeRequest(`/api/goals/${activeGoal.goal_id}`);
+        const response = await makeRequest(`/api/goals/latest`);
         setActiveGoal(response.data);
       } catch (error) {
         console.error("Failed to fetch goal:", error);
@@ -22,13 +25,27 @@ export const GoalProvider = ({ children }) => {
     };
 
     fetchGoal();
-  }, []);
+  }, [currentUser]);
 
   const setGoal = async (goalData) => {
     setIsSubmitting(true);
 
     try {
-      const newGoal = await makeRequest("/api/goals/add", goalData);
+      const startDate = new Date(goalData.start_date);
+      let endDate;
+
+      if (goalData.goal_type === "MONTHLY") {
+        endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + 1);
+      } else if (goalData.goal_type === "ANNUAL") {
+        endDate = new Date(startDate);
+        endDate.setFullYear(endDate.getFullYear() + 1);
+      }
+
+      const newGoal = await makeRequest("/api/goals/add", {
+        ...goalData,
+        end_date: endDate.toISOString().split("T")[0],
+      });
 
       setActiveGoal(newGoal);
     } catch (error) {
@@ -37,14 +54,36 @@ export const GoalProvider = ({ children }) => {
       setIsSubmitting(false);
     }
   };
+
   const updateGoal = async (goalData) => {
     setIsSubmitting(true);
+
     try {
+      const updatedData = { ...goalData };
+
+      if (goalData.start_date || goalData.goal_type) {
+        const startDate = new Date(
+          goalData.start_date || activeGoal.start_date
+        );
+        let endDate;
+
+        if (goalData.goal_type || activeGoal.goal_type === "MONTHLY") {
+          endDate = new Date(startDate);
+          endDate.setMonth(endDate.getMonth() + 1);
+        } else if (goalData.goal_type || activeGoal.goal_type === "ANNUAL") {
+          endDate = new Date(startDate);
+          endDate.setFullYear(endDate.getFullYear() + 1);
+        }
+
+        updatedData.end_date = endDate.toISOString().split("T")[0];
+      }
+
       const updatedGoal = await makeRequest(
         `/api/goals/${activeGoal.goal_id}`,
-        goalData,
+        updatedData,
         "PUT"
       );
+
       setActiveGoal(updatedGoal);
     } catch (error) {
       console.error("Failed to update goal:", error);
@@ -54,7 +93,8 @@ export const GoalProvider = ({ children }) => {
   };
 
   const getProgress = () => {
-    if (!activeGoal) return 0;
+    if (!activeGoal || !activeGoal.start_date || !activeGoal.goal_count)
+      return 0;
 
     const booksAfterStartDate = bookShelf.read.filter(
       (book) => new Date(book.created_at) >= new Date(activeGoal.start_date)

@@ -99,6 +99,24 @@ export const updateGoal = async (req, res) => {
   }
 };
 
+export const getLatestGoal = async (req, res) => {
+  try {
+    const latestGoal = await knex("ReadingGoals")
+      .where({ user_id: req.user.userId })
+      .orderBy("created_at", "desc")
+      .first();
+
+    if (!latestGoal) {
+      return res.status(404).json({ error: "No goals found" });
+    }
+
+    res.status(200).json({ goal: buildGoalDto(latestGoal) });
+  } catch (error) {
+    console.error("Error fetching latest goal:", error);
+    res.status(500).json({ error: "Error fetching latest goal" });
+  }
+};
+
 export const deleteGoal = async (req, res) => {
   const { goalId } = req.params;
   try {

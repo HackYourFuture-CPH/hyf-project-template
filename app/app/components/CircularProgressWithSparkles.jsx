@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import { keyframes } from "@mui/system";
 
@@ -121,40 +121,43 @@ const SparkleEffect = () => {
   const numSparkles = 8;
   const maxRadius = 60;
 
-  const sparkles = Array.from({ length: numSparkles }, (_, index) => {
-    const randomAngle = Math.random() * 2 * Math.PI;
-    const randomRadius = Math.random() * maxRadius;
-    const x = randomRadius * Math.cos(randomAngle);
-    const y = randomRadius * Math.sin(randomAngle);
+  const sparkles = useMemo(() => {
+    return Array.from({ length: numSparkles }, (_, index) => {
+      const randomAngle = Math.random() * 2 * Math.PI;
+      const randomRadius = Math.random() * maxRadius;
+      const x = randomRadius * Math.cos(randomAngle);
+      const y = randomRadius * Math.sin(randomAngle);
 
-    const randomDelay = Math.random() * 0.5;
-    const randomDuration = 0.8 + Math.random() * 0.4;
+      const randomDelay = Math.random() * 0.5;
+      const randomDuration = 0.8 + Math.random() * 0.4;
 
-    return (
-      <Box
-        key={index}
-        sx={{
-          position: "absolute",
-          top: `calc(50% + ${y}px)`,
-          left: `calc(50% + ${x}px)`,
-          width: "20px",
-          height: "20px",
-          animation: `${sparklesAnimation} ${randomDuration}s ease-in-out infinite`,
-          animationDelay: `${randomDelay}s`,
-          pointerEvents: "none",
-          "&::before": {
-            content: '""',
+      return (
+        <Box
+          key={index}
+          sx={{
             position: "absolute",
-            width: "100%",
-            height: "100%",
-            background: "linear-gradient(45deg, #FFD700, #FFA500)",
-            clipPath:
-              "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
-          },
-        }}
-      />
-    );
-  });
+            top: `calc(50% + ${y}px)`,
+            left: `calc(50% + ${x}px)`,
+            width: "20px",
+            height: "20px",
+            animation: `${sparklesAnimation} ${randomDuration}s ease-in-out infinite`,
+            animationDelay: `${randomDelay}s`,
+            pointerEvents: "none",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(45deg, #FFD700, #FFA500)",
+              clipPath:
+                "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+            },
+            willChange: "transform, opacity",
+          }}
+        />
+      );
+    });
+  }, [numSparkles, maxRadius]);
 
   return <Box sx={{ position: "absolute", inset: 0 }}>{sparkles}</Box>;
 };
