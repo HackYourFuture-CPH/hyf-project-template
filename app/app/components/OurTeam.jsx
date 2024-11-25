@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import styles from "./OurTeam.module.css";
 
 const OurTeam = () => {
@@ -63,14 +62,8 @@ const OurTeam = () => {
                         className={`${styles.member} ${visibleMembers[index] ? styles.visible : ""}`}
                         ref={(el) => (membersRef.current[index] = el)}
                     >
-                        <Image
-                            src={member.src}
-                            alt={member.name}
-                            className={styles.memberImage}
-                            width={300}
-                            height={300}
-                        />
-                        <h3>{member.name.toUpperCase()}</h3>
+                        <img src={member.src} alt={member.name} className={styles.memberImage} />
+                        <p>{member.name.toUpperCase()}</p>
 
                         <div className={styles.socialMediaIcons}>
                             <a href={member.GitHub} target="_blank" rel="noopener noreferrer">
