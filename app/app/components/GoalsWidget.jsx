@@ -12,12 +12,12 @@ import {
   DialogActions,
   TextField,
   MenuItem,
-  CircularProgress,
   IconButton,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { makeRequest } from "../utils/makeRequest.js";
 import { useBookshelf } from "../contexts/BooksReadCountContext.jsx";
+import CircularProgress from "./CircularProgressWithSparkles.jsx";
 
 export default function GoalsWidget({ activeGoal, setActiveGoal }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +27,6 @@ export default function GoalsWidget({ activeGoal, setActiveGoal }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [error, setError] = useState(null);
 
   const { booksCount } = useBookshelf();
 
@@ -112,8 +111,12 @@ export default function GoalsWidget({ activeGoal, setActiveGoal }) {
     setActiveGoal(refreshedGoal);
   };
 
+  const progress = activeGoal
+    ? Math.min((booksCount / activeGoal.goal_count) * 100, 100)
+    : 0;
+
   return (
-    <Card sx={{ width: "100%" }}>
+    <Card sx={{ width: "100%", p: 2 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           Reading Goal
@@ -143,61 +146,15 @@ export default function GoalsWidget({ activeGoal, setActiveGoal }) {
         ) : (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              textAlign: "center",
               mt: 2,
             }}
           >
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography variant="body2">
-                {activeGoal?.goal_type?.charAt(0) +
-                  activeGoal?.goal_type?.slice(1).toLowerCase()}{" "}
-                Goal
-              </Typography>
-              <Typography variant="body2" color="primary">
-                {activeGoal.goal_count} Books
-              </Typography>
-            </Box>
-
-            <Box sx={{ position: "relative", mb: 2 }}>
-              <CircularProgress
-                variant="determinate"
-                value={Math.min(
-                  (booksCount / activeGoal.goal_count) * 100,
-                  100
-                )}
-                size={80}
-                thickness={4}
-              />
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography variant="caption" component="div">
-                  {`${Math.round((booksCount / activeGoal.goal_count) * 100)}%`}
-                </Typography>
-              </Box>
-            </Box>
-
+            <CircularProgress progress={progress} />
             <Typography variant="body2" color="text.secondary">
               {booksCount} of {activeGoal.goal_count} books read
             </Typography>
+
             <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
               <Button
                 variant="outlined"
