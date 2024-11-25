@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
 import GoalsWidget from "./GoalsWidget";
 import { useBookshelf } from "../contexts/BooksReadCountContext";
+import { GoalProvider } from "../contexts/GoalContext";
 import { makeRequest } from "../utils/makeRequest";
 import styles from "./Profile.module.css";
 
@@ -11,7 +12,6 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
-  const [activeGoal, setActiveGoal] = useState(null);
   const { bookShelf, booksCount, loading, error } = useBookshelf();
 
   useEffect(() => {
@@ -39,25 +39,8 @@ const Profile = () => {
       }
     };
 
-    const fetchActiveGoal = async () => {
-      try {
-        const response = await makeRequest(`/api/goals`, {}, "GET");
-        const goalsArray = response.goals;
-
-        if (Array.isArray(goalsArray)) {
-          const active = goalsArray.find((g) => g.status === "IN_PROGRESS");
-          setActiveGoal(active || null);
-        } else {
-          console.error("Goals data is not an array:", response);
-        }
-      } catch (error) {
-        console.error("Failed to fetch goals:", error);
-      }
-    };
-
     fetchUserProfile();
     fetchFavoriteGenre();
-    fetchActiveGoal();
   }, []);
 
   const openModal = () => setIsModalOpen(true);
@@ -120,11 +103,11 @@ const Profile = () => {
           />
         )}
       </div>
-      <GoalsWidget
-        booksReadCount={booksCount}
-        activeGoal={activeGoal}
-        setActiveGoal={setActiveGoal}
-      />
+      <GoalProvider>
+        <Box sx={{ mt: 3 }}>
+          <GoalsWidget />
+        </Box>
+      </GoalProvider>
     </Box>
   );
 };

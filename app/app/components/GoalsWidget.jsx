@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -13,8 +13,8 @@ import {
   IconButton,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { useBookshelf } from "../contexts/BooksReadCountContext.jsx";
-import { useGoal } from "../contexts/GoalContext.jsx";
+import { useBookshelf } from "../contexts/BooksReadCountContext";
+import { useGoal } from "../contexts/GoalContext";
 import CircularProgress from "./CircularProgressWithSparkles.jsx";
 
 export default function GoalsWidget() {
@@ -26,130 +26,173 @@ export default function GoalsWidget() {
     getTimeRemaining,
     isSubmitting,
   } = useGoal();
+
   const { booksCount } = useBookshelf();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [goalData, setGoalData] = useState({
     goal_type: activeGoal?.goal_type || "MONTHLY",
     goal_count: activeGoal?.goal_count || "",
   });
+  const [isNewlyCompleted, setIsNewlyCompleted] = useState(false);
 
-  const handleSetGoal = (e) => {
+  useEffect(() => {
+    if (getProgress() === 100 && !isNewlyCompleted) {
+      setIsNewlyCompleted(true);
+    }
+  }, [getProgress()]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (activeGoal !== undefined) {
+        setIsLoading(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [activeGoal]);
+
+  useEffect(() => {
+    if (activeGoal) {
+      setGoalData({
+        goal_type: activeGoal.goal_type,
+        goal_count: activeGoal.goal_count,
+      });
+    }
+  }, [activeGoal]);
+
+  const handleSetGoal = async (e) => {
     e.preventDefault();
-    setGoal(goalData);
+    await setGoal(goalData);
+    setIsModalOpen(false);
+  };
 
-    const handleUpdateGoal = (e) => {
-      e.preventDefault();
-      updateGoal(goalData);
-    };
+  const handleUpdateGoal = async (e) => {
+    e.preventDefault();
+    await updateGoal(goalData);
+    setIsModalOpen(false);
+  };
 
+  if (isLoading) {
     return (
-      <Box sx={{ width: "100%", p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Reading Goal
-        </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+        <CircularProgress size={40} />
+      </Box>
+    );
+  }
 
-        {!activeGoal ? (
-          <Box sx={{ textAlign: "center", mt: 4 }}>
-            <Typography color="text.secondary">
-              No active reading goal
-            </Typography>
+  return (
+    <Box sx={{ width: "100%", p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Reading Goal
+      </Typography>
+
+      {!activeGoal ? (
+        <Box sx={{ textAlign: "center", mt: 4 }}>
+          <Typography color="text.secondary">No active reading goal</Typography>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Set a Goal
+          </Button>
+        </Box>
+      ) : (
+        <Box sx={{ textAlign: "center", mt: 2 }}>
+          <CircularProgress
+            progress={getProgress() || 0}
+            isNewlyCompleted={isNewlyCompleted}
+          />
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {booksCount} of {activeGoal.goal_count} books read
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {getTimeRemaining()}
+          </Typography>
+
+          <Box
+            sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "center" }}
+          >
             <Button
-              variant="contained"
+              variant="outlined"
+              color="primary"
               size="small"
               onClick={() => setIsModalOpen(true)}
             >
-              Set a Goal
+              Edit Goal
             </Button>
+            <IconButton
+              color="primary"
+              onClick={() =>
+                setGoal({
+                  goal_type: activeGoal.goal_type,
+                  goal_count: booksCount,
+                })
+              }
+            >
+              <RefreshIcon />
+            </IconButton>
           </Box>
-        ) : (
-          <Box sx={{ textAlign: "center", mt: 2 }}>
-            <CircularProgress progress={getProgress() || 0} />
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              {booksCount} of {activeGoal.goal_count} books read
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {getTimeRemaining()}
-            </Typography>
+        </Box>
+      )}
 
-            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Edit Goal
-              </Button>
-              <IconButton
-                color="primary"
-                onClick={() =>
-                  setGoal({
-                    goal_type: activeGoal.goal_type,
-                    goal_count: booksCount,
-                  })
-                }
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        )}
-
-        <Dialog
-          open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          maxWidth="xs"
-          fullWidth
-        >
-          <form onSubmit={activeGoal ? handleUpdateGoal : handleSetGoal}>
-            <DialogTitle>
-              {activeGoal ? "Edit Reading Goal" : "Set Reading Goal"}
-            </DialogTitle>
-            <DialogContent>
-              <TextField
-                select
-                label="Goal Type"
-                value={goalData.goal_type}
-                onChange={(e) =>
-                  setGoalData((prev) => ({
-                    ...prev,
-                    goal_type: e.target.value,
-                  }))
-                }
-                fullWidth
-              >
-                <MenuItem value="MONTHLY">Monthly</MenuItem>
-                <MenuItem value="ANNUAL">Annual</MenuItem>
-              </TextField>
-              <TextField
-                label="Number of Books"
-                type="number"
-                value={goalData.goal_count}
-                onChange={(e) =>
-                  setGoalData((prev) => ({
-                    ...prev,
-                    goal_count: Number(e.target.value),
-                  }))
-                }
-                fullWidth
-                required
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-              <Button type="submit" variant="contained" disabled={isSubmitting}>
-                {isSubmitting
-                  ? activeGoal
-                    ? "Updating..."
-                    : "Setting..."
-                  : activeGoal
-                  ? "Update Goal"
-                  : "Set Goal"}
-              </Button>
-            </DialogActions>
-          </form>
-        </Dialog>
-      </Box>
-    );
-  };
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <form onSubmit={activeGoal ? handleUpdateGoal : handleSetGoal}>
+          <DialogTitle>
+            {activeGoal ? "Edit Reading Goal" : "Set Reading Goal"}
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              select
+              label="Goal Type"
+              value={goalData.goal_type}
+              onChange={(e) =>
+                setGoalData((prev) => ({
+                  ...prev,
+                  goal_type: e.target.value,
+                }))
+              }
+              fullWidth
+              margin="normal"
+            >
+              <MenuItem value="MONTHLY">Monthly</MenuItem>
+              <MenuItem value="ANNUAL">Annual</MenuItem>
+            </TextField>
+            <TextField
+              label="Number of Books"
+              type="number"
+              value={goalData.goal_count}
+              onChange={(e) =>
+                setGoalData((prev) => ({
+                  ...prev,
+                  goal_count: Number(e.target.value),
+                }))
+              }
+              fullWidth
+              margin="normal"
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button type="submit" variant="contained" disabled={isSubmitting}>
+              {isSubmitting
+                ? activeGoal
+                  ? "Updating..."
+                  : "Setting..."
+                : activeGoal
+                ? "Update Goal"
+                : "Set Goal"}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    </Box>
+  );
 }

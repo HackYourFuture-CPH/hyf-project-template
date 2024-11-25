@@ -2,7 +2,6 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 import { BookshelfProvider } from "./contexts/BooksReadCountContext";
 import localFont from "next/font/local";
 import "./globals.css";
-import { GoalProvider } from "./contexts/GoalContext";
 
 // Load Lato Font
 const lato = localFont({
@@ -41,9 +40,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${lato.variable} ${playfairDisplay.variable}`}>
         <AuthContextProvider>
-          <BookshelfProvider>
-            <GoalProvider>{children}</GoalProvider>
-          </BookshelfProvider>
+          <BookshelfProvider>{children}</BookshelfProvider>
         </AuthContextProvider>
       </body>
     </html>

@@ -38,7 +38,10 @@ const glowAnimation = keyframes`
   }
 `;
 
-const CircularProgressWithSparkles = ({ progress }) => {
+const CircularProgressWithSparkles = ({
+  progress,
+  isNewlyCompleted = false,
+}) => {
   const color =
     progress === 100
       ? "#4CAF50"
@@ -98,7 +101,7 @@ const CircularProgressWithSparkles = ({ progress }) => {
           )}
         </Typography>
       </Box>
-      {progress === 100 && <SparkleEffect />}
+      {progress === 100 && isNewlyCompleted && <SparkleEffect />}
     </Box>
   );
 };
@@ -109,7 +112,7 @@ const SparkleEffect = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSparkles(false);
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);

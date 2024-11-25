@@ -15,12 +15,22 @@ export const GoalProvider = ({ children }) => {
 
   useEffect(() => {
     if (!currentUser) return;
+
     const fetchGoal = async () => {
       try {
-        const response = await makeRequest(`/api/goals/latest`);
-        setActiveGoal(response.data);
+        const response = await makeRequest(`/api/goals/latest`, {}, "GET");
+        console.log("Raw API response:", response);
+        console.log(response.goal);
+
+        if (response.goal) {
+          setActiveGoal(response.goal);
+        } else {
+          console.log("No goal found in response");
+          setActiveGoal(null);
+        }
       } catch (error) {
         console.error("Failed to fetch goal:", error);
+        setActiveGoal(null);
       }
     };
 
@@ -31,7 +41,7 @@ export const GoalProvider = ({ children }) => {
     setIsSubmitting(true);
 
     try {
-      const startDate = new Date(goalData.start_date);
+      const startDate = new Date(goalData.start_date || new Date());
       let endDate;
 
       if (goalData.goal_type === "MONTHLY") {
@@ -47,7 +57,7 @@ export const GoalProvider = ({ children }) => {
         end_date: endDate.toISOString().split("T")[0],
       });
 
-      setActiveGoal(newGoal);
+      setActiveGoal(newGoal.goal);
     } catch (error) {
       console.error("Failed to set goal:", error);
     } finally {
@@ -63,7 +73,7 @@ export const GoalProvider = ({ children }) => {
 
       if (goalData.start_date || goalData.goal_type) {
         const startDate = new Date(
-          goalData.start_date || activeGoal.start_date
+          goalData.start_date || activeGoal.start_date || new Date()
         );
         let endDate;
 
@@ -84,7 +94,7 @@ export const GoalProvider = ({ children }) => {
         "PUT"
       );
 
-      setActiveGoal(updatedGoal);
+      setActiveGoal(updatedGoal.goal);
     } catch (error) {
       console.error("Failed to update goal:", error);
     } finally {
@@ -93,9 +103,10 @@ export const GoalProvider = ({ children }) => {
   };
 
   const getProgress = () => {
-    if (!activeGoal || !activeGoal.start_date || !activeGoal.goal_count)
-      return 0;
-
+    if (!activeGoal || !activeGoal.goal_count) return 0;
+    const startDate = activeGoal.start_date
+      ? new Date(activeGoal.start_date)
+      : new Date();
     const booksAfterStartDate = bookShelf.read.filter(
       (book) => new Date(book.created_at) >= new Date(activeGoal.start_date)
     );
