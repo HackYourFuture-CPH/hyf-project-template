@@ -1,19 +1,20 @@
 "use client";
+
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext"; // Import useAuth
 import styles from "./Header.module.css";
 
 const Header = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth(); // Use currentUser and logout from AuthContext
 
   // Conditional greeting message: Show username if logged in, or 'Guest' if not
   const userName = useMemo(
-    () => currentUser?.firstName || "Guest",
+    () => currentUser?.user.firstName || "Guest",
     [currentUser]
   );
 
@@ -32,11 +33,20 @@ const Header = () => {
     }
   };
 
+  // Handle logout functionality
+  const handleLogout = async () => {
+    try {
+      await logout(); // Call the logout function from AuthContext
+      router.push("/login"); // Redirect to the login page after logging out
+    } catch (error) {
+      console.error("Logout failed:", error.message);
+    }
+  };
+
   return (
     <header className={styles.header}>
-      {/* Left Section: Greeting (only show when logged in) */}
+      {/* Left Section: Greeting */}
       <div className={styles.leftNav}>
-        {/* Only display greeting if currentUser exists */}
         {currentUser && <p className={styles.greeting}>Hello, {userName}!</p>}
       </div>
 
@@ -59,10 +69,11 @@ const Header = () => {
           <li className={styles.navItem}>
             <Link href="/dashboard">DASHBOARD</Link>
           </li>
-          {/* Log out link */}
           {currentUser ? (
             <li className={styles.navItem}>
-              <Link href="/login">LOG OUT</Link>
+              <button className={styles.logoutButton} onClick={handleLogout}>
+                LOG OUT
+              </button>
             </li>
           ) : (
             <li className={styles.navItem}>
@@ -70,8 +81,6 @@ const Header = () => {
             </li>
           )}
         </ul>
-
-        {/* Search bar */}
         <input
           type="text"
           placeholder="Search..."

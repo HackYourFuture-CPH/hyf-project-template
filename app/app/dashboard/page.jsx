@@ -15,7 +15,6 @@ export default function DashboardPage() {
     if (!currentUser) {
         return <p>Loading user data...</p>;
     }
-
     return (
         <AppLayoutContainer>
             <div className={styles.mainContent}>
