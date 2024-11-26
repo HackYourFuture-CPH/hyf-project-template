@@ -30,26 +30,27 @@ export const addGoal = async (req, res) => {
   }
 
   try {
-    const existingGoal = await knex("ReadingGoals")
-      .where({
+    if (status === "IN_PROGRESS") {
+      const existingGoal = await knex("ReadingGoals")
+        .where({
+          user_id: req.user.userId,
+          goal_type: goal_type,
+          status: "IN_PROGRESS",
+        })
+        .first();
+      if (existingGoal) {
+        return res.status(400).json({ error: "Goal already exists" });
+      }
+
+      const [goalId] = await knex("ReadingGoals").insert({
         user_id: req.user.userId,
-        goal_type: goal_type,
-        status: "IN_PROGRESS",
-      })
-      .first();
-    if (existingGoal) {
-      return res.status(400).json({ error: "Goal already exists" });
+        goal_type,
+        goal_count,
+        start_date,
+        end_date,
+        status,
+      });
     }
-
-    const [goalId] = await knex("ReadingGoals").insert({
-      user_id: req.user.userId,
-      goal_type,
-      goal_count,
-      start_date,
-      end_date,
-      status,
-    });
-
     const newGoal = await knex("ReadingGoals")
       .where({ goal_id: goalId })
       .first();
@@ -79,6 +80,21 @@ export const updateGoal = async (req, res) => {
     if (!goal) {
       return res.status(404).json({ error: "Goal not found" });
     }
+
+    if (goal.status === "IN_PROGRESS" && goal_count !== undefined) {
+      const activeGoal = await knex("ReadingGoals")
+        .where({
+          user_id: req.user.userId,
+          status: "IN_PROGRESS",
+        })
+        .first();
+      if (activeGoal && activeGoal.goal_id !== goalId) {
+        return res
+          .status(400)
+          .json({ error: "You already have an active goal" });
+      }
+    }
+
     await knex("ReadingGoals")
       .where({ goal_id: goalId })
       .update({
@@ -107,7 +123,7 @@ export const getLatestGoal = async (req, res) => {
       .first();
 
     if (!latestGoal) {
-      return res.status(404).json({ error: "No goals found" });
+      return res.status(404).json({ goal: null });
     }
 
     res.status(200).json({ goal: buildGoalDto(latestGoal) });

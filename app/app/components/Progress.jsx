@@ -38,7 +38,7 @@ const glowAnimation = keyframes`
   }
 `;
 
-const CircularProgressWithSparkles = ({ progress = 0 }) => {
+const Progress = ({ progress = 0 }) => {
   const [previousProgress, setPreviousProgress] = useState(progress);
   const [showSparkles, setShowSparkles] = useState(false);
 
@@ -161,4 +161,4 @@ const SparkleEffect = () => {
   return <Box sx={{ position: "absolute", inset: 0 }}>{sparkles}</Box>;
 };
 
-export default CircularProgressWithSparkles;
+export default Progress;

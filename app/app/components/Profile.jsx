@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import Button from "./Button";
 import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
@@ -12,7 +13,7 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
-  const { bookShelf, booksCount, loading, error } = useBookshelf();
+  const { booksCount, loading, error } = useBookshelf();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -21,7 +22,7 @@ const Profile = () => {
         setUserData(response.user);
       } catch (err) {
         console.error("Error fetching user profile:", err);
-        setError("Error fetching user profile.");
+        setUserData("Error fetching user profile.");
       }
     };
 

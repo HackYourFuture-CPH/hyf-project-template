@@ -13,76 +13,104 @@ import {
   IconButton,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useBookshelf } from "../contexts/BooksReadCountContext";
 import { useGoal } from "../contexts/GoalContext";
-import CircularProgress from "./CircularProgressWithSparkles.jsx";
+import Progress from "./Progress";
 
 export default function GoalsWidget() {
   const {
     activeGoal,
     setGoal,
     updateGoal,
+    deleteGoal,
     getProgress,
     getTimeRemaining,
     isSubmitting,
   } = useGoal();
+
+  const calculateEndDate = (startDate, goalType) => {
+    const start = new Date(startDate);
+    let endDate;
+    if (goalType === "MONTHLY") {
+      endDate = new Date(start);
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else if (goalType === "ANNUAL") {
+      endDate = new Date(start);
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
+    return endDate.toISOString().split("T")[0];
+  };
 
   const { booksCount } = useBookshelf();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [goalData, setGoalData] = useState({
     goal_type: activeGoal?.goal_type || "MONTHLY",
-    goal_count: activeGoal?.goal_count || "",
+    goal_count: activeGoal?.goal_count || 1,
     start_date:
       activeGoal?.start_date || new Date().toISOString().split("T")[0],
+    end_date:
+      activeGoal?.end_date ||
+      calculateEndDate(
+        activeGoal?.start_date || new Date().toISOString().split("T")[0],
+        activeGoal?.goal_type || "MONTHLY"
+      ),
   });
   const [isNewlyCompleted, setIsNewlyCompleted] = useState(false);
+
+  useEffect(() => {
+    if (activeGoal) {
+      setGoalData({
+        goal_type: activeGoal.goal_type || "MONTHLY",
+        goal_count: activeGoal.goal_count || 1,
+        start_date:
+          activeGoal.start_date || new Date().toISOString().split("T")[0],
+        end_date:
+          activeGoal.end_date ||
+          calculateEndDate(
+            activeGoal.start_date || new Date().toISOString().split("T")[0],
+            activeGoal.goal_type || "MONTHLY"
+          ),
+      });
+    }
+  }, [activeGoal]);
+
+  useEffect(() => {
+    if (activeGoal !== undefined) {
+      setIsLoading(false);
+    }
+  }, [activeGoal]);
 
   useEffect(() => {
     if (getProgress() === 100 && !isNewlyCompleted) {
       setIsNewlyCompleted(true);
     }
-  }, [getProgress()]);
+  }, [getProgress, isNewlyCompleted]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (activeGoal !== undefined) {
-        setIsLoading(false);
-      }
-    }, 1000);
+  const handleGoal = async (e) => {
+    e.preventDefault();
 
-    return () => clearTimeout(timer);
-  }, [activeGoal]);
-
-  useEffect(() => {
     if (activeGoal) {
-      setGoalData({
-        goal_type: activeGoal.goal_type,
-        goal_count: activeGoal.goal_count,
-        start_date: activeGoal.start_date,
-      });
+      await updateGoal(goalData);
+    } else {
+      await setGoal(goalData);
     }
-  }, [activeGoal]);
 
-  const handleSetGoal = async (e) => {
-    e.preventDefault();
-    await setGoal(goalData);
     setIsModalOpen(false);
   };
 
-  const handleUpdateGoal = async (e) => {
-    e.preventDefault();
-    await updateGoal(goalData);
-    setIsModalOpen(false);
-  };
   const handleResetGoal = async () => {
-    const resetGoalData = {
-      goal_type: activeGoal.goal_type,
-      goal_count: booksCount,
-      start_date: new Date().toISOString().split("T")[0],
-    };
-    await setGoal(resetGoalData);
+    if (!activeGoal) return;
+
+    try {
+      await deleteGoal(activeGoal.goal_id);
+      console.log("Goal successfully deleted");
+    } catch (error) {
+      console.error("Failed to reset goal:", error);
+    }
   };
+
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
@@ -110,7 +138,7 @@ export default function GoalsWidget() {
         </Box>
       ) : (
         <Box sx={{ textAlign: "center", mt: 2 }}>
-          <CircularProgress
+          <Progress
             progress={getProgress() || 0}
             isNewlyCompleted={isNewlyCompleted}
           />
@@ -145,7 +173,7 @@ export default function GoalsWidget() {
         maxWidth="xs"
         fullWidth
       >
-        <form onSubmit={activeGoal ? handleUpdateGoal : handleSetGoal}>
+        <form onSubmit={handleGoal}>
           <DialogTitle>
             {activeGoal ? "Edit Reading Goal" : "Set Reading Goal"}
           </DialogTitle>
@@ -153,7 +181,7 @@ export default function GoalsWidget() {
             <TextField
               select
               label="Goal Type"
-              value={goalData.goal_type}
+              value={goalData.goal_type || "MONTHLY"}
               onChange={(e) =>
                 setGoalData((prev) => ({
                   ...prev,
@@ -169,6 +197,7 @@ export default function GoalsWidget() {
             <TextField
               label="Number of Books"
               type="number"
+              InputProps={{ inputProps: { min: 1 } }}
               value={goalData.goal_count}
               onChange={(e) =>
                 setGoalData((prev) => ({
@@ -179,6 +208,34 @@ export default function GoalsWidget() {
               fullWidth
               margin="normal"
               required
+            />
+            <TextField
+              label="Start Date"
+              type="date"
+              value={goalData.start_date}
+              onChange={(e) =>
+                setGoalData((prev) => ({
+                  ...prev,
+                  start_date: e.target.value,
+                }))
+              }
+              fullWidth
+              margin="normal"
+              required
+            />
+            <TextField
+              label="End Date"
+              type="text"
+              value={
+                goalData.end_date ||
+                calculateEndDate(
+                  goalData.start_date || new Date().toISOString().split("T")[0],
+                  goalData.goal_type || "MONTHLY"
+                )
+              }
+              disabled
+              fullWidth
+              margin="normal"
             />
           </DialogContent>
           <DialogActions>

@@ -20,16 +20,23 @@ export const GoalProvider = ({ children }) => {
       try {
         const response = await makeRequest(`/api/goals/latest`, {}, "GET");
         console.log("Raw API response:", response);
-        console.log(response.goal);
 
-        if (response.goal) {
+        if (response && response.goal) {
           setActiveGoal(response.goal);
         } else {
-          console.log("No goal found in response");
+          console.log("No active goal found. Showing goal modal.");
           setActiveGoal(null);
         }
       } catch (error) {
-        console.error("Failed to fetch goal:", error);
+        console.error("Error fetching goal:", error);
+        // Log additional error information
+        if (error.response) {
+          console.error("API Response Error:", error.response);
+        } else if (error.request) {
+          console.error("API Request Error:", error.request);
+        } else {
+          console.error("Error Message:", error.message);
+        }
         setActiveGoal(null);
       }
     };
@@ -41,6 +48,10 @@ export const GoalProvider = ({ children }) => {
     setIsSubmitting(true);
 
     try {
+      if (activeGoal) {
+        return updateGoal(goalData);
+      }
+
       const startDate = new Date(goalData.start_date || new Date());
       let endDate;
 
@@ -60,6 +71,14 @@ export const GoalProvider = ({ children }) => {
       setActiveGoal(newGoal.goal);
     } catch (error) {
       console.error("Failed to set goal:", error);
+      // Log additional error information
+      if (error.response) {
+        console.error("API Response Error:", error.response);
+      } else if (error.request) {
+        console.error("API Request Error:", error.request);
+      } else {
+        console.error("Error Message:", error.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -99,6 +118,15 @@ export const GoalProvider = ({ children }) => {
       console.error("Failed to update goal:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const deleteGoal = async (goalId) => {
+    try {
+      await makeRequest(`/api/goals/${goalId}`, {}, "DELETE");
+      setActiveGoal(null);
+    } catch (error) {
+      console.error("Failed to delete goal:", error);
     }
   };
 
@@ -147,6 +175,7 @@ export const GoalProvider = ({ children }) => {
         activeGoal,
         setGoal,
         updateGoal,
+        deleteGoal,
         getProgress,
         getTimeRemaining,
         isSubmitting,
