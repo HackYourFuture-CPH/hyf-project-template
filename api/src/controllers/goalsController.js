@@ -21,8 +21,9 @@ export const addGoal = async (req, res) => {
     goal_type,
     goal_count,
     status = "IN_PROGRESS",
-    start_date = null,
-    end_date = null,
+    start_date,
+    end_date,
+    user_id,
   } = req.body;
 
   if (!goal_type || !goal_count) {
@@ -30,33 +31,36 @@ export const addGoal = async (req, res) => {
   }
 
   try {
-    if (status === "IN_PROGRESS") {
-      const existingGoal = await knex("ReadingGoals")
-        .where({
-          user_id: req.user.userId,
-          goal_type: goal_type,
-          status: "IN_PROGRESS",
-        })
-        .first();
-      if (existingGoal) {
-        return res.status(400).json({ error: "Goal already exists" });
-      }
-
-      const [goalId] = await knex("ReadingGoals").insert({
+    const existingGoal = await knex("ReadingGoals")
+      .where({
         user_id: req.user.userId,
-        goal_type,
-        goal_count,
-        start_date,
-        end_date,
-        status,
-      });
+        goal_type: goal_type,
+        status: "IN_PROGRESS",
+      })
+      .first();
+
+    if (existingGoal) {
+      return res.status(400).json({ error: "Goal already exists" });
     }
+
+    const [goalId] = await knex("ReadingGoals").insert({
+      user_id: req.user.userId,
+      goal_type,
+      goal_count,
+      start_date,
+      end_date,
+      status,
+    });
+
     const newGoal = await knex("ReadingGoals")
       .where({ goal_id: goalId })
       .first();
 
+    if (!newGoal) {
+      throw new Error("Failed to create goal");
+    }
+
     res.status(201).json({
-      message: "Goal created successfully",
       goal: buildGoalDto(newGoal),
     });
   } catch (error) {

@@ -29,7 +29,6 @@ export const GoalProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching goal:", error);
-        // Log additional error information
         if (error.response) {
           console.error("API Response Error:", error.response);
         } else if (error.request) {
@@ -49,36 +48,43 @@ export const GoalProvider = ({ children }) => {
 
     try {
       if (activeGoal) {
-        return updateGoal(goalData);
+        // If there's an active goal, update it instead of creating a new one
+        await updateGoal(goalData);
+        return;
+      } else {
+        // If there's no active goal, create a new one
+        const startDate = new Date(goalData.start_date || new Date());
+        let endDate;
+
+        if (goalData.goal_type === "MONTHLY") {
+          endDate = new Date(startDate);
+          endDate.setMonth(endDate.getMonth() + 1);
+        } else if (goalData.goal_type === "ANNUAL") {
+          endDate = new Date(startDate);
+          endDate.setFullYear(endDate.getFullYear() + 1);
+        }
+
+        const response = await makeRequest("/api/goals/add", {
+          ...goalData,
+          end_date: endDate.toISOString().split("T")[0],
+          status: "IN_PROGRESS",
+        });
+
+        if (response && response.goal) {
+          setActiveGoal(response.goal);
+        } else {
+          throw new Error("Failed to create goal");
+        }
       }
-
-      const startDate = new Date(goalData.start_date || new Date());
-      let endDate;
-
-      if (goalData.goal_type === "MONTHLY") {
-        endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + 1);
-      } else if (goalData.goal_type === "ANNUAL") {
-        endDate = new Date(startDate);
-        endDate.setFullYear(endDate.getFullYear() + 1);
-      }
-
-      const newGoal = await makeRequest("/api/goals/add", {
-        ...goalData,
-        end_date: endDate.toISOString().split("T")[0],
-      });
-
-      setActiveGoal(newGoal.goal);
     } catch (error) {
       console.error("Failed to set goal:", error);
-      // Log additional error information
-      if (error.response) {
-        console.error("API Response Error:", error.response);
-      } else if (error.request) {
-        console.error("API Request Error:", error.request);
-      } else {
-        console.error("Error Message:", error.message);
+
+      if (error.response?.data?.error === "Goal already exists") {
+        throw new Error(
+          "You already have an active goal. Please complete or delete it before creating a new one."
+        );
       }
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -96,26 +102,33 @@ export const GoalProvider = ({ children }) => {
         );
         let endDate;
 
-        if (goalData.goal_type || activeGoal.goal_type === "MONTHLY") {
+        const goalType = goalData.goal_type || activeGoal.goal_type;
+
+        if (goalType === "MONTHLY") {
           endDate = new Date(startDate);
           endDate.setMonth(endDate.getMonth() + 1);
-        } else if (goalData.goal_type || activeGoal.goal_type === "ANNUAL") {
+        } else if (goalType === "ANNUAL") {
           endDate = new Date(startDate);
           endDate.setFullYear(endDate.getFullYear() + 1);
         }
 
-        updatedData.end_date = endDate.toISOString().split("T")[0];
+        updatedData.end_date = endDate.toLocaleDateString("en-CA");
       }
 
-      const updatedGoal = await makeRequest(
+      const response = await makeRequest(
         `/api/goals/${activeGoal.goal_id}`,
         updatedData,
         "PUT"
       );
 
-      setActiveGoal(updatedGoal.goal);
+      if (response && response.goal) {
+        setActiveGoal(response.goal);
+      } else {
+        throw new Error("Failed to update goal");
+      }
     } catch (error) {
       console.error("Failed to update goal:", error);
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -127,18 +140,24 @@ export const GoalProvider = ({ children }) => {
       setActiveGoal(null);
     } catch (error) {
       console.error("Failed to delete goal:", error);
+      throw error;
     }
+  };
+  const getBooksAfterStartDate = () => {
+    if (!activeGoal) return [];
+    const startDate = activeGoal.start_date
+      ? new Date(activeGoal.start_date)
+      : new Date();
+
+    return bookShelf.read.filter(
+      (book) => new Date(book.created_at) >= startDate
+    );
   };
 
   const getProgress = () => {
     if (!activeGoal || !activeGoal.goal_count) return 0;
-    const startDate = activeGoal.start_date
-      ? new Date(activeGoal.start_date)
-      : new Date();
-    const booksAfterStartDate = bookShelf.read.filter(
-      (book) => new Date(book.created_at) >= new Date(activeGoal.start_date)
-    );
 
+    const booksAfterStartDate = getBooksAfterStartDate();
     return Math.min(
       (booksAfterStartDate.length / activeGoal.goal_count) * 100,
       100
@@ -169,6 +188,7 @@ export const GoalProvider = ({ children }) => {
 
     return null;
   };
+
   return (
     <GoalContext.Provider
       value={{
@@ -178,6 +198,7 @@ export const GoalProvider = ({ children }) => {
         deleteGoal,
         getProgress,
         getTimeRemaining,
+        getBooksAfterStartDate,
         isSubmitting,
       }}
     >

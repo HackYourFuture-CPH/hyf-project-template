@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Typography,
   Box,
@@ -26,6 +26,7 @@ export default function GoalsWidget() {
     deleteGoal,
     getProgress,
     getTimeRemaining,
+    getBooksAfterStartDate,
     isSubmitting,
   } = useGoal();
 
@@ -39,7 +40,7 @@ export default function GoalsWidget() {
       endDate = new Date(start);
       endDate.setFullYear(endDate.getFullYear() + 1);
     }
-    return endDate.toISOString().split("T")[0];
+    return endDate.toLocaleDateString("en-CA");
   };
 
   const { booksCount } = useBookshelf();
@@ -49,32 +50,41 @@ export default function GoalsWidget() {
     goal_type: activeGoal?.goal_type || "MONTHLY",
     goal_count: activeGoal?.goal_count || 1,
     start_date:
-      activeGoal?.start_date || new Date().toISOString().split("T")[0],
+      activeGoal?.start_date || new Date().toLocaleDateString("en-CA"),
     end_date:
       activeGoal?.end_date ||
       calculateEndDate(
-        activeGoal?.start_date || new Date().toISOString().split("T")[0],
+        activeGoal?.start_date || new Date().toLocaleDateString("en-CA"),
         activeGoal?.goal_type || "MONTHLY"
       ),
   });
   const [isNewlyCompleted, setIsNewlyCompleted] = useState(false);
+  const booksReadAfterStartDate = useMemo(
+    () => getBooksAfterStartDate(),
+    [activeGoal, booksCount]
+  );
+  const progress = useMemo(() => getProgress(), [activeGoal, booksCount]);
 
   useEffect(() => {
-    if (activeGoal) {
+    if (isModalOpen && activeGoal) {
       setGoalData({
-        goal_type: activeGoal.goal_type || "MONTHLY",
-        goal_count: activeGoal.goal_count || 1,
-        start_date:
-          activeGoal.start_date || new Date().toISOString().split("T")[0],
-        end_date:
-          activeGoal.end_date ||
-          calculateEndDate(
-            activeGoal.start_date || new Date().toISOString().split("T")[0],
-            activeGoal.goal_type || "MONTHLY"
-          ),
+        goal_type: activeGoal.goal_type,
+        goal_count: activeGoal.goal_count,
+        start_date: activeGoal.start_date,
+        end_date: activeGoal.end_date,
+      });
+    } else if (isModalOpen) {
+      setGoalData({
+        goal_type: "MONTHLY",
+        goal_count: 1,
+        start_date: new Date().toLocaleDateString("en-CA"),
+        end_date: calculateEndDate(
+          new Date().toLocaleDateString("en-CA"),
+          "MONTHLY"
+        ),
       });
     }
-  }, [activeGoal]);
+  }, [isModalOpen, activeGoal]);
 
   useEffect(() => {
     if (activeGoal !== undefined) {
@@ -91,13 +101,17 @@ export default function GoalsWidget() {
   const handleGoal = async (e) => {
     e.preventDefault();
 
-    if (activeGoal) {
-      await updateGoal(goalData);
-    } else {
-      await setGoal(goalData);
+    try {
+      if (activeGoal) {
+        await updateGoal(goalData);
+      } else {
+        await setGoal(goalData);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error handling goal:", error);
+      setIsLoading(false);
     }
-
-    setIsModalOpen(false);
   };
 
   const handleResetGoal = async () => {
@@ -139,14 +153,18 @@ export default function GoalsWidget() {
       ) : (
         <Box sx={{ textAlign: "center", mt: 2 }}>
           <Progress
-            progress={getProgress() || 0}
+            progress={progress || 0}
             isNewlyCompleted={isNewlyCompleted}
           />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {booksCount} of {activeGoal.goal_count} books read
+            {booksReadAfterStartDate.length} of {activeGoal.goal_count} books
+            read
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {getTimeRemaining()} | Ends on: {activeGoal.end_date}
+            {getTimeRemaining()} | Ends on:
+            {activeGoal.end_date
+              ? new Date(activeGoal.end_date).toLocaleDateString("en-CA")
+              : "No end date available"}
           </Typography>
 
           <Box
@@ -197,7 +215,6 @@ export default function GoalsWidget() {
             <TextField
               label="Number of Books"
               type="number"
-              InputProps={{ inputProps: { min: 1 } }}
               value={goalData.goal_count}
               onChange={(e) =>
                 setGoalData((prev) => ({
@@ -229,7 +246,7 @@ export default function GoalsWidget() {
               value={
                 goalData.end_date ||
                 calculateEndDate(
-                  goalData.start_date || new Date().toISOString().split("T")[0],
+                  goalData.start_date || new Date().toLocaleDateString("en-CA"),
                   goalData.goal_type || "MONTHLY"
                 )
               }
@@ -240,7 +257,13 @@ export default function GoalsWidget() {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="contained" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={
+                isSubmitting || !goalData.goal_count || !goalData.start_date
+              }
+            >
               {isSubmitting
                 ? activeGoal
                   ? "Updating..."
