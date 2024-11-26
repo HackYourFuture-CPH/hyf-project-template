@@ -38,10 +38,20 @@ const glowAnimation = keyframes`
   }
 `;
 
-const CircularProgressWithSparkles = ({
-  progress,
-  isNewlyCompleted = false,
-}) => {
+const CircularProgressWithSparkles = ({ progress = 0 }) => {
+  const [previousProgress, setPreviousProgress] = useState(progress);
+  const [showSparkles, setShowSparkles] = useState(false);
+
+  useEffect(() => {
+    if (progress === 100 && previousProgress < 100) {
+      setShowSparkles(true);
+
+      const timer = setTimeout(() => setShowSparkles(false), 2000);
+      return () => clearTimeout(timer);
+    }
+    setPreviousProgress(progress);
+  }, [progress, previousProgress]);
+
   const color =
     progress === 100
       ? "#4CAF50"
@@ -101,27 +111,13 @@ const CircularProgressWithSparkles = ({
           )}
         </Typography>
       </Box>
-      {progress === 100 && isNewlyCompleted && <SparkleEffect />}
+      {showSparkles && <SparkleEffect />}
     </Box>
   );
 };
 
 const SparkleEffect = () => {
-  const [showSparkles, setShowSparkles] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSparkles(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!showSparkles) {
-    return null;
-  }
-
-  const numSparkles = 8;
+  const numSparkles = 7;
   const maxRadius = 60;
 
   const sparkles = useMemo(() => {
