@@ -1,5 +1,6 @@
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { BookshelfProvider } from "./contexts/BooksReadCountContext";
+import { ThemeProvider } from "./contexts/ThemeContext"; // Import the ThemeProvider
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -39,9 +40,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${lato.variable} ${playfairDisplay.variable}`}>
-        <AuthContextProvider>
-          <BookshelfProvider>{children}</BookshelfProvider>
-        </AuthContextProvider>
+        <ThemeProvider> {/* Wrap the application in ThemeProvider */}
+          <AuthContextProvider>
+            <BookshelfProvider>{children}</BookshelfProvider>
+          </AuthContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
