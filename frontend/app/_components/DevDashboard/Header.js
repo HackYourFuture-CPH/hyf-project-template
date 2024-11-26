@@ -20,8 +20,8 @@ export default function Header() {
   const menuItems = [
     { name: 'Dashboard', path: '/dev-dashboard' },
     { name: 'Projects', path: '/dev-dashboard/projects' },
-    { name: 'Chat', path: '/chat' },
-    { name: 'Profile', path: '/profile' },
+    { name: 'Chat', path: '/dev-dashboard/chat' },
+    { name: 'Events', path: '/dev-dashboard/events' },
   ];
 
   const HeaderContent = () => (
