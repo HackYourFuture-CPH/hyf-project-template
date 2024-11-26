@@ -11,6 +11,7 @@ import {
   TextField,
   MenuItem,
   IconButton,
+  Stack,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -148,13 +149,22 @@ export default function GoalsWidget() {
             {booksReadAfterStartDate.length} of {activeGoal.goal_count} books
             read
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {getTimeRemaining()} | Ends on:
-            {activeGoal.end_date
-              ? new Date(activeGoal.end_date).toLocaleDateString("en-CA")
-              : "No end date available"}
-          </Typography>
-
+          <Stack spacing={1}>
+            <Typography variant="caption" color="text.secondary">
+              Started:{" "}
+              {new Date(activeGoal.start_date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {getTimeRemaining()} | Ends on:{" "}
+              {activeGoal.end_date
+                ? new Date(activeGoal.end_date).toLocaleDateString("en-CA")
+                : "No end date available"}
+            </Typography>
+          </Stack>
           <Box
             sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "center" }}
           >
@@ -203,6 +213,13 @@ export default function GoalsWidget() {
             <TextField
               label="Number of Books"
               type="number"
+              slotProps={{
+                htmlInput: {
+                  min: 1,
+                  step: 1,
+                  inputMode: "numeric",
+                },
+              }}
               value={goalData.goal_count}
               onChange={(e) =>
                 setGoalData((prev) => ({
@@ -227,20 +244,6 @@ export default function GoalsWidget() {
               fullWidth
               margin="normal"
               required
-            />
-            <TextField
-              label="End Date"
-              type="text"
-              value={
-                goalData.end_date ||
-                calculateEndDate(
-                  goalData.start_date || new Date().toLocaleDateString("en-CA"),
-                  goalData.goal_type || "MONTHLY"
-                )
-              }
-              disabled
-              fullWidth
-              margin="normal"
             />
           </DialogContent>
           <DialogActions>
