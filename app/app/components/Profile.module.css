@@ -7,22 +7,30 @@
     gap: 20px;
 }
 
-.Profile .imageContainer {
+.Welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.imageContainer {
     position: relative;
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
-.Profile .imageContainer img {
+.profileImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.Profile .userDetailsContainer {
+.userDetailsContainer {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -32,23 +40,65 @@
     text-align: left;
 }
 
-.Profile .userDetailsContainer div {
+.userDetailsContainer div {
     padding: 5px;
     color: #666;
 }
 
-.Profile .userDetailsContainer div strong {
-    padding: 5px;
+.userDetailsContainer div strong {
     color: #000;
 }
 
-.Profile .userDetailsContainer ul {
+.userDetailsContainer ul {
     padding-left: 20px;
     margin: 0;
-    list-style-type: none;
+    list-style-type: square;
 }
 
-.Profile .userDetailsContainer ul li {
+.userDetailsContainer ul li {
     font-size: 1rem;
     color: #666;
+}
+
+.editButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #666;
+    transition:
+        color 0.3s ease,
+        transform 0.2s ease;
+    position: relative;
+}
+
+.editButton:hover {
+    color: #333;
+    transform: scale(1.2);
+}
+
+.editButton::after {
+    content: "Edit Profile";
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 5px 8px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.editButton:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-5px);
 }

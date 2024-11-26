@@ -11,23 +11,23 @@ export const getQuotes = async (req, res) => {
 };
 
 export const addQuote = async (req, res) => {
-    const { bookId, userId, quoteText, author } = req.body;
+    const { bookId, userId, content, author } = req.body;
 
-    if (!bookId || !userId || !quoteText) {
+    if (!bookId || !userId || !content) {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
     try {
-        const newQuote = await knex("Quotes").insert({
+        const [newQuoteId] = await knex("Quotes").insert({
             book_id: bookId,
             user_id: userId,
-            quote_text: quoteText,
+            content: content,
             author: author || null,
         });
 
-        res.status(201).json({ message: "Quote added successfully", quoteId: newQuote[0] });
+        res.status(201).json({ message: "Quote added successfully", quoteId: newQuoteId });
     } catch (error) {
-        console.log("Error adding quote:", error);
+        console.error("Error adding quote:", error);
         res.status(500).json({ message: "Failed to add quote" });
     }
 };
@@ -39,13 +39,13 @@ export const getUserQuotes = async (req, res) => {
         const quotes = await knex("Quotes as q")
             .leftJoin("Books as b", "q.book_id", "b.book_id")
             .select(
-                "q.quote_id",
-                "q.quote_text",
+                "q.id as quote_id",
+                "q.content as quote_text",
                 "b.title as book_title",
                 "b.author as book_author"
             )
             .where("q.user_id", userId)
-            .orderBy("q.quote_id", "desc")
+            .orderBy("q.id", "desc")
             .limit(4);
 
         if (!quotes || quotes.length === 0) {
