@@ -14,9 +14,13 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showNotes, setShowNotes] = useState(false);
+  const [showQuotes, setShowQuotes] = useState(false);
 
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
+
+  const handleOpenQuotes = () => setShowQuotes(true);
+  const handleCloseQuotes = () => setShowQuotes(false);
 
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
@@ -159,6 +163,7 @@ const BookDetails = () => {
                   backgroundColor: "#B49090",
                 },
               }}
+              onClick={handleOpenQuotes}
             >
               Quotes
             </Button>
@@ -183,6 +188,13 @@ const BookDetails = () => {
               open={showNotes}
               handleClose={handleCloseNotes}
               bookId={id}
+              type="notes"
+            />
+            <Notes
+              open={showQuotes}
+              handleClose={handleCloseQuotes}
+              bookId={id}
+              type="quotes"
             />
           </Box>
         </Box>
