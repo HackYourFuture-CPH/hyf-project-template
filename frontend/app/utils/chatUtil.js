@@ -5,4 +5,3 @@ export const getAllClientsFromDeveloper = async developerId => {
   return handleResponse(response, defaultSuccessCallback, () => {
     toast.error('Failed to fetch clients');
   });
-};

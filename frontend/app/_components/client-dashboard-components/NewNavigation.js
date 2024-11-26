@@ -60,7 +60,7 @@ function NewNavigation({ userName }) {
 
           <li>
             <Link
-              href=""
+              href="/client-dashboard/chat"
               className="hover:text-white hover:border-b-2 hover:border-lime-500 transition-colors"
             >
               Chat
