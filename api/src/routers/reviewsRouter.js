@@ -2,7 +2,6 @@ import express from "express";
 import { authenticate } from "../middlewares/authenticate.js";
 import {
   getAllReviews,
-  getReviewById,
   createReview,
   updateReview,
   deleteReview,
@@ -13,7 +12,6 @@ const reviewsRouter = express.Router();
 
 //public routes
 reviewsRouter.get("/", getAllReviews);
-reviewsRouter.get("/:id", getReviewById);
 
 //protected routes
 reviewsRouter.post("/book/:id", authenticate(), createReview);

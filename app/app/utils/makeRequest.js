@@ -15,7 +15,7 @@ export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
     });
 
     if (response.status === 204) {
-      return null; // Return null or any appropriate value for no content
+      return null;
     }
 
     const result = await response.json();
