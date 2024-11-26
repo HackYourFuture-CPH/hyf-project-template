@@ -1,9 +1,5 @@
 import { makeRequest } from "./makeRequest.js";
 
-export const getReviewById = async (id) => {
-  return makeRequest(`/api/reviews/${id}`, {}, "GET");
-};
-
 export const getUserReview = async (bookId) => {
   return makeRequest(`/api/reviews/book/${bookId}/my-review`, {}, "GET");
 };
