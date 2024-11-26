@@ -71,7 +71,7 @@ export const addGoal = async (req, res) => {
 
 export const updateGoal = async (req, res) => {
   const { goalId } = req.params;
-  const { goal_count } = req.body;
+  const { goal_count, goal_type, start_date, end_date } = req.body;
 
   try {
     const goal = await knex("ReadingGoals")
@@ -85,25 +85,30 @@ export const updateGoal = async (req, res) => {
       return res.status(404).json({ error: "Goal not found" });
     }
 
-    if (goal.status === "IN_PROGRESS" && goal_count !== undefined) {
+    if (goal.status === "IN_PROGRESS") {
       const activeGoal = await knex("ReadingGoals")
         .where({
           user_id: req.user.userId,
           status: "IN_PROGRESS",
         })
+        .whereNot({ goal_id: goalId })
         .first();
-      if (activeGoal && activeGoal.goal_id !== goalId) {
+
+      if (activeGoal) {
         return res
           .status(400)
-          .json({ error: "You already have an active goal" });
+          .json({ error: "You already have another active goal" });
       }
     }
 
-    await knex("ReadingGoals")
-      .where({ goal_id: goalId })
-      .update({
-        goal_count: goal_count || goal.goal_count,
-      });
+    const updateData = {
+      ...(goal_count !== undefined && { goal_count }),
+      ...(goal_type !== undefined && { goal_type }),
+      ...(start_date !== undefined && { start_date }),
+      ...(end_date !== undefined && { end_date }),
+    };
+
+    await knex("ReadingGoals").where({ goal_id: goalId }).update(updateData);
 
     const updatedGoal = await knex("ReadingGoals")
       .where({ goal_id: goalId })

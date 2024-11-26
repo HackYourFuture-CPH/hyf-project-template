@@ -27,21 +27,9 @@ export default function GoalsWidget() {
     getProgress,
     getTimeRemaining,
     getBooksAfterStartDate,
+    calculateEndDate,
     isSubmitting,
   } = useGoal();
-
-  const calculateEndDate = (startDate, goalType) => {
-    const start = new Date(startDate);
-    let endDate;
-    if (goalType === "MONTHLY") {
-      endDate = new Date(start);
-      endDate.setMonth(endDate.getMonth() + 1);
-    } else if (goalType === "ANNUAL") {
-      endDate = new Date(start);
-      endDate.setFullYear(endDate.getFullYear() + 1);
-    }
-    return endDate.toLocaleDateString("en-CA");
-  };
 
   const { booksCount } = useBookshelf();
   const [isModalOpen, setIsModalOpen] = useState(false);

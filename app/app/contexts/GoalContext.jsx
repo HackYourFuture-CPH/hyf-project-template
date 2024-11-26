@@ -43,6 +43,19 @@ export const GoalProvider = ({ children }) => {
     fetchGoal();
   }, [currentUser]);
 
+  const calculateEndDate = (startDate, goalType) => {
+    const start = new Date(startDate);
+    let endDate;
+    if (goalType === "MONTHLY") {
+      endDate = new Date(start);
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else if (goalType === "ANNUAL") {
+      endDate = new Date(start);
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
+    return endDate.toLocaleDateString("en-CA");
+  };
+
   const setGoal = async (goalData) => {
     setIsSubmitting(true);
 
@@ -112,7 +125,7 @@ export const GoalProvider = ({ children }) => {
           endDate.setFullYear(endDate.getFullYear() + 1);
         }
 
-        updatedData.end_date = endDate.toLocaleDateString("en-CA");
+        updatedData.end_date = endDate.toISOString().split("T")[0];
       }
 
       const response = await makeRequest(
@@ -199,6 +212,7 @@ export const GoalProvider = ({ children }) => {
         getProgress,
         getTimeRemaining,
         getBooksAfterStartDate,
+        calculateEndDate,
         isSubmitting,
       }}
     >
