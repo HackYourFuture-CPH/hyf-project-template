@@ -5,10 +5,8 @@ import {
   deleteNotes,
   updateNotes,
 } from "../controllers/notesController.js";
-//import { authenticate } from "../middlewares/authenticate.js";
 
 const notesRouter = express.Router();
-//notesRouter.use(authenticate());
 
 notesRouter.get("/", getNotes);
 notesRouter.post("/add-notes", addNotes);
