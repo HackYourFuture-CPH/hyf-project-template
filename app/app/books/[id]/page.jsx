@@ -4,7 +4,7 @@ import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
-import Notes from "@/app/components/Notes.jsx";
+import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
 
 const BookDetails = () => {
@@ -184,13 +184,13 @@ const BookDetails = () => {
             >
               Notes
             </Button>
-            <Notes
+            <NotesAndQuotes
               open={showNotes}
               handleClose={handleCloseNotes}
               bookId={id}
               type="notes"
             />
-            <Notes
+            <NotesAndQuotes
               open={showQuotes}
               handleClose={handleCloseQuotes}
               bookId={id}

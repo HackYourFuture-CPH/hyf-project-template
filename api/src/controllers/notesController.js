@@ -52,12 +52,11 @@ export const deleteNotes = async (req, res) => {
   const { user_id } = req.body;
   try {
     const deletedCount = await knex("Notes").where({ id, user_id }).del();
-    if (!deletedCount) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to delete this note" });
+    if (deletedCount) {
+      return res.status(204).end();
+    } else {
+      return res.status(404).json({ error: "Entry not found" });
     }
-    res.json({ message: "Note deleted successfully" });
   } catch (error) {
     console.error("Error deleting note:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -16,7 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../contexts/AuthContext.jsx";
 import { makeRequest } from "../utils/makeRequest.js";
 
-const Notes = ({ open, handleClose, bookId, type }) => {
+const NotesAndQuotes = ({ open, handleClose, bookId, type }) => {
   const { currentUser } = useAuth();
   const [entries, setEntries] = useState([]);
   const [showAddEntry, setShowAddEntry] = useState(false);
@@ -84,7 +84,6 @@ const Notes = ({ open, handleClose, bookId, type }) => {
       setEditingEntryId(null);
       setShowAddEntry(false);
 
-      // Fetch updated entries after adding/editing
       const updatedEntries = await makeRequest(
         `/api/book-${type}?book_id=${bookId}&user_id=${userId}`,
         {},
@@ -110,8 +109,19 @@ const Notes = ({ open, handleClose, bookId, type }) => {
         "DELETE"
       );
 
+      // Check if the response is null indicating successful deletion
       if (response === null) {
-        setEntries(entries.filter((entry) => entry.id !== entryId));
+        // Optimistically update UI by removing the deleted entry
+        setEntries((prevEntries) =>
+          prevEntries.filter((entry) => entry.id !== entryId)
+        );
+
+        // Optionally, refetch entries to ensure the data is in sync with the server
+        // This is useful if you don't want to rely solely on local state updates
+        const updatedEntries = await makeRequest(
+          `/api/book-${type}?book_id=${bookId}&user_id=${currentUser.user.id}`
+        );
+        setEntries(updatedEntries);
       } else {
         console.error(`Failed to delete book-${type}:`, response);
       }
@@ -262,4 +272,4 @@ const Notes = ({ open, handleClose, bookId, type }) => {
   );
 };
 
-export default Notes;
+export default NotesAndQuotes;

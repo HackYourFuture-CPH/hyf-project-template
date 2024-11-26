@@ -54,12 +54,11 @@ export const deleteQuote = async (req, res) => {
   const { user_id } = req.body;
   try {
     const deletedCount = await knex("Quotes").where({ id, user_id }).del();
-    if (!deletedCount) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to delete this quote" });
+    if (deletedCount) {
+      return res.status(204).end();
+    } else {
+      return res.status(404).json({ error: "Entry not found" });
     }
-    res.json({ message: "Quote deleted successfully" });
   } catch (error) {
     console.error("Error deleting quote:", error);
     res.status(500).json({ error: "Internal Server Error" });
