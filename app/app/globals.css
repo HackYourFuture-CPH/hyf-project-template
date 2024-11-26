@@ -1,15 +1,16 @@
+/* Define default (light theme) variables */
 :root {
     --background: #ffffff;
     --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-    }
+/* Define dark theme variables */
+:root[data-theme="dark"] {
+    --background: #0a0a0a;
+    --foreground: #ededed;
 }
 
+/* Body and HTML Styling */
 html,
 body {
     max-width: 100vw;
@@ -24,6 +25,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Headings Styling */
 h1,
 h2,
 h6 {
@@ -32,19 +34,21 @@ h6 {
     font-weight: 400;
 }
 
+/* Universal Reset */
 * {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
 }
 
+/* Link Styling */
 a {
     color: inherit;
     text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
+/* Ensure proper color scheme handling for manual theme switching */
+html {
+    color-scheme: var(--foreground);
 }
+
