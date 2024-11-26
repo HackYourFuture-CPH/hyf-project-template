@@ -18,7 +18,8 @@ export default function ClientDashboard() {
        h-full text-center px-4 py-10 gap-96"
       >
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-emerald-200 mb-10 sm:mb-12 md:mb-16 lg:mb-20 tracking-tight font-normal">
-          Welcome To Your Dashboard
+          Welcome to Your Command Center – Let's Get
+          Started!
         </h1>
         <Link
           href="client-dashboard/projects"
