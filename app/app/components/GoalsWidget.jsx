@@ -33,6 +33,8 @@ export default function GoalsWidget() {
   const [goalData, setGoalData] = useState({
     goal_type: activeGoal?.goal_type || "MONTHLY",
     goal_count: activeGoal?.goal_count || "",
+    start_date:
+      activeGoal?.start_date || new Date().toISOString().split("T")[0],
   });
   const [isNewlyCompleted, setIsNewlyCompleted] = useState(false);
 
@@ -57,6 +59,7 @@ export default function GoalsWidget() {
       setGoalData({
         goal_type: activeGoal.goal_type,
         goal_count: activeGoal.goal_count,
+        start_date: activeGoal.start_date,
       });
     }
   }, [activeGoal]);
@@ -72,7 +75,14 @@ export default function GoalsWidget() {
     await updateGoal(goalData);
     setIsModalOpen(false);
   };
-
+  const handleResetGoal = async () => {
+    const resetGoalData = {
+      goal_type: activeGoal.goal_type,
+      goal_count: booksCount,
+      start_date: new Date().toISOString().split("T")[0],
+    };
+    await setGoal(resetGoalData);
+  };
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
@@ -108,7 +118,7 @@ export default function GoalsWidget() {
             {booksCount} of {activeGoal.goal_count} books read
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {getTimeRemaining()}
+            {getTimeRemaining()} | Ends on: {activeGoal.end_date}
           </Typography>
 
           <Box
@@ -122,15 +132,7 @@ export default function GoalsWidget() {
             >
               Edit Goal
             </Button>
-            <IconButton
-              color="primary"
-              onClick={() =>
-                setGoal({
-                  goal_type: activeGoal.goal_type,
-                  goal_count: booksCount,
-                })
-              }
-            >
+            <IconButton color="primary" onClick={handleResetGoal}>
               <RefreshIcon />
             </IconButton>
           </Box>
