@@ -33,15 +33,18 @@ export const updateQuote = async (req, res) => {
   const { user_id, content } = req.body;
 
   try {
-    const [updatedQuote] = await knex("Quotes")
+    const result = await knex("Quotes")
       .where({ id, user_id })
-      .update({ content })
-      .returning("*");
-    if (!updatedQuote) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to update this quote" });
+      .update({ content });
+
+    if (result === 0) {
+      return res.status(403).json({
+        error: "Not authorized to update this quote or quote not found",
+      });
     }
+
+    const updatedQuote = await knex("Quotes").where({ id }).first();
+
     res.json(updatedQuote);
   } catch (error) {
     console.error("Error updating quote:", error);
@@ -51,14 +54,24 @@ export const updateQuote = async (req, res) => {
 
 export const deleteQuote = async (req, res) => {
   const { id } = req.params;
-  const { user_id } = req.body;
+  const { user_id } = req.query;
+
+  if (!user_id) {
+    return res
+      .status(400)
+      .json({ error: "Missing user_id in query parameters" });
+  }
+
   try {
-    const deletedCount = await knex("Quotes").where({ id, user_id }).del();
-    if (deletedCount) {
-      return res.status(204).end();
-    } else {
-      return res.status(404).json({ error: "Entry not found" });
+    const result = await knex("Quotes").where({ id, user_id }).del();
+
+    if (result === 0) {
+      return res.status(403).json({
+        error: "Not authorized to delete this quote or quote not found",
+      });
     }
+
+    res.json({ success: true, message: "Quote deleted successfully" });
   } catch (error) {
     console.error("Error deleting quote:", error);
     res.status(500).json({ error: "Internal Server Error" });

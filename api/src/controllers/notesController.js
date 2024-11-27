@@ -30,35 +30,49 @@ export const addNotes = async (req, res) => {
 export const updateNotes = async (req, res) => {
   const { id } = req.params;
   const { user_id, content } = req.body;
+
   try {
-    const [updatedNote] = await knex("Notes")
+    const result = await knex("Notes")
       .where({ id, user_id })
-      .update({ content, updated_at: knex.fn.now() })
-      .returning("*");
-    if (!updatedNote) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to update this note" });
+      .update({ content });
+
+    if (result === 0) {
+      return res.status(403).json({
+        error: "Not authorized to update this note or note not found",
+      });
     }
+
+    const updatedNote = await knex("Notes").where({ id }).first();
+
     res.json(updatedNote);
   } catch (error) {
-    console.error("Error updating note:", error);
+    console.error("Error updating Note:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 export const deleteNotes = async (req, res) => {
   const { id } = req.params;
-  const { user_id } = req.body;
+  const { user_id } = req.query;
+
+  if (!user_id) {
+    return res
+      .status(400)
+      .json({ error: "Missing user_id in query parameters" });
+  }
+
   try {
-    const deletedCount = await knex("Notes").where({ id, user_id }).del();
-    if (deletedCount) {
-      return res.status(204).end();
-    } else {
-      return res.status(404).json({ error: "Entry not found" });
+    const result = await knex("Notes").where({ id, user_id }).del();
+
+    if (result === 0) {
+      return res.status(403).json({
+        error: "Not authorized to delete this note or note not found",
+      });
     }
+
+    res.json({ success: true, message: "Note deleted successfully" });
   } catch (error) {
-    console.error("Error deleting note:", error);
+    console.error("Error deleting Note:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

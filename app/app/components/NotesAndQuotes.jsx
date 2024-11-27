@@ -103,30 +103,21 @@ const NotesAndQuotes = ({ open, handleClose, bookId, type }) => {
 
   const handleDeleteEntry = async (entryId) => {
     try {
-      const response = await makeRequest(
-        `/api/book-${type}/${entryId}`,
-        { user_id: currentUser.user.id },
+      const userId = currentUser.user.id;
+      await makeRequest(
+        `/api/book-${type}/${entryId}?user_id=${userId}`,
+        {},
         "DELETE"
       );
 
-      // Check if the response is null indicating successful deletion
-      if (response === null) {
-        // Optimistically update UI by removing the deleted entry
-        setEntries((prevEntries) =>
-          prevEntries.filter((entry) => entry.id !== entryId)
-        );
-
-        // Optionally, refetch entries to ensure the data is in sync with the server
-        // This is useful if you don't want to rely solely on local state updates
-        const updatedEntries = await makeRequest(
-          `/api/book-${type}?book_id=${bookId}&user_id=${currentUser.user.id}`
-        );
-        setEntries(updatedEntries);
-      } else {
-        console.error(`Failed to delete book-${type}:`, response);
-      }
+      const updatedEntries = await makeRequest(
+        `/api/book-${type}?book_id=${bookId}&user_id=${userId}`,
+        {},
+        "GET"
+      );
+      setEntries(updatedEntries);
     } catch (error) {
-      console.error(`Error deleting book-${type}:`, error);
+      console.error("Error deleting book-quotes:", error);
     }
   };
 
