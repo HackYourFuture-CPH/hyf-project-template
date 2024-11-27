@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 import { useAuth } from "../contexts/AuthContext";
+import { useErrorModal } from "../hooks/useErrorModal";
+import ErrorModal from "../components/ErrorModal";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -10,6 +12,7 @@ const Login = () => {
   const [errors, setErrors] = useState({ username: "", password: "" });
   const router = useRouter(); // Initialize the router
   const { login } = useAuth(); // Use Login from Auth context
+  const { error, showError, hideError } = useErrorModal();
 
   // Validate form fields
   const isValid = () => {
@@ -26,6 +29,13 @@ const Login = () => {
     }
 
     setErrors(tempErrors);
+    if (!valid) {
+      showError(
+        "Please fill in all required fields",
+        "Validation Error",
+        "warning"
+      );
+    }
     return valid;
   };
 
@@ -35,18 +45,30 @@ const Login = () => {
       await login(userData); // Login through Auth context
       router.push(`/dashboard`); // Redirect to dashboard
     } catch (error) {
-      console.error("Login failed:", error);
-      alert(error.message || "Something went wrong, please try again.");
+      showError(
+        error.response?.data?.error ||
+          "Oops! We couldn't log you in. Please check your username and password, and try again.",
+        "Login Failed",
+        "error"
+      );
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isValid()) {
-      loginUser(username, password);
+    try {
+      if (isValid()) {
+        loginUser(username, password);
+      }
+    } catch (error) {
+      showError(
+        error.message ||
+          "Oops! We couldn't log you in. Please check your username and password, and try again.",
+        "Login Failed",
+        "error"
+      );
     }
   };
-
   return (
     <Box
       display="flex"
@@ -196,6 +218,13 @@ const Login = () => {
           Back to Home
         </Button>
       </Box>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
     </Box>
   );
 };

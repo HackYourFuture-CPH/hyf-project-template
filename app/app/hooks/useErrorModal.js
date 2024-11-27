@@ -6,22 +6,23 @@ export const useErrorModal = () => {
     isOpen: false,
     message: "",
     title: "Error",
+    severity: "error",
   });
 
-  const showError = (message, title = "Error") => {
+  const showError = (message, title = "Error", severity = "error") => {
     setError({
       isOpen: true,
       message,
       title,
+      severity,
     });
   };
 
   const hideError = () => {
-    setError({
+    setError((prev) => ({
+      ...prev,
       isOpen: false,
-      message: "",
-      title: "Error",
-    });
+    }));
   };
 
   return { error, showError, hideError };
