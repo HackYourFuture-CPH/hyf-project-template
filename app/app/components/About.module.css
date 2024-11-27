@@ -2,11 +2,14 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #f5ebeb;
+    background-color: var(--background);
+    color: var(--foreground);
     padding: 40px;
     width: 100%;
     margin: 50px 0 0 0;
+    transition: background-color 0.3s, color 0.3s;
 }
+
 
 .textContainer {
     margin-right: 20px;
@@ -16,12 +19,13 @@
 .aboutTitle {
     font-size: 2rem;
     margin-bottom: 60px;
+    color:  #867070;
 }
 
 .aboutDescription {
     font-size: 1rem;
     margin-bottom: 20px;
-    color: #333;
+    color: var(--foreground);
 }
 
 .authorContainer {
@@ -30,7 +34,9 @@
     flex-direction: column;
     width: 320px;
     height: 320px;
-    background-color: #fff;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .authorImage {
@@ -44,13 +50,9 @@
     min-width: 200px;
 }
 
-.quoteContainer h3 {
-    margin: 0;
-}
-
 .quoteContainer blockquote {
     font-style: italic;
-    color: #555;
+    color: var(--secondary-accent);
     margin: 10px 0;
     padding: 20px;
 }
@@ -62,73 +64,5 @@
 }
 
 .learnMore:hover {
-    color: #d06097;
-}
-
-@media (max-width: 768px) {
-    .about {
-        flex-direction: column;
-        align-items: center;
-        height: auto;
-        padding: 20px;
-    }
-
-    .textContainer {
-        margin-right: 0;
-        max-width: 100%;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .aboutTitle {
-        font-size: 1.5rem;
-        margin-bottom: 40px;
-    }
-
-    .aboutDescription {
-        font-size: 0.9rem;
-    }
-
-    .authorContainer {
-        width: 260px;
-        height: auto;
-        background-color: #fff;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    .authorImage {
-        width: 80px;
-        height: 80px;
-        margin-top: -40px;
-    }
-
-    .quoteContainer blockquote {
-        font-size: 0.9rem;
-        padding: 10px;
-    }
-
-    .learnMore {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .aboutTitle {
-        font-size: 1.2rem;
-        margin-bottom: 30px;
-    }
-
-    .authorImage {
-        width: 70px;
-        height: 70px;
-    }
-
-    .quoteContainer blockquote {
-        font-size: 0.8rem;
-    }
-
-    .learnMore {
-        font-size: 0.8rem;
-    }
+    color: var(--foreground);
 }

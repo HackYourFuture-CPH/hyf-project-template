@@ -1,73 +1,20 @@
 "use client";
-
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "../contexts/AuthContext"; // Import the AuthContext
-import { useTheme } from "../contexts/ThemeContext"; // Import the ThemeContext
+import { useAuth } from "../contexts/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 import styles from "./Header.module.css";
 
 const Header = () => {
-  const { currentUser, logout } = useAuth(); // Access user and logout function
-  const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme function
+  const { currentUser, logout } = useAuth();
   const router = useRouter();
-  const pathname = usePathname(); // Get current path
+  const pathname = usePathname();
 
   const handleLogout = async () => {
-    await logout(); // Call the logout function
-    router.push("/"); // Redirect to the home page
-  };
-
-  // Dynamically render buttons based on login status and current path
-  const renderButtons = () => {
-    if (!currentUser) {
-      // User is not logged in
-      if (pathname === "/login" || pathname === "/signup") {
-        return (
-          <button onClick={toggleTheme} className={styles.themeButton}>
-            {theme === "light" ? "☀️" : "🌙"}
-          </button>
-        );
-      }
-      return (
-        <>
-          <Link href="/login" className={styles.navButton}>
-            LOG IN
-          </Link>
-          <Link href="/signup" className={styles.navButton}>
-            SIGN UP
-          </Link>
-          <button onClick={toggleTheme} className={styles.themeButton}>
-            {theme === "light" ? "☀️" : "🌙"}
-          </button>
-        </>
-      );
-    } else {
-      // User is logged in
-      if (pathname === "/dashboard") {
-        return (
-          <>
-            <button className={styles.navButton} onClick={handleLogout}>
-              LOG OUT
-            </button>
-            <button onClick={toggleTheme} className={styles.themeButton}>
-              {theme === "light" ? "☀️" : "🌙"}
-            </button>
-          </>
-        );
-      }
-      return (
-        <>
-          <Link href="/dashboard" className={styles.navButton}>
-            DASHBOARD
-          </Link>
-          <button onClick={toggleTheme} className={styles.themeButton}>
-            {theme === "light" ? "☀️" : "🌙"}
-          </button>
-        </>
-      );
-    }
+    await logout();
+    router.push("/");
   };
 
   return (
@@ -83,7 +30,34 @@ const Header = () => {
           />
         </Link>
       </div>
-      <nav className={styles.nav}>{renderButtons()}</nav>
+      <nav className={styles.nav}>
+        {!currentUser ? (
+          <>
+            {pathname !== "/login" && (
+              <Link href="/login" className={styles.navButton}>
+                LOG IN
+              </Link>
+            )}
+            {pathname !== "/signup" && (
+              <Link href="/signup" className={styles.navButton}>
+                SIGN UP
+              </Link>
+            )}
+          </>
+        ) : (
+          <>
+            {pathname !== "/dashboard" && (
+              <Link href="/dashboard" className={styles.navButton}>
+                DASHBOARD
+              </Link>
+            )}
+            <button onClick={handleLogout} className={styles.navButton}>
+              LOG OUT
+            </button>
+          </>
+        )}
+        <ThemeToggle />
+      </nav>
     </header>
   );
 };

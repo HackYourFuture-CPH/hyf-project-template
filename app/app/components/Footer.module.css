@@ -10,6 +10,10 @@
     align-items: center;
     position: relative;
 }
+[data-theme="dark"] .footer {
+    background-color: var(--background); /* Dark mode background */
+    color: var(--foreground); /* Adjust text color if needed */
+}
 
 .footerBottom {
     font-size: 0.8rem;

@@ -1,0 +1,15 @@
+.themeToggle {
+    background-color: var(--foreground);
+    color: var(--background);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.themeToggle:hover {
+    background-color: var(--accent);
+    color: var(--background);
+}
