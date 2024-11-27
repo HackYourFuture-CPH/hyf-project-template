@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ username: "", password: "" });
   const router = useRouter(); // Initialize the router
-  const { login } = useAuth(); //Use Login from Auth context
+  const { login } = useAuth(); // Use Login from Auth context
 
   // Validate form fields
   const isValid = () => {
@@ -28,26 +28,20 @@ const Login = () => {
     setErrors(tempErrors);
     return valid;
   };
+
   const loginUser = async (username, password) => {
     try {
-      // Prepare user data for login
       const userData = { username, password };
-
-      // Make API call to login
-      await login(userData);
-
-      // Redirect to homepage (or dashboard)
-      router.push(`/dashboard`); // This will navigate to the homepage (or you can specify any other route)
+      await login(userData); // Login through Auth context
+      router.push(`/dashboard`); // Redirect to dashboard
     } catch (error) {
       console.error("Login failed:", error);
       alert(error.message || "Something went wrong, please try again.");
     }
   };
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(username);
-
     if (isValid()) {
       loginUser(username, password);
     }
@@ -60,21 +54,22 @@ const Login = () => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
-      bgcolor="#E4D0D0" // Warm, parchment-like background color
+      bgcolor="#E4D0D0"
       padding={3}
     >
       {/* Left Side: Book Stack Image */}
       <Box
-        display={{ xs: "none", md: "flex" }}
+        display="flex"
         alignItems="center"
         justifyContent="center"
         flex={1}
         sx={{
-          backgroundImage: 'url("https://pngimg.com/d/book_PNG51081.png")', // Add your book image here
+          backgroundImage: 'url("https://pngimg.com/d/book_PNG51081.png")',
           backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
           height: "70vh",
           maxWidth: "400px",
+          marginBottom: { xs: 2, md: 0 }, // Add spacing for mobile view
         }}
       />
 
@@ -85,7 +80,7 @@ const Login = () => {
         alignItems="center"
         justifyContent="center"
         flex={1}
-        bgcolor="#fdf3e2" // Soft, paper-like background
+        bgcolor="#fdf3e2"
         borderRadius={3}
         boxShadow={5}
         padding={5}
@@ -99,7 +94,7 @@ const Login = () => {
             fontFamily: "serif",
             fontWeight: "bold",
             mb: 2,
-            color: "#5A4A42", // Dark brown, bookish color
+            color: "#5A4A42",
           }}
         >
           Welcome to LeafNotes
@@ -128,15 +123,15 @@ const Login = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
-                bgcolor: "#fffbe8", // Off-white, parchment look
-                color: "#3E2723", // Dark brown text
+                bgcolor: "#fffbe8",
+                color: "#3E2723",
               },
               "& .MuiInputLabel-root": {
                 color: "#5A4A42",
                 fontFamily: "serif",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#5A4A42", // Border color to match theme
+                borderColor: "#5A4A42",
               },
             }}
           />
@@ -168,13 +163,14 @@ const Login = () => {
             type="submit"
             variant="contained"
             fullWidth
+            disabled={!username || !password} // Disable button if fields are empty
             sx={{
               mt: 2,
               borderRadius: "10px",
-              bgcolor: "#D5B4B4", // Warm brown button
+              bgcolor: username && password ? "#FFB74D" : "#D5B4B4", // Bright orange when enabled
               color: "#ffffff",
               ":hover": {
-                bgcolor: "#5A4A42", // Darker brown on hover
+                bgcolor: username && password ? "#FF8A00" : "#D5B4B4", // Brighter hover when enabled
               },
               fontFamily: "serif",
             }}
@@ -190,6 +186,15 @@ const Login = () => {
             Sign up
           </Link>
         </Typography>
+
+        {/* Back Home Button */}
+        <Button
+          variant="text"
+          sx={{ mt: 2, color: "#5A4A42" }}
+          onClick={() => router.push("/")} // Redirect to homepage
+        >
+          Back to Home
+        </Button>
       </Box>
     </Box>
   );
