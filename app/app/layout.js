@@ -3,6 +3,7 @@ import { BookshelfProvider } from "./contexts/BooksReadCountContext";
 import { ThemeProvider } from "./contexts/ThemeContext"; // Import the ThemeProvider
 import localFont from "next/font/local";
 import "./globals.css";
+import IconToggle from "./components/IconToggle"; // Import the IconToggle component
 
 // Load Lato Font
 const lato = localFont({
@@ -18,19 +19,6 @@ const playfairDisplay = localFont({
   weight: "400", // Regular weight
 });
 
-// You can also load bold versions if needed
-const latoBold = localFont({
-  src: "./fonts/Lato-Bold.ttf", // Path to your .ttf file
-  variable: "--font-lato-bold",
-  weight: "700", // Bold weight
-});
-
-const playfairDisplayBold = localFont({
-  src: "./fonts/PlayfairDisplay-Bold.ttf", // Path to your .ttf file
-  variable: "--font-playfair-bold",
-  weight: "700", // Bold weight
-});
-
 export const metadata = {
   title: "LeafNotes",
   description: "A note-taking app for book lovers",
@@ -42,7 +30,13 @@ export default function RootLayout({ children }) {
       <body className={`${lato.variable} ${playfairDisplay.variable}`}>
         <ThemeProvider> {/* Wrap the application in ThemeProvider */}
           <AuthContextProvider>
-            <BookshelfProvider>{children}</BookshelfProvider>
+            <BookshelfProvider>
+              {/* Add IconToggle in a fixed position header */}
+              <header style={{ position: 'absolute', top: 10, right: 10 }}>
+                <IconToggle />
+              </header>
+              {children} {/* All page content goes here */}
+            </BookshelfProvider>
           </AuthContextProvider>
         </ThemeProvider>
       </body>

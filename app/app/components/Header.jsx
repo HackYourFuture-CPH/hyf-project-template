@@ -56,7 +56,7 @@ const Header = () => {
             </button>
           </>
         )}
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
       </nav>
     </header>
   );
