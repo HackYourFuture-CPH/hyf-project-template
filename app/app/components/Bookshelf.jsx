@@ -188,7 +188,7 @@ const Bookshelf = () => {
         isOpen={isConfirmModalOpen}
         onClose={() => {
           setIsConfirmModalOpen(false);
-          setBookToDelete(null);
+          setBookToRemove(null);
         }}
         onConfirm={confirmDelete}
         message="Are you sure you want to remove this book from your bookshelf?"
