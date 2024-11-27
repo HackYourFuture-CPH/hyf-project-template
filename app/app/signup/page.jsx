@@ -8,13 +8,12 @@ import {
   Box,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
-
 import { validateField } from "../utils/validation";
 import { isValidate } from "../utils/validation";
+import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -32,11 +31,12 @@ const SignUp = () => {
     password: "",
   });
 
+  const { theme } = useTheme(); // Access the current theme (light or dark)
+  const router = useRouter();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setData((prevData) => ({ ...prevData, [name]: value }));
-
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: validateField(name, value) ? "" : prevErrors[name],
@@ -50,8 +50,6 @@ const SignUp = () => {
       [name]: validateField(name, value),
     }));
   };
-
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,7 +70,6 @@ const SignUp = () => {
 
     try {
       const result = await makeRequest(`/auth/register`, userData);
-
       setData({
         firstName: "",
         lastName: "",
@@ -96,12 +93,18 @@ const SignUp = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          bgcolor: theme === "dark" ? "var(--background-dark)" : "#F0D2D6", // Adjust background color based on theme
         }}
       >
         <Container
           sx={{
             display: "flex",
-            background: "#F0D2D6",
+            background: theme === "dark" ? "#333333" : "#F5ECE8", // Dark mode background
+            borderRadius: 2,
+            boxShadow:
+              theme === "dark"
+                ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                : "0px 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Container
@@ -117,14 +120,17 @@ const SignUp = () => {
               sx={{
                 fontFamily: "jacques Francois",
                 marginBottom: 2,
-                color: "#3C3C3C",
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
                 fontWeight: "500",
                 whiteSpace: "pre-line",
                 letterSpacing: "0.5px",
                 lineHeight: 1.5,
                 padding: "10px 20px",
-                backgroundColor: "#F5ECE8",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                backgroundColor: theme === "dark" ? "#444444" : "#F5ECE8", // Adjust background color for heading
+                boxShadow:
+                  theme === "dark"
+                    ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                    : "0px 4px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
               <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
@@ -144,9 +150,13 @@ const SignUp = () => {
             maxWidth="md"
             sx={{
               padding: 3,
-              background: "#EAD3C4",
-
+              background: theme === "dark" ? "#444444" : "#EAD3C4", // Adjust background color for form container
               marginRight: "-25px",
+              borderRadius: 2,
+              boxShadow:
+                theme === "dark"
+                  ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                  : "0px 4px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Typography
@@ -155,6 +165,7 @@ const SignUp = () => {
                 textAlign: "center",
                 margin: "15px",
                 fontFamily: "jacques Francois",
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
               }}
             >
               Create Account{" "}
@@ -178,6 +189,20 @@ const SignUp = () => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     onBlur={handleBlur}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
                   />{" "}
                 </Grid2>{" "}
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
@@ -195,6 +220,20 @@ const SignUp = () => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     onBlur={handleBlur}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
                   />{" "}
                 </Grid2>{" "}
               </Grid2>{" "}
@@ -213,6 +252,20 @@ const SignUp = () => {
               error={!!errors.email}
               helperText={errors.email}
               onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
             />{" "}
             <TextField
               variant="outlined"
@@ -228,6 +281,20 @@ const SignUp = () => {
               error={!!errors.username}
               helperText={errors.username}
               onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
             />{" "}
             <TextField
               variant="outlined"
@@ -244,6 +311,20 @@ const SignUp = () => {
               error={!!errors.password}
               helperText={errors.password}
               onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
             />{" "}
             <Button
               type="submit"
@@ -251,7 +332,7 @@ const SignUp = () => {
               variant="contained"
               color="primary"
               sx={{
-                background: "grey",
+                background: theme === "dark" ? "#666666" : "grey",
                 mt: 3,
                 mb: 2,
                 fontFamily: "jacques Francois",
@@ -262,7 +343,10 @@ const SignUp = () => {
             >
               Submit{" "}
             </Button>{" "}
-            <Typography variant="h8">
+            <Typography
+              variant="h8"
+              sx={{ color: theme === "dark" ? "#ffffff" : "#3C3C3C" }}
+            >
               Already have an account?{" "}
               <a href="/login" target="_blank" style={{ color: "blueviolet" }}>
                 Login{" "}
