@@ -40,29 +40,28 @@ const QuotesList = ({ userId }) => {
     }
     setQuoteToRemove(quoteId);
     setIsConfirmModalOpen(true);
+  };
+  const confirmRemoveQuote = async () => {
+    if (!quoteToRemove) return;
 
-    const confirmRemoveQuote = async () => {
-      if (!quoteToRemove) return;
-
-      try {
-        await axios.delete(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/${quoteToRemove}`,
-          {
-            withCredentials: true,
-          }
-        );
-        // Remove the deleted quote from the local state
-        setQuotes((prevQuotes) =>
-          prevQuotes.filter((quote) => quote.quote_id !== quoteToRemove)
-        );
-      } catch (err) {
-        console.error("Error removing quote:", err);
-        setError("Failed to remove quote. Please try again.");
-      } finally {
-        setIsConfirmModalOpen(false);
-        setQuoteToRemove(null);
-      }
-    };
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/quotes/${quoteToRemove}`,
+        {
+          withCredentials: true,
+        }
+      );
+      // Remove the deleted quote from the local state
+      setQuotes((prevQuotes) =>
+        prevQuotes.filter((quote) => quote.quote_id !== quoteToRemove)
+      );
+    } catch (err) {
+      console.error("Error removing quote:", err);
+      setError("Failed to remove quote. Please try again.");
+    } finally {
+      setIsConfirmModalOpen(false);
+      setQuoteToRemove(null);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
