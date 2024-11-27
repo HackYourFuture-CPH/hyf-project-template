@@ -49,7 +49,7 @@ const QuotesList = ({ userId }) => {
       );
       // Remove the deleted quote from the local state
       setQuotes((prevQuotes) =>
-        prevQuotes.filter((quote) => quote.id !== quoteId)
+        prevQuotes.filter((quote) => quote.quote_id !== quoteId)
       );
     } catch (err) {
       console.error("Error removing quote:", err);
@@ -72,16 +72,16 @@ const QuotesList = ({ userId }) => {
         </div>
       ) : (
         <ul>
-          {quotes.map((quote) => (
-            <li key={quote.id} className={styles.quoteItem}>
+          {quotes.map((quote, index) => (
+            <li key={quote.quote_id || index} className={styles.quoteItem}>
               <blockquote>
-                <p>"{quote.content}"</p>
+                <p>"{quote.quote_text}"</p>
                 <div>- {quote.book_author || "Unknown"} </div>
                 <div>{quote.book_title || "Unknown Book"}</div>
               </blockquote>
               <button
                 className={styles.closeButton}
-                onClick={() => handleRemoveQuote(quote.id)}
+                onClick={() => handleRemoveQuote(quote.quote_id)}
               >
                 &times;
               </button>
