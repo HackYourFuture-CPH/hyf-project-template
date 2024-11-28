@@ -1,3 +1,5 @@
+import styles from "./BookGrid.module.css";
+
 const BookGrid = ({ books, onAddBook, loading }) => {
   if (loading) {
     return <h1>Loading...</h1>;
