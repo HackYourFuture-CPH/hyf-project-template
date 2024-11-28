@@ -2,6 +2,10 @@ const BookGrid = ({ books, onAddBook, loading }) => {
   if (loading) {
     return <h1>Loading...</h1>;
   }
+
+  if (!books.length) {
+    return <div className={styles.noResults}>No books found</div>;
+  }
   return (
     <div className={styles.bookGrid}>
       {books.map((book) => (
@@ -16,7 +20,7 @@ const BookGrid = ({ books, onAddBook, loading }) => {
             <p>{book.volumeInfo.authors?.join(", ")}</p>
           </div>
           <button onClick={() => onAddBook(book)} className={styles.addButton}>
-            Add
+            Add to Bookshelf
           </button>
         </div>
       ))}
