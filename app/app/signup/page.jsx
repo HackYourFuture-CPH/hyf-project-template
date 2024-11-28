@@ -17,6 +17,8 @@ import AppLayoutContainer from "../components/AppLayoutContainer";
 import { validateField } from "../utils/validation";
 import { isValidate } from "../utils/validation";
 import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
+import ErrorModal from "../components/ErrorModal";
+import { useErrorModal } from "../hooks/useErrorModal";
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -34,10 +36,9 @@ const SignUp = () => {
     password: "",
   });
 
+  const { error, showError, hideError } = useErrorModal();
   const { theme } = useTheme(); // Access the current theme (light or dark)
-
   const isMobile = useMediaQuery("(max-width:600px)");
-
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -85,8 +86,25 @@ const SignUp = () => {
       });
       router.push("/login");
     } catch (error) {
-      //console.error("Error registering user:", error);
-      alert(error.message || "Something went wrong, please try again.");
+      if (!window.navigator.onLine) {
+        showError(
+          "Please check your internet connection and try again.",
+          "Connection Error",
+          "error"
+        );
+      } else if (error.message === "Failed to fetch") {
+        showError(
+          "We can't reach our servers right now. Please try again in a few minutes.",
+          "Server Error",
+          "error"
+        );
+      } else {
+        showError(
+          error.message || "Something went wrong. Please try again later.",
+          "Error",
+          "error"
+        );
+      }
     }
   };
 
@@ -388,6 +406,13 @@ const SignUp = () => {
           </Container>{" "}
         </Container>
       </Container>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
     </AppLayoutContainer>
   );
 };
