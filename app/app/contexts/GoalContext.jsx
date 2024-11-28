@@ -19,12 +19,10 @@ export const GoalProvider = ({ children }) => {
     const fetchGoal = async () => {
       try {
         const response = await makeRequest(`/api/goals/latest`, {}, "GET");
-        console.log("Raw API response:", response);
 
         if (response && response.goal) {
           setActiveGoal(response.goal);
         } else {
-          console.log("No active goal found. Showing goal modal.");
           setActiveGoal(null);
         }
       } catch (error) {
