@@ -104,14 +104,18 @@ const SignUp = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          bgcolor: theme === "dark" ? "var(--background-dark)" : "#F0D2D6", // Adjust background color based on theme
+          bgcolor: theme === "dark" ? "#000000" : "#F0D2D6", // Adjust background color based on theme
         }}
       >
         <Container
           sx={{
             display: "flex",
 
-            background: theme === "dark" ? "#333333" : "#F5ECE8", // Dark mode background
+            background: theme === "dark" ? "#111112" : "#F5ECE8", // Dark mode background
+
+
+          
+
             borderRadius: 2,
             boxShadow:
               theme === "dark"
@@ -179,7 +183,11 @@ const SignUp = () => {
             sx={{
               padding: 3,
 
-              background: theme === "dark" ? "#444444" : "#EAD3C4", // Adjust background color for form container
+              background: theme === "dark" ? "#000000" : "#EAD3C4", // Adjust background color for form container
+
+
+            
+
               marginRight: "-25px",
               borderRadius: 2,
               boxShadow:

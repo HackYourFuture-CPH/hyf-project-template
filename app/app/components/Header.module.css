@@ -21,7 +21,7 @@
 }
 /* Header.module.css */
 [data-theme="dark"] .logo {
-    filter: brightness(2); /* Brighten the logo */
+    filter: brightness(8); /* Brighten the logo */
 }
 
 
