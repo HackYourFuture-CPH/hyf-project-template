@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Button from "./Button";
 import { Box } from "@mui/material";
 import EditProfile from "./EditProfile";
 import GoalsWidget from "./GoalsWidget";
@@ -12,7 +11,8 @@ import styles from "./Profile.module.css";
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [favoriteGenre, setFavoriteGenre] = useState(null);
+    const [mostReadGenre, setMostReadGenre] = useState(null);
+    const [favoriteAuthor, setFavoriteAuthor] = useState(null);
     const { booksCount, loading, error } = useBookshelf();
 
     useEffect(() => {
@@ -26,23 +26,25 @@ const Profile = () => {
             }
         };
 
-        const fetchFavoriteGenre = async () => {
+        const fetchFavoriteData = async () => {
             try {
-                const response = await makeRequest("/api/user-books/favorite-genre", {}, "GET");
-                setFavoriteGenre(response.favoriteGenre);
+                const response = await makeRequest("/api/user-books/favorite-data", {}, "GET");
+                setMostReadGenre(response.mostReadGenre);
+                setFavoriteAuthor(response.favoriteAuthor);
             } catch (err) {
-                console.error("Error fetching favorite genre:", err);
-                setFavoriteGenre("Not available.");
+                console.error("Error fetching favorite data:", err);
+                setMostReadGenre("Not available");
+                setFavoriteAuthor("Not available");
             }
         };
 
         fetchUserProfile();
-        fetchFavoriteGenre();
+        fetchFavoriteData();
     }, []);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-
+    console.log(userData);
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
     if (!userData) return <div>No user data available.</div>;
@@ -68,13 +70,11 @@ const Profile = () => {
                         <strong>About:</strong> {userData.about || "No information available."}
                     </div>
                     <div>
-                        <strong>Favorite Genre:</strong> {favoriteGenre || "Not available"}
+                        <strong>Most Read Genre:</strong> {mostReadGenre || "Not available"}
                     </div>
-                    <ul>
-                        {userData.favoriteBooks &&
-                            userData.favoriteBooks.length > 0 &&
-                            userData.favoriteBooks.map((book, idx) => <li key={idx}>{book}</li>)}
-                    </ul>
+                    <div>
+                        <strong>Favorite Author:</strong> {favoriteAuthor || "Not available"}
+                    </div>
                     <div>
                         <strong>Books Read:</strong> {booksCount}
                     </div>
