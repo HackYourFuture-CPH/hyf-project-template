@@ -26,6 +26,11 @@ export const makeRequest = async (endpoint, userData = {}, method = "POST") => {
 
     return result;
   } catch (error) {
-    throw new Error(error.message || "Network error, please try again later.");
+    if (!window.navigator.onLine || error.message === "Failed to fetch") {
+      throw new Error(
+        "Unable to connect to the server. Please try again later."
+      );
+    }
+    throw error;
   }
 };
