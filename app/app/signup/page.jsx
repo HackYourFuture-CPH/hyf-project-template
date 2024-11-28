@@ -85,7 +85,7 @@ const SignUp = () => {
       });
       router.push("/login");
     } catch (error) {
-      console.error("Error registering user:", error);
+      //console.error("Error registering user:", error);
       alert(error.message || "Something went wrong, please try again.");
     }
   };
