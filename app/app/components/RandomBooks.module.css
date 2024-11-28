@@ -1,0 +1,97 @@
+.popularBooks {
+    text-align: center;
+    padding-top: 40px;
+}
+
+.booksContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 30px;
+    justify-content: flex-start;
+    padding: 20px 0;
+    margin: 0 auto;
+    animation: scrollBooks 40s linear infinite; /* Added animation for continuous scrolling */
+}
+
+/* Stop the animation on hover */
+.booksContainer:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scrollBooks {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%); /* Scroll to the left until all books are off the screen */
+    }
+}
+
+/* Each individual book card styling */
+.bookCard {
+    background-color: #fdfdfd;
+    padding: 20px;
+    border-radius: 12px;
+    width: 200px;
+    height: 400px;
+    text-overflow: hidden;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    scroll-snap-align: start; /* Ensures each card "snaps" to the start of the scroll container */
+}
+
+.bookCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.bookImage {
+    width: 150px;
+    height: 225px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.bookImage:hover {
+    transform: scale(1.1);
+}
+
+/* Make sure the container scrolls horizontally */
+.booksContainer::-webkit-scrollbar {
+    height: 8px; /* Adds a scrollbar on the x-axis */
+}
+
+.booksContainer::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.bookTitle {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-top: 10px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+}
+
+@media (max-width: 768px) {
+    .booksContainer {
+        gap: 15px; /* Smaller gap on mobile */
+    }
+
+    .bookCard {
+        width: 150px; /* Smaller book cards */
+    }
+
+    .bookImage {
+        width: 120px;
+        height: 180px;
+    }
+}

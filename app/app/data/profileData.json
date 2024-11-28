@@ -1,0 +1,96 @@
+{
+    "user": {
+        "name": "Sam",
+        "email": "sam@example.com",
+        "src": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/authors/1696236573i/22302._UX200_CR0,0,200,200_.jpg",
+        "gender": "male",
+        "booksRead": 10,
+        "booksCurrentlyReading": 1,
+        "favoriteAuthor": "Stephen King",
+        "favoriteBooks": [
+            "To Kill A Mockingbird",
+            "1984",
+            "Pride and Prejudice",
+            "The Great Gatsby"
+        ],
+        "activity": "Joined in August 2009, Last Active in October 2024"
+    },
+    "about": "Lorem ipsum dolor sit amet, consectet null a ante et justo ut aliquet et justo mag et aliquet",
+    "bookShelf": {
+        "read": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1471552048i/30017549.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1587724137i/1134122.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1431013639i/4137.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1328862427i/758283.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1275653256i/1775944.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1465731570i/30526430.jpg"
+        ],
+        "currentlyReading": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1709043680i/171942.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1472027832i/51799.jpg"
+        ],
+        "wishToRead": [
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1315355292i/12541427.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1291999900i/9850443.jpg",
+            "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1496756079i/12995.jpg"
+        ]
+    },
+    "monthlyProgress": {
+        "booksRead": 6,
+        "pagesRead": 1200,
+        "goal": 10,
+        "goalPercentage": 60
+    },
+    "yearlyProgress": {
+        "booksRead": 10,
+        "pagesRead": 2100,
+        "goal": 50,
+        "goalPercentage": 50
+    },
+    "mostRecentQuote": [
+        {
+            "quoteText": "The only limit to our realization of tomorrow is our doubts of today.",
+            "book": "The Power of Positive Thinking",
+            "author": "Norman Vincent Peale"
+        },
+        {
+            "quoteText": "In three words I can sum up everything I've learned about life: it goes on.",
+            "book": "The Road Not Taken",
+            "author": "Robert Frost"
+        },
+        {
+            "quoteText": "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+            "book": "Self-Reliance",
+            "author": "Ralph Waldo Emerson"
+        }
+    ],
+    "favoriteQuote": [
+        {
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1309212005i/143628.jpg",
+            "quoteText": "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+            "book": "Winston Churchill: A Biography",
+            "author": "Winston Churchill"
+        },
+        {
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1568307771i/19089.jpg",
+            "quoteText": "It is never too late to be what you might have been.",
+            "book": "Middlemarch",
+            "author": "George Eliot"
+        },
+        {
+            "src": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1298438452i/92303.jpg",
+            "quoteText": "Be yourself; everyone else is already taken.",
+            "book": "The Importance of Being Earnest",
+            "author": "Oscar Wilde"
+        }
+    ],
+    "editFavoriteQuote": [
+        {
+            "src": "https://static01.nyt.com/images/2024/06/30/books/books-flat-slide-91FS/books-flat-slide-91FS-articleLarge.png",
+            "quoteText": "The quote",
+            "book": "The book title",
+            "author": "the author’s name"
+        }
+    ]
+}
