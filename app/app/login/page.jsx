@@ -173,21 +173,27 @@ const Login = () => {
               mt: 2,
               borderRadius: "10px",
               bgcolor:
-                username && password
-                  ? theme === "dark"
-                    ? "#FF8A00"
-                    : "#FFB74D"
-                  : "#D5B4B4",
-              color: "#ffffff",
+                theme === "dark"
+                  ? "#bbbbbb" // Background for dark mode
+                  : username && password
+                  ? "#FFB74D" // Light orange for light mode when active
+                  : "#D5B4B4", // Muted gray for light mode when disabled
+              color: theme === "dark" ? "#ffffff" : "#ffffff", // Text is always white
+              fontWeight: "bold",
               ":hover": {
                 bgcolor:
-                  username && password
-                    ? theme === "dark"
-                      ? "#FF5E00"
-                      : "#FF8A00"
-                    : "#D5B4B4",
+                  theme === "dark"
+                    ? "#aaaaaa" // Slightly darker gray on hover in dark mode
+                    : username && password
+                    ? "#FF8A00" // Darker orange hover for light mode
+                    : "#C4A3A3", // Subtle muted hover for disabled state
+              },
+              "&.Mui-disabled": {
+                bgcolor: theme === "dark" ? "#bbbbbb" : "#D5B4B4", // Disabled background
+                color: theme === "dark" ? "#ffffff" : "#ffffff", // White text when disabled
               },
               fontFamily: "serif",
+              transition: "background-color 0.3s",
             }}
           >
             Login
