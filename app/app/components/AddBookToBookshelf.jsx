@@ -6,13 +6,19 @@ import styles from "./AddBookToBookshelf.module.css";
 
 const isBookInCategory = (book, bookShelf) => {
   return (
-    bookShelf.read.some((b) => b.google_books_id === book.google_book_id) ||
+    bookShelf.read.some((b) => b.google_book_id === book.google_book_id) ||
     bookShelf.currentlyReading.some(
-      (b) => b.google_books_id === book.google_book_id
+      (b) => b.google_book_id === book.google_book_id
     ) ||
-    bookShelf.wishToRead.some((b) => b.google_books_id === book.google_book_id)
+    bookShelf.wishToRead.some((b) => b.google_book_id === book.google_book_id)
   );
 };
+
+// const isBookInCategory = (book, bookShelf, category) => {
+//   return bookShelf[category].some(
+//     (b) => b.google_book_id === book.google_book_id
+//   );
+// };
 
 const AddBookToBookshelf = ({
   category,
@@ -20,61 +26,55 @@ const AddBookToBookshelf = ({
   bookShelf,
   closeModal,
 }) => {
-  const [query, setQuery] = useState("");
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [genre, setGenre] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Debounced search function
-  const debouncedFetchSearchResults = debounce(
-    async (query, setLoading, setError, setSearchResults) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
-          {
-            params: { query, page: 1, pageSize: 10 },
-          }
-        );
-        setSearchResults(response.data || []);
-      } catch (err) {
-        setError("An error occurred while fetching the search results.");
-      } finally {
-        setLoading(false);
-      }
-    },
-    500
-  ); // Delay the call by 500ms after the user stops typing
+  const debouncedFetchSearchResults = debounce(async (title, author, genre) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
+        {
+          params: {
+            title: title || undefined,
+            author: author || undefined,
+            genre: genre || undefined,
+            page: 1,
+            pageSize: 10,
+          },
+        }
+      );
+      setSearchResults(response.data || []);
+    } catch (err) {
+      setError("An error occurred while fetching the search results.");
+    } finally {
+      setLoading(false);
+    }
+  }, 500);
 
-  const handleSearchChange = (e) => {
-    setQuery(e.target.value);
-    debouncedFetchSearchResults(
-      e.target.value,
-      setLoading,
-      setError,
-      setSearchResults
-    );
+  const handleSearch = () => {
+    debouncedFetchSearchResults(title, author, genre);
   };
 
   const mapCategoryToStatus = (category) => {
-    // Map category to backend-compatible status
     const statusMap = {
       read: "READ",
       currentlyReading: "CURRENTLY READING",
       wishToRead: "WISH TO READ",
     };
-    return statusMap[category] || "READ"; // Default to "READ" if category is unknown
+    return statusMap[category] || "READ";
   };
 
   const handleAddBook = async (book) => {
-    if (isBookInCategory(book, bookShelf)) {
-      setError("This book is already in your library with the same status.");
-      console.log(
-        "Error set: This book is already in your library with the same status."
-      );
-      closeModal();
+    if (isBookInCategory(book, bookShelf, category)) {
+      setError(`This book is already in your ${category} category.`);
+
       return;
     }
 
@@ -96,16 +96,16 @@ const AddBookToBookshelf = ({
         },
         { withCredentials: true }
       );
-      // Handle success
       if (response.status === 201) {
-        setSuccessMessage(`${response.data.book.title} added to your ${category} bookshelf.`);
-        onBookAdded(response.data.book); // Notify parent to refresh bookshelf
+        setSuccessMessage(
+          `${response.data.book.title} added to your ${category} bookshelf.`
+        );
+        onBookAdded(response.data.book);
+        console.log(response.status, response.data);
         closeModal();
       }
     } catch (err) {
-      // Handle error (e.g., book already exists)
       if (err.response && err.response.data.error) {
-        // Check for specific backend error
         if (
           err.response.data.error === "Book already exists in user's library"
         ) {
@@ -118,7 +118,6 @@ const AddBookToBookshelf = ({
       } else {
         setError("An error occurred while adding the book.");
       }
-      closeModal();
     }
   };
 
@@ -129,53 +128,69 @@ const AddBookToBookshelf = ({
         <button onClick={closeModal} className={styles.closeButton}>
           &times;
         </button>
-        <input
-          type="text"
-          value={query}
-          onChange={handleSearchChange}
-          placeholder="Search for a book..."
-          className={styles.searchInput}
-        />
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter book title"
+            className={styles.searchInput}
+          />
+          <input
+            type="text"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="Enter author name"
+            className={styles.searchInput}
+          />
+          <input
+            type="text"
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+            placeholder="Enter genre"
+            className={styles.searchInput}
+          />
+          <button onClick={handleSearch} className={styles.searchButton}>
+            Search
+          </button>
+        </div>
         {loading && <p className={styles.loading}>Loading...</p>}
 
         {error && <p className={styles.error}>{error}</p>}
         {successMessage && <p className={styles.success}>{successMessage}</p>}
-        {!loading && !error && query && (
+        {!loading && !error && searchResults.length > 0 && (
           <div className={styles.resultsContainer}>
-            {searchResults.length > 0 ? (
-              <ul className={styles.resultsList}>
-                {searchResults.map((result, index) => (
-                  <li
-                    key={`${result.google_book_id}-${index}`}
-                    className={styles.resultItem}
+            <ul className={styles.resultsList}>
+              {searchResults.map((result, index) => (
+                <li
+                  key={`${result.google_book_id}-${index}`}
+                  className={styles.resultItem}
+                >
+                  {result.cover_image && (
+                    <img
+                      src={result.cover_image}
+                      alt={result.title}
+                      className={styles.bookImage}
+                    />
+                  )}
+                  <div className={styles.bookDetails}>
+                    <h4>{result.title}</h4>
+                    <p>{result.authors || "Unknown Author"}</p>
+                  </div>
+                  <button
+                    onClick={() => handleAddBook(result)}
+                    className={styles.addButton}
                   >
-                    {result.cover_image && (
-                      <img
-                        src={result.cover_image}
-                        alt={result.title}
-                        className={styles.bookImage}
-                      />
-                    )}
-                    <div className={styles.bookDetails}>
-                      <h4>{result.title}</h4>
-                      <p>{result.authors || "Unknown Author"}</p>
-                    </div>
-                    <button
-                      onClick={() => handleAddBook(result)}
-                      className={styles.addButton}
-                    >
-                      Add
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No results found.</p>
-            )}
+                    Add
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
     </div>
   );
 };
+
 export default AddBookToBookshelf;

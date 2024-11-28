@@ -43,7 +43,6 @@ const Reviews = ({ bookId, onSuccess }) => {
         setReviewText(review.review_text);
         setIsDeleted(false);
       } catch (error) {
-        console.log("No existing review found.");
         setExistingReview(null);
       }
     };
@@ -51,6 +50,10 @@ const Reviews = ({ bookId, onSuccess }) => {
   }, [bookId]);
 
   const handleSubmit = async () => {
+    if (!reviewText || !rating) {
+      setError("Missing required fields");
+      return;
+    }
     try {
       const reviewData = { rating, review_text: reviewText };
 
@@ -62,6 +65,7 @@ const Reviews = ({ bookId, onSuccess }) => {
       }
       onSuccess();
       setIsEditing(false);
+      setError("");
     } catch (error) {
       console.error("Error submitting review:", error);
       setError(error.message || "Failed to submit the review.");
@@ -92,6 +96,16 @@ const Reviews = ({ bookId, onSuccess }) => {
       handleDelete();
     }
     setDialogOpen(false);
+  };
+
+  const handleReviewTextChange = (e) => {
+    setReviewText(e.target.value);
+    if (error) setError("");
+  };
+
+  const handleRatingChange = (newRating) => {
+    setRating(newRating);
+    if (error) setError("");
   };
 
   return (
@@ -148,7 +162,7 @@ const Reviews = ({ bookId, onSuccess }) => {
           </Typography>
           <Rating
             value={rating}
-            onChange={(event, newValue) => setRating(newValue)}
+            onChange={(e, newValue) => handleRatingChange(newValue)}
             precision={0.5}
             size="large"
             sx={{ mb: 2 }}
@@ -156,7 +170,7 @@ const Reviews = ({ bookId, onSuccess }) => {
           <TextField
             label="Write your review"
             value={reviewText}
-            onChange={(event) => setReviewText(event.target.value)}
+            onChange={handleReviewTextChange}
             multiline
             rows={3}
             fullWidth
@@ -170,10 +184,16 @@ const Reviews = ({ bookId, onSuccess }) => {
           )}
           <Button
             variant="contained"
-            color="primary"
             onClick={handleSubmit}
             fullWidth
-            sx={{ fontWeight: "bold", textTransform: "none" }}
+            sx={{
+              fontWeight: "bold",
+              textTransform: "none",
+              bgcolor: "#d5b4b4",
+              "&:hover": {
+                bgcolor: "#867070",
+              },
+            }}
           >
             {existingReview ? "Update Review" : "Submit Review"}
           </Button>

@@ -17,6 +17,7 @@ import adminRouter from "./routers/adminRouter.js";
 import notesRouter from "./routers/notesRouter.js";
 import goalsRouter from "./routers/goalsRouter.js";
 import randomBooksRouter from "./routers/randomBooksRouter.js";
+import bookQuotesRouter from "./routers/booksQuotesRouter.js";
 
 const app = express();
 app.use((req, res, next) => {
@@ -48,7 +49,8 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/admin", adminRouter);
 
 app.use("/api/random-books", randomBooksRouter);
-app.use("/api/notes", notesRouter);
+app.use("/api/book-notes", notesRouter);
+app.use("/api/book-quotes", bookQuotesRouter);
 
 app.use("/api/goals", goalsRouter);
 
