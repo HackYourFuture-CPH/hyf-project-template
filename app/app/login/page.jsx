@@ -12,7 +12,7 @@ import ErrorModal from "../components/ErrorModal";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ username: "", password: "" });
+  const [errors, setErrors] = useState({ username: "", password: "" }); // define the error
   const { theme } = useTheme(); // Access theme
 
   const router = useRouter(); // Initialize the router
