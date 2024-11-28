@@ -5,6 +5,10 @@
     text-align: center;
     justify-self: center;
 }
+[data-theme="dark"] .ourTeam {
+    background-color: var(--background); /* Dark mode background */
+    color: var(--foreground); /* Adjust text color if needed */
+}
 
 .teamMembers {
     display: flex;

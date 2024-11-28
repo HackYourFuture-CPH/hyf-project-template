@@ -4,7 +4,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: transparent;
+    background-color: var(--background);
+    color: var(--foreground);
     z-index: 5;
 }
 
@@ -16,7 +17,13 @@
 .logo {
     max-width: 150px;
     height: auto;
+    transition: filter 0.3s ease;
 }
+/* Header.module.css */
+[data-theme="dark"] .logo {
+    filter: brightness(2); /* Brighten the logo */
+}
+
 
 .nav {
     display: flex;

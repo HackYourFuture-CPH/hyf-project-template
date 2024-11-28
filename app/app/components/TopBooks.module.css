@@ -1,11 +1,19 @@
+/* Default style (light mode) */
 .TopBooks {
     text-align: center;
     margin: 50px auto;
-    background-color: #f5ebeb;
+    background-color: #f5ebeb; /* Light mode background */
     padding: 40px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 970px;
 }
+
+/* Dark mode */
+[data-theme="dark"] .TopBooks {
+    background-color: var(--background); /* Dark mode background */
+    color: var(--foreground); /* Adjust text color if needed */
+}
+
 .TopBooks h2 {
     padding-bottom: 30px;
 }
@@ -32,36 +40,40 @@
     justify-content: center;
     align-items: center;
     gap: 80px;
+    color: var(--foreground);
 }
+
 .bookDetails p {
     text-transform: uppercase;
     letter-spacing: 5px;
     margin-top: 10px;
+    color: var(--foreground);
 }
 
 .bookImage {
     width: 200px;
     height: 300px;
     object-fit: cover;
-    border: 1px solid #ccc;
+    border: 1px solid var(--foreground);
     border-radius: 4px;
+    transition: border-color 0.3s;
 }
 
 @keyframes slideInOut {
     0% {
-        transform: translateX(100%); /* Start offscreen from the right */
+        transform: translateX(100%);
         opacity: 0;
     }
     10% {
-        transform: translateX(0); /* Centered on the screen */
+        transform: translateX(0);
         opacity: 1;
     }
     90% {
-        transform: translateX(0); /* Stay in the center */
+        transform: translateX(0);
         opacity: 1;
     }
     100% {
-        transform: translateX(-100%); /* Exit to the left */
+        transform: translateX(-100%);
         opacity: 0;
     }
 }

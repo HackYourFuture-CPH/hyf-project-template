@@ -1,20 +1,27 @@
 "use client";
+
 import { useState } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
-import { useRouter } from "next/navigation"; // Import useRouter from Next.js
+import { useRouter } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
+
+import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
 import { useErrorModal } from "../hooks/useErrorModal";
 import ErrorModal from "../components/ErrorModal";
+
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({ username: "", password: "" });
+
+  
+  const { theme } = useTheme(); // Access theme
+
   const router = useRouter(); // Initialize the router
   const { login } = useAuth(); // Use Login from Auth context
   const { error, showError, hideError } = useErrorModal();
 
-  // Validate form fields
+
   const isValid = () => {
     let valid = true;
     const tempErrors = { username: "", password: "" };
@@ -42,8 +49,8 @@ const Login = () => {
   const loginUser = async (username, password) => {
     try {
       const userData = { username, password };
-      await login(userData); // Login through Auth context
-      router.push(`/dashboard`); // Redirect to dashboard
+      await login(userData);
+      router.push(`/dashboard`);
     } catch (error) {
       showError(
         error.response?.data?.error ||
@@ -76,7 +83,7 @@ const Login = () => {
       alignItems="center"
       justifyContent="center"
       minHeight="100vh"
-      bgcolor="#E4D0D0"
+      bgcolor={theme === "dark" ? "var(--background-dark)" : "#E4D0D0"}
       padding={3}
     >
       {/* Left Side: Book Stack Image */}
@@ -91,7 +98,7 @@ const Login = () => {
           backgroundSize: "contain",
           height: "70vh",
           maxWidth: "400px",
-          marginBottom: { xs: 2, md: 0 }, // Add spacing for mobile view
+          marginBottom: { xs: 2, md: 0 },
         }}
       />
 
@@ -102,30 +109,33 @@ const Login = () => {
         alignItems="center"
         justifyContent="center"
         flex={1}
-        bgcolor="#fdf3e2"
+        bgcolor={theme === "dark" ? "var(--form-bg-dark)" : "#fdf3e2"}
         borderRadius={3}
         boxShadow={5}
         padding={5}
         width="100%"
         maxWidth={500}
       >
-        {/* Welcome Message */}
         <Typography
           variant="h4"
           sx={{
             fontFamily: "serif",
             fontWeight: "bold",
             mb: 2,
-            color: "#5A4A42",
+            color: theme === "dark" ? "#ffffff" : "#5A4A42",
           }}
         >
           Welcome to LeafNotes
         </Typography>
-        <Typography variant="body1" color="text.secondary" mb={4}>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          mb={4}
+          sx={{ color: theme === "dark" ? "#cccccc" : "inherit" }}
+        >
           Track what you've read and what's next in your literary journey.
         </Typography>
 
-        {/* Login Form */}
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -145,15 +155,15 @@ const Login = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
-                bgcolor: "#fffbe8",
-                color: "#3E2723",
+                bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                color: theme === "dark" ? "#ffffff" : "#3E2723",
               },
               "& .MuiInputLabel-root": {
-                color: "#5A4A42",
+                color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
                 fontFamily: "serif",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#5A4A42",
+                borderColor: theme === "dark" ? "#444444" : "#5A4A42",
               },
             }}
           />
@@ -169,15 +179,15 @@ const Login = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
-                bgcolor: "#fffbe8",
-                color: "#3E2723",
+                bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                color: theme === "dark" ? "#ffffff" : "#3E2723",
               },
               "& .MuiInputLabel-root": {
-                color: "#5A4A42",
+                color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
                 fontFamily: "serif",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#5A4A42",
+                borderColor: theme === "dark" ? "#444444" : "#5A4A42",
               },
             }}
           />
@@ -185,23 +195,38 @@ const Login = () => {
             type="submit"
             variant="contained"
             fullWidth
-            disabled={!username || !password} // Disable button if fields are empty
+            disabled={!username || !password}
             sx={{
               mt: 2,
               borderRadius: "10px",
-              bgcolor: username && password ? "#FFB74D" : "#D5B4B4", // Bright orange when enabled
-              color: "#ffffff",
+              bgcolor:
+                theme === "dark"
+                  ? "#bbbbbb" // Background for dark mode
+                  : username && password
+                  ? "#FFB74D" // Light orange for light mode when active
+                  : "#D5B4B4", // Muted gray for light mode when disabled
+              color: theme === "dark" ? "#ffffff" : "#ffffff", // Text is always white
+              fontWeight: "bold",
               ":hover": {
-                bgcolor: username && password ? "#FF8A00" : "#D5B4B4", // Brighter hover when enabled
+                bgcolor:
+                  theme === "dark"
+                    ? "#aaaaaa" // Slightly darker gray on hover in dark mode
+                    : username && password
+                    ? "#FF8A00" // Darker orange hover for light mode
+                    : "#C4A3A3", // Subtle muted hover for disabled state
+              },
+              "&.Mui-disabled": {
+                bgcolor: theme === "dark" ? "#bbbbbb" : "#D5B4B4", // Disabled background
+                color: theme === "dark" ? "#ffffff" : "#ffffff", // White text when disabled
               },
               fontFamily: "serif",
+              transition: "background-color 0.3s",
             }}
           >
             Login
           </Button>
         </Box>
 
-        {/* Sign Up Link */}
         <Typography variant="body2" sx={{ mt: 2, color: "#5A4A42" }}>
           Don't have an account?{" "}
           <Link href="/signup" underline="hover" color="inherit">
@@ -209,11 +234,10 @@ const Login = () => {
           </Link>
         </Typography>
 
-        {/* Back Home Button */}
         <Button
           variant="text"
-          sx={{ mt: 2, color: "#5A4A42" }}
-          onClick={() => router.push("/")} // Redirect to homepage
+          sx={{ mt: 2, color: theme === "dark" ? "#bbbbbb" : "#5A4A42" }}
+          onClick={() => router.push("/")}
         >
           Back to Home
         </Button>

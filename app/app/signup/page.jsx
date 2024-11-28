@@ -10,12 +10,17 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
 
-import { validateField, isValidate } from "../utils/validation";
+import { validateField } from "../utils/validation";
+import { isValidate } from "../utils/validation";
+import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
+
+
+
+
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -33,14 +38,16 @@ const SignUp = () => {
     password: "",
   });
 
+
+  const { theme } = useTheme(); // Access the current theme (light or dark)
+
   const isMobile = useMediaQuery("(max-width:600px)");
+
   const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setData((prevData) => ({ ...prevData, [name]: value }));
-
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: validateField(name, value) ? "" : prevErrors[name],
@@ -74,7 +81,6 @@ const SignUp = () => {
 
     try {
       const result = await makeRequest(`/auth/register`, userData);
-
       setData({
         firstName: "",
         lastName: "",
@@ -98,22 +104,45 @@ const SignUp = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          bgcolor: theme === "dark" ? "var(--background-dark)" : "#F0D2D6", // Adjust background color based on theme
         }}
       >
         <Container
           sx={{
             display: "flex",
-            background: "#F0D2D6",
+
+            background: theme === "dark" ? "#333333" : "#F5ECE8", // Dark mode background
+            borderRadius: 2,
+            boxShadow:
+              theme === "dark"
+                ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
+          
             flexDirection: isMobile ? "column" : "row",
+
           }}
         >
           {!isMobile && (
             <Container
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                marginTop: 5,
+
+                fontFamily: "jacques Francois",
+                marginBottom: 2,
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
+                fontWeight: "500",
+                whiteSpace: "pre-line",
+                letterSpacing: "0.5px",
+                lineHeight: 1.5,
+                padding: "10px 20px",
+                backgroundColor: theme === "dark" ? "#444444" : "#F5ECE8", // Adjust background color for heading
+                boxShadow:
+                  theme === "dark"
+                    ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                    : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
+               
+
               }}
             >
               <Typography
@@ -149,8 +178,16 @@ const SignUp = () => {
             maxWidth="md"
             sx={{
               padding: 3,
-              background: "#EAD3C4",
+
+              background: theme === "dark" ? "#444444" : "#EAD3C4", // Adjust background color for form container
+              marginRight: "-25px",
+              borderRadius: 2,
+              boxShadow:
+                theme === "dark"
+                  ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                  : "0px 4px 8px rgba(0, 0, 0, 0.1)",
               marginRight: isMobile ? "0" : "-25px", // Adjust margin for mobile
+
             }}
           >
             <Typography
@@ -159,6 +196,7 @@ const SignUp = () => {
                 textAlign: "center",
                 margin: "15px",
                 fontFamily: "jacques Francois",
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
               }}
             >
               Create Account
@@ -179,8 +217,26 @@ const SignUp = () => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     onBlur={handleBlur}
-                  />
-                </Grid2>
+
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
+                  />{" "}
+                </Grid2>{" "}
+
+                 
+
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
                   <TextField
                     variant="outlined"
@@ -195,10 +251,31 @@ const SignUp = () => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     onBlur={handleBlur}
+
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
+                  />{" "}
+                </Grid2>{" "}
+              </Grid2>{" "}
+            </Box>{" "}
+
                   />
                 </Grid2>
               </Grid2>
             </Box>
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -213,7 +290,25 @@ const SignUp = () => {
               error={!!errors.email}
               helperText={errors.email}
               onBlur={handleBlur}
-            />
+
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+
+        
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -228,7 +323,25 @@ const SignUp = () => {
               error={!!errors.username}
               helperText={errors.username}
               onBlur={handleBlur}
-            />
+
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+
+    
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -244,16 +357,31 @@ const SignUp = () => {
               error={!!errors.password}
               helperText={errors.password}
               onBlur={handleBlur}
-            />
+
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               sx={{
-                background: "grey",
+                background: theme === "dark" ? "#666666" : "grey",
                 mt: 3,
-                mb: 2,
                 fontFamily: "jacques Francois",
                 textTransform: "none",
                 fontSize: "20px",
@@ -261,14 +389,36 @@ const SignUp = () => {
               onClick={handleSubmit}
             >
               Submit
-            </Button>
-            <Typography variant="h8">
-              Already have an account?
+
+            </Button>{" "}
+            <Typography
+              variant="h8"
+              sx={{
+                mt: 2,
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C",
+                textAlign: "center", // Center-align text
+                fontFamily: "jacques Francois",
+              }}
+            >
+              Already have an account?{" "}
               <a href="/login" target="_blank" style={{ color: "blueviolet" }}>
                 Login
               </a>
-            </Typography>
-          </Container>
+            </Typography>{" "}
+            <Button
+              variant="text"
+              sx={{
+                mt: 8, // Add spacing between the buttons
+                color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                fontFamily: "jacques Francois",
+                fontSize: "16px",
+              }}
+              onClick={() => router.push("/")}
+            >
+              Back to Home
+            </Button>
+          </Container>{" "}
+
         </Container>
       </Container>
     </AppLayoutContainer>
