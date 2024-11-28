@@ -1,0 +1,85 @@
+.header {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center everything horizontally */
+    justify-content: center; /* Center vertically (if necessary) */
+    padding: 0px;
+    background-color: transparent;
+    width: 100%;
+    z-index: 5;
+}
+
+/* Center Section: Logo */
+.logoContainer {
+    margin-bottom: 40px; /* Space below the logo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    max-width: 200px; /* Make the logo bigger */
+    height: auto;
+
+}
+
+/* Right Section: Links and Search */
+.rightNav {
+    display: flex;
+    flex-direction: row; /* Align elements in a row */
+    gap: 40px; /* Add space between the elements */
+    align-items: center; /* Align items in the center */
+}
+
+/* Navigation Links */
+.navList {
+    display: flex;
+    flex-direction: row; /* Stack the navigation links in a row */
+    gap: 40px; /* Space between "DASHBOARD" and "LOG OUT" */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.navItem a {
+    text-decoration: none;
+    color: #333;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    letter-spacing: 3px;
+    transition: color 0.3s;
+}
+
+.navItem a:hover {
+    color: #867070;
+}
+
+/* Search Input */
+.searchInput {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    outline: none;
+    width: 200px;
+    transition: width 0.3s ease-in-out;
+}
+
+.searchInput:focus {
+    width: 300px;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    .rightNav {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        gap: 10px;
+    }
+
+    .searchInput {
+        width: 150px;
+    }
+
+    .searchInput:focus {
+        width: 200px;
+    }
+}
