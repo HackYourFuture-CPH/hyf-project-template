@@ -1,0 +1,68 @@
+.about {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var(--background);
+    color: var(--foreground);
+    padding: 40px;
+    width: 100%;
+    margin: 50px 0 0 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+.textContainer {
+    margin-right: 20px;
+    max-width: 700px;
+}
+
+.aboutTitle {
+    font-size: 2rem;
+    margin-bottom: 60px;
+    color:  #867070;
+}
+
+.aboutDescription {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: var(--foreground);
+}
+
+.authorContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 320px;
+    height: 320px;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.authorImage {
+    border-radius: 50%;
+    margin-top: -50px;
+}
+
+.quoteContainer {
+    text-align: center;
+    height: auto;
+    min-width: 200px;
+}
+
+.quoteContainer blockquote {
+    font-style: italic;
+    color: var(--secondary-accent);
+    margin: 10px 0;
+    padding: 20px;
+}
+
+.learnMore {
+    color: #e072a8;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.learnMore:hover {
+    color: var(--foreground);
+}
