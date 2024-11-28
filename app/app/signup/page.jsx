@@ -334,24 +334,40 @@ const SignUp = () => {
               sx={{
                 background: theme === "dark" ? "#666666" : "grey",
                 mt: 3,
-                mb: 2,
                 fontFamily: "jacques Francois",
                 textTransform: "none",
                 fontSize: "20px",
               }}
               onClick={handleSubmit}
             >
-              Submit{" "}
+              Submit
             </Button>{" "}
             <Typography
               variant="h8"
-              sx={{ color: theme === "dark" ? "#ffffff" : "#3C3C3C" }}
+              sx={{
+                mt: 2,
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C",
+                textAlign: "center", // Center-align text
+                fontFamily: "jacques Francois",
+              }}
             >
               Already have an account?{" "}
               <a href="/login" target="_blank" style={{ color: "blueviolet" }}>
-                Login{" "}
-              </a>{" "}
+                Login
+              </a>
             </Typography>{" "}
+            <Button
+              variant="text"
+              sx={{
+                mt: 8, // Add spacing between the buttons
+                color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                fontFamily: "jacques Francois",
+                fontSize: "16px",
+              }}
+              onClick={() => router.push("/")}
+            >
+              Back to Home
+            </Button>
           </Container>{" "}
         </Container>
       </Container>
