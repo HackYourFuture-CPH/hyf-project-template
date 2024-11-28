@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import styles from "./AddBookToBookshelf.module.css";
-import SuccessModal from "./SuccessModal";
+import SuccessModal from "../SuccessModal";
 
 const isBookInCategory = (book, bookShelf, category) => {
   return bookShelf[category].some(
