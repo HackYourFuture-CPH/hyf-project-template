@@ -11,16 +11,6 @@ const isBookInCategory = (book, bookShelf, category) => {
   );
 };
 
-// const isBookInCategory = (book, bookShelf) => {
-//   return (
-//     bookShelf.read.some((b) => b.google_books_id === book.google_book_id) ||
-//     bookShelf.currentlyReading.some(
-//       (b) => b.google_books_id === book.google_book_id
-//     ) ||
-//     bookShelf.wishToRead.some((b) => b.google_books_id === book.google_book_id)
-//   );
-// };
-
 const AddBookToBookshelf = ({
   category,
   onBookAdded,
