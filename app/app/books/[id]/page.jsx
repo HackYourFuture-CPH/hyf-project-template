@@ -4,7 +4,7 @@ import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Box, CardMedia, Typography, Button } from "@mui/material";
-import Notes from "@/app/components/Notes.jsx";
+import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
 
 const BookDetails = () => {
@@ -14,9 +14,13 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showNotes, setShowNotes] = useState(false);
+  const [showQuotes, setShowQuotes] = useState(false);
 
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
+
+  const handleOpenQuotes = () => setShowQuotes(true);
+  const handleCloseQuotes = () => setShowQuotes(false);
 
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
@@ -159,6 +163,7 @@ const BookDetails = () => {
                   backgroundColor: "#B49090",
                 },
               }}
+              onClick={handleOpenQuotes}
             >
               Quotes
             </Button>
@@ -179,10 +184,17 @@ const BookDetails = () => {
             >
               Notes
             </Button>
-            <Notes
+            <NotesAndQuotes
               open={showNotes}
               handleClose={handleCloseNotes}
               bookId={id}
+              type="notes"
+            />
+            <NotesAndQuotes
+              open={showQuotes}
+              handleClose={handleCloseQuotes}
+              bookId={id}
+              type="quotes"
             />
           </Box>
         </Box>

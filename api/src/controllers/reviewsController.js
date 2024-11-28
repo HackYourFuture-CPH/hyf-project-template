@@ -12,24 +12,6 @@ export const getAllReviews = async (req, res) => {
   }
 };
 
-export const getReviewById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const review = await knex("Reviews")
-      .select("Reviews.*", "Users.username")
-      .leftJoin("Users", "Reviews.user_id", "Users.user_id")
-      .where("Reviews.review_id", req.params.id)
-      .first();
-    if (!review) {
-      return res.status(404).json({ error: "Review not found" });
-    }
-    res.status(200).json(review);
-  } catch (error) {
-    console.log("Error fetching review by ID", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 export const getMyReview = async (req, res) => {
   const book_id = req.params.id;
   const user_id = req.user.userId;

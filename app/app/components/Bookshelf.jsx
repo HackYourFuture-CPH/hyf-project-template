@@ -5,6 +5,7 @@ import axios from "axios";
 import BookshelfSection from "./BookshelfSection";
 import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
+import ConfirmationModal from "./ConfirmationModal";
 import { useBookshelf } from "../contexts/BooksReadCountContext";
 
 const Bookshelf = () => {
@@ -14,6 +15,8 @@ const Bookshelf = () => {
   const [isQuoteModalOpen, setQuoteModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("");
   const [selectedBookId, setSelectedBookId] = useState(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [bookToRemove, setBookToRemove] = useState(null);
 
   useEffect(() => {
     const allFavorites = [
@@ -80,13 +83,15 @@ const Bookshelf = () => {
   };
 
   const handleRemoveBook = async (bookId, category) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this book?"
-    );
-    if (!confirmed) return;
+    setBookToRemove({ bookId, category });
+    setIsConfirmModalOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (!bookToRemove) return;
+
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/delete/${bookId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/delete/${bookToRemove.bookId}`,
         {
           withCredentials: true,
         }
@@ -94,12 +99,15 @@ const Bookshelf = () => {
 
       setBookShelf((prevShelf) => ({
         ...prevShelf,
-        [category]: prevShelf[category].filter(
-          (book) => book.book_id !== bookId
+        [bookToRemove.category]: prevShelf[bookToRemove.category].filter(
+          (book) => book.book_id !== bookToRemove.bookId
         ),
       }));
     } catch (err) {
       console.error("Error removing book:", err);
+    } finally {
+      setIsConfirmModalOpen(false);
+      setBookToRemove(null);
     }
   };
 
@@ -176,6 +184,17 @@ const Bookshelf = () => {
       {isQuoteModalOpen && (
         <FavoriteQuote bookId={selectedBookId} closeModal={closeQuoteModal} />
       )}
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setBookToRemove(null);
+        }}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to remove this book from your bookshelf?"
+        confirmText="Remove"
+        cancelText="Cancel"
+      />
     </div>
   );
 };

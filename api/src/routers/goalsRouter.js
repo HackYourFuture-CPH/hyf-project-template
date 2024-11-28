@@ -4,6 +4,7 @@ import {
   updateGoal,
   deleteGoal,
   getUserGoals,
+  getLatestGoal,
 } from "../controllers/goalsController.js";
 import { authenticate } from "../middlewares/authenticate.js";
 
@@ -13,6 +14,7 @@ const goalsRouter = express.Router();
 goalsRouter.use(authenticate());
 
 goalsRouter.get("/", getUserGoals);
+goalsRouter.get("/latest", getLatestGoal);
 goalsRouter.post("/add", addGoal);
 goalsRouter.put("/:goalId", updateGoal);
 goalsRouter.delete("/:goalId", deleteGoal);

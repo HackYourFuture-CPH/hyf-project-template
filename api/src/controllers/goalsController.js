@@ -21,8 +21,9 @@ export const addGoal = async (req, res) => {
     goal_type,
     goal_count,
     status = "IN_PROGRESS",
-    start_date = null,
-    end_date = null,
+    start_date,
+    end_date,
+    user_id,
   } = req.body;
 
   if (!goal_type || !goal_count) {
@@ -37,6 +38,7 @@ export const addGoal = async (req, res) => {
         status: "IN_PROGRESS",
       })
       .first();
+
     if (existingGoal) {
       return res.status(400).json({ error: "Goal already exists" });
     }
@@ -54,8 +56,11 @@ export const addGoal = async (req, res) => {
       .where({ goal_id: goalId })
       .first();
 
+    if (!newGoal) {
+      throw new Error("Failed to create goal");
+    }
+
     res.status(201).json({
-      message: "Goal created successfully",
       goal: buildGoalDto(newGoal),
     });
   } catch (error) {
@@ -66,7 +71,7 @@ export const addGoal = async (req, res) => {
 
 export const updateGoal = async (req, res) => {
   const { goalId } = req.params;
-  const { goal_count } = req.body;
+  const { goal_count, goal_type, start_date, end_date } = req.body;
 
   try {
     const goal = await knex("ReadingGoals")
@@ -79,11 +84,31 @@ export const updateGoal = async (req, res) => {
     if (!goal) {
       return res.status(404).json({ error: "Goal not found" });
     }
-    await knex("ReadingGoals")
-      .where({ goal_id: goalId })
-      .update({
-        goal_count: goal_count || goal.goal_count,
-      });
+
+    if (goal.status === "IN_PROGRESS") {
+      const activeGoal = await knex("ReadingGoals")
+        .where({
+          user_id: req.user.userId,
+          status: "IN_PROGRESS",
+        })
+        .whereNot({ goal_id: goalId })
+        .first();
+
+      if (activeGoal) {
+        return res
+          .status(400)
+          .json({ error: "You already have another active goal" });
+      }
+    }
+
+    const updateData = {
+      ...(goal_count !== undefined && { goal_count }),
+      ...(goal_type !== undefined && { goal_type }),
+      ...(start_date !== undefined && { start_date }),
+      ...(end_date !== undefined && { end_date }),
+    };
+
+    await knex("ReadingGoals").where({ goal_id: goalId }).update(updateData);
 
     const updatedGoal = await knex("ReadingGoals")
       .where({ goal_id: goalId })
@@ -96,6 +121,24 @@ export const updateGoal = async (req, res) => {
   } catch (err) {
     console.error("Error updating goal:", err);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getLatestGoal = async (req, res) => {
+  try {
+    const latestGoal = await knex("ReadingGoals")
+      .where({ user_id: req.user.userId })
+      .orderBy("created_at", "desc")
+      .first();
+
+    if (!latestGoal) {
+      return res.status(404).json({ goal: null });
+    }
+
+    res.status(200).json({ goal: buildGoalDto(latestGoal) });
+  } catch (error) {
+    console.error("Error fetching latest goal:", error);
+    res.status(500).json({ error: "Error fetching latest goal" });
   }
 };
 

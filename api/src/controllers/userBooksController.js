@@ -96,8 +96,7 @@ export const addBookToUser = async (req, res) => {
                 .first();
 
             if (existingUserBook) {
-                res.status(400).json({ error: "Book already exists in user's library" });
-                return;
+                return res.status(400).json({ error: `Book already exists in the library ` });
             }
 
             await trx("UserBooks").insert({
@@ -118,8 +117,7 @@ export const addBookToUser = async (req, res) => {
                 .first();
         });
         if (!result) {
-            // if result is undefined, it means the book already exists in the user's library, and we've already sent a response
-            return;
+            return res.status(500).json({ error: "Failed to add book to the user's library." });
         }
 
         return res.status(201).json({
@@ -251,29 +249,34 @@ export const deleteUserBook = async (req, res) => {
     }
 };
 
-export const getFavoriteGenre = async (req, res) => {
+export const getFavoriteGenreAndAuthor = async (req, res) => {
     const userId = req.user.userId;
 
     try {
-        const favoriteGenre = await knex("Books")
+        const favoriteAuthor = await knex("Books")
             .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
-            .where({ "UserBooks.user_id": userId })
-            .whereNotNull("Books.genre")
+            .where({ "UserBooks.user_id": userId, "UserBooks.is_favorite": 1 }) // Filter for favorite books
+            .groupBy("Books.author")
+            .select("Books.author")
+            .count("Books.author as author_count")
+            .orderBy("author_count", "desc")
+            .first();
+
+        const mostReadGenre = await knex("Books")
+            .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
+            .where({ "UserBooks.user_id": userId, "UserBooks.status": "READ" }) // Filter for read books
             .groupBy("Books.genre")
             .select("Books.genre")
             .count("Books.genre as genre_count")
             .orderBy("genre_count", "desc")
-            .first(); // Select the top genre
+            .first();
 
-        if (!favoriteGenre) {
-            return res.status(404).json({
-                error: "No favorite genre found for this user.",
-            });
-        }
-
-        return res.status(200).json({ favoriteGenre: favoriteGenre.genre });
+        return res.status(200).json({
+            favoriteAuthor: favoriteAuthor ? favoriteAuthor.author : "Not available",
+            mostReadGenre: mostReadGenre ? mostReadGenre.genre : "Not available",
+        });
     } catch (error) {
-        console.error("Error fetching favorite genre:", error);
+        console.error("Error fetching favorite author or most read genre:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };

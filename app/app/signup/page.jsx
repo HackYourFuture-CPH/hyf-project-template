@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Container,
   TextField,
@@ -6,14 +7,20 @@ import {
   Typography,
   Grid2,
   Box,
+  useMediaQuery,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { makeRequest } from "../utils/makeRequest.js";
 import AppLayoutContainer from "../components/AppLayoutContainer";
+
 import { validateField } from "../utils/validation";
 import { isValidate } from "../utils/validation";
 import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
+
+
+
+
 
 const SignUp = () => {
   const [data, setData] = useState({
@@ -31,7 +38,11 @@ const SignUp = () => {
     password: "",
   });
 
+
   const { theme } = useTheme(); // Access the current theme (light or dark)
+
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -99,25 +110,23 @@ const SignUp = () => {
         <Container
           sx={{
             display: "flex",
+
             background: theme === "dark" ? "#333333" : "#F5ECE8", // Dark mode background
             borderRadius: 2,
             boxShadow:
               theme === "dark"
                 ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                 : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
+          
+            flexDirection: isMobile ? "column" : "row",
+
           }}
         >
-          <Container
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: 5,
-            }}
-          >
-            <Typography
-              variant="h5"
+          {!isMobile && (
+            <Container
               sx={{
+
                 fontFamily: "jacques Francois",
                 marginBottom: 2,
                 color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
@@ -131,25 +140,45 @@ const SignUp = () => {
                   theme === "dark"
                     ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                     : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
+               
+
               }}
             >
-              <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                Welcome to LeafNotes {"\n"}
-              </Box>
-              Track what you've read and {"\n"}what's next.
-            </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontFamily: "jacques Francois",
+                  marginBottom: 2,
+                  color: "#3C3C3C",
+                  fontWeight: "500",
+                  whiteSpace: "pre-line",
+                  letterSpacing: "0.5px",
+                  lineHeight: 1.5,
+                  padding: "10px 20px",
+                  backgroundColor: "#F5ECE8",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
+                  Welcome to LeafNotes {"\n"}
+                </Box>
+                Track what you've read and {"\n"}what's next.
+              </Typography>
 
-            <Box sx={{ width: "500px", height: "auto" }}>
-              <img
-                src="./books.png"
-                style={{ width: "100%", height: "auto" }}
-              />
-            </Box>
-          </Container>
+              <Box sx={{ width: "500px", height: "auto" }}>
+                <img
+                  src="./books.png"
+                  style={{ width: "100%", height: "auto" }}
+                />
+              </Box>
+            </Container>
+          )}
           <Container
             maxWidth="md"
             sx={{
               padding: 3,
+
               background: theme === "dark" ? "#444444" : "#EAD3C4", // Adjust background color for form container
               marginRight: "-25px",
               borderRadius: 2,
@@ -157,6 +186,8 @@ const SignUp = () => {
                 theme === "dark"
                   ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                   : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              marginRight: isMobile ? "0" : "-25px", // Adjust margin for mobile
+
             }}
           >
             <Typography
@@ -168,14 +199,11 @@ const SignUp = () => {
                 color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
               }}
             >
-              Create Account{" "}
-            </Typography>{" "}
+              Create Account
+            </Typography>
             <Box sx={{ display: "flex", width: "100%", mb: 1 }}>
-              {" "}
               <Grid2 container spacing={2} sx={{ width: "100%" }}>
-                {" "}
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
-                  {" "}
                   <TextField
                     variant="outlined"
                     required
@@ -189,6 +217,7 @@ const SignUp = () => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     onBlur={handleBlur}
+
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "10px",
@@ -205,8 +234,10 @@ const SignUp = () => {
                     }}
                   />{" "}
                 </Grid2>{" "}
+
+                 
+
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
-                  {" "}
                   <TextField
                     variant="outlined"
                     required
@@ -220,6 +251,7 @@ const SignUp = () => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     onBlur={handleBlur}
+
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "10px",
@@ -238,6 +270,12 @@ const SignUp = () => {
                 </Grid2>{" "}
               </Grid2>{" "}
             </Box>{" "}
+
+                  />
+                </Grid2>
+              </Grid2>
+            </Box>
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -252,6 +290,7 @@ const SignUp = () => {
               error={!!errors.email}
               helperText={errors.email}
               onBlur={handleBlur}
+
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -267,6 +306,9 @@ const SignUp = () => {
                 },
               }}
             />{" "}
+
+        
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -281,6 +323,7 @@ const SignUp = () => {
               error={!!errors.username}
               helperText={errors.username}
               onBlur={handleBlur}
+
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -296,6 +339,9 @@ const SignUp = () => {
                 },
               }}
             />{" "}
+
+    
+
             <TextField
               variant="outlined"
               margin="normal"
@@ -311,6 +357,7 @@ const SignUp = () => {
               error={!!errors.password}
               helperText={errors.password}
               onBlur={handleBlur}
+
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -326,6 +373,7 @@ const SignUp = () => {
                 },
               }}
             />{" "}
+
             <Button
               type="submit"
               fullWidth
@@ -341,6 +389,7 @@ const SignUp = () => {
               onClick={handleSubmit}
             >
               Submit
+
             </Button>{" "}
             <Typography
               variant="h8"
@@ -369,6 +418,7 @@ const SignUp = () => {
               Back to Home
             </Button>
           </Container>{" "}
+
         </Container>
       </Container>
     </AppLayoutContainer>
