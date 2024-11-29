@@ -1,8 +1,8 @@
 "use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import AppLayoutContainer from "../components/AppLayoutContainer";
+import { CircularProgress, Box, Typography } from "@mui/material";
 import Profile from "../components/Profile";
 import Bookshelf from "../components/Bookshelf";
 import QuotesList from "../components/QuotesList";
@@ -14,7 +14,20 @@ export default function DashboardPage() {
   const [booksReadCount, setBooksReadCount] = useState(0);
 
   if (!currentUser) {
-    return <p>Loading user data...</p>;
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          Loading user data...
+        </Typography>
+      </Box>
+    );
   }
 
   return (
