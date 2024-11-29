@@ -70,6 +70,8 @@ const BookDetails = () => {
             flex: { xs: "1", md: "3" },
             maxWidth: { xs: "100%", md: "20%" },
             textAlign: { xs: "center", md: "left" },
+            position: "relative",
+            width: "100%",
           }}
         >
           <CardMedia
@@ -82,8 +84,11 @@ const BookDetails = () => {
               borderRadius: "8px",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
               margin: { xs: "0 auto", md: "0" },
+              opacity: book.is_fallback ? 0.2 : 1,
+              position: "relative",
             }}
           />
+
           <Box sx={{ marginTop: "1rem" }}>
             <Reviews bookId={id} onSuccess={handleReviewSuccess} />
           </Box>
