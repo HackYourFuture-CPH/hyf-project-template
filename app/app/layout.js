@@ -29,11 +29,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${lato.variable} ${playfairDisplay.variable}`}>
-        <ThemeProvider> {/* Wrap the application in ThemeProvider */}
+        <ThemeProvider>
+          {" "}
+          {/* Wrap the application in ThemeProvider */}
           <AuthContextProvider>
             <BookshelfProvider>
               {/* Add IconToggle in a fixed position header */}
-              <header style={{ position: 'absolute', top: 0, right: 0}}>
+              <header style={{ position: "absolute", top: 0, right: 0 }}>
                 <IconToggle />
               </header>
               {/* CssBaseline normalizes styles globally */}

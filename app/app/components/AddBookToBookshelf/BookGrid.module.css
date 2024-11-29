@@ -87,14 +87,10 @@
   font-size: 0.65rem;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
 }
 
 .addButton:hover {
-  margin-top: auto;
   background-color: var(--accent);
-  color: var(--background);
-  border-color: var(--accent);
 }
 
 .loading {

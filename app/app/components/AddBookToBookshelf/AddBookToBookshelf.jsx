@@ -24,62 +24,67 @@ const AddBookToBookshelf = ({
     return statusMap[category] || "READ";
   };
 
-  const handleAddBook = async (book) => {
-    if (
-      bookShelf[category]?.some(
-        (b) => b.google_books_id === book.google_book_id
-      )
-    ) {
-      setError(`This book is already in your ${category} category.`);
-      return;
-    }
+  const handleAddBook = useCallback(
+    async (book) => {
+      if (
+        bookShelf[category]?.some(
+          (b) => b.google_books_id === book.google_book_id
+        )
+      ) {
+        setError(`This book is already in your ${category} category.`);
+        return;
+      }
 
-    try {
-      const status = mapCategoryToStatus(category);
-      setSuccessMessage(null);
-      setError(null);
+      try {
+        const status = mapCategoryToStatus(category);
+        setSuccessMessage(null);
+        setError(null);
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
-        {
-          google_books_id: book.google_book_id,
-          title: book.title,
-          author: book.authors,
-          genre: book.genre,
-          cover_image: book.cover_image,
-          description: book.description,
-          status,
-        },
-        { withCredentials: true }
-      );
-      if (response.status === 201) {
-        setSuccessMessage(
-          `${response.data.book.title} added to your ${category} bookshelf.`
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
+          {
+            google_books_id: book.google_book_id,
+            title: book.title,
+            author: book.authors,
+            genre: book.genre,
+            cover_image: book.cover_image,
+            description: book.description,
+            status,
+          },
+          { withCredentials: true }
         );
-        setIsSuccessModalOpen(true);
-        onBookAdded(response.data.book);
-      }
-    } catch (err) {
-      if (err.response && err.response.data.error) {
-        if (
-          err.response.data.error === "Book already exists in user's library"
-        ) {
-          setError(
-            "This book is already in your library under a different status."
+        if (response.status === 201) {
+          setSuccessMessage(
+            `${response.data.book.title} added to your ${category} bookshelf.`
           );
-        } else {
-          setError(`Error: ${err.response.data.error || "An error occurred."}`);
+          setIsSuccessModalOpen(true);
+          onBookAdded(response.data.book);
         }
-      } else {
-        setError("An error occurred while adding the book.");
+      } catch (err) {
+        if (err.response && err.response.data.error) {
+          if (
+            err.response.data.error === "Book already exists in user's library"
+          ) {
+            setError(
+              "This book is already in your library under a different status."
+            );
+          } else {
+            setError(
+              `Error: ${err.response.data.error || "An error occurred."}`
+            );
+          }
+        } else {
+          setError("An error occurred while adding the book.");
+        }
       }
-    }
-  };
+    },
+    [category, bookShelf, onBookAdded]
+  );
 
-  const handleSuccessModalClose = () => {
+  const handleSuccessModalClose = useCallback(() => {
     setIsSuccessModalOpen(false);
     closeModal();
-  };
+  }, [closeModal]);
 
   return (
     <div className={styles.modalOverlay}>

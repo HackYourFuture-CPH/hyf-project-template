@@ -65,19 +65,6 @@ const SearchForm = ({ onAddBook }) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterType]: value }));
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    debouncedFetchSearchResults(
-      searchParams.title,
-      searchParams.author,
-      filters
-    );
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    debouncedSearch(searchParams, filters);
-  };
-
   return (
     <div className={styles.searchContainer}>
       <div className={styles.searchInputs}>
