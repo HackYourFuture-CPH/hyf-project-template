@@ -11,8 +11,8 @@ import styles from "./Profile.module.css";
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [mostReadGenre, setMostReadGenre] = useState(null);
-    const [favoriteAuthor, setFavoriteAuthor] = useState(null);
+    const [mostReadGenres, setMostReadGenres] = useState([]);
+    const [favoriteAuthors, setFavoriteAuthors] = useState([]);
     const { booksCount, loading, error } = useBookshelf();
 
     useEffect(() => {
@@ -29,12 +29,12 @@ const Profile = () => {
         const fetchFavoriteData = async () => {
             try {
                 const response = await makeRequest("/api/user-books/favorite-data", {}, "GET");
-                setMostReadGenre(response.mostReadGenre);
-                setFavoriteAuthor(response.favoriteAuthor);
+                setMostReadGenres(response.mostReadGenres || ["Not available"]);
+                setFavoriteAuthors(response.favoriteAuthors || ["Not available"]);
             } catch (err) {
                 console.error("Error fetching favorite data:", err);
-                setMostReadGenre("Not available");
-                setFavoriteAuthor("Not available");
+                setMostReadGenres(["Not available"]);
+                setFavoriteAuthors(["Not available"]);
             }
         };
 
@@ -44,7 +44,7 @@ const Profile = () => {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-    console.log(userData);
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
     if (!userData) return <div>No user data available.</div>;
@@ -70,10 +70,12 @@ const Profile = () => {
                         <strong>About:</strong> {userData.about || "No information available."}
                     </div>
                     <div>
-                        <strong>Most Read Genre:</strong> {mostReadGenre || "Not available"}
+                        <strong>Most Read Genres:</strong>{" "}
+                        {mostReadGenres.length ? mostReadGenres.join(", ") : "Not available"}
                     </div>
                     <div>
-                        <strong>Favorite Author:</strong> {favoriteAuthor || "Not available"}
+                        <strong>Favorite Authors:</strong>{" "}
+                        {favoriteAuthors.length ? favoriteAuthors.join(", ") : "Not available"}
                     </div>
                     <div>
                         <strong>Books Read:</strong> {booksCount}
