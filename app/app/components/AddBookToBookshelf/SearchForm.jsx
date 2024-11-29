@@ -1,9 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import debounce from "lodash.debounce";
-import { FilterBar } from "./FilterBar";
-import { BookGrid } from "./BookGrid";
+import FilterBar from "./FilterBar";
+import BookGrid from "./BookGrid";
 import { defaultFilters, formatSearchQuery } from "./constants";
+import styles from "./SearchForm.module.css";
 
 const SearchForm = ({ onAddBook }) => {
   const [searchParams, setSearchParams] = useState({ title: "", author: "" });

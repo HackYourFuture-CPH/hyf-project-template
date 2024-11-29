@@ -11,7 +11,7 @@ const FilterBar = ({ filters, onFilterChange }) => {
         onChange={(e) => onFilterChange("language", e.target.value)}
       >
         {filterOptions.languages.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.code} value={option.code}>
             {option.label}
           </option>
         ))}
@@ -50,8 +50,8 @@ const FilterBar = ({ filters, onFilterChange }) => {
         onChange={(e) => onFilterChange("maxResults", Number(e.target.value))}
       >
         {filterOptions.maxResults.map((option) => (
-          <option key={value} value={value}>
-            {value} results
+          <option key={option} value={option}>
+            {option} results
           </option>
         ))}
       </select>
