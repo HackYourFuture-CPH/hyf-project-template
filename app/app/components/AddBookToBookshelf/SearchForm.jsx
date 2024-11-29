@@ -59,9 +59,9 @@ const SearchForm = ({ onAddBook }) => {
   };
 
   return (
-    <div className={styles.searchForm}>
-      <form onSubmit={handleSearch} className={styles.form}>
-        <div className={styles.inputGroup}>
+    <div className={styles.searchContainer}>
+      <form onSubmit={handleSearch} className={styles.searchForm}>
+        <div className={styles.searchInputs}>
           <input
             type="text"
             value={searchParams.title}
@@ -69,7 +69,7 @@ const SearchForm = ({ onAddBook }) => {
               setSearchParams({ ...searchParams, title: e.target.value })
             }
             placeholder="Enter book title"
-            className={styles.input}
+            className={styles.searchInput}
           />
           <input
             type="text"
@@ -78,19 +78,23 @@ const SearchForm = ({ onAddBook }) => {
               setSearchParams({ ...searchParams, author: e.target.value })
             }
             placeholder="Enter author name"
-            className={styles.input}
+            className={styles.searchInput}
           />
           <button type="submit" className={styles.searchButton}>
             Search
           </button>
         </div>
-
-        <FilterBar filters={filters} onFilterChange={handleFilterChange} />
       </form>
 
       {error && <div className={styles.error}>{error}</div>}
-
-      <BookGrid books={books} onAddBook={onAddBook} loading={loading} />
+      <div className={styles.contentContainer}>
+        <div className={styles.filterSection}>
+          <FilterBar filters={filters} onFilterChange={handleFilterChange} />
+        </div>
+        <div className={styles.resultsSection}>
+          <BookGrid books={books} onAddBook={onAddBook} loading={loading} />
+        </div>
+      </div>
     </div>
   );
 };
