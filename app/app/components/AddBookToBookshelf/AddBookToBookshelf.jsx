@@ -1,14 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import axios from "axios";
 import SearchForm from "./SearchForm";
-import styles from "./AddBookToBookshelf.module.css";
 import SuccessModal from "../SuccessModal";
-
-const isBookInCategory = (book, bookShelf, category) => {
-  return bookShelf[category].some(
-    (b) => b.google_books_id === book.google_book_id
-  );
-};
+import styles from "./AddBookToBookshelf.module.css";
 
 const AddBookToBookshelf = ({
   category,
@@ -18,7 +13,7 @@ const AddBookToBookshelf = ({
 }) => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const mapCategoryToStatus = (category) => {
     const statusMap = {
@@ -30,7 +25,11 @@ const AddBookToBookshelf = ({
   };
 
   const handleAddBook = async (book) => {
-    if (isBookInCategory(book, bookShelf, category)) {
+    if (
+      bookShelf[category]?.some(
+        (b) => b.google_books_id === book.google_book_id
+      )
+    ) {
       setError(`This book is already in your ${category} category.`);
       return;
     }
@@ -57,9 +56,8 @@ const AddBookToBookshelf = ({
         setSuccessMessage(
           `${response.data.book.title} added to your ${category} bookshelf.`
         );
+        setIsSuccessModalOpen(true);
         onBookAdded(response.data.book);
-        setIsModalOpen(true);
-        console.log(response.data.book);
       }
     } catch (err) {
       if (err.response && err.response.data.error) {
@@ -78,11 +76,17 @@ const AddBookToBookshelf = ({
     }
   };
 
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false);
+    closeModal();
+  };
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.addBookContainer}>
         <div className={styles.header}>
-          <h2>Add Book to {category.replace(/([a-z])([A-Z])/g, "$1 $2")}</h2>
+          <h2>Add Book to {category.split(/(?=[A-Z])/).join(" ")}</h2>
+
           <button onClick={closeModal} className={styles.closeButton}>
             ×
           </button>
@@ -94,12 +98,9 @@ const AddBookToBookshelf = ({
 
         {successMessage && (
           <SuccessModal
-            isOpen={isModalOpen}
+            isOpen={isSuccessModalOpen}
             message={successMessage}
-            onClose={() => {
-              setIsModalOpen(false);
-              if (closeModal) closeModal();
-            }}
+            onClose={handleSuccessModalClose}
           />
         )}
       </div>

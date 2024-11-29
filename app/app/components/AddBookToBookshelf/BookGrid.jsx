@@ -11,15 +11,15 @@ const BookGrid = ({ books, onAddBook, loading }) => {
   return (
     <div className={styles.bookGrid}>
       {books.map((book) => (
-        <div key={book.id} className={styles.bookCard}>
+        <div key={book.google_book_id} className={styles.bookCard}>
           <img
-            src={book.volumeInfo.imageLinks?.thumbnail}
-            alt={book.volumeInfo.title}
+            src={book.cover_image}
+            alt={book.title}
             className={styles.bookImage}
           />
           <div className={styles.bookDetails}>
-            <h4>{book.volumeInfo.title}</h4>
-            <p>{book.volumeInfo.authors?.join(", ")}</p>
+            <h4>{book.title}</h4>
+            <p>{book.authors}</p>
           </div>
           <button onClick={() => onAddBook(book)} className={styles.addButton}>
             Add to Bookshelf
