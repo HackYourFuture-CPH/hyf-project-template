@@ -3,7 +3,13 @@
 import AppLayoutContainer from "@/app/components/AppLayoutContainer";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Box, CardMedia, Typography, Button } from "@mui/material";
+import {
+  CircularProgress,
+  Box,
+  CardMedia,
+  Typography,
+  Button,
+} from "@mui/material";
 import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
 
@@ -48,7 +54,22 @@ const BookDetails = () => {
     fetchBookDetails();
   }, [id]);
 
-  if (loading) return <p>Loading book details...</p>;
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          Loading book details...
+        </Typography>
+      </Box>
+    );
+  }
   if (error) return <p>{error}</p>;
 
   return (
