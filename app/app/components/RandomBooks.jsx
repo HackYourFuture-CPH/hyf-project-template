@@ -1,6 +1,6 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { CircularProgress, Box, Typography } from "@mui/material";
 import styles from "./RandomBooks.module.css";
 
 const RandomBooks = () => {
@@ -58,7 +58,22 @@ const RandomBooks = () => {
     fetchBooks();
   }, []);
 
-  if (loading) return <p>Loading books...</p>;
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          Loading books...
+        </Typography>
+      </Box>
+    );
+  }
 
   if (error) return <p>{error}</p>;
 

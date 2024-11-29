@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { CircularProgress, Box, Typography } from "@mui/material";
 import styles from "./Bookshelf.module.css";
 import axios from "axios";
 import BookshelfSection from "./BookshelfSection";
@@ -126,7 +127,22 @@ const Bookshelf = () => {
     }));
   };
 
-  if (loading) return <p>Loading bookshelf...</p>;
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          Loading bookshelf...
+        </Typography>
+      </Box>
+    );
+  }
   if (error) return <p>{error}</p>;
 
   return (
