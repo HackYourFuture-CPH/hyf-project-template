@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import FilterBar from "./FilterBar";
@@ -13,8 +13,10 @@ const SearchForm = ({ onAddBook }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const debouncedFetchSearchResults = debounce(
-    async (title, author, filters) => {
+  const debouncedSearch = useCallback(
+    debounce(async (searchTerms, filterOptions) => {
+      if (!searchTerms.title && !searchTerms.author) return;
+
       setLoading(true);
       setError(null);
       try {
@@ -22,15 +24,15 @@ const SearchForm = ({ onAddBook }) => {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/searchGoogleBooks`,
           {
             params: {
-              title: title || undefined,
-              author: author || undefined,
-              genre: filters.genre !== "all" ? filters.genre : undefined,
-              language: filters.language,
-              filterType: filters.filterType,
-              printType: filters.printType,
-              orderBy: filters.orderBy,
+              title: searchTerms.title || undefined,
+              author: searchTerms.author || undefined,
+              genre: filterOptions.genre !== "all" ? filters.genre : undefined,
+              language: filterOptions.language,
+              filterType: filterOptions.filterType,
+              printType: filterOptions.printType,
+              orderBy: filterOptions.orderBy,
               page: 1,
-              pageSize: filters.maxResults,
+              pageSize: filterOptions.maxResults,
             },
           }
         );
@@ -41,9 +43,23 @@ const SearchForm = ({ onAddBook }) => {
       } finally {
         setLoading(false);
       }
-    },
-    500
+    }, 500),
+    []
   );
+
+  useEffect(() => {
+    if (searchParams.title || searchParams.author) {
+      debouncedSearch(searchParams, filters);
+    }
+  }, [searchParams, filters, debouncedSearch]);
+
+  const handleInputChange = (e, field) => {
+    const newSearchParams = {
+      ...searchParams,
+      [field]: e.target.value,
+    };
+    setSearchParams(newSearchParams);
+  };
 
   const handleFilterChange = (filterType, value) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterType]: value }));
@@ -57,42 +73,41 @@ const SearchForm = ({ onAddBook }) => {
       filters
     );
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    debouncedSearch(searchParams, filters);
+  };
 
   return (
     <div className={styles.searchContainer}>
-      <form onSubmit={handleSearch} className={styles.searchForm}>
-        <div className={styles.searchInputs}>
-          <input
-            type="text"
-            value={searchParams.title}
-            onChange={(e) =>
-              setSearchParams({ ...searchParams, title: e.target.value })
-            }
-            placeholder="Enter book title"
-            className={styles.searchInput}
-          />
-          <input
-            type="text"
-            value={searchParams.author}
-            onChange={(e) =>
-              setSearchParams({ ...searchParams, author: e.target.value })
-            }
-            placeholder="Enter author name"
-            className={styles.searchInput}
-          />
-          <button type="submit" className={styles.searchButton}>
-            Search
-          </button>
-        </div>
-      </form>
+      <div className={styles.searchInputs}>
+        <input
+          type="text"
+          value={searchParams.title}
+          onChange={(e) => handleInputChange(e, "title")}
+          placeholder="Enter book title"
+          className={styles.searchInput}
+        />
+        <input
+          type="text"
+          value={searchParams.author}
+          onChange={(e) => handleInputChange(e, "author")}
+          placeholder="Enter author name"
+          className={styles.searchInput}
+        />
+      </div>
 
-      {error && <div className={styles.error}>{error}</div>}
       <div className={styles.contentContainer}>
         <div className={styles.filterSection}>
           <FilterBar filters={filters} onFilterChange={handleFilterChange} />
         </div>
+
         <div className={styles.resultsSection}>
-          <BookGrid books={books} onAddBook={onAddBook} loading={loading} />
+          {loading && <div className={styles.loading}>Searching...</div>}
+          {error && <div className={styles.error}>{error}</div>}
+          {!loading && !error && (
+            <BookGrid books={books} onAddBook={onAddBook} />
+          )}
         </div>
       </div>
     </div>

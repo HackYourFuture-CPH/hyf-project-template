@@ -18,11 +18,13 @@
 }
 
 .bookCard:hover {
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
 .imageWrapper {
   position: relative;
+  height: 150px;
   width: 100%;
   padding-top: 130%;
   background: #f8f9fa;
@@ -77,9 +79,9 @@
 .addButton {
   width: 100%;
   padding: 0.35rem;
-  background-color: #9f8a9d;
-  color: var(--background);
-  border: none;
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
   border-radius: 5px;
   font-family: var(--font-lato), sans-serif;
   font-size: 0.65rem;
@@ -90,7 +92,9 @@
 
 .addButton:hover {
   margin-top: auto;
-  background-color: #8a7288;
+  background-color: var(--accent);
+  color: var(--background);
+  border-color: var(--accent);
 }
 
 .loading {

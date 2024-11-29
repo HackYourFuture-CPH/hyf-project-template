@@ -36,24 +36,6 @@
   border-color: #9f8a9d;
 }
 
-.searchButton {
-  padding: 0.75rem 2rem;
-  background-color: #9f8a9d;
-  color: var(--background);
-  border: none;
-  border-radius: 5px;
-  font-family: var(--font-lato), sans-serif;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.searchButton:hover {
-  background-color: #8a7288;
-  color: var(--background);
-  border-color: var(--accent);
-}
-
 .contentContainer {
   display: flex;
   gap: 2rem;
