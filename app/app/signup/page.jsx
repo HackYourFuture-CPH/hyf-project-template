@@ -116,7 +116,7 @@ const SignUp = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          bgcolor: theme === "dark" ? "#000000" : "#F0D2D6", // Adjust background color based on theme
+          bgcolor: theme === "dark" ? "#171717" : "#ffffff", // Adjust background color based on theme
         }}
       >
         <Container
@@ -137,34 +137,40 @@ const SignUp = () => {
           {!isMobile && (
             <Container
               sx={{
-                fontFamily: "jacques Francois",
-                marginBottom: 2,
-                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
-                fontWeight: "500",
-                whiteSpace: "pre-line",
-                letterSpacing: "0.5px",
-                lineHeight: 1.5,
-                padding: "10px 20px",
-                backgroundColor: theme === "dark" ? "#444444" : "#F5ECE8", // Adjust background color for heading
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "20px", // Inner spacing
+                backgroundColor: theme === "dark" ? "#111112" : "#F5ECE8", // Match background color
+                borderRadius: 2, // Smooth corners
                 boxShadow:
                   theme === "dark"
-                    ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
-                    : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    ? "0px 4px 8px rgba(0, 0, 0, 0.4)" // Dark mode shadow
+                    : "0px 4px 8px rgba(0, 0, 0, 0.1)", // Light mode shadow
+                width: "600px",
+                maxWidth: "100%", // Ensure responsiveness
+                textAlign: "center", // Align text centrally
               }}
             >
               <Typography
                 variant="h5"
                 sx={{
                   fontFamily: "jacques Francois",
-                  marginBottom: 2,
-                  color: "#3C3C3C",
+                  marginBottom: 0,
+                  padding: 0,
+                  color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
                   fontWeight: "500",
                   whiteSpace: "pre-line",
                   letterSpacing: "0.5px",
                   lineHeight: 1.5,
-                  padding: "10px 20px",
-                  backgroundColor: "#F5ECE8",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  padding: "10px 20px", // Inner padding for text
+                  backgroundColor: theme === "dark" ? "#444444" : "#F5ECE8", // Match background to parent container
+                  boxShadow:
+                    theme === "dark"
+                      ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                      : "0px 4px 8px rgba(0, 0, 0, 0.1)", // Consistent shadow
+                  borderRadius: 1, // Rounded edges for text container
                 }}
               >
                 <Box sx={{ fontWeight: "bold", fontStyle: "italic" }}>
