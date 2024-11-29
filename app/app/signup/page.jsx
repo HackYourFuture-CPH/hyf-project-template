@@ -18,10 +18,6 @@ import { validateField } from "../utils/validation";
 import { isValidate } from "../utils/validation";
 import { useTheme } from "../contexts/ThemeContext"; // Access Theme Context
 
-
-
-
-
 const SignUp = () => {
   const [data, setData] = useState({
     firstName: "",
@@ -37,7 +33,6 @@ const SignUp = () => {
     username: "",
     password: "",
   });
-
 
   const { theme } = useTheme(); // Access the current theme (light or dark)
 
@@ -113,24 +108,18 @@ const SignUp = () => {
 
             background: theme === "dark" ? "#111112" : "#F5ECE8", // Dark mode background
 
-
-          
-
             borderRadius: 2,
             boxShadow:
               theme === "dark"
                 ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                 : "0px 4px 8px rgba(0, 0, 0, 0.1)",
 
-          
             flexDirection: isMobile ? "column" : "row",
-
           }}
         >
           {!isMobile && (
             <Container
               sx={{
-
                 fontFamily: "jacques Francois",
                 marginBottom: 2,
                 color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
@@ -144,9 +133,6 @@ const SignUp = () => {
                   theme === "dark"
                     ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                     : "0px 4px 8px rgba(0, 0, 0, 0.1)",
-
-               
-
               }}
             >
               <Typography
@@ -185,9 +171,6 @@ const SignUp = () => {
 
               background: theme === "dark" ? "#000000" : "#EAD3C4", // Adjust background color for form container
 
-
-            
-
               marginRight: "-25px",
               borderRadius: 2,
               boxShadow:
@@ -195,7 +178,6 @@ const SignUp = () => {
                   ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
                   : "0px 4px 8px rgba(0, 0, 0, 0.1)",
               marginRight: isMobile ? "0" : "-25px", // Adjust margin for mobile
-
             }}
           >
             <Typography
@@ -225,7 +207,6 @@ const SignUp = () => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     onBlur={handleBlur}
-
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "10px",
@@ -242,9 +223,6 @@ const SignUp = () => {
                     }}
                   />{" "}
                 </Grid2>{" "}
-
-                 
-
                 <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
                   <TextField
                     variant="outlined"
@@ -259,7 +237,6 @@ const SignUp = () => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     onBlur={handleBlur}
-
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "10px",
@@ -278,12 +255,6 @@ const SignUp = () => {
                 </Grid2>{" "}
               </Grid2>{" "}
             </Box>{" "}
-
-                  />
-                </Grid2>
-              </Grid2>
-            </Box>
-
             <TextField
               variant="outlined"
               margin="normal"
@@ -298,7 +269,6 @@ const SignUp = () => {
               error={!!errors.email}
               helperText={errors.email}
               onBlur={handleBlur}
-
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -314,9 +284,6 @@ const SignUp = () => {
                 },
               }}
             />{" "}
-
-        
-
             <TextField
               variant="outlined"
               margin="normal"
@@ -331,7 +298,6 @@ const SignUp = () => {
               error={!!errors.username}
               helperText={errors.username}
               onBlur={handleBlur}
-
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -347,9 +313,6 @@ const SignUp = () => {
                 },
               }}
             />{" "}
-
-    
-
             <TextField
               variant="outlined"
               margin="normal"
@@ -365,7 +328,6 @@ const SignUp = () => {
               error={!!errors.password}
               helperText={errors.password}
               onBlur={handleBlur}
-
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "10px",
@@ -381,7 +343,6 @@ const SignUp = () => {
                 },
               }}
             />{" "}
-
             <Button
               type="submit"
               fullWidth
@@ -397,7 +358,6 @@ const SignUp = () => {
               onClick={handleSubmit}
             >
               Submit
-
             </Button>{" "}
             <Typography
               variant="h8"
@@ -426,7 +386,6 @@ const SignUp = () => {
               Back to Home
             </Button>
           </Container>{" "}
-
         </Container>
       </Container>
     </AppLayoutContainer>
