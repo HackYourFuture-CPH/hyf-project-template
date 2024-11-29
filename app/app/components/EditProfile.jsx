@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useErrorModal } from "../hooks/useErrorModal";
+import ErrorModal from "./ErrorModal";
 import axios from "axios";
 import styles from "./EditProfile.module.css";
 import Button from "./Button";
@@ -12,6 +14,7 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const { showError, error, hideError } = useErrorModal();
 
   // Handle input change
   const handleChange = (e) => {
@@ -32,8 +35,21 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
     e.preventDefault();
 
     try {
+      if (!formData.username.trim()) {
+        showError("Username is required", "Validation Error", "error");
+        return;
+      }
+
       const formDataToSend = new FormData();
       if (selectedFile) {
+        if (selectedFile.size > 5 * 1024 * 1024) {
+          showError(
+            "Profile image must be less than 5MB",
+            "File Size Error",
+            "error"
+          );
+          return;
+        }
         formDataToSend.append("profile", selectedFile);
       }
       formDataToSend.append("first_name", formData.firstName);
@@ -53,13 +69,28 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
           },
         }
       );
+      showError("Profile updated successfully!", "Success", "success");
 
-      onSave(response.data.updatedUser); // Pass updated user data to parent
-      window.location.reload();
-      onClose(); // Close the modal
+      setTimeout(() => {
+        onSave(response.data.updatedUser);
+        onClose();
+        window.location.reload();
+      }, 1500);
     } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
+      let errorMessage = "Failed to update profile. Please try again.";
+      let errorTitle = "Profile Update Failed";
+
+      if (error.response?.status === 409) {
+        errorMessage = "Username already exists. Please choose another.";
+        errorTitle = "Username Taken";
+      } else if (error.response?.status === 413) {
+        errorMessage = "File size too large. Please choose a smaller image.";
+        errorTitle = "File Size Error";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      showError(errorMessage, errorTitle, "error");
     } finally {
       setUploading(false);
     }
@@ -68,76 +99,85 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>
-          &times;
-        </button>
-        <h2>Edit Profile</h2>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.inputGroup}>
-            <label>First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="Enter your first name..."
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Enter your last name..."
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter a new username..."
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>About</label>
-            <textarea
-              name="about"
-              value={formData.about}
-              onChange={handleChange}
-              placeholder="Tell us about yourself..."
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Upload Profile Image</label>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-          </div>
-          {selectedFile && (
-            <div className={styles.imagePreview}>
-              <img
-                src={URL.createObjectURL(selectedFile)}
-                alt="Profile Preview"
-                className={styles.profileImage}
+    <>
+      <div className={styles.overlay}>
+        <div className={styles.modal}>
+          <button className={styles.closeButton} onClick={onClose}>
+            &times;
+          </button>
+          <h2>Edit Profile</h2>
+          <form onSubmit={handleSubmit}>
+            <div className={styles.inputGroup}>
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Enter your first name..."
               />
             </div>
-          )}
+            <div className={styles.inputGroup}>
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter your last name..."
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter a new username..."
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>About</label>
+              <textarea
+                name="about"
+                value={formData.about}
+                onChange={handleChange}
+                placeholder="Tell us about yourself..."
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Upload Profile Image</label>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+            </div>
+            {selectedFile && (
+              <div className={styles.imagePreview}>
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Profile Preview"
+                  className={styles.profileImage}
+                />
+              </div>
+            )}
 
-          <Button
-            type="submit"
-            className={styles.saveButton}
-            disabled={uploading}
-          >
-            {uploading ? "Saving..." : "Save"}
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              className={styles.saveButton}
+              disabled={uploading}
+            >
+              {uploading ? "Saving..." : "Save"}
+            </Button>
+          </form>
+        </div>
       </div>
-    </div>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
+    </>
   );
 };
 
