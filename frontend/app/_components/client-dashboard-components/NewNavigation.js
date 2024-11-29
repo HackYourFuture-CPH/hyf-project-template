@@ -14,13 +14,13 @@ function NewNavigation({ userName }) {
   return (
     <div
       className="flex flex-col items-center 
-    justify-evenly w-full px-4 md:px-10 lg:px-20"
+    justify-evenly gap-12 w-full px-4 md:gap-8 md:px-10 lg:px-20"
     >
       <div className="flex justify-between items-center w-full py-6">
         <h1
           className={`${nabla.className} text-2xl md:text-4xl`}
         >
-          WFlance
+          WEflance
         </h1>
 
         <div className="flex justify-center items-center gap-4">
@@ -68,7 +68,11 @@ function NewNavigation({ userName }) {
           </li>
           <li>
             <Link href="/client-dashboard/createProject">
-              <button className="bg-accent-500  px-6 py-2 md:px-8 md:py-4 text-primary-800 font-semibold hover:bg-amber-300 transition-all rounded-lg cursor-pointer">
+              <button
+                className="bg-accent-500  px-6 py-2 
+              lg:mx-20 md:px-7 md:py-3 text-primary-800 font-semibold
+               hover:bg-amber-300 transition-all rounded-lg cursor-pointer"
+              >
                 Create project
               </button>
             </Link>

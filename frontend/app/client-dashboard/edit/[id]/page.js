@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Spinner from "@/app/_components/client-dashboard-components/Spinner";
 
 export default function EditProject({ params }) {
   const router = useRouter();
@@ -90,43 +91,80 @@ export default function EditProject({ params }) {
   };
 
   if (!projectId) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && (
-        <div className="text-red-500 mb-4">{error}</div>
-      )}
-      <label>
-        Project Name:
-        <input
-          type="text"
-          name="name"
-          value={projectData.name || ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Status:
-        <select
-          name="status"
-          value={projectData.status || ""}
-          onChange={handleChange}
-          required
+    <div
+      className="min-h-screen bg-[#e0d9c7] bg-floral-pattern
+       bg-repeat flex items-center justify-center px-4"
+    >
+      <div className="max-w-lg w-full bg-[#e0ded7] shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Edit Project
+        </h2>
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 border border-red-500 text-red-700 rounded-md">
+            {error}
+          </div>
+        )}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 "
         >
-          <option value="in-progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="pending">Pending</option>
-        </select>
-      </label>
-      <button
-        type="submit"
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Save
-      </button>
-    </form>
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-gray-600 font-medium mb-2"
+            >
+              Project Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={projectData.name || ""}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 bg-[#f4f5f5e1] border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="status"
+              className="block text-gray-600 font-medium mb-2"
+            >
+              Status
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={projectData.status || ""}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 bg-[#f4f5f5e1] border rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="in-progress">
+                In Progress
+              </option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all duration-200"
+          >
+            Save Changes
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { getFieldFromCookie } from "@/app/utils/auth";
 import { getAllClientsFromDeveloper } from "@/app/utils/chatUtil.js";
-// import { getAllClientsFromDeveloper } from "@/app/utils/chatUtil";
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
@@ -161,7 +161,7 @@ const Chat = () => {
               />
               <button
                 onClick={() => joinRoom()}
-                className="w-full bg-primary-blue-dark text-white py-2 rounded-lg hover:bg-primary-blue"
+                className="w-full bg-primary-400 text-white font-semibold py-2 rounded-lg hover:bg-primary-blue"
               >
                 Start Chat
               </button>
@@ -181,7 +181,7 @@ const Chat = () => {
                       joinRoom(`${client.id}_${senderId}`)
                     }
                   >
-                    Chat with{" "}
+                    Chat with
                     {client.name || `User ${client.id}`}
                   </li>
                 ))}
@@ -214,7 +214,7 @@ const Chat = () => {
                         ? "You"
                         : `User ${msg.senderId}`}
                       :
-                    </strong>{" "}
+                    </strong>
                     {msg.message}
                   </div>
                 )
@@ -231,13 +231,13 @@ const Chat = () => {
                   setMessageInput(e.target.value)
                 }
                 placeholder="Type a message..."
-                className="flex-1 border rounded-lg px-3 py-2 mr-2"
+                className="flex-1 rounded-lg px-3 py-2 mr-2"
               />
               <button
                 onClick={sendMessage}
-                className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                className=" text-white py-2 px-4 rounded-lg"
               >
-                Send
+                <PaperAirplaneIcon className="h-6 w-6 text-primary-400" />
               </button>
             </div>
           </div>

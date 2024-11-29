@@ -14,12 +14,20 @@ export default function ClientDashboard() {
         className="object-cover object-top min-h-screen"
       />
       <div
-        className="relative z-10 flex flex-col items-center justify-center
+        className="relative z-10 flex flex-col 
+        items-center justify-center
        h-full text-center px-4 py-10 gap-96"
       >
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-emerald-200 mb-10 sm:mb-12 md:mb-16 lg:mb-20 tracking-tight font-normal">
-          Welcome to Your Command Center – Let's Get
-          Started!
+        <h1
+          className="text-4xl sm:text-5xl 
+           text-emerald-200 mb-10 sm:mb-12 md:mb-16 lg:mb-20 
+           tracking-tight font-normal"
+          style={{
+            textShadow:
+              "2px 2px 0 #222, -2px 2px 0 #333, 2px -2px 0 #222, -2px -2px 0 #333",
+          }}
+        >
+          Welcome! Everything You Need Is Just a Click Away.
         </h1>
         <Link
           href="client-dashboard/projects"

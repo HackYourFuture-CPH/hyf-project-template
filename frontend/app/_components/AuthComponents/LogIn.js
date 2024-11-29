@@ -8,32 +8,35 @@ import {
   getUserPathByRole,
 } from "../../utils/userUtil";
 import { toast } from "react-toastify";
+import SpinnerMini from "../client-dashboard-components/SpinnerMini";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(null);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
+    setIsLoading(true);
 
     if (!email || !password) {
       setFormError("Please fill in both fields.");
       return;
     }
 
-      await handleLogIn(email, password, async () => {
-        const userInfo = await getUserInfo();
-        const userRole = userInfo.role;
-        Cookies.set("userRole", userRole);
-        Cookies.set("userId", userInfo.id);
-        toast.success("Logged in successfully! 🎉");
+    await handleLogIn(email, password, async () => {
+      const userInfo = await getUserInfo();
+      const userRole = userInfo.role;
+      Cookies.set("userRole", userRole);
+      Cookies.set("userId", userInfo.id);
+      toast.success("Logged in successfully! 🎉");
 
-        const dashboardPath = getUserPathByRole(userRole);
-        window.location.replace(dashboardPath);
-      });
-
+      const dashboardPath = getUserPathByRole(userRole);
+      window.location.replace(dashboardPath);
+    });
+    setIsLoading(false);
   };
 
   return (
@@ -63,9 +66,13 @@ const LogIn = () => {
         />
         <button
           type="submit"
-          className="w-full bg-primary-purple text-white py-2 rounded-lg hover:bg-primary-purple-dark transition-colors"
+          className=" flex items-center justify-center w-full bg-primary-purple text-white py-2 rounded-lg hover:bg-primary-purple-dark transition-colors"
         >
-          Sign In
+          {isLoading ? (
+            <SpinnerMini />
+          ) : (
+            <span>Sign In</span>
+          )}
         </button>
       </form>
       {formError && (

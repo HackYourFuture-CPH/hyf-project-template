@@ -10,6 +10,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { XCircleIcon } from "@heroicons/react/24/solid";
 
 import {
   Dialog,
@@ -19,6 +20,7 @@ import {
 } from "../ui/dialog";
 import { useEffect, useState } from "react";
 import { getFieldFromCookie } from "@/app/utils/auth";
+import SpinnerMini from "./SpinnerMini";
 
 function Calender() {
   const [currentEvent, setCurrentEvent] = useState([]);
@@ -26,6 +28,9 @@ function Calender() {
   const [newEventTitle, setNewEventTitle] = useState("");
   const [selectDate, setSelectDate] = useState(null);
   const [userId, setUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingEventId, setLoadingEventId] =
+    useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -61,8 +66,6 @@ function Calender() {
   }, []);
 
   const HandleDateClick = (selected) => {
-    console.log("Date selected:", selected);
-
     setSelectDate(selected);
     setIsDialogOpen(true);
   };
@@ -97,7 +100,6 @@ function Calender() {
         userId: `${userId}`,
       };
       try {
-        // POST the newEvent to the server
         const response = await fetch("/api/events", {
           method: "POST",
           headers: {
@@ -107,14 +109,10 @@ function Calender() {
         });
 
         if (response.ok) {
-          // Optionally process the server's response
-          const result = await response.json();
-          console.log("Event successfully added:", result);
+          // const result = await response.json();
 
-          // Add the event to the calendar locally
           calendarApi.addEvent(newEvent);
 
-          // Close the dialog or reset state
           handleCloseDialog();
         } else {
           console.error(
@@ -125,6 +123,37 @@ function Calender() {
       } catch (error) {
         console.error("Error adding event:", error);
       }
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this event?"
+      )
+    )
+      setLoadingEventId(eventId);
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/events/${eventId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        setCurrentEvent((prevEvents) =>
+          prevEvents.filter((event) => event.id !== eventId)
+        );
+      } else {
+        console.error("Failed to delete event.");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    } finally {
+      setIsLoading(false);
+      setLoadingEventId(null);
     }
   };
 
@@ -145,17 +174,31 @@ function Calender() {
             {currentEvent.length > 0 &&
               currentEvent.map((event) => (
                 <li
-                  className="border border-gray-200 shadow px-4 py-2 rounded-md text-primary-600"
+                  className=" flex flex-col justify-between items-center gap-2 font-semibold
+                   border border-gray-200 shadow px-4 py-2 rounded-md bg-sky-700 
+                    text-primary-neutral-light lg:flex-row "
                   key={event.id}
                 >
-                  {event.title} -{" "}
-                  <label className="text-primary-950">
+                  {event.title}
+                  <label className="">
                     {formatDate(event.start, {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
                     })}
                   </label>
+                  <button
+                    onClick={() =>
+                      handleDeleteEvent(event.id)
+                    }
+                    disabled={loadingEventId === event.id}
+                  >
+                    {loadingEventId === event.id ? (
+                      <SpinnerMini />
+                    ) : (
+                      <XCircleIcon className="h-6 w-6" />
+                    )}
+                  </button>
                 </li>
               ))}
           </ul>

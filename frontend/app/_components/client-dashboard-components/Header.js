@@ -27,7 +27,7 @@ function Header() {
     fetchUserData();
   }, []);
   return (
-    <header className="w-full h-[13rem] bg-primary-600 text-slate-50 shadow-md">
+    <header className="w-full h-[13rem] bg-gradient-to-r from-[#264249] to-[#287a8b] text-slate-50 shadow-md">
       <NewNavigation userName={userName} />
     </header>
   );

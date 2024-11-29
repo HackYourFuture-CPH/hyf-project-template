@@ -14,7 +14,10 @@ export default function RootLayout({ children }) {
   return (
     <div className="flex flex-col  ">
       <Header />
-      <main className=" overflow-hidden min-h-screen relative bg-amber-50">
+      <main
+        className=" overflow-hidden min-h-screen relative
+      bg-gradient-to-r from-white via-[#f7f9fc] to-[#e9f3ff]"
+      >
         {children}
       </main>
     </div>
