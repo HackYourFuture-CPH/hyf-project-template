@@ -4,6 +4,7 @@ import { ThemeProvider } from "./contexts/ThemeContext"; // Import the ThemeProv
 import localFont from "next/font/local";
 import "./globals.css";
 import IconToggle from "./components/IconToggle"; // Import the IconToggle component
+import { CssBaseline } from "@mui/material"; // Import CssBaseline for global reset
 
 // Load Lato Font
 const lato = localFont({
@@ -32,9 +33,11 @@ export default function RootLayout({ children }) {
           <AuthContextProvider>
             <BookshelfProvider>
               {/* Add IconToggle in a fixed position header */}
-              <header style={{ position: 'absolute', top: 10, right: 10 }}>
+              <header style={{ position: 'absolute', top: 0, right: 0}}>
                 <IconToggle />
               </header>
+              {/* CssBaseline normalizes styles globally */}
+              <CssBaseline />
               {children} {/* All page content goes here */}
             </BookshelfProvider>
           </AuthContextProvider>
