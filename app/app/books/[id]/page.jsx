@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
-import { useErrorModal } from "@/app/hooks/useErrorModal.jsx";
-import ErrorModal from "@/app/hooks/useSuccessModal.jsx";
+import { useErrorModal } from "../../hooks/useErrorModal.js";
+import ErrorModal from "../../components/ErrorModal.jsx";
 
 const BookDetails = () => {
   const { id } = useParams();
