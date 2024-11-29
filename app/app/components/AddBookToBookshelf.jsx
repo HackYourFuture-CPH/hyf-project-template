@@ -3,22 +3,13 @@ import { useState } from "react";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import styles from "./AddBookToBookshelf.module.css";
+import SuccessModal from "./SuccessModal";
 
-const isBookInCategory = (book, bookShelf) => {
-  return (
-    bookShelf.read.some((b) => b.google_book_id === book.google_book_id) ||
-    bookShelf.currentlyReading.some(
-      (b) => b.google_book_id === book.google_book_id
-    ) ||
-    bookShelf.wishToRead.some((b) => b.google_book_id === book.google_book_id)
+const isBookInCategory = (book, bookShelf, category) => {
+  return bookShelf[category].some(
+    (b) => b.google_books_id === book.google_book_id
   );
 };
-
-// const isBookInCategory = (book, bookShelf, category) => {
-//   return bookShelf[category].some(
-//     (b) => b.google_book_id === book.google_book_id
-//   );
-// };
 
 const AddBookToBookshelf = ({
   category,
@@ -33,6 +24,7 @@ const AddBookToBookshelf = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const debouncedFetchSearchResults = debounce(async (title, author, genre) => {
     setLoading(true);
@@ -72,9 +64,9 @@ const AddBookToBookshelf = ({
   };
 
   const handleAddBook = async (book) => {
+    console.log("Attempting to add book:", book);
     if (isBookInCategory(book, bookShelf, category)) {
       setError(`This book is already in your ${category} category.`);
-
       return;
     }
 
@@ -101,8 +93,8 @@ const AddBookToBookshelf = ({
           `${response.data.book.title} added to your ${category} bookshelf.`
         );
         onBookAdded(response.data.book);
-        console.log(response.status, response.data);
-        closeModal();
+        setIsModalOpen(true);
+        console.log(response.data.book);
       }
     } catch (err) {
       if (err.response && err.response.data.error) {
@@ -155,7 +147,6 @@ const AddBookToBookshelf = ({
           </button>
         </div>
         {loading && <p className={styles.loading}>Loading...</p>}
-
         {error && <p className={styles.error}>{error}</p>}
         {successMessage && <p className={styles.success}>{successMessage}</p>}
         {!loading && !error && searchResults.length > 0 && (
@@ -188,6 +179,11 @@ const AddBookToBookshelf = ({
             </ul>
           </div>
         )}
+        <SuccessModal
+          isOpen={isModalOpen}
+          message={successMessage}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

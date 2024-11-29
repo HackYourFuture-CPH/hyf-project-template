@@ -26,7 +26,6 @@ const fetchGoogleBooksDetails = async (googleBooksId) => {
         throw new Error("Error fetching book details from Google Books");
     }
 };
-
 export const addBookToUser = async (req, res) => {
     if (req.user.role !== "admin" && req.user.role !== "user") {
         return res
@@ -95,8 +94,48 @@ export const addBookToUser = async (req, res) => {
                 })
                 .first();
 
-            if (existingUserBook) {
-                return res.status(400).json({ error: `Book already exists in the library ` });
+            console.log("Existing User Book:", existingUserBook);
+
+            if (existingUserBook && existingUserBook.status === status) {
+                console.log(existingUserBook);
+                console.log(existingUserBook.status);
+                console.log(status);
+                res.status(400).json({
+                    error: `Book already exists in the library with the same status.`,
+                });
+                return;
+            }
+
+            if (existingUserBook && existingUserBook.status !== status) {
+                await trx("UserBooks")
+                    .where({
+                        user_id: req.user.userId,
+                        book_id: book.book_id,
+                    })
+                    .update({
+                        status,
+                        start_date,
+                        end_date,
+                    });
+
+                const updatedBook = await trx("Books")
+                    .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
+                    .where({
+                        "UserBooks.user_id": req.user.userId,
+                        "Books.book_id": book.book_id,
+                    })
+                    .select(
+                        "Books.*",
+                        "UserBooks.status",
+                        "UserBooks.start_date",
+                        "UserBooks.end_date"
+                    )
+                    .first();
+
+                return res.status(200).json({
+                    message: "Book status updated successfully.",
+                    book: buildUserBookDto(updatedBook),
+                });
             }
 
             await trx("UserBooks").insert({
@@ -116,17 +155,20 @@ export const addBookToUser = async (req, res) => {
                 .select("Books.*", "UserBooks.status", "UserBooks.start_date", "UserBooks.end_date")
                 .first();
         });
+
         if (!result) {
             return res.status(500).json({ error: "Failed to add book to the user's library." });
         }
 
-        return res.status(201).json({
+        res.status(201).json({
             message: "Book added to user's library successfully",
             book: buildUserBookDto(result),
         });
+        return;
     } catch (error) {
         console.error("Error adding book to user's library:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        // res.status(500).json({ error: "Internal Server Error" });
+        // return;
     }
 };
 
@@ -253,27 +295,35 @@ export const getFavoriteGenreAndAuthor = async (req, res) => {
     const userId = req.user.userId;
 
     try {
-        const favoriteAuthor = await knex("Books")
+        const favoriteAuthors = await knex("Books")
             .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
             .where({ "UserBooks.user_id": userId, "UserBooks.is_favorite": 1 }) // Filter for favorite books
             .groupBy("Books.author")
             .select("Books.author")
             .count("Books.author as author_count")
-            .orderBy("author_count", "desc")
-            .first();
+            .orderBy("author_count", "desc");
 
-        const mostReadGenre = await knex("Books")
+        const maxAuthorCount = favoriteAuthors[0]?.author_count || 0; // Get the max count
+        const topAuthors = favoriteAuthors
+            .filter((author) => author.author_count === maxAuthorCount)
+            .slice(0, 3); // Limit to 3 authors in case of ties
+
+        const mostReadGenres = await knex("Books")
             .join("UserBooks", "Books.book_id", "=", "UserBooks.book_id")
             .where({ "UserBooks.user_id": userId, "UserBooks.status": "READ" }) // Filter for read books
             .groupBy("Books.genre")
             .select("Books.genre")
             .count("Books.genre as genre_count")
-            .orderBy("genre_count", "desc")
-            .first();
+            .orderBy("genre_count", "desc");
+
+        const maxGenreCount = mostReadGenres[0]?.genre_count || 0; // Get the max count
+        const topGenres = mostReadGenres
+            .filter((genre) => genre.genre_count === maxGenreCount)
+            .slice(0, 3); // Limit to 3 genres in case of ties
 
         return res.status(200).json({
-            favoriteAuthor: favoriteAuthor ? favoriteAuthor.author : "Not available",
-            mostReadGenre: mostReadGenre ? mostReadGenre.genre : "Not available",
+            favoriteAuthors: topAuthors.map((author) => author.author) || ["Not available"],
+            mostReadGenres: topGenres.map((genre) => genre.genre) || ["Not available"],
         });
     } catch (error) {
         console.error("Error fetching favorite author or most read genre:", error);
