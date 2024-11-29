@@ -12,13 +12,14 @@ import {
 } from "@mui/material";
 import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
+import { useErrorModal } from "@/app/hooks/useErrorModal.jsx";
+import ErrorModal from "@/app/hooks/useSuccessModal.jsx";
 
 const BookDetails = () => {
   const { id } = useParams();
-
+  const { showError, error, hideError } = useErrorModal();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showNotes, setShowNotes] = useState(false);
   const [showQuotes, setShowQuotes] = useState(false);
 
@@ -30,6 +31,7 @@ const BookDetails = () => {
 
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
+    showError("Review added successfully!", "Success", "success");
   };
 
   useEffect(() => {
@@ -45,14 +47,18 @@ const BookDetails = () => {
         const data = await response.json();
         setBook(data);
       } catch (err) {
-        setError("Could not load book details.");
+        showError(
+          "Could not load book details. Please try again later.",
+          "Loading Error",
+          "error"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchBookDetails();
-  }, [id]);
+  }, [id, showError]);
 
   if (loading) {
     return (
@@ -70,162 +76,170 @@ const BookDetails = () => {
       </Box>
     );
   }
-  if (error) return <p>{error}</p>;
 
   return (
-    <AppLayoutContainer>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          alignItems: { xs: "center", md: "start" },
-          padding: "2rem",
-          backgroundColor: "#f5ebeb",
-          height: "auto",
-          margin: { xs: "2% 5%", md: "2% 10%" },
-          gap: { xs: "2rem", md: "0" },
-        }}
-      >
+    <>
+      <AppLayoutContainer>
         <Box
           sx={{
-            flex: { xs: "1", md: "3" },
-            maxWidth: { xs: "100%", md: "20%" },
-            textAlign: { xs: "center", md: "left" },
-            position: "relative",
-            width: "100%",
-          }}
-        >
-          <CardMedia
-            component="img"
-            image={book.cover_image}
-            alt={book.title}
-            sx={{
-              width: { xs: "70%", md: "100%" },
-              height: "auto",
-              borderRadius: "8px",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
-              margin: { xs: "0 auto", md: "0" },
-              opacity: book.is_fallback ? 0.2 : 1,
-              position: "relative",
-            }}
-          />
-
-          <Box sx={{ marginTop: "1rem" }}>
-            <Reviews bookId={id} onSuccess={handleReviewSuccess} />
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            flex: { xs: "1", md: "2" },
-            paddingLeft: { xs: "0", md: "2rem" },
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "start",
-            textAlign: { xs: "center", md: "left" },
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "center", md: "start" },
+            padding: "2rem",
+            backgroundColor: "#f5ebeb",
+            height: "auto",
+            margin: { xs: "2% 5%", md: "2% 10%" },
+            gap: { xs: "2rem", md: "0" },
           }}
         >
-          <Typography
-            variant="h4"
-            component="h1"
+          <Box
             sx={{
-              fontWeight: "bold",
-              marginBottom: "1rem",
-              fontSize: { xs: "1.5rem", md: "2rem" },
+              flex: { xs: "1", md: "3" },
+              maxWidth: { xs: "100%", md: "20%" },
+              textAlign: { xs: "center", md: "left" },
+              position: "relative",
+              width: "100%",
             }}
           >
-            {book.title}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{
-              marginBottom: "0.5rem",
-              fontSize: { xs: "1rem", md: "1.25rem" },
-            }}
-          >
-            Author: {book.author}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{
-              marginBottom: "1rem",
-              fontSize: { xs: "1rem", md: "1.25rem" },
-            }}
-          >
-            Genre: {book.genre}
-          </Typography>
-          <Typography
-            variant="body1"
-            component="p"
-            sx={{
-              fontSize: { xs: "0.9rem", md: "1.2rem" },
-              lineHeight: "1.6",
-              paddingBottom: "2rem",
-            }}
-          >
-            {book.description}
-          </Typography>
+            <CardMedia
+              component="img"
+              image={book.cover_image}
+              alt={book.title}
+              sx={{
+                width: { xs: "70%", md: "100%" },
+                height: "auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
+                margin: { xs: "0 auto", md: "0" },
+                opacity: book.is_fallback ? 0.2 : 1,
+                position: "relative",
+              }}
+            />
+
+            <Box sx={{ marginTop: "1rem" }}>
+              <Reviews bookId={id} onSuccess={handleReviewSuccess} />
+            </Box>
+          </Box>
 
           <Box
             sx={{
+              flex: { xs: "1", md: "2" },
+              paddingLeft: { xs: "0", md: "2rem" },
               display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              gap: "1rem",
-              marginTop: "1rem",
-              justifyContent: { xs: "center", md: "flex-start" },
+              flexDirection: "column",
+              justifyContent: "start",
+              textAlign: { xs: "center", md: "left" },
             }}
           >
-            <Button
-              variant="contained"
+            <Typography
+              variant="h4"
+              component="h1"
               sx={{
-                textTransform: "none",
-                fontSize: { xs: "16px", md: "20px" },
-                padding: "0.5rem 2rem",
-                borderRadius: "35px",
-                backgroundColor: "#D5B4B4",
-                "&:hover": {
-                  backgroundColor: "#B49090",
-                },
+                fontWeight: "bold",
+                marginBottom: "1rem",
+                fontSize: { xs: "1.5rem", md: "2rem" },
               }}
-              onClick={handleOpenQuotes}
             >
-              Quotes
-            </Button>
+              {book.title}
+            </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              sx={{
+                marginBottom: "0.5rem",
+                fontSize: { xs: "1rem", md: "1.25rem" },
+              }}
+            >
+              Author: {book.author}
+            </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              sx={{
+                marginBottom: "1rem",
+                fontSize: { xs: "1rem", md: "1.25rem" },
+              }}
+            >
+              Genre: {book.genre}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="p"
+              sx={{
+                fontSize: { xs: "0.9rem", md: "1.2rem" },
+                lineHeight: "1.6",
+                paddingBottom: "2rem",
+              }}
+            >
+              {book.description}
+            </Typography>
 
-            <Button
-              variant="contained"
+            <Box
               sx={{
-                textTransform: "none",
-                fontSize: { xs: "16px", md: "20px" },
-                padding: "0.5rem 2rem",
-                borderRadius: "35px",
-                backgroundColor: "#D5B4B4",
-                "&:hover": {
-                  backgroundColor: "#B49090",
-                },
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: "1rem",
+                marginTop: "1rem",
+                justifyContent: { xs: "center", md: "flex-start" },
               }}
-              onClick={handleOpenNotes}
             >
-              Notes
-            </Button>
-            <NotesAndQuotes
-              open={showNotes}
-              handleClose={handleCloseNotes}
-              bookId={id}
-              type="notes"
-            />
-            <NotesAndQuotes
-              open={showQuotes}
-              handleClose={handleCloseQuotes}
-              bookId={id}
-              type="quotes"
-            />
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  fontSize: { xs: "16px", md: "20px" },
+                  padding: "0.5rem 2rem",
+                  borderRadius: "35px",
+                  backgroundColor: "#D5B4B4",
+                  "&:hover": {
+                    backgroundColor: "#B49090",
+                  },
+                }}
+                onClick={handleOpenQuotes}
+              >
+                Quotes
+              </Button>
+
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  fontSize: { xs: "16px", md: "20px" },
+                  padding: "0.5rem 2rem",
+                  borderRadius: "35px",
+                  backgroundColor: "#D5B4B4",
+                  "&:hover": {
+                    backgroundColor: "#B49090",
+                  },
+                }}
+                onClick={handleOpenNotes}
+              >
+                Notes
+              </Button>
+              <NotesAndQuotes
+                open={showNotes}
+                handleClose={handleCloseNotes}
+                bookId={id}
+                type="notes"
+              />
+              <NotesAndQuotes
+                open={showQuotes}
+                handleClose={handleCloseQuotes}
+                bookId={id}
+                type="quotes"
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </AppLayoutContainer>
+      </AppLayoutContainer>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
+    </>
   );
 };
 

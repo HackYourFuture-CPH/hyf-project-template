@@ -7,10 +7,13 @@ import BookshelfSection from "./BookshelfSection";
 import AddBookToBookshelf from "./AddBookToBookshelf";
 import FavoriteQuote from "./FavoriteQuote";
 import ConfirmationModal from "./ConfirmationModal";
+import { useErrorModal } from "../hooks/useErrorModal";
+import ErrorModal from "./ErrorModal";
 import { useBookshelf } from "../contexts/BooksReadCountContext";
 
 const Bookshelf = () => {
-  const { bookShelf, setBookShelf, loading, error } = useBookshelf();
+  const { bookShelf, setBookShelf, loading } = useBookshelf();
+  const { showError, error, hideError } = useErrorModal();
   const [favorites, setFavorites] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQuoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -61,9 +64,14 @@ const Bookshelf = () => {
         }));
       } catch (err) {
         console.error("Error toggling favorite:", err);
+        showError(
+          "Failed to update favorite status. Please try again.",
+          "Update Failed",
+          "error"
+        );
       }
     },
-    [bookShelf, setBookShelf]
+    [bookShelf, setBookShelf, showError]
   );
 
   const handleAddBook = (category) => {
@@ -109,6 +117,11 @@ const Bookshelf = () => {
       }));
     } catch (err) {
       console.error("Error removing book:", err);
+      showError(
+        "Failed to remove book. Please try again.",
+        "Delete Failed",
+        "error"
+      );
     } finally {
       setIsConfirmModalOpen(false);
       setBookToRemove(null);
@@ -143,77 +156,85 @@ const Bookshelf = () => {
       </Box>
     );
   }
-  if (error) return <p>{error}</p>;
 
   return (
-    <div className={styles.bookshelf}>
-      <div className={styles.bookshelfHeader}>
-        <h3>Bookshelf</h3>
-      </div>
-
-      <BookshelfSection
-        title="Read"
-        books={bookShelf.read}
-        category="read"
-        onAddBookClick={handleAddBook}
-        onBookClick={handleBookClick}
-        onToggleFavorite={toggleFavorite}
-        onAddQuoteClick={handleAddQuoteClick}
-        onRemoveBook={handleRemoveBook}
-      />
-
-      <BookshelfSection
-        title="Currently Reading"
-        books={bookShelf.currentlyReading}
-        category="currentlyReading"
-        onAddBookClick={handleAddBook}
-        onBookClick={handleBookClick}
-        onToggleFavorite={toggleFavorite}
-        onAddQuoteClick={handleAddQuoteClick}
-        onRemoveBook={handleRemoveBook}
-      />
-
-      <BookshelfSection
-        title="Wish to Read"
-        books={bookShelf.wishToRead}
-        category="wishToRead"
-        onAddBookClick={handleAddBook}
-        onBookClick={handleBookClick}
-        onToggleFavorite={toggleFavorite}
-        onAddQuoteClick={handleAddQuoteClick}
-        onRemoveBook={handleRemoveBook}
-      />
-
-      {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            {isModalOpen && currentCategory && (
-              <AddBookToBookshelf
-                category={currentCategory}
-                onBookAdded={onBookAdded}
-                bookShelf={bookShelf}
-                closeModal={handleCloseModal}
-              />
-            )}
-          </div>
+    <>
+      <div className={styles.bookshelf}>
+        <div className={styles.bookshelfHeader}>
+          <h3>Bookshelf</h3>
         </div>
-      )}
 
-      {isQuoteModalOpen && (
-        <FavoriteQuote bookId={selectedBookId} closeModal={closeQuoteModal} />
-      )}
-      <ConfirmationModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => {
-          setIsConfirmModalOpen(false);
-          setBookToRemove(null);
-        }}
-        onConfirm={confirmDelete}
-        message="Are you sure you want to remove this book from your bookshelf?"
-        confirmText="Remove"
-        cancelText="Cancel"
+        <BookshelfSection
+          title="Read"
+          books={bookShelf.read}
+          category="read"
+          onAddBookClick={handleAddBook}
+          onBookClick={handleBookClick}
+          onToggleFavorite={toggleFavorite}
+          onAddQuoteClick={handleAddQuoteClick}
+          onRemoveBook={handleRemoveBook}
+        />
+
+        <BookshelfSection
+          title="Currently Reading"
+          books={bookShelf.currentlyReading}
+          category="currentlyReading"
+          onAddBookClick={handleAddBook}
+          onBookClick={handleBookClick}
+          onToggleFavorite={toggleFavorite}
+          onAddQuoteClick={handleAddQuoteClick}
+          onRemoveBook={handleRemoveBook}
+        />
+
+        <BookshelfSection
+          title="Wish to Read"
+          books={bookShelf.wishToRead}
+          category="wishToRead"
+          onAddBookClick={handleAddBook}
+          onBookClick={handleBookClick}
+          onToggleFavorite={toggleFavorite}
+          onAddQuoteClick={handleAddQuoteClick}
+          onRemoveBook={handleRemoveBook}
+        />
+
+        {isModalOpen && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              {isModalOpen && currentCategory && (
+                <AddBookToBookshelf
+                  category={currentCategory}
+                  onBookAdded={onBookAdded}
+                  bookShelf={bookShelf}
+                  closeModal={handleCloseModal}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {isQuoteModalOpen && (
+          <FavoriteQuote bookId={selectedBookId} closeModal={closeQuoteModal} />
+        )}
+        <ConfirmationModal
+          isOpen={isConfirmModalOpen}
+          onClose={() => {
+            setIsConfirmModalOpen(false);
+            setBookToRemove(null);
+          }}
+          onConfirm={confirmDelete}
+          message="Are you sure you want to remove this book from your bookshelf?"
+          confirmText="Remove"
+          cancelText="Cancel"
+        />
+      </div>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
       />
-    </div>
+    </>
   );
 };
 
