@@ -11,7 +11,7 @@ import { useBookshelf } from "../contexts/BooksReadCountContext";
 const Bookshelf = () => {
   const { bookShelf, setBookShelf, loading, error } = useBookshelf();
   const [favorites, setFavorites] = useState([]);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQuoteModalOpen, setQuoteModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("");
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -65,9 +65,9 @@ const Bookshelf = () => {
     [bookShelf, setBookShelf]
   );
 
-  const handleAddBookClick = (category) => {
+  const handleAddBook = (category) => {
     setCurrentCategory(category);
-    setModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleAddQuoteClick = (bookId) => {
@@ -75,7 +75,10 @@ const Bookshelf = () => {
     setQuoteModalOpen(true);
   };
 
-  const closeModal = () => setModalOpen(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCurrentCategory(null);
+  };
 
   const closeQuoteModal = () => {
     setSelectedBookId(null);
@@ -136,7 +139,7 @@ const Bookshelf = () => {
         title="Read"
         books={bookShelf.read}
         category="read"
-        onAddBookClick={handleAddBookClick}
+        onAddBookClick={handleAddBook}
         onBookClick={handleBookClick}
         onToggleFavorite={toggleFavorite}
         onAddQuoteClick={handleAddQuoteClick}
@@ -147,7 +150,7 @@ const Bookshelf = () => {
         title="Currently Reading"
         books={bookShelf.currentlyReading}
         category="currentlyReading"
-        onAddBookClick={handleAddBookClick}
+        onAddBookClick={handleAddBook}
         onBookClick={handleBookClick}
         onToggleFavorite={toggleFavorite}
         onAddQuoteClick={handleAddQuoteClick}
@@ -158,7 +161,7 @@ const Bookshelf = () => {
         title="Wish to Read"
         books={bookShelf.wishToRead}
         category="wishToRead"
-        onAddBookClick={handleAddBookClick}
+        onAddBookClick={handleAddBook}
         onBookClick={handleBookClick}
         onToggleFavorite={toggleFavorite}
         onAddQuoteClick={handleAddQuoteClick}
@@ -168,15 +171,14 @@ const Bookshelf = () => {
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <button onClick={closeModal} className={styles.closeButton}>
-              &times;
-            </button>
-            <AddBookToBookshelf
-              category={currentCategory}
-              onBookAdded={onBookAdded}
-              bookShelf={bookShelf}
-              closeModal={closeModal}
-            />
+            {isModalOpen && currentCategory && (
+              <AddBookToBookshelf
+                category={currentCategory}
+                onBookAdded={onBookAdded}
+                bookShelf={bookShelf}
+                closeModal={handleCloseModal}
+              />
+            )}
           </div>
         </div>
       )}

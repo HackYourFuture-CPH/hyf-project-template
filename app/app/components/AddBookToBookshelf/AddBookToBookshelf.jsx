@@ -1,0 +1,111 @@
+"use client";
+import { useState, useCallback } from "react";
+import axios from "axios";
+import SearchForm from "./SearchForm";
+import SuccessModal from "../SuccessModal";
+import styles from "./AddBookToBookshelf.module.css";
+
+const AddBookToBookshelf = ({
+  category,
+  onBookAdded,
+  bookShelf,
+  closeModal,
+}) => {
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  const mapCategoryToStatus = (category) => {
+    const statusMap = {
+      read: "READ",
+      currentlyReading: "CURRENTLY READING",
+      wishToRead: "WISH TO READ",
+    };
+    return statusMap[category] || "READ";
+  };
+
+  const handleAddBook = async (book) => {
+    if (
+      bookShelf[category]?.some(
+        (b) => b.google_books_id === book.google_book_id
+      )
+    ) {
+      setError(`This book is already in your ${category} category.`);
+      return;
+    }
+
+    try {
+      const status = mapCategoryToStatus(category);
+      setSuccessMessage(null);
+      setError(null);
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
+        {
+          google_books_id: book.google_book_id,
+          title: book.title,
+          author: book.authors,
+          genre: book.genre,
+          cover_image: book.cover_image,
+          description: book.description,
+          status,
+        },
+        { withCredentials: true }
+      );
+      if (response.status === 201) {
+        setSuccessMessage(
+          `${response.data.book.title} added to your ${category} bookshelf.`
+        );
+        setIsSuccessModalOpen(true);
+        onBookAdded(response.data.book);
+      }
+    } catch (err) {
+      if (err.response && err.response.data.error) {
+        if (
+          err.response.data.error === "Book already exists in user's library"
+        ) {
+          setError(
+            "This book is already in your library under a different status."
+          );
+        } else {
+          setError(`Error: ${err.response.data.error || "An error occurred."}`);
+        }
+      } else {
+        setError("An error occurred while adding the book.");
+      }
+    }
+  };
+
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false);
+    closeModal();
+  };
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.addBookContainer}>
+        <div className={styles.header}>
+          <h2>Add Book to {category.split(/(?=[A-Z])/).join(" ")}</h2>
+
+          <button onClick={closeModal} className={styles.closeButton}>
+            ×
+          </button>
+        </div>
+
+        {error && <div className={styles.error}>{error}</div>}
+
+        <SearchForm onAddBook={handleAddBook} />
+
+        {successMessage && (
+          <SuccessModal
+            isOpen={isSuccessModalOpen}
+            message={successMessage}
+            onClose={handleSuccessModalClose}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AddBookToBookshelf;
