@@ -22,19 +22,21 @@
 }
 
 .filterSelect {
+  width: 100%;
   padding: 0.5rem;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: #333;
-  background: white;
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+  border-radius: 5px;
+  font-family: var(--font-lato), sans-serif;
+  font-size: 0.85rem;
   cursor: pointer;
+  transition: var(--transition);
 }
 
 .filterSelect:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  border-color: var(--accent);
 }
 
 @media (max-width: 768px) {
