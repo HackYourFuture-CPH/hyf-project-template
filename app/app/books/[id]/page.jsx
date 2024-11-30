@@ -14,6 +14,7 @@ import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
 import { useErrorModal } from "../../hooks/useErrorModal.js";
 import ErrorModal from "../../components/ErrorModal.jsx";
+import styles from "./page.module.css"; // Import the CSS module
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -86,11 +87,11 @@ const BookDetails = () => {
             flexDirection: { xs: "column", md: "row" },
             alignItems: { xs: "center", md: "start" },
             padding: "2rem",
-            backgroundColor: "#f5ebeb",
             height: "auto",
             margin: { xs: "2% 5%", md: "2% 10%" },
             gap: { xs: "2rem", md: "0" },
           }}
+          className={styles.BookDetails} // Use the className from the imported CSS module
         >
           <Box
             sx={{
@@ -190,7 +191,7 @@ const BookDetails = () => {
                   fontSize: { xs: "16px", md: "20px" },
                   padding: "0.5rem 2rem",
                   borderRadius: "35px",
-                  backgroundColor: "#D5B4B4",
+                  backgroundColor: "#D5B4B4", // Light color for button
                   "&:hover": {
                     backgroundColor: "#B49090",
                   },
@@ -207,7 +208,7 @@ const BookDetails = () => {
                   fontSize: { xs: "16px", md: "20px" },
                   padding: "0.5rem 2rem",
                   borderRadius: "35px",
-                  backgroundColor: "#D5B4B4",
+                  backgroundColor: "#D5B4B4", // Light color for button
                   "&:hover": {
                     backgroundColor: "#B49090",
                   },
