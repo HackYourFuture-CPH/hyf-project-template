@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
           <AuthContextProvider>
             <BookshelfProvider>
               {/* Add IconToggle in a fixed position header */}
-              <header style={{ position: "absolute", top: 0, right: 0 }}>
+              <header style={{ position: "absolute", top: 30, right: 0 }}>
                 <IconToggle />
               </header>
               {/* CssBaseline normalizes styles globally */}
