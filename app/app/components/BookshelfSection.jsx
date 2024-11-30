@@ -100,26 +100,48 @@ const BookshelfSection = ({
             </div>
 
             {hoveredBookId === book.book_id && (
-              <div className={styles.readingStatusAction}>
-                {category === "currently_reading" && (
-                  <button
-                    className={styles.statusButton}
-                    onClick={() => onUpdateReadingStatus(book.book_id, "read")}
-                  >
-                    Mark as Read ✓
-                  </button>
+              <>
+                {/* Only show for currently reading books */}
+                {category === "currentlyReading" && (
+                  <div className={styles.readingStatusAction}>
+                    <button
+                      className={styles.statusButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(
+                          "Clicking Mark as Read for book:",
+                          book.book_id
+                        ); // Debug log
+                        onUpdateReadingStatus(book.book_id, "READ");
+                      }}
+                    >
+                      Mark as Read ✓
+                    </button>
+                  </div>
                 )}
-                {category === "wish_to_read" && (
-                  <button
-                    className={styles.statusButton}
-                    onClick={() =>
-                      onUpdateReadingStatus(book.book_id, "currently_reading")
-                    }
-                  >
-                    Start Reading 📖
-                  </button>
+
+                {/* Only show for wish to read books */}
+                {category === "wishToRead" && (
+                  <div className={styles.readingStatusAction}>
+                    <button
+                      className={styles.statusButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(
+                          "Clicking Start Reading for book:",
+                          book.book_id
+                        ); // Debug log
+                        onUpdateReadingStatus(
+                          book.book_id,
+                          "CURRENTLY READING"
+                        );
+                      }}
+                    >
+                      Start Reading 📖
+                    </button>
+                  </div>
                 )}
-              </div>
+              </>
             )}
           </div>
         ))}
