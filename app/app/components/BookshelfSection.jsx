@@ -120,17 +120,12 @@ const BookshelfSection = ({
                   </div>
                 )}
 
-                {/* Only show for wish to read books */}
                 {category === "wishToRead" && (
                   <div className={styles.readingStatusAction}>
                     <button
                       className={styles.statusButton}
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log(
-                          "Clicking Start Reading for book:",
-                          book.book_id
-                        ); // Debug log
                         onUpdateReadingStatus(
                           book.book_id,
                           "CURRENTLY READING"
