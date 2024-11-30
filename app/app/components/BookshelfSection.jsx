@@ -15,6 +15,7 @@ const BookshelfSection = ({
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [hoveredBookId, setHoveredBookId] = useState(null);
 
   // Determine whether to show the "See More" button
   const hasMoreBooks = books.length > 10;
@@ -35,31 +36,39 @@ const BookshelfSection = ({
       <p>{title}:</p>
       <div className={styles.bookshelfImages}>
         {displayedBooks.map((book) => (
-          //<div key={book.book_id} className={styles.bookContainer}>
           <div
             key={book.book_id}
             className={`${styles.bookContainer} ${
               book.is_fallback ? styles.fallbackBook : ""
             }`}
+            onMouseEnter={() => setHoveredBookId(book.book_id)}
+            onMouseLeave={() => setHoveredBookId(null)}
           >
-            <div className={styles.bookImageWrapper}>
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                //className={styles.bookImage}
-                onClick={() => onBookClick(book.book_id)}
-                data-tooltip="Go to the book's page"
-                className={`${styles.bookImage} ${
-                  book.is_fallback ? styles.fallbackImage : ""
-                }`}
-              />
-              {book.is_fallback && (
-                <div className={styles.hoverMessage}>
-                  This is not the real book image
-                </div>
-              )}
+            <div className={styles.bookContent}>
+              <div className={styles.bookImageWrapper}>
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  //className={styles.bookImage}
+                  onClick={() => onBookClick(book.book_id)}
+                  data-tooltip="Go to the book's page"
+                  className={`${styles.bookImage} ${
+                    book.is_fallback ? styles.fallbackImage : ""
+                  }`}
+                />
+                {book.is_fallback && (
+                  <div className={styles.hoverMessage}>
+                    This is not the real book image
+                  </div>
+                )}
+              </div>
             </div>
-            <div className={styles.optionsMenu}>
+
+            <div
+              className={`${styles.optionsMenu} ${
+                hoveredBookId === book.book_id ? styles.show : ""
+              }`}
+            >
               <button
                 className={styles.optionButton}
                 onClick={() => onBookClick(book.book_id)}
