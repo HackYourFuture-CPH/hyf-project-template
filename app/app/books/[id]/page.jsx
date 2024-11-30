@@ -14,6 +14,8 @@ import NotesAndQuotes from "@/app/components/NotesAndQuotes.jsx";
 import Reviews from "@/app/components/Reviews.jsx";
 import { useErrorModal } from "../../hooks/useErrorModal.js";
 import ErrorModal from "../../components/ErrorModal.jsx";
+import { useCallback } from "react";
+import { debounce } from "lodash";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -22,12 +24,20 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showNotes, setShowNotes] = useState(false);
   const [showQuotes, setShowQuotes] = useState(false);
+  //const [error, setError] = useState(null);
 
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
 
   const handleOpenQuotes = () => setShowQuotes(true);
   const handleCloseQuotes = () => setShowQuotes(false);
+
+  const handleErrorWithDebounce = useCallback(
+    debounce((message, title, severity) => {
+      showError(message, title, severity);
+    }, 300),
+    [showError]
+  );
 
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
@@ -47,7 +57,7 @@ const BookDetails = () => {
         const data = await response.json();
         setBook(data);
       } catch (err) {
-        showError(
+        handleErrorWithDebounce(
           "Could not load book details. Please try again later.",
           "Loading Error",
           "error"
@@ -58,7 +68,7 @@ const BookDetails = () => {
     };
 
     fetchBookDetails();
-  }, [id, showError]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -77,6 +87,8 @@ const BookDetails = () => {
     );
   }
 
+  // if (loading) return <p>Loading book details...</p>;
+  // if (error) return <p>{error}</p>;
   return (
     <>
       <AppLayoutContainer>
