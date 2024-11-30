@@ -87,6 +87,7 @@
   font-size: 0.65rem;
   font-weight: 500;
   cursor: pointer;
+  margin-top: auto;
 }
 
 .addButton:hover {
