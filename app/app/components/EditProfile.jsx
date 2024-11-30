@@ -4,8 +4,9 @@ import ErrorModal from "./ErrorModal";
 import axios from "axios";
 import styles from "./EditProfile.module.css";
 import Button from "./Button";
-
+import { useTheme } from "../contexts/ThemeContext";
 const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     firstName: userData?.first_name || "",
     lastName: userData?.last_name || "",
@@ -97,11 +98,14 @@ const EditProfile = ({ isOpen, onClose, userData, onSave }) => {
   };
 
   if (!isOpen) return null;
-
+  const modalStyles = {
+    backgroundColor: theme === "dark" ? "#1E1E1E" : "#F5EBEB",
+    color: theme === "dark" ? "#FFFFFF" : "#000000",
+  };
   return (
     <>
       <div className={styles.overlay}>
-        <div className={styles.modal}>
+        <div className={styles.modal} style={modalStyles}>
           <button className={styles.closeButton} onClick={onClose}>
             &times;
           </button>

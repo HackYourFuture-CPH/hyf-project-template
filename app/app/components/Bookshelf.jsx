@@ -10,8 +10,11 @@ import ConfirmationModal from "./ConfirmationModal";
 import { useErrorModal } from "../hooks/useErrorModal";
 import ErrorModal from "./ErrorModal";
 import { useBookshelf } from "../contexts/BooksReadCountContext";
+import { useTheme } from "../contexts/ThemeContext"; // Assuming ThemeContext is available
 
 const Bookshelf = () => {
+  const { theme } = useTheme(); // Access the theme
+  const textColor = theme === "dark" ? "#FFFFFF" : "#000000";
   const { bookShelf, setBookShelf, loading } = useBookshelf();
   const { showError, error, hideError } = useErrorModal();
   const [favorites, setFavorites] = useState([]);
@@ -150,7 +153,12 @@ const Bookshelf = () => {
         minHeight="200px"
       >
         <CircularProgress />
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          style={{ color: textColor }}
+          sx={{ mt: 2 }}
+        >
           Loading bookshelf...
         </Typography>
       </Box>
@@ -161,11 +169,11 @@ const Bookshelf = () => {
     <>
       <div className={styles.bookshelf}>
         <div className={styles.bookshelfHeader}>
-          <h3>Bookshelf</h3>
+          <h3 style={{ color: textColor }}>Bookshelf</h3>
         </div>
 
         <BookshelfSection
-          title="Read"
+          title={<span style={{ color: textColor }}>Read</span>}
           books={bookShelf.read}
           category="read"
           onAddBookClick={handleAddBook}
@@ -176,7 +184,7 @@ const Bookshelf = () => {
         />
 
         <BookshelfSection
-          title="Currently Reading"
+          title={<span style={{ color: textColor }}>Currently Reading</span>}
           books={bookShelf.currentlyReading}
           category="currentlyReading"
           onAddBookClick={handleAddBook}
@@ -187,7 +195,7 @@ const Bookshelf = () => {
         />
 
         <BookshelfSection
-          title="Wish to Read"
+          title={<span style={{ color: textColor }}>Wish to Read</span>}
           books={bookShelf.wishToRead}
           category="wishToRead"
           onAddBookClick={handleAddBook}
