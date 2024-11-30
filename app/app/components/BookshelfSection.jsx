@@ -49,7 +49,6 @@ const BookshelfSection = ({
                 <img
                   src={book.cover_image}
                   alt={book.title}
-                  //className={styles.bookImage}
                   onClick={() => onBookClick(book.book_id)}
                   data-tooltip="Go to the book's page"
                   className={`${styles.bookImage} ${
