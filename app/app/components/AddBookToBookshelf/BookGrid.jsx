@@ -18,21 +18,17 @@ const BookCard = memo(({ book, onAddBook, existingBooks }) => {
   const handleClick = useCallback(async () => {
     if (isAdding) return;
 
-    const isDuplicate = existingBooks?.some(
-      (existingBook) => existingBook.google_book_id === book.google_book_id
-    );
-
-    if (isDuplicate) {
-      showError("This book is already in your bookshelf");
+    if (!book.isbn) {
+      showError("This book doesn't have an ISBN. Please try another edition.");
       return;
     }
 
     setIsAdding(true);
     try {
       await onAddBook(book);
-    } catch (error) {
+    } catch (err) {
       if (isMounted.current) {
-        showError(error.message || "Failed to add book");
+        showError(err.response?.data?.error || "Failed to add book");
       }
     } finally {
       if (isMounted.current) {
