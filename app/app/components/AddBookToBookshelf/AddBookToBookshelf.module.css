@@ -1,63 +1,17 @@
 .addBookContainer {
     text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffffff; /* Default light mode background */
+    color: #212020; /* Default light mode text color */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.searchInput {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+.darkMode .addBookContainer {
+    background-color: #333333; /* Dark mode background */
+    color: #ffffff; /* Dark mode text color */
 }
 
-.resultsContainer {
-    margin-top: 20px;
-}
-
-.resultsList {
-    list-style-type: none;
-    padding: 0;
-}
-
-.resultItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.bookImage {
-    width: 50px;
-    height: 75px;
-    object-fit: cover;
-}
-
-.addButton {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #d5b4b4; /* Green background */
-    color: #867070;
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 0.25rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.addButton:hover {
-    background-color: #e4d0d0;
-}
-
-.addButton:disabled {
-    background-color: #aaa; /* Grey out the button when disabled */
-    cursor: not-allowed;
-}
-
-.bookDetails {
-    flex: 1;
-    padding-left: 10px;
-}
 
 .closeButton {
     position: absolute;
@@ -67,4 +21,17 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
+    color: inherit; /* Inherit color from the container */
+    transition: transform 0.2s ease;
+}
+
+.closeButton:hover {
+    transform: scale(1.2);
+}
+
+.header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: inherit; /* Inherit color from the container */
+    transition: color 0.3s ease;
 }

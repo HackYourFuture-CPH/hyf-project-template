@@ -1,8 +1,10 @@
 "use client";
+
 import { useState, useCallback } from "react";
 import axios from "axios";
 import SearchForm from "./SearchForm";
 import SuccessModal from "../SuccessModal";
+import { useTheme } from "../../contexts/ThemeContext";
 import styles from "./AddBookToBookshelf.module.css";
 
 const AddBookToBookshelf = ({
@@ -11,6 +13,9 @@ const AddBookToBookshelf = ({
   bookShelf,
   closeModal,
 }) => {
+  const { theme } = useTheme(); // Access theme context
+  const isDarkMode = theme === "dark";
+
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -89,10 +94,13 @@ const AddBookToBookshelf = ({
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.addBookContainer}>
+      <div
+        className={`${styles.addBookContainer} ${
+          isDarkMode ? "darkMode" : "lightMode"
+        }`}
+      >
         <div className={styles.header}>
           <h2>Add Book to {category.split(/(?=[A-Z])/).join(" ")}</h2>
-
           <button onClick={closeModal} className={styles.closeButton}>
             ×
           </button>
