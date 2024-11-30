@@ -99,7 +99,12 @@ const AddBookToBookshelf = ({
 
         {error && <div className={styles.error}>{error}</div>}
 
-        <SearchForm onAddBook={handleAddBook} />
+        <SearchForm
+          onAddBook={handleAddBook}
+          existingBooks={bookShelf[category] || []}
+          bookShelf={bookShelf}
+          category={category}
+        />
 
         {successMessage && (
           <SuccessModal

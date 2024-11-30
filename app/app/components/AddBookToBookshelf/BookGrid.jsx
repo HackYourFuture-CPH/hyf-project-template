@@ -1,10 +1,13 @@
 "use client";
 import { memo, useState, useEffect, useCallback, useRef } from "react";
+import { useErrorModal } from "@/app/hooks/useErrorModal";
+import ErrorModal from "../ErrorModal";
 import styles from "./BookGrid.module.css";
 
-const BookCard = memo(({ book, onAddBook }) => {
+const BookCard = memo(({ book, onAddBook, existingBooks }) => {
   const [isAdding, setIsAdding] = useState(false);
   const isMounted = useRef(true);
+  const { error, showError, hideError } = useErrorModal();
 
   useEffect(() => {
     return () => {
@@ -14,41 +17,66 @@ const BookCard = memo(({ book, onAddBook }) => {
 
   const handleClick = useCallback(async () => {
     if (isAdding) return;
+
+    const isDuplicate = existingBooks?.some(
+      (existingBook) => existingBook.google_book_id === book.google_book_id
+    );
+
+    if (isDuplicate) {
+      showError("This book is already in your bookshelf");
+      return;
+    }
+
     setIsAdding(true);
     try {
       await onAddBook(book);
+    } catch (error) {
+      if (isMounted.current) {
+        showError(error.message || "Failed to add book");
+      }
     } finally {
-      setIsAdding(false);
+      if (isMounted.current) {
+        setIsAdding(false);
+      }
     }
-  }, [book, onAddBook, isAdding]);
+  }, [book, onAddBook, isAdding, showError]);
 
   return (
-    <div className={styles.bookCard}>
-      <div className={styles.imageWrapper}>
-        <img
-          src={book.cover_image}
-          alt={book.title}
-          className={styles.bookImage}
-          loading="lazy"
-        />
+    <>
+      <div className={styles.bookCard}>
+        <div className={styles.imageWrapper}>
+          <img
+            src={book.cover_image}
+            alt={book.title}
+            className={styles.bookImage}
+            loading="lazy"
+          />
+        </div>
+        <div className={styles.bookInfo}>
+          <h3 className={styles.bookTitle}>{book.title}</h3>
+          <p className={styles.bookAuthor}>{book.authors}</p>
+          <button
+            onClick={handleClick}
+            className={`${styles.addButton} ${isAdding ? styles.adding : ""}`}
+            disabled={isAdding}
+            type="button"
+          >
+            {isAdding ? "Adding..." : "Add"}
+          </button>
+        </div>
       </div>
-      <div className={styles.bookInfo}>
-        <h3 className={styles.bookTitle}>{book.title}</h3>
-        <p className={styles.bookAuthor}>{book.authors}</p>
-        <button
-          onClick={handleClick}
-          className={`${styles.addButton} ${isAdding ? styles.adding : ""}`}
-          disabled={isAdding}
-          type="button"
-        >
-          {isAdding ? "Adding..." : "Add"}
-        </button>
-      </div>
-    </div>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
+    </>
   );
 });
 
-const BookGrid = memo(({ books, onAddBook, loading }) => {
+const BookGrid = memo(({ books, onAddBook, loading, existingBooks }) => {
   if (loading) {
     return <h1>Loading...</h1>;
   }
@@ -60,7 +88,12 @@ const BookGrid = memo(({ books, onAddBook, loading }) => {
   return (
     <div className={styles.bookGrid}>
       {books.map((book) => (
-        <BookCard key={book.google_book_id} book={book} onAddBook={onAddBook} />
+        <BookCard
+          key={book.google_book_id}
+          book={book}
+          onAddBook={onAddBook}
+          existingBooks={existingBooks}
+        />
       ))}
     </div>
   );

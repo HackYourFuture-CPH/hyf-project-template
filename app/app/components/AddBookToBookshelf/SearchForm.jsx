@@ -6,7 +6,7 @@ import BookGrid from "./BookGrid";
 import { defaultFilters, formatSearchQuery } from "./constants";
 import styles from "./SearchForm.module.css";
 
-const SearchForm = ({ onAddBook }) => {
+const SearchForm = ({ onAddBook, existingBooks, bookShelf, category }) => {
   const [searchParams, setSearchParams] = useState({ title: "", author: "" });
   const [filters, setFilters] = useState(defaultFilters);
   const [books, setBooks] = useState([]);
@@ -65,6 +65,23 @@ const SearchForm = ({ onAddBook }) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterType]: value }));
   };
 
+  const handleAddBook = async (book) => {
+    const isInAnyCategory = Object.values(bookShelf).some((categoryBooks) =>
+      categoryBooks.some((b) => b.google_books_id === book.google_book_id)
+    );
+
+    if (isInAnyCategory) {
+      setError("This book is already in your library.");
+      return;
+    }
+
+    try {
+      await onAddBook(book);
+    } catch (error) {
+      setError(error.message || "Failed to add book");
+    }
+  };
+
   return (
     <div className={styles.searchContainer}>
       <div className={styles.searchInputs}>
@@ -93,7 +110,12 @@ const SearchForm = ({ onAddBook }) => {
           {loading && <div className={styles.loading}>Searching...</div>}
           {error && <div className={styles.error}>{error}</div>}
           {!loading && !error && (
-            <BookGrid books={books} onAddBook={onAddBook} />
+            <BookGrid
+              books={books}
+              onAddBook={handleAddBook}
+              existingBooks={existingBooks}
+              loading={loading}
+            />
           )}
         </div>
       </div>
