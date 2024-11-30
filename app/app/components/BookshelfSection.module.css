@@ -129,9 +129,9 @@
     data-tooltip
   ); /* Use the "data-tooltip" attribute for the description */
   position: absolute;
-  bottom: -30px; /* Position below the button */
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%; /* Position below the button */
+  right: 110%;
+  transform: translateY(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   font-size: 10px;
