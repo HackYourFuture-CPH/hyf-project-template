@@ -26,11 +26,11 @@ const AddBookToBookshelf = ({
 
   const handleAddBook = useCallback(
     async (book) => {
-      if (
-        bookShelf[category]?.some(
-          (b) => b.google_books_id === book.google_book_id
-        )
-      ) {
+      const isBookInCategory = bookShelf[category]?.some(
+        (b) => b.isbn === book.isbn && book.isbn !== null
+      );
+
+      if (isBookInCategory) {
         setError(`This book is already in your ${category} category.`);
         return;
       }
@@ -44,6 +44,7 @@ const AddBookToBookshelf = ({
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/add`,
           {
             google_books_id: book.google_book_id,
+            isbn: book.isbn,
             title: book.title,
             author: book.authors,
             genre: book.genre,
@@ -99,7 +100,12 @@ const AddBookToBookshelf = ({
 
         {error && <div className={styles.error}>{error}</div>}
 
-        <SearchForm onAddBook={handleAddBook} />
+        <SearchForm
+          onAddBook={handleAddBook}
+          existingBooks={bookShelf[category] || []}
+          bookShelf={bookShelf}
+          category={category}
+        />
 
         {successMessage && (
           <SuccessModal

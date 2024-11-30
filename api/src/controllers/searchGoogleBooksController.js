@@ -60,6 +60,11 @@ export const searchGoogleBooks = async (req, res) => {
       description: item.volumeInfo.description || null,
       genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : null,
       cover_image: item.volumeInfo.imageLinks?.thumbnail || null,
+      isbn: item.volumeInfo.industryIdentifiers
+        ? item.volumeInfo.industryIdentifiers.find(
+            (id) => id.type === "ISBN_13" || id.type === "ISBN_10"
+          )?.identifier || null
+        : null,
     }));
 
     return res.json(books);
