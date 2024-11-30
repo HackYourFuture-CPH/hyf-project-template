@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import debounce from "lodash.debounce";
-import FilterBar from "./FilterBar";
+import FilterBar from "./Filterbar";
 import BookGrid from "./BookGrid";
 import { defaultFilters, formatSearchQuery } from "./constants";
 import styles from "./SearchForm.module.css";
