@@ -137,7 +137,7 @@ const BookshelfSection = ({
                         );
                       }}
                     >
-                      Start Reading 📖
+                      Start Reading
                     </button>
                   </div>
                 )}
