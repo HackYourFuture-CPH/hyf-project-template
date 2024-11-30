@@ -1,40 +1,46 @@
 .bookshelf {
-    padding: 10px;
+  padding: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .bookshelfHeader {
-    padding: 15px;
-    font-size: 1.2em;
+  padding: 15px;
+  font-size: 1.2em;
 }
 
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  isolation: isolate;
 }
 
 .modalContent {
-    background-color: #fff;
-    padding: 20px;
-    width: 80%;
-    max-width: 600px;
-    height: 500px;
-    overflow-y: auto;
-    position: relative;
+  background-color: #fff;
+  padding: 20px;
+  width: 80%;
+  max-width: 600px;
+  height: 500px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10000;
 }
 
 .modalContent .closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10001;
 }

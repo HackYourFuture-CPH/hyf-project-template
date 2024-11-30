@@ -12,6 +12,7 @@ const BookshelfSection = ({
   onToggleFavorite,
   onAddQuoteClick,
   onRemoveBook,
+  onUpdateReadingStatus,
 }) => {
   const [showAll, setShowAll] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -97,6 +98,29 @@ const BookshelfSection = ({
                 &times;
               </button>
             </div>
+
+            {hoveredBookId === book.book_id && (
+              <div className={styles.readingStatusAction}>
+                {category === "currently_reading" && (
+                  <button
+                    className={styles.statusButton}
+                    onClick={() => onUpdateReadingStatus(book.book_id, "read")}
+                  >
+                    Mark as Read ✓
+                  </button>
+                )}
+                {category === "wish_to_read" && (
+                  <button
+                    className={styles.statusButton}
+                    onClick={() =>
+                      onUpdateReadingStatus(book.book_id, "currently_reading")
+                    }
+                  >
+                    Start Reading 📖
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         ))}
 
