@@ -87,6 +87,7 @@
   font-size: 0.65rem;
   font-weight: 500;
   cursor: pointer;
+  margin-top: auto;
 }
 
 .addButton:hover {
@@ -114,29 +115,40 @@
   height: fit-content;
 }
 
-/* Media Queries */
-@media (max-width: 1200px) {
-  .bookGrid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  }
-}
-
 @media (max-width: 768px) {
   .bookGrid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  .imageWrapper {
+    height: 120px;
+    padding-top: 150%; /* Adjust aspect ratio for mobile */
+  }
+
+  .bookImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* or 'cover' if you want to fill completely */
+    max-height: none; /* Remove max-height constraint */
   }
 
   .bookTitle {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
   }
 
   .bookAuthor {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
   }
-}
 
-@media (max-width: 480px) {
-  .bookGrid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  .bookInfo {
+    padding: 0.5rem;
+  }
+
+  .addButton {
+    padding: 0.4rem;
+    font-size: 0.8rem;
   }
 }

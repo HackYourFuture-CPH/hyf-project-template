@@ -77,6 +77,82 @@ const Bookshelf = () => {
     [bookShelf, setBookShelf, showError]
   );
 
+  const handleUpdateReadingStatus = async (bookId, newStatus) => {
+    try {
+      const now = new Date();
+
+      const formatDateForMySQL = (date) =>
+        date.toISOString().slice(0, 19).replace("T", " ");
+
+      let start_date = null;
+      let end_date = null;
+
+      if (newStatus === "CURRENTLY READING") {
+        start_date = formatDateForMySQL(now);
+      } else if (newStatus === "READ") {
+        end_date = formatDateForMySQL(now);
+      }
+
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user-books/update/${bookId}`,
+        {
+          status: newStatus,
+          start_date,
+          end_date,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setBookShelf((prevShelf) => {
+        console.log("Previous shelf:", prevShelf);
+        const updatedShelf = { ...prevShelf };
+        let bookToUpdate = null;
+        let currentCategory = null;
+
+        for (const category of Object.keys(prevShelf)) {
+          const found = prevShelf[category].find(
+            (book) => book.book_id === bookId
+          );
+          if (found) {
+            bookToUpdate = found;
+            currentCategory = category;
+            break;
+          }
+        }
+
+        if (bookToUpdate && currentCategory) {
+          updatedShelf[currentCategory] = prevShelf[currentCategory].filter(
+            (book) => book.book_id !== bookId
+          );
+
+          const newCategory =
+            newStatus === "READ"
+              ? "read"
+              : newStatus === "CURRENTLY READING"
+              ? "currentlyReading"
+              : "wishToRead";
+
+          updatedShelf[newCategory] = [
+            ...prevShelf[newCategory],
+            { ...bookToUpdate, status: newStatus },
+          ];
+        }
+
+        return updatedShelf;
+      });
+    } catch (err) {
+      console.error("Error updating reading status:", err);
+      console.error("Error details:", err.response?.data);
+      showError(
+        "Failed to update reading status. Please try again.",
+        "Update Failed",
+        "error"
+      );
+    }
+  };
+
   const handleAddBook = (category) => {
     setCurrentCategory(category);
     setIsModalOpen(true);
@@ -181,6 +257,7 @@ const Bookshelf = () => {
           onToggleFavorite={toggleFavorite}
           onAddQuoteClick={handleAddQuoteClick}
           onRemoveBook={handleRemoveBook}
+          onUpdateReadingStatus={handleUpdateReadingStatus}
         />
 
         <BookshelfSection
@@ -192,6 +269,7 @@ const Bookshelf = () => {
           onToggleFavorite={toggleFavorite}
           onAddQuoteClick={handleAddQuoteClick}
           onRemoveBook={handleRemoveBook}
+          onUpdateReadingStatus={handleUpdateReadingStatus}
         />
 
         <BookshelfSection
@@ -203,6 +281,7 @@ const Bookshelf = () => {
           onToggleFavorite={toggleFavorite}
           onAddQuoteClick={handleAddQuoteClick}
           onRemoveBook={handleRemoveBook}
+          onUpdateReadingStatus={handleUpdateReadingStatus}
         />
 
         {isModalOpen && (

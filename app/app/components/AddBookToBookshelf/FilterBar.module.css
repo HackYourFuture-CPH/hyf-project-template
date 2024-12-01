@@ -1,58 +1,80 @@
+/* Global styles for filter bar */
 .filterBar {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1rem;
 }
+
+/* Filter Title (Heading) */
 .filterTitle {
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
-  color: #333;
   font-weight: 600;
+  color: #333; /* Light mode text color */
 }
 
+/* Dark mode styles for the title */
+.darkMode .filterTitle {
+  color: #191818; /* White text color in dark mode */
+
+  padding: 0.5rem; /* Add padding for spacing */
+  border-radius: 5px; /* Optional: rounded corners */
+}
+
+/* Dark mode background for the filter bar */
+.darkMode .filterBar {
+
+  color: #242222; /* White text for dark mode */
+  border-radius: 8px; /* Optional: Add border radius for rounded corners */
+}
+
+/* Filter Group (wrapper for each label and select) */
 .filterGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+/* Filter Labels */
 .filterLabel {
   font-size: 0.9rem;
-  color: #666;
+  color: #666; /* Light mode label color */
 }
+
+/* Dark mode labels */
+.darkMode .filterLabel {
+  color: #1b1818; /* Light gray text for labels in dark mode */
+}
+
 
 .filterSelect {
   width: 100%;
   padding: 0.5rem;
-  background-color: var(--background);
-  color: var(--foreground);
-  border: 1px solid var(--foreground);
+  background-color: #fff; 
+  color: #333; 
+  border: 1px solid #ccc; 
   border-radius: 5px;
-  font-family: var(--font-lato), sans-serif;
+  font-family: sans-serif;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: border 0.2s ease;
 }
 
+/* Dark mode styles for select dropdown */
+.darkMode .filterSelect {
+  background-color: #444; /* Dark mode background */
+  color: #fff; /* White text for select fields in dark mode */
+  border: 1px solid #555; /* Dark mode border */
+}
+
+/* Focus styles for select dropdown */
 .filterSelect:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: #0056b3; /* Blue border when focused */
 }
 
-@media (max-width: 768px) {
-  .mainContent {
-    flex-direction: column;
-  }
-
-  .filterSection {
-    width: 100%;
-  }
-
-  .searchInputs {
-    flex-direction: column;
-  }
-
-  .bookGrid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  }
+/* Dark mode focus styles */
+.darkMode .filterSelect:focus {
+  border-color: #fff; /* White border when focused in dark mode */
 }

@@ -96,11 +96,13 @@ const AddBookToBookshelf = ({
     <div className={styles.modalOverlay}>
       <div
         className={`${styles.addBookContainer} ${
-          isDarkMode ? "darkMode" : "lightMode"
+          isDarkMode ? styles.darkMode : styles.lightMode
         }`}
       >
         <div className={styles.header}>
-          <h2>Add Book to {category.split(/(?=[A-Z])/).join(" ")}</h2>
+          <h2 className={isDarkMode ? styles.darkTitle : styles.lightTitle}>
+            Add Book to {category.split(/(?=[A-Z])/).join(" ")}
+          </h2>
           <button onClick={closeModal} className={styles.closeButton}>
             ×
           </button>

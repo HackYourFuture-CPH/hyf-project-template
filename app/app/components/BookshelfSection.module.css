@@ -1,5 +1,6 @@
 .bookshelfSection {
   margin-top: 50px;
+  z-index: 1;
 }
 
 .bookshelfSection p {
@@ -12,6 +13,17 @@
   display: inline-block;
   width: 100px;
   transition: transform 0.3s ease;
+  margin-bottom: 40px;
+  z-index: 1;
+}
+
+.bookContent {
+  position: relative;
+  background: white;
+}
+
+.bookContainer:hover {
+  z-index: 2;
 }
 
 .bookshelfImages {
@@ -26,6 +38,38 @@
   height: 150px;
   overflow: hidden;
   border-radius: 8px;
+  z-index: 1;
+}
+
+.readingStatusAction {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusButton {
+  width: 100%;
+  height: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ffd700;
+  color: #000;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+}
+
+.statusButton:hover {
+  background-color: #ffc000;
+  color: #000;
 }
 
 .bookImage {
@@ -37,7 +81,7 @@
 
 .optionsMenu {
   position: absolute;
-  top: 10px; /* Align with the top of the container */
+  top: 10px;
   right: 5px;
   display: flex;
   flex-direction: column;
@@ -45,6 +89,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 3;
 }
 
 .bookContainer:hover .optionsMenu {
@@ -73,15 +118,19 @@
   color: black;
 }
 
+.optionsMenu.show {
+  opacity: 1;
+}
+
 /* Tooltip styling */
 .optionButton::after {
   content: attr(
     data-tooltip
   ); /* Use the "data-tooltip" attribute for the description */
   position: absolute;
-  bottom: -30px; /* Position below the button */
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%; /* Position below the button */
+  right: 110%;
+  transform: translateY(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   font-size: 10px;
