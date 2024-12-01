@@ -10,9 +10,9 @@ import styles from "./Profile.module.css";
 import { useTheme } from "../contexts/ThemeContext";
 
 const Profile = () => {
-  const { theme } = useTheme(); // Access the theme context
+  const { theme } = useTheme(); // Access the current theme from the context
   const welcomeTextColor = theme === "dark" ? "#FFFFFF" : "#000000";
-  const welcomeBackgroundColor = theme === "dark" ? "#333333" : "#f5ebeb";
+  const isDarkMode = theme === "dark";
   const [userData, setUserData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mostReadGenres, setMostReadGenres] = useState([]);
@@ -63,8 +63,8 @@ const Profile = () => {
         <div
           className={styles.Welcome}
           style={{
-            backgroundColor: welcomeBackgroundColor,
-            color: welcomeTextColor,
+            backgroundColor: theme === "dark" ? "#333" : "", // Black background for dark mode
+            color: theme === "dark" ? "#fff" : "", // White text in dark mode for contrast
             padding: "10px",
             borderRadius: "5px",
           }}
