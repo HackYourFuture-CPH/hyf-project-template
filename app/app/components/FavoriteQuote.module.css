@@ -1,3 +1,4 @@
+/* Modal Overlay */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -11,14 +12,23 @@
     z-index: 1000;
 }
 
+/* Modal Content */
 .modalContent {
     background: white;
     padding: 20px;
     width: 40%;
     text-align: center;
     position: relative;
+    border-radius: 8px;
 }
 
+/* Dark Mode Modal Content */
+.darkMode .modalContent {
+    background-color: #333; /* Dark background */
+    color: #fff; /* White text */
+}
+
+/* Close Button */
 .closeButton {
     position: absolute;
     top: 10px;
@@ -29,25 +39,60 @@
     cursor: pointer;
 }
 
+/* Dark Mode Close Button */
+.darkMode .closeButton {
+    color: #fff; /* Light text for dark mode */
+}
+
+/* Textarea */
 .textarea {
     width: 100%;
     height: 80px;
     margin: 10px 0;
     padding: 8px;
     border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
+/* Dark Mode Textarea */
+.darkMode .textarea {
+    background-color: #444; /* Dark background */
+    color: #fff; /* White text */
+    border: 1px solid #888; /* Light border */
+}
+
+/* Input Field */
 .input {
     width: 100%;
     padding: 8px;
     margin: 10px 0;
     border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
+/* Dark Mode Input Field */
+.darkMode .input {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #888;
+}
+
+/* Error Message */
 .error {
     color: red;
 }
 
+/* Dark Mode Error Message */
+.darkMode .error {
+    color: #ff4444; /* Brighter red for better contrast in dark mode */
+}
+
+/* Success Message */
 .success {
     color: green;
+}
+
+/* Dark Mode Success Message */
+.darkMode .success {
+    color: #66cc66; /* Lighter green for better contrast in dark mode */
 }
