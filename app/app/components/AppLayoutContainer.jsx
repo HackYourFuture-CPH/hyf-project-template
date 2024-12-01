@@ -3,14 +3,13 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 const AppLayoutContainer = ({ children }) => {
-    return (
-        <div>
-            <Header />
-            {children}
-            <Footer />
-        </div>
-    );
+  return (
+    <>
+      <Header />
+      {children}
+      <Footer />
+    </>
+  );
 };
-
 
 export default AppLayoutContainer;

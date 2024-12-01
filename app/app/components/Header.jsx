@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
-import ThemeToggle from "./ThemeToggle";
 import styles from "./Header.module.css";
+import IconToggle from "./IconToggle";
 
 const Header = () => {
   const { currentUser, logout } = useAuth();
@@ -43,6 +43,7 @@ const Header = () => {
                 SIGN UP
               </Link>
             )}
+            <IconToggle className={styles.navButton}></IconToggle>
           </>
         ) : (
           <>
@@ -51,12 +52,12 @@ const Header = () => {
                 DASHBOARD
               </Link>
             )}
-            <button onClick={handleLogout} className={styles.navButton}>
+            <Link href="/" onClick={handleLogout} className={styles.navButton}>
               LOG OUT
-            </button>
+            </Link>
+            <IconToggle className={styles.navButton}></IconToggle>
           </>
         )}
-        {/* <ThemeToggle /> */}
       </nav>
     </header>
   );
