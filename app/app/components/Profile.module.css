@@ -13,7 +13,9 @@
     align-items: center;
     width: 100%;
     max-width: 600px;
-}
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;}
 
 .imageContainer {
     position: relative;
@@ -23,6 +25,16 @@
     overflow: hidden;
     margin-bottom: 20px;
 }
+
+.darkMode .Welcome {
+    background-color: #333; /* Dark background in dark mode */
+    color: #fff; /* White text in dark mode */
+    font-weight: bold;}
+
+    .darkMode .Welcome strong {
+        color: #0c0c0c; /* Change text color for username */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Add a shadow for better visibility */
+      }
 
 .profileImage {
     width: 100%;

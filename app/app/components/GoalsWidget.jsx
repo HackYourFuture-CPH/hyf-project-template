@@ -12,6 +12,7 @@ import {
   MenuItem,
   IconButton,
   Stack,
+  useTheme, // Import useTheme hook to access theme
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -53,6 +54,8 @@ export default function GoalsWidget() {
     [activeGoal, booksCount]
   );
   const progress = useMemo(() => getProgress(), [activeGoal, booksCount]);
+
+  const theme = useTheme(); // Access the current theme
 
   useEffect(() => {
     if (isModalOpen && activeGoal) {
@@ -124,17 +127,38 @@ export default function GoalsWidget() {
 
   return (
     <Box sx={{ width: "100%", p: 2 }}>
-      <Typography variant="h6" gutterBottom>
+      <Typography
+        variant="h6"
+        gutterBottom
+        sx={{
+          color: theme.palette.mode === "dark" ? "#000" : "text.primary", // Set text color to black in dark mode and default in light mode
+        }}
+      >
         Reading Goal
       </Typography>
 
       {!activeGoal ? (
-        <Box sx={{ textAlign: "center", mt: 4 }}>
-          <Typography color="text.secondary">No active reading goal</Typography>
+        <Box
+          sx={{
+            textAlign: "center",
+            mt: 4,
+            color: theme.palette.mode === "dark" ? "#000" : "text.secondary", // Check dark mode
+          }}
+        >
+          <Typography>No active reading goal</Typography>
           <Button
             variant="contained"
             size="small"
             onClick={() => setIsModalOpen(true)}
+            sx={{
+              color: theme.palette.mode === "dark" ? "#000" : "primary.main", // Button text in black
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#fff" : "primary.main", // Button background in white for dark mode
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark" ? "#f0f0f0" : "primary.dark",
+              },
+            }}
           >
             Set a Goal
           </Button>

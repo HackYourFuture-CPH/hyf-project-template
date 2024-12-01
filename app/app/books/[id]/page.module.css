@@ -1,0 +1,27 @@
+/* page.module.css */
+
+/* Light Mode Styling */
+.BookDetails {
+    background-color: #e3d1d1; /* Set this as your background color for light mode */
+    color: #000000; /* Text color for light mode */
+}
+
+/* Dark Mode Styling */
+
+[data-theme="dark"] .BookDetails {
+    background-color: #1a1a1a; /* Dark background color for dark mode */
+    color: #ffffff; /* Text color for dark mode */
+}
+
+[data-theme="dark"] .BookDetails .MuiButton-root {
+    background-color: #444444; /* Dark buttons for dark mode */
+}
+
+[data-theme="dark"] .BookDetails .MuiButton-root:hover {
+    background-color: #666666; /* Dark button hover for dark mode */
+}
+
+/* Adjust typography color for dark mode */
+[data-theme="dark"] .BookDetails .MuiTypography-root {
+    color: #ffffff; /* Text color for dark mode */
+}

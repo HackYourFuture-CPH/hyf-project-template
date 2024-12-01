@@ -1,88 +1,108 @@
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  padding: 2rem;
-}
-.addBookContainer {
-  width: 50vw;
-  height: 80vh;
-  max-width: 900px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  z-index: 10000;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.closeButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  color: #666;
-}
-
-.error {
-  color: #dc3545;
-  padding: 1rem;
-  text-align: center;
-}
-
-@media (max-width: 1024px) {
-  .addBookContainer {
-    width: 70vw;
-  }
-}
-
-@media (max-width: 1024px) {
-  .addBookContainer {
-    width: 70vw;
-  }
-}
-
-@media (max-width: 768px) {
-  .modalOverlay {
-    padding: 1rem;
-  }
-
-  .addBookContainer {
-    width: 95vw;
-    height: 90vh;
-    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 2rem;
   }
-
+  
+  .addBookContainer {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffffff; /* Default light mode background */
+    color: #212020; /* Default light mode text color */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+  }
+  
+  .darkMode {
+    background-color: #252525; /* Dark mode background */
+    color: #ffffff; /* Dark mode text color */
+  }
+  
+  .lightMode {
+    background-color: #ffffff; /* Light mode background */
+    color: #212020; /* Light mode text color */
+  }
+  
+  /* Title styles for dark and light mode */
+  .darkTitle {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .lightTitle {
+    background-color: transparent;
+    color: inherit;
+  }
+  
+  /* Style labels in dark mode */
+  .darkMode label {
+    color: #ffffff; /* White color for label text */
+  }
+  .darkMode select, .darkMode input {
+    background-color: #333333; /* Dark background for input fields */
+    color: #ffffff; /* White text for input fields */
+    border: 1px solid #555555; /* Optional: lighter border for better visibility */
+  }
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: inherit; /* Inherit color from the container */
+    transition: transform 0.2s ease;
+  }
+  .darkMode option {
+    background-color: #949393; /* Dark background for dropdown options */
+    color: #ffffff; /* White text for dropdown options */
+  }
+  /* Ensure the container holding these items has the dark mode styles */
+.darkMode .formGroup {
+    color: #ffffff; /* White text for any surrounding descriptive text */
+  }
+  .closeButton:hover {
+    transform: scale(1.2);
+  }
+  
   .header {
-    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+    font-size: 1.25rem;
     flex-shrink: 0;
   }
-
-  .header h2 {
-    font-size: 1.1rem;
+  
+  .error {
+    color: #dc3545;
+    padding: 1rem;
+    text-align: center;
   }
-}
+  
+  @media (max-width: 1024px) {
+    .addBookContainer {
+      width: 70vw;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .modalOverlay {
+      padding: 1rem;
+    }
+  }
+  

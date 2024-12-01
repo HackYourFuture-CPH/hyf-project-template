@@ -6,16 +6,22 @@
     padding: 40px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 970px;
+    border-radius: 8px;
+    color: #000; /* Default light text */
 }
 
 /* Dark mode */
 [data-theme="dark"] .TopBooks {
-    background-color: var(--background); /* Dark mode background */
-    color: var(--foreground); /* Adjust text color if needed */
+    background-color: #1a1a1a; /* Dark mode background */
+    color: #f0f0f0; /* Light text for dark mode */
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 }
 
 .TopBooks h2 {
     padding-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 .bookWrapper {
@@ -39,26 +45,55 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 80px;
-    color: var(--foreground);
+    gap: 20px;
+    color: inherit; /* Inherit text color */
 }
 
 .bookDetails p {
     text-transform: uppercase;
-    letter-spacing: 5px;
-    margin-top: 10px;
-    color: var(--foreground);
+    letter-spacing: 2px;
+    margin-top: 5px;
+    color: inherit; /* Inherit text color */
+    font-size: 1rem;
+}
+
+/* Highlight the book's label in light/dark modes */
+.bookDetails h3 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333; /* Light mode */
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .bookDetails h3 {
+    color: #f0f0f0; /* Dark mode text */
 }
 
 .bookImage {
     width: 200px;
     height: 300px;
     object-fit: cover;
-    border: 1px solid var(--foreground);
+    border: 2px solid #ccc; /* Default light border */
     border-radius: 4px;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+.bookImage:hover {
+    border-color: #867070; /* Accent color on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode hover styles for images */
+[data-theme="dark"] .bookImage {
+    border-color: #444;
+}
+
+[data-theme="dark"] .bookImage:hover {
+    border-color: #867070; /* Accent color on hover */
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Slide in/out animation */
 @keyframes slideInOut {
     0% {
         transform: translateX(100%);
