@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ConfirmationModal from "./ConfirmationModal";
 import styles from "./QuotesList.module.css";
+import { useTheme } from "../contexts/ThemeContext"; // Assuming you have a theme context
 
 const QuotesList = ({ userId }) => {
+  const { theme } = useTheme(); // Get the theme from context
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,6 +43,7 @@ const QuotesList = ({ userId }) => {
     setQuoteToRemove(quoteId);
     setIsConfirmModalOpen(true);
   };
+
   const confirmRemoveQuote = async () => {
     if (!quoteToRemove) return;
 
@@ -66,9 +69,14 @@ const QuotesList = ({ userId }) => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
+
   return (
     <>
-      <div className={styles.QuotesList}>
+      <div
+        className={`${styles.QuotesList} ${
+          theme === "dark" ? styles.darkMode : ""
+        }`}
+      >
         <h2>Recent Quotes</h2>
         {quotes.length === 0 ? (
           <div className={styles.emptyState}>
@@ -81,14 +89,21 @@ const QuotesList = ({ userId }) => {
         ) : (
           <ul>
             {quotes.map((quote, index) => (
-              <li key={quote.quote_id || index} className={styles.quoteItem}>
+              <li
+                key={quote.quote_id || index}
+                className={`${styles.quoteItem} ${
+                  theme === "dark" ? styles.darkMode : ""
+                }`}
+              >
                 <blockquote>
                   <p>"{quote.quote_text}"</p>
                   <div>- {quote.book_author || "Unknown"} </div>
                   <div>{quote.book_title || "Unknown Book"}</div>
                 </blockquote>
                 <button
-                  className={styles.closeButton}
+                  className={`${styles.closeButton} ${
+                    theme === "dark" ? styles.darkMode : ""
+                  }`}
                   onClick={() => handleRemoveQuote(quote.quote_id)}
                 >
                   &times;
@@ -112,4 +127,5 @@ const QuotesList = ({ userId }) => {
     </>
   );
 };
+
 export default QuotesList;
