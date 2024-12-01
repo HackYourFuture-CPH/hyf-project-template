@@ -1,10 +1,17 @@
 .QuotesList {
     padding: 20px;
-    background-color: #e4d0d0;
+    background-color: #e4d0d0;  /* Light background by default */
     border: 1px solid #ddd;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark mode styles for QuotesList */
+.darkMode .QuotesList {
+    background-color: #333;  /* Dark background for dark mode */
+    color: #fff;  /* Light text for dark mode */
+}
+
+/* Heading */
 .QuotesList h2 {
     font-size: 1.5rem;
     font-weight: bold;
@@ -13,6 +20,12 @@
     color: #333;
 }
 
+/* Dark mode heading */
+.darkMode .QuotesList h2 {
+    color: #fff;  /* Light color for heading in dark mode */
+}
+
+/* List and quote item styles */
 .QuotesList ul {
     list-style: none;
     padding: 0;
@@ -29,12 +42,25 @@
     border-radius: 8px;
 }
 
+/* Dark mode styles for quote item */
+.darkMode .quoteItem {
+    background-color: #444;  /* Dark background for quote items */
+    border-left: 4px solid #777;  /* Lighter border */
+}
+
+/* Blockquote styles */
 .quoteItem blockquote {
     margin: 0;
     font-style: italic;
     color: #555;
 }
 
+/* Dark mode blockquote styles */
+.darkMode .quoteItem blockquote {
+    color: #ddd;  /* Lighter text for blockquote */
+}
+
+/* Author and title styles */
 .quoteItem div {
     margin-top: 10px;
     font-size: 0.9rem;
@@ -42,31 +68,48 @@
     color: #777;
 }
 
+/* Dark mode author and title styles */
+.darkMode .quoteItem div {
+    color: #bbb;  /* Lighter color for text in dark mode */
+}
+
+/* Close button styles */
 .closeButton {
-    position: absolute; /* Position relative to .quoteItem */
-    top: 10px; /* Adjust spacing from the top */
-    right: 10px; /* Adjust spacing from the right */
-    width: 24px; /* Slightly larger for better usability */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
     height: 24px;
     border: none;
     border-radius: 50%;
     background-color: rgba(0, 0, 0, 0.7);
     color: white;
     font-size: 16px;
-    display: none; /* Hidden by default */
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition:
-        background-color 0.3s ease,
-        transform 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.quoteItem:hover .closeButton {
-    display: flex; /* Show on hover */
+/* Dark mode close button */
+.darkMode .closeButton {
+    background-color: rgba(255, 255, 255, 0.7);  /* Lighter background for dark mode */
+    color: #333;  /* Darker text color */
 }
 
+/* Show close button on hover */
+.quoteItem:hover .closeButton {
+    display: flex;
+}
+
+/* Hover effects for close button */
 .closeButton:hover {
-    background-color: #867070; /* Highlighted color on hover */
+    background-color: #867070;
+}
+
+/* Dark mode empty state text */
+.darkMode .emptyState p {
+    color: #bbb;
 }
