@@ -151,6 +151,7 @@ const SignUp = () => {
                 width: "600px",
                 maxWidth: "100%", // Ensure responsiveness
                 textAlign: "center", // Align text centrally
+                marginLeft: "-20px",
               }}
             >
               <Typography
