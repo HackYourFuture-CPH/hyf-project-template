@@ -1,37 +1,40 @@
-/* Default style (light mode) */
+/* Base Styles */
 .TopBooks {
     text-align: center;
     margin: 50px auto;
     background-color: #f5ebeb; /* Light mode background */
-    padding: 40px 20px;
+    padding: 20px 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 970px;
     border-radius: 8px;
-    color: #000; /* Default light text */
+    color: #000;
 }
 
-/* Dark mode */
+/* Dark Mode */
 [data-theme="dark"] .TopBooks {
-    background-color: #1a1a1a; /* Dark mode background */
-    color: #f0f0f0; /* Light text for dark mode */
+    background-color: #1a1a1a;
+    color: #f0f0f0;
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 }
 
 .TopBooks h2 {
     padding-bottom: 30px;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    transition: color 0.3s ease;
 }
 
+/* Book Wrapper */
 .bookWrapper {
     position: relative;
     overflow: hidden;
-    height: 300px;
+    height: auto; /* Adjust dynamically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Book Item */
 .bookItem {
-    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,75 +43,118 @@
     animation: slideInOut 10s ease-in-out infinite;
 }
 
+/* Book Details */
 .bookDetails {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    color: inherit; /* Inherit text color */
+    text-align: center;
+    gap: 10px;
+    color: inherit;
 }
 
 .bookDetails p {
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     margin-top: 5px;
-    color: inherit; /* Inherit text color */
-    font-size: 1rem;
+    color: inherit;
+    font-size: 0.9rem;
 }
 
-/* Highlight the book's label in light/dark modes */
+/* Book Label */
 .bookDetails h3 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
-    color: #333; /* Light mode */
-    transition: color 0.3s ease;
+    color: #333;
 }
 
 [data-theme="dark"] .bookDetails h3 {
-    color: #f0f0f0; /* Dark mode text */
+    color: #f0f0f0;
 }
 
+/* Book Image */
 .bookImage {
     width: 200px;
-    height: 300px;
+    height: auto;
+    max-width: 100%;
     object-fit: cover;
-    border: 2px solid #ccc; /* Default light border */
+    border: 2px solid #ccc;
     border-radius: 4px;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .bookImage:hover {
-    border-color: #867070; /* Accent color on hover */
+    border-color: #867070;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Dark mode hover styles for images */
 [data-theme="dark"] .bookImage {
     border-color: #444;
 }
 
 [data-theme="dark"] .bookImage:hover {
-    border-color: #867070; /* Accent color on hover */
+    border-color: #867070;
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
 }
 
-/* Slide in/out animation */
-@keyframes slideInOut {
-    0% {
-        transform: translateX(100%);
-        opacity: 0;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .TopBooks {
+        margin: 20px auto;
+        padding: 15px;
+        max-width: 90%;
     }
-    10% {
-        transform: translateX(0);
-        opacity: 1;
+
+    .TopBooks h2 {
+        font-size: 1.2rem;
     }
-    90% {
-        transform: translateX(0);
-        opacity: 1;
+
+    .bookWrapper {
+        height: auto; /* Let height adjust dynamically */
+        overflow: visible;
     }
-    100% {
-        transform: translateX(-100%);
-        opacity: 0;
+
+    .bookItem {
+        flex-direction: column; /* Stack items vertically */
+        gap: 15px;
+        animation: none; /* Disable animation on smaller screens */
+    }
+
+    .bookImage {
+        width: 150px;
+        height: auto;
+    }
+
+    .bookDetails h3 {
+        font-size: 1rem;
+    }
+
+    .bookDetails p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .TopBooks {
+        margin: 10px auto;
+        padding: 10px;
+    }
+
+    .TopBooks h2 {
+        font-size: 1rem;
+    }
+
+    .bookImage {
+        width: 100px;
+        height: auto;
+    }
+
+    .bookDetails h3 {
+        font-size: 0.9rem;
+    }
+
+    .bookDetails p {
+        font-size: 0.7rem;
     }
 }

@@ -1,21 +1,19 @@
+/* Default styles (for laptops and larger screens) */
 .mainPart {
     text-align: center;
     padding: 200px 10px;
     background-image: url("/main.jpg");
     background-size: cover;
     background-position: center;
-    color:  #333;
+    color: #333;
     width: 100%;
     height: 860px;
     margin-top: -150px;
 }
 
-
-
 [data-theme="dark"] .mainPart {
     background-image: url("/main-dark.jpg"); /* Dark mode image */
 }
-
 
 .mainTitle {
     font-size: 2.5rem;
@@ -50,4 +48,36 @@
     display: flex;
     justify-content: center;
     gap: 10px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+    .mainPart {
+        padding: 100px 20px; /* Reduced padding for mobile */
+        height: auto; /* Allow height to adjust dynamically */
+        margin-top: 0; /* No negative margin on mobile */
+    }
+
+    .mainTitle {
+        font-size: 2rem; /* Smaller font size */
+        margin-bottom: 30px; /* Reduced spacing */
+        max-width: 90%; /* Adjust width for mobile */
+    }
+
+    .descriptionContainer {
+        margin: 0 auto; /* Center the container */
+        padding: 0 10px; /* Add horizontal padding */
+        width: 100%; /* Full width for mobile */
+    }
+
+    .description {
+        font-size: 0.9rem; /* Slightly smaller text */
+        margin-bottom: 20px; /* Reduced spacing */
+        max-width: 100%; /* Full width */
+    }
+
+    .buttonContainer {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px;
+    }
 }

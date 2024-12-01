@@ -6,7 +6,8 @@
 
 .bookshelfHeader {
   padding: 15px;
-  font-size: 1.2em;
+  font-size: 1.5em;
+  text-align: center; /* Center align the header for better mobile view */
 }
 
 .modalOverlay {
@@ -26,12 +27,13 @@
 .modalContent {
   background-color: #fff;
   padding: 20px;
-  width: 80%;
-  max-width: 600px;
-  height: 500px;
+  width: 90%; /* Adjust width for smaller screens */
+  max-width: 500px;
+  max-height: 80vh; /* Limit modal height on mobile */
   overflow-y: auto;
   position: relative;
   z-index: 10000;
+  border-radius: 8px;
 }
 
 .modalContent .closeButton {
@@ -43,4 +45,40 @@
   font-size: 24px;
   cursor: pointer;
   z-index: 10001;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .bookshelfHeader {
+    font-size: 1.2em; /* Reduce font size on smaller screens */
+    padding: 10px;
+  }
+
+  .bookshelf {
+    padding: 5px;
+  }
+
+  .modalContent {
+    width: 95%; /* Maximize the modal width for mobile screens */
+    max-width: none;
+    max-height: 90vh; /* Allow more height for better usability */
+  }
+
+  .modalContent .closeButton {
+    font-size: 20px; /* Adjust close button size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .bookshelfHeader {
+    font-size: 1em; /* Further reduce font size for very small screens */
+  }
+
+  .modalContent {
+    padding: 15px;
+  }
+
+  .modalContent .closeButton {
+    font-size: 18px;
+  }
 }
