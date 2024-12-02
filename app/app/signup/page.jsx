@@ -274,10 +274,10 @@ const SignUp = () => {
                         borderColor: theme === "dark" ? "#444444" : "#5A4A42",
                       },
                     }}
-                  />{" "}
-                </Grid2>{" "}
-              </Grid2>{" "}
-            </Box>{" "}
+                  />
+                </Grid2>
+              </Grid2>
+            </Box>
             <TextField
               variant="outlined"
               margin="normal"
