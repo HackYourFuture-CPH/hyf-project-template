@@ -27,6 +27,8 @@ const BookDetails = () => {
   const [showQuotes, setShowQuotes] = useState(false);
   //const [error, setError] = useState(null);
 
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
   const handleOpenNotes = () => setShowNotes(true);
   const handleCloseNotes = () => setShowNotes(false);
 
@@ -43,6 +45,14 @@ const BookDetails = () => {
   const handleReviewSuccess = (response) => {
     console.log("Review added successfully:", response);
     showError("Review added successfully!", "Success", "success");
+  };
+
+  const toggleDescription = () => setShowFullDescription((prev) => !prev);
+
+  const getTruncatedDescription = (text) => {
+    const maxLength = 500;
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
   useEffect(() => {
@@ -184,7 +194,22 @@ const BookDetails = () => {
                 paddingBottom: "2rem",
               }}
             >
-              {book.description}
+              {showFullDescription
+                ? book.description
+                : getTruncatedDescription(book.description)}
+              {book.description.length > 500 && (
+                <Button
+                  onClick={toggleDescription}
+                  sx={{
+                    textTransform: "none",
+                    color: "#3f51b5",
+                    fontWeight: "bold",
+                    marginLeft: "0.5rem",
+                  }}
+                >
+                  {showFullDescription ? "Show Less" : "Read More"}
+                </Button>
+              )}
             </Typography>
 
             <Box

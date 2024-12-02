@@ -391,6 +391,242 @@ const SignUp = () => {
                     </Container>{" "}
                 </Container>
             </Container>
+<<<<<<< HEAD
+          )}
+          <Container
+            maxWidth="md"
+            sx={{
+              padding: 3,
+
+              background: theme === "dark" ? "#000000" : "#EAD3C4", // Adjust background color for form container
+
+              marginRight: "-25px",
+              borderRadius: 2,
+              boxShadow:
+                theme === "dark"
+                  ? "0px 4px 8px rgba(0, 0, 0, 0.4)"
+                  : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              marginRight: isMobile ? "0" : "-25px", // Adjust margin for mobile
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                textAlign: "center",
+                margin: "15px",
+                fontFamily: "jacques Francois",
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C", // Adjust text color based on theme
+              }}
+            >
+              Create Account
+            </Typography>
+            <Box sx={{ display: "flex", width: "100%", mb: 1 }}>
+              <Grid2 container spacing={2} sx={{ width: "100%" }}>
+                <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
+                  <TextField
+                    variant="outlined"
+                    required
+                    id="firstName"
+                    label="First Name"
+                    name="firstName"
+                    autoComplete="fname"
+                    fullWidth
+                    value={data.firstName}
+                    onChange={handleChange}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                    onBlur={handleBlur}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
+                  />{" "}
+                </Grid2>{" "}
+                <Grid2 xs={6} sx={{ flexGrow: 1, maxWidth: "50%" }}>
+                  <TextField
+                    variant="outlined"
+                    required
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="lname"
+                    fullWidth
+                    value={data.lastName}
+                    onChange={handleChange}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                    onBlur={handleBlur}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "10px",
+                        bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                        color: theme === "dark" ? "#ffffff" : "#3E2723",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                        fontFamily: "serif",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                      },
+                    }}
+                  />
+                </Grid2>
+              </Grid2>
+            </Box>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              value={data.email}
+              onChange={handleChange}
+              error={!!errors.email}
+              helperText={errors.email}
+              onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              value={data.username}
+              onChange={handleChange}
+              error={!!errors.username}
+              helperText={errors.username}
+              onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              value={data.password}
+              onChange={handleChange}
+              error={!!errors.password}
+              helperText={errors.password}
+              onBlur={handleBlur}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  bgcolor: theme === "dark" ? "#333333" : "#fffbe8",
+                  color: theme === "dark" ? "#ffffff" : "#3E2723",
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                  fontFamily: "serif",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme === "dark" ? "#444444" : "#5A4A42",
+                },
+              }}
+            />{" "}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{
+                background: theme === "dark" ? "#666666" : "grey",
+                mt: 3,
+                fontFamily: "jacques Francois",
+                textTransform: "none",
+                fontSize: "20px",
+              }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>{" "}
+            <Typography
+              variant="h8"
+              sx={{
+                mt: 2,
+                color: theme === "dark" ? "#ffffff" : "#3C3C3C",
+                textAlign: "center", // Center-align text
+                fontFamily: "jacques Francois",
+              }}
+            >
+              Already have an account?{" "}
+              <a href="/login" target="_blank" style={{ color: "blueviolet" }}>
+                Login
+              </a>
+            </Typography>{" "}
+            <Button
+              variant="text"
+              sx={{
+                mt: 8, // Add spacing between the buttons
+                color: theme === "dark" ? "#bbbbbb" : "#5A4A42",
+                fontFamily: "jacques Francois",
+                fontSize: "16px",
+              }}
+              onClick={() => router.push("/")}
+            >
+              Back to Home
+            </Button>
+          </Container>{" "}
+        </Container>
+      </Container>
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={hideError}
+        message={error.message}
+        title={error.title}
+        severity={error.severity}
+      />
+    </AppLayoutContainer>
+  );
+=======
             <ErrorModal
                 isOpen={error.isOpen}
                 onClose={hideError}
@@ -400,6 +636,7 @@ const SignUp = () => {
             />
         </AppLayoutContainer>
     );
+>>>>>>> origin/main
 };
 
 export default SignUp;

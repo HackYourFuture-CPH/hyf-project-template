@@ -58,7 +58,7 @@ const BookshelfSection = ({
                 />
                 {book.is_fallback && (
                   <div className={styles.hoverMessage}>
-                    This is not the real book image
+                    This is not the real book cover
                   </div>
                 )}
               </div>
