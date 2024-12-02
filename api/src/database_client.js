@@ -1,4 +1,12 @@
 import knex from "knex";
+import dotenv from "dotenv";
+
+//dotenv.config();
+//dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: ".env.local" });
+
+// const env = process.env.NODE_ENV || "development";
+// dotenv.config({ path: `.env.${env}` });
 
 const connection = knex({
   client: process.env.DB_CLIENT,
@@ -11,6 +19,7 @@ const connection = knex({
     ssl:
       process.env.DB_USE_SSL === "true" ? { rejectUnauthorized: false } : false,
   },
+  debug: true,
 });
 
 export default connection;
