@@ -7,23 +7,26 @@
     padding: 40px;
     width: 100%;
     margin: 50px 0 0 0;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
+    flex-wrap: wrap;
 }
-
 
 .textContainer {
     margin-right: 20px;
     max-width: 700px;
+    flex: 1;
 }
 
 .aboutTitle {
     font-size: 2rem;
     margin-bottom: 60px;
-    color:  #867070;
+    color: #867070;
 }
 
 .aboutDescription {
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 20px;
     color: var(--foreground);
 }
@@ -36,7 +39,10 @@
     height: 320px;
     background-color: var(--background);
     color: var(--foreground);
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
+    margin-top: 40px;
 }
 
 .authorImage {
@@ -48,6 +54,7 @@
     text-align: center;
     height: auto;
     min-width: 200px;
+    margin-top: 15px;
 }
 
 .quoteContainer blockquote {
@@ -65,4 +72,52 @@
 
 .learnMore:hover {
     color: var(--foreground);
+}
+
+/* Mobile view (responsive) */
+@media (max-width: 768px) {
+    .about {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .textContainer {
+        margin-right: 0;
+        text-align: center;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .authorContainer {
+        width: 250px;
+        height: auto;
+        margin-top: 20px;
+        order: -1; /* Move this element above Our Team */
+    }
+
+    .authorImage {
+        margin-top: -40px;
+        width: 120px;
+        height: 120px;
+    }
+
+    .quoteContainer h2 {
+        font-size: 1.2rem;
+    }
+
+    .quoteContainer blockquote {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .quoteContainer .learnMore {
+        font-size: 0.9rem;
+    }
+
+    /* Maintain order on mobile - Dr. Seuss section comes before Our Team */
+    .textContainer,
+    .authorContainer {
+        width: 100%;
+    }
 }

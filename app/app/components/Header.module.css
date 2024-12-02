@@ -1,75 +1,74 @@
 .header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: var(--background);
-    color: var(--foreground);
-    z-index: 5;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--background);
+  color: var(--foreground);
+  z-index: 5;
 }
 
 .logoContainer {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
-    max-width: 150px;
-    height: auto;
-    transition: filter 0.3s ease;
+  max-width: 150px;
+  height: auto;
+  transition: filter 0.3s ease;
 }
 /* Header.module.css */
 [data-theme="dark"] .logo {
-    filter: brightness(8); /* Brighten the logo */
+  filter: brightness(8); /* Brighten the logo */
 }
 
-
 .nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .navButton {
-    text-decoration: none;
-    font-family: "Lato", sans-serif;
-    font-weight: 400;
-    padding: 10px 15px;
-    background-color: transparent;
-    transition: all 0.3s;
-    cursor: pointer;
-    letter-spacing: 5px;
-    border: none;
+  text-decoration: none;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  padding: 10px 15px;
+  background-color: transparent;
+  transition: all 0.3s;
+  cursor: pointer;
+  letter-spacing: 5px;
+  border: none;
 }
 
 .navButton:hover {
-    color: #867070;
+  color: #867070;
 }
 
 .themeButton {
-    padding: 10px 15px;
-    font-size: 24px;
-    background-color: transparent;
-    cursor: pointer;
-    transition: all 0.3s;
-    letter-spacing: 5px;
-    border: none;
+  padding: 10px 15px;
+  font-size: 24px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 5px;
+  border: none;
 }
 
 .themeButton:hover {
-    color: #867070;
+  color: #867070;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        align-items: center;
-    }
+  .header {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .nav {
-        flex-direction: row;
-        gap: 10px;
-    }
+  .nav {
+    flex-direction: row;
+    gap: 10px;
+  }
 }

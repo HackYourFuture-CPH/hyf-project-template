@@ -151,12 +151,12 @@ export default function GoalsWidget() {
             size="small"
             onClick={() => setIsModalOpen(true)}
             sx={{
-              color: theme.palette.mode === "dark" ? "#000" : "primary.main", // Button text in black
+              color: theme.palette.mode === "dark" ? "#fff" : "#000", // Text color: black in light mode, white in dark mode
               backgroundColor:
-                theme.palette.mode === "dark" ? "#fff" : "primary.main", // Button background in white for dark mode
+                theme.palette.mode === "dark" ? "#333" : "#cfc0c0", // Background color: #cfc0c0 in light mode, dark in dark mode
               "&:hover": {
                 backgroundColor:
-                  theme.palette.mode === "dark" ? "#f0f0f0" : "primary.dark",
+                  theme.palette.mode === "dark" ? "#555" : "#b0a3a3", // Lighter hover effect for light mode
               },
             }}
           >

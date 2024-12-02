@@ -10,11 +10,11 @@ const FilterBar = ({ filters, onFilterChange }) => {
 
   return (
     <div className={`${styles.filterBar} ${isDarkMode ? styles.darkMode : ""}`}>
-      <h3
+      {/* <h3
         className={`${styles.filterTitle} ${isDarkMode ? styles.darkMode : ""}`}
       >
         Filters
-      </h3>
+      </h3> */}
 
       <div
         className={`${styles.filterGroup} ${isDarkMode ? styles.darkMode : ""}`}

@@ -24,7 +24,6 @@
 
 /* Dark mode background for the filter bar */
 .darkMode .filterBar {
-
   color: #242222; /* White text for dark mode */
   border-radius: 8px; /* Optional: Add border radius for rounded corners */
 }
@@ -47,13 +46,12 @@
   color: #1b1818; /* Light gray text for labels in dark mode */
 }
 
-
 .filterSelect {
   width: 100%;
   padding: 0.5rem;
-  background-color: #fff; 
-  color: #333; 
-  border: 1px solid #ccc; 
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
   border-radius: 5px;
   font-family: sans-serif;
   font-size: 0.85rem;
@@ -77,4 +75,28 @@
 /* Dark mode focus styles */
 .darkMode .filterSelect:focus {
   border-color: #fff; /* White border when focused in dark mode */
+}
+
+@media (max-width: 768px) {
+  .filterBar {
+    /* display: flex;
+    flex-direction: row; */
+    gap: 1rem;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Filter Title (Heading) */
+  .filterTitle {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333; /* Light mode text color */
+  }
+  .filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
