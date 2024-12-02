@@ -6,6 +6,7 @@
     padding: 20px 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 970px;
+    height: 500px;
     border-radius: 8px;
     color: #000;
 }
@@ -81,7 +82,9 @@
     object-fit: cover;
     border: 2px solid #ccc;
     border-radius: 4px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition:
+        border-color 0.3s,
+        box-shadow 0.3s;
 }
 
 .bookImage:hover {
@@ -96,6 +99,26 @@
 [data-theme="dark"] .bookImage:hover {
     border-color: #867070;
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Slide in/out animation */
+@keyframes slideInOut {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    10% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    90% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
 }
 
 /* Responsive Styles */
