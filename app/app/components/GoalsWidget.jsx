@@ -240,21 +240,19 @@ export default function GoalsWidget() {
               color="primary"
               onClick={handleResetGoal}
               sx={{
-                color: theme.palette.mode === "dark" ? "#fff" : "#000", // Icon color: white in dark mode, black in light mode
+                backgroundColor: (theme) =>
+                  theme.palette.mode === "dark" ? "#333" : "#f0f0f0", // Background color adjustment
+                color: (theme) =>
+                  theme.palette.mode === "dark" ? "#fff" : "#000", // Icon color change for better contrast
                 "&:hover": {
-                  backgroundColor:
-                    theme.palette.mode === "dark" ? "#444" : "#ddd", // Background color on hover
-                  color: theme.palette.mode === "dark" ? "#fff" : "#000", // Icon color on hover
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "dark" ? "#444" : "#ddd", // Hover background
+                  color: (theme) =>
+                    theme.palette.mode === "dark" ? "#fff" : "#000", // Hover icon color
                 },
-                borderRadius: "50%", // Circular button shape
-                padding: "8px", // Increase padding for a more clickable button
               }}
             >
-              <RefreshIcon
-                sx={{
-                  fontSize: "24px", // Adjust icon size
-                }}
-              />
+              <RefreshIcon />
             </IconButton>
           </Box>
         </Box>
