@@ -1,12 +1,13 @@
 .bookshelfSection {
-  margin-top: 50px;
+  margin-top: 0px;
   z-index: 1;
 }
 
 .bookshelfSection p {
   font-weight: bold;
   font-size: 14pt;
-  margin: 20px auto;
+  margin-bottom: 20px;
+  margin-top: 0px;
 }
 .bookContainer {
   position: relative;

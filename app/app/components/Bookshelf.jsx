@@ -245,7 +245,7 @@ const Bookshelf = () => {
     <>
       <div className={styles.bookshelf}>
         <div className={styles.bookshelfHeader}>
-          <h3 style={{ color: textColor }}>Bookshelf</h3>
+          {/* <h3 style={{ color: textColor }}>Bookshelf</h3> */}
         </div>
 
         <BookshelfSection
