@@ -169,12 +169,29 @@ export default function GoalsWidget() {
             progress={progress || 0}
             isNewlyCompleted={isNewlyCompleted}
           />
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              color:
+                theme.palette.mode === "dark"
+                  ? "#000"
+                  : theme.palette.text.secondary,
+            }}
+          >
             {booksReadAfterStartDate.length} of {activeGoal.goal_count} books
             read
           </Typography>
           <Stack spacing={1}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#000"
+                    : theme.palette.text.secondary,
+              }}
+            >
               Started:{" "}
               {new Date(activeGoal.start_date).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -182,7 +199,15 @@ export default function GoalsWidget() {
                 day: "numeric",
               })}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? "#000"
+                    : theme.palette.text.secondary,
+              }}
+            >
               {getTimeRemaining()} | Ends on:{" "}
               {activeGoal.end_date
                 ? new Date(activeGoal.end_date).toLocaleDateString("en-CA")
@@ -193,15 +218,43 @@ export default function GoalsWidget() {
             sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "center" }}
           >
             <Button
-              variant="outlined"
-              color="primary"
+              variant="contained"
               size="small"
               onClick={() => setIsModalOpen(true)}
+              sx={{
+                color: theme.palette.mode === "dark" ? "#fff" : "#000", // Text color
+                backgroundColor:
+                  theme.palette.mode === "dark" ? "#555" : "#e0e0e0", // Background color
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#777" : "#c0c0c0", // Hover color
+                },
+                borderRadius: "8px", // Rounded corners
+                padding: "6px 12px", // Padding
+                fontWeight: "bold", // Bold text
+              }}
             >
               Edit Goal
             </Button>
-            <IconButton color="primary" onClick={handleResetGoal}>
-              <RefreshIcon />
+            <IconButton
+              color="primary"
+              onClick={handleResetGoal}
+              sx={{
+                color: theme.palette.mode === "dark" ? "#fff" : "#000", // Icon color: white in dark mode, black in light mode
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "dark" ? "#444" : "#ddd", // Background color on hover
+                  color: theme.palette.mode === "dark" ? "#fff" : "#000", // Icon color on hover
+                },
+                borderRadius: "50%", // Circular button shape
+                padding: "8px", // Increase padding for a more clickable button
+              }}
+            >
+              <RefreshIcon
+                sx={{
+                  fontSize: "24px", // Adjust icon size
+                }}
+              />
             </IconButton>
           </Box>
         </Box>
