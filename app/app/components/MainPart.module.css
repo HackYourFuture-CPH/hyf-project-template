@@ -15,12 +15,16 @@
     background-image: url("/main-dark.jpg"); /* Dark mode image */
 }
 
+[data-theme="dark"] .mainTitle {
+    color: #fff;
+}
+
 .mainTitle {
     font-size: 2.5rem;
     color: #867070;
     margin: 0 auto;
     margin-bottom: 50px;
-    max-width: 600px;
+    max-width: 650px;
 }
 
 .subTitle {

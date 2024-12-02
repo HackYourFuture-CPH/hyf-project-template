@@ -8,7 +8,7 @@ const MainPart = () => {
     return (
         <main className={styles.mainPart}>
             <h1 className={styles.mainTitle}>
-                Welcome to Leaf Notes Your personal space to track, cherish, and explore your
+                Welcome to Leaf Notes <br /> Your personal space to track, cherish, and explore your
                 reading journey.
             </h1>
             <div className={styles.descriptionContainer}>
