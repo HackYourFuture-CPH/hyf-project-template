@@ -8,7 +8,7 @@ but can work as a starting point for any full stack project.
 It consists of two packages:
 
 - `api` which is a NodeJS project using Express for the API
-- `app` which is Vite project using React for the web app
+- `app` which is Next project using React for the web app
 
 Both packages are as small as possible but feel free to add more tools as you see fit.
 
@@ -168,8 +168,8 @@ AggregateError [ECONNREFUSED]:
 ```
 
 ### Broken TypeScript config file
-This boilerplate does not use TypeScript, but Vite which is used in the `app` package has built in support for TypeScript.
-This means that Vite (or rather `esbuild` which is used internally) will look for a TypScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
+This boilerplate does not use TypeScript, but Next which is used in the `app` package has built in support for TypeScript.
+This means that Next (or rather `esbuild` which is used internally) will look for a TypeScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
 If it does find a TypeScript config file but that file is invalid or empty you'll see errors like this:
 
 ```
@@ -179,7 +179,7 @@ If it does find a TypeScript config file but that file is invalid or empty you'l
       1 │ 
         ╵ ^
 
-failed to load config from /Users/milton/dev/hyf/hyf-project-template/app/vite.config.js
+failed to load config from /Users/milton/dev/hyf/hyf-project-template/app/next.config.js
 error when starting dev server:
 Error: Build failed with 1 error:
 ../../tsconfig.json:1:0: ERROR: Unexpected end of file in JSON
@@ -197,7 +197,7 @@ Error: Build failed with 1 error:
 
 There are 3 possible solutions:
 1. Delete the offending TypeScript config file
-2. Fix the issue in the file so that Vite can use it
+2. Fix the issue in the file so that Next can use it
 3. Move your project folder to some place that doesn't put the TypeScript config file in the parent folder of your project folder
 
 ## Architecture diagram
