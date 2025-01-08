@@ -2,23 +2,22 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import knex from "./database_client.js";
-import nestedRouter from "./routers/nested.js";
+import { connectDB } from "../db/database_client.js";
 
+connectDB()
 const app = express();
+const PORT = process.env.PORT || 5000; // default port 5000
+
 app.use(cors());
 app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
-// You can delete this route once you add your own routes
-apiRouter.get("/", async (req, res) => {
+app.get("/api", async (req, res) => {
   
-  res.json({ tables });
+  res.json("Welcome to upskill");
 });
 
-// This nested router example can also be replaced with your own sub-router
-apiRouter.use("/nested", nestedRouter);
 
 app.use("/api", apiRouter);
 
