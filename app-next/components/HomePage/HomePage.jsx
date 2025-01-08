@@ -15,7 +15,7 @@ function HomePage() {
         />
       </a>
       <a href="/nested" className="link">
-        <span className="message">Go to the nested page TEST TEST</span>
+        <span className="message">Go to the nested page</span>
       </a>
     </>
   );
