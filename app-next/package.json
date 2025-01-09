@@ -9,8 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.11"
+    "axios": "^1.7.9",
+    "framer-motion": "^11.16.1",
+    "lucide-react": "^0.469.0",
+    "motion": "^11.16.1",
+    "next": "14.2.11",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }
