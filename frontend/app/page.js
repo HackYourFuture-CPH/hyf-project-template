@@ -1,7 +1,11 @@
-import HomePage from "@/components/HomePage/HomePage";
+import CategorySection from "../components/CategorySection";
+import HeroSection from "../components/Hero";
 
 export default function Home() {
   return (
-    <HomePage />
+    <div>
+      <HeroSection />
+      <CategorySection />
+    </div>
   );
 }
