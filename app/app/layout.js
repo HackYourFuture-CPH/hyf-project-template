@@ -1,7 +1,10 @@
 import "./globals.css";
+import Footer from "@/components/footer";
+
+
 
 export const metadata = {
-  title: "HackYourFuture"
+  title: "DKTestPrep",
 };
 
 export default function RootLayout({ children }) {
@@ -9,6 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         {children}
+        <Footer />
       </body>
     </html>
   );
