@@ -7,7 +7,7 @@ export default function Navbar() {
     <header className="py-6 flex justify-between items-center">
       <div className="flex items-center gap-2">
         <PlayCircle className="h-8 w-8 text-blue-500" />
-        <h1 className="text-2xl font-bold text-blue-500">GroupApp</h1>
+        <h1 className="text-2xl font-bold text-blue-500">MovieApp</h1>
       </div>
       <div className="space-x-4">
         <Link href="/login">
