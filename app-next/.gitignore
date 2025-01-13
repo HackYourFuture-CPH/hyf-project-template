@@ -33,16 +33,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-# Исключение конфигурационных файлов и токенов
-.env
-.env.local
-.env.production
-.env.development
 
-# Исключение Node.js файлов
-node_modules/
-package-lock.json
-
-# Исключение кеша и временных файлов
-.next/
-.DS_Store
