@@ -15,3 +15,6 @@ body,
     height: 100%;
     width: 100%;
 }
+section {
+    margin: 50px 120px;
+}
