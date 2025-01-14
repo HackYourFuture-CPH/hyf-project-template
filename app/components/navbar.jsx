@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
@@ -12,10 +12,11 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {AccountCircle} from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
 import styles from "@/styles/global.css";
+import Link from 'next/link';
 
-const pages = ['Om Os', 'Test', 'Mine Resultater', 'Blog'];
+const pages = ['Start', 'Om Os', 'Test', 'Mine Resultater', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -85,9 +86,11 @@ function ResponsiveAppBar() {
                             onClose={handleCloseNavMenu}
                             sx={{ display: { xs: 'block', md: 'none' } }}
                         >
-                            {pages.map((page) => (
+                            {pages.map((page, index) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu} className="pl-5 pr-10">
-                                    <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                                    <Link href={`/${page.toLowerCase().replace(/ /g, '-')}`} passHref>
+                                        <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                                    </Link>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -111,18 +114,20 @@ function ResponsiveAppBar() {
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', justifyContent: 'flex-end' }, mr: 5, gap: 1 }}>
                         {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 3, color: 'white', display: 'block', '&:hover': {backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'white', borderRadius: '8px'} }}>
-                                {page}
-                            </Button>
+                            <Link key={page} href={`/${page.toLowerCase().replace(/ /g, '-')}`} passHref>
+                                <Button
+                                    onClick={handleCloseNavMenu}
+                                    sx={{ my: 3, color: 'white', display: 'block', '&:hover': {backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'white', borderRadius: '8px'} }}
+                                >
+                                    {page}
+                                </Button>
+                            </Link>
                         ))}
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <AccountCircle sx={{background: 'white', borderRadius: '50%', width: '30px', height: '30px'}} />
+                                <AccountCircle sx={{ background: 'white', borderRadius: '50%', width: '30px', height: '30px' }} />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -142,7 +147,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu} sx={{pl: 3, pr: 8}}>
+                                <MenuItem key={setting} onClick={handleCloseUserMenu} sx={{ pl: 3, pr: 8 }}>
                                     <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}
