@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { AccountCircle } from "@mui/icons-material";
-import styles from "@/styles/global.css";
+import styles from "../app/globals.css";
 import Link from 'next/link';
 
 const pages = ['Start', 'Om Os', 'Test', 'Mine Resultater', 'Blog'];
@@ -39,7 +39,7 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static" className="bg-cyan-900 px-10">
+        <AppBar position="static" className="bg-blue-900 px-10">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
