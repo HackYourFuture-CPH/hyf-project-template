@@ -10,7 +10,7 @@ export const style = {
     padding: "sm:px-4 px-2 sm:py-4 py-2",
 
     marginX: "sm:mx-4 mx-2",
-    marginY: "sm:my-14 my-6",
+    marginY: "sm:my-10 my-4",
 };
 
 export const layout = {
