@@ -33,8 +33,8 @@ function WelcomePage() {
 
     return (
         <section>
-            <div className={`${layout.section} gap-10`}>
-                <div className={`${style.flexCenter} max-w-[600px]`}>
+            <div className={`${layout.section} gap-10 flex-col md:flex-row justify-center items-center`}>
+                <div className={`${style.flexCenter} max-w-[600px] lg:max-w-[600px] md:max-w-[400px]`}>
                     <h1 className={`${style.heading}`}>Velkommen <br/> til DKTestPrep</h1>
                     <p className={`${style.paragraph} my-6`}>Bliv klar til den danske indfødsretsprøve med selvtillid!
                         Forbereder du dig på den danske indfødsretsprøve? DKTestPrep er her for at hjælpe dig med at få
@@ -42,11 +42,11 @@ function WelcomePage() {
                         selvtillid, der er nødvendig for at bestå prøven.</p>
                     <Button value="Log ind" styles={`mt-5`}/>
                 </div>
-                <div className={`${style.flexCenter} rounded-2xl`}>
+                <div className={`${style.flexCenter} rounded-2xl max-w-[600px]`}>
                     <img src="/imageWelcome.jpg" alt="image" className='rounded-2xl'/>
                 </div>
             </div>
-            <div className={`flex flex-row gap-28 justify-center ${style.marginY}`}>
+            <div className={`flex flex-row sm:flex-wrap ss:flex-wrap xs:flex-wrap md:gap-20 sm:gap-10 ss:gap-10 xs:gap-8 justify-center ${style.marginY}`}>
                 {exploreFeatures.map(feature => (
                     <Explore key={feature.id} {...feature} />
                 ))}
