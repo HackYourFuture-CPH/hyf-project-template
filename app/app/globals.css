@@ -1,8 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background: aliceblue;
+    box-sizing: border-box;
+}
+
 html,
 body,
 #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+section {
+    margin: 50px 120px;
+}
+
+@media (max-width: 1000px) {
+    section {
+        margin: 30px 70px;
+    }
+}
+@media (max-width: 600px) {
+    section {
+        margin: 20px 40px;
+    }
 }
