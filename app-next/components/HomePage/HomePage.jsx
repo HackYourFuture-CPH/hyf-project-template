@@ -6,6 +6,7 @@ import "./HomePage.css";
 function HomePage() {
   return (
     <>
+      
       <a href="https://www.hackyourfuture.dk/" target="_blank" className="link">
         <Image
           src={HYFLogo.src}
