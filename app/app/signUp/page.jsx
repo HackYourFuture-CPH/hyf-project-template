@@ -36,12 +36,12 @@ export default function SignUpPage({onClick}) {
                         </div>
                         <div className="flex flex-col gap-1 mb-5">
                             <label htmlFor="password" className="font-bold ml-1">Adgangskode</label>
-                            <input className="p-2 border rounded-xl hover:border-blue-300 duration-300" type="password"
+                            <input className="p-2 border rounded-xl hover:border-blue-300 duration-300" minLength="8" type="password"
                                    name="password" id="password" required placeholder="Indtast mindst 8+ tegn"/>
                         </div>
                         <div className="flex flex-col gap-1 mb-5">
                             <label htmlFor="repeatPassword" className="font-bold ml-1">Bekræft adgangskode</label>
-                            <input className="p-2 border rounded-xl hover:border-blue-300 duration-300" type="password"
+                            <input className="p-2 border rounded-xl hover:border-blue-300 duration-300" minLength="8" type="password"
                                    name="repeatPassword" id="repeatPassword" required
                                    placeholder="Indtast mindst 8+ tegn"/>
                         </div>
