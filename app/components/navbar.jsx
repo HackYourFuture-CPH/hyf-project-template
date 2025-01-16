@@ -43,7 +43,7 @@ function ResponsiveAppBar() {
         <AppBar position="static" className="bg-blue-900 px-10">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Link href="/" passHref>
+                    <Link href="/start" passHref>
                         <Typography
                             variant="h6"
                             noWrap
@@ -95,7 +95,7 @@ function ResponsiveAppBar() {
                             ))}
                         </Menu>
                     </Box>
-                    <Link href="/" passHref>
+                    <Link href="/start" passHref>
                         <Typography
                             variant="h5"
                             noWrap
