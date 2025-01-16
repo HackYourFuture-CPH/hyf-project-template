@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { useRouter} from "next/navigation";
 
 const pages = ['Start', 'Om Os', 'Test', 'Mine Resultater', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Login'];
+const settings = ['Profil', 'Konto', 'Dashboard', 'Log ind'];
 
 function ResponsiveAppBar() {
 
