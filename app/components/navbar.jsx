@@ -47,7 +47,6 @@ function ResponsiveAppBar() {
                         <Typography
                             variant="h6"
                             noWrap
-                            href="#app-bar-with-responsive-menu"
                             sx={{
                                 mr: 2,
                                 display: {xs: 'none', md: 'flex'},
@@ -100,7 +99,6 @@ function ResponsiveAppBar() {
                         <Typography
                             variant="h5"
                             noWrap
-                            href="#app-bar-with-responsive-menu"
                             sx={{
                                 mr: 2,
                                 display: {xs: 'flex', md: 'none'},
@@ -165,7 +163,17 @@ function ResponsiveAppBar() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu} sx={{pl: 3, pr: 8}}>
-                                    <Typography sx={{textAlign: 'center'}}>{setting}</Typography>
+                                    {setting === 'Log ind' ? (
+                                        <Link href="/signin" passHref>
+                                            <Typography
+                                                sx={{textAlign: 'center', textDecoration: 'none', color: 'inherit'}}
+                                            >
+                                                {setting}
+                                            </Typography>
+                                        </Link>
+                                    ) : (
+                                        <Typography sx={{textAlign: 'center'}}>{setting}</Typography>
+                                    )}
                                 </MenuItem>
                             ))}
                         </Menu>
