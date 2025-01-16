@@ -11,11 +11,17 @@ export default function SignUpPage({onClick}) {
         router.push("/signIn");
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        console.log("Form submitted");
+    }
+
     return (
         <section>
             <div className="max-w-3xl mx-auto rounded-2xl bg-white shadow-xl p-7">
                 <h1 className={`${style.heading} text-center`}>Tilmeld dig</h1>
-                <form className="flex flex-col gap-5">
+                <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                     <div className="flex flex-row w-full gap-5 mt-5">
                         <div className="flex flex-col gap-1 flex-grow">
                             <label className="font-bold ml-1" htmlFor="name">Fornavn</label>
@@ -52,7 +58,7 @@ export default function SignUpPage({onClick}) {
                             Privatlivspolitik</p>
                     </div>
                     <div className="flex justify-center mt-3">
-                        <Button styles={`mb-3`} type="submit" value="Tilmeld dig" onClick={onClick}/>
+                        <Button styles={`mb-3`} type="submit" value="Tilmeld dig"/>
                     </div>
                     <div className="flex items-center justify-center gap-5">
                         <p>Har du allerede en konto?</p>
