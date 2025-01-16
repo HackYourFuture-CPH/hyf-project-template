@@ -15,11 +15,18 @@ import MenuItem from '@mui/material/MenuItem';
 import { AccountCircle } from "@mui/icons-material";
 import styles from "../app/globals.css";
 import Link from 'next/link';
+import { useRouter} from "next/navigation";
 
 const pages = ['Start', 'Om Os', 'Test', 'Mine Resultater', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Account', 'Dashboard', 'Login'];
 
 function ResponsiveAppBar() {
+
+    const router = useRouter();
+
+    const handlerSignIn = () => {
+        router.push("/signIn");
+    }
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -148,7 +155,7 @@ function ResponsiveAppBar() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu} sx={{ pl: 3, pr: 8 }}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                                    <Typography onClick={handlerSignIn}  sx={{ textAlign: 'center' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
