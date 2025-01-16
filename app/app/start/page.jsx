@@ -14,7 +14,7 @@ function WelcomePage() {
     const router = useRouter();
 
     const handleSingUp = () => {
-        router.push("/signUp");
+        router.push("/signIn");
     }
 
     const exploreFeatures = [
