@@ -2,7 +2,6 @@ import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
 import Features from "@/components/features";
 import Footer from "@/components/footer";
-import LoginForm from "@/components/LoginForm";
 
 
 export default function Home() {
@@ -13,7 +12,7 @@ export default function Home() {
         <Hero />
         <Features />
       </div>
-      <LoginForm />
+     
       <Footer />
     </div>
   );
