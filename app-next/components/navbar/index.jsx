@@ -3,6 +3,8 @@
 import { PlayCircle, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SignInModal, LogInModal } from "./path-to/SignInModal";
+
 
 export default function Navbar() {
   const scrollToTop = () => {
