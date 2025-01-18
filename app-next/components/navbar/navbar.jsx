@@ -2,6 +2,7 @@ import { PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+
 export default function Navbar() {
   return (
     <header className="py-6 flex justify-between items-center">
