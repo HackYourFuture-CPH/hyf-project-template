@@ -1,7 +1,8 @@
-import HomePage from "@/components/HomePage/HomePage";
-
+import InstructorSection from "../components/instructor-section/InstructorSection";
 export default function Home() {
   return (
-    <HomePage />
+    <main>
+      <InstructorSection />
+    </main>
   );
 }
