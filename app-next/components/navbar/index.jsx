@@ -2,11 +2,13 @@
 
 import { PlayCircle, ArrowUp } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 
 
 export default function Navbar() {
+  const pathname = usePathname();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -36,12 +38,14 @@ export default function Navbar() {
           </Link>
         </div>
       </header>
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-6 right-6 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
-        <ArrowUp className="h-5 w-5" />
-      </button>
+      {pathname === "/movies" && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
+      )}
     </>
   );
 }
