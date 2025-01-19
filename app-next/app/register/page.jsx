@@ -2,6 +2,8 @@
 
 import React from "react";
 import { PlayCircle } from "lucide-react";
+import { register } from "@/action";
+
 
 const SignUpForm = () => {
   return (
@@ -24,13 +26,14 @@ const SignUpForm = () => {
         </p>
 
         {/* Sign Up Form */}
-        <form className="mt-6 space-y-4">
+        <form className="mt-6 space-y-4" action={register}>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               User name
             </label>
             <input
               type="text"
+              name="name"
               placeholder="John Doe"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
@@ -41,6 +44,7 @@ const SignUpForm = () => {
             </label>
             <input
               type="email"
+              name="email"
               placeholder="example@gmail.com"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
@@ -51,6 +55,7 @@ const SignUpForm = () => {
             </label>
             <input
               type="password"
+              name="password"
               placeholder="Create a strong password"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
