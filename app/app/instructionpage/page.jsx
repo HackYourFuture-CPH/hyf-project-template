@@ -64,7 +64,7 @@ const ExamInstructions = () => {
               ændre dine svar.
             </span>
           </div>
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 ">
             <FontAwesomeIcon
               icon={faListCheck}
               className="size-6 text-red-500"
