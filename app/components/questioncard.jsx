@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
 function QuestionCard({ question, answers, onAnswer }) {
   return (
-    <div className="card bg-white rounded-xl p-10 mx-auto w-full max-w-4xl">
-      <h2 className="question text-2xl font-bold mb-10 text-center text-gray-800">
+    <div className="card mx-auto w-full max-w-4xl rounded-xl bg-white p-10">
+      <h2 className="question mb-10 text-center text-2xl font-bold text-gray-800">
         {question}
       </h2>
-      <div className="answers-container flex flex-col gap-3 items-center">
+      <div className="answers-container flex flex-col items-center gap-3">
         {Object.keys(answers).map((key) => (
           <button
             key={key}
-            className="answer w-full max-w-3xl p-1 text-lg bg-gray-100 border p-1 border-gray-100 shadow-md rounded-lg cursor-pointer  focus:outline-none transition-colors duration-300"
+            className="answer w-full max-w-3xl cursor-pointer rounded-lg border border-gray-100 bg-gray-100 p-1 text-lg shadow-md  transition-colors duration-300 focus:outline-none"
             onClick={() => onAnswer(key)}
           >
             {key}: {answers[key]}
