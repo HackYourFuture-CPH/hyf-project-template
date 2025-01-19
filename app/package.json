@@ -20,7 +20,9 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "clsx": "^2.1.1",
+    "knex": "^3.1.0",
     "next": "15.1.5",
+    "pg": "^8.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
