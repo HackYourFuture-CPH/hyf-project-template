@@ -27,7 +27,7 @@ const SignUpForm = () => {
         <form className="mt-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Full Name
+              User name
             </label>
             <input
               type="text"
