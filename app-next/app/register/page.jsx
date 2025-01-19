@@ -76,7 +76,7 @@ const SignUpForm = () => {
         {/* Footer */}
         <p className="text-center text-gray-600 mt-4">
           Already have an account?{" "}
-          <a href="#" className="text-blue-500 hover:underline">
+          <a href="/login" className="text-blue-500 hover:underline">
             Log In
           </a>
         </p>
