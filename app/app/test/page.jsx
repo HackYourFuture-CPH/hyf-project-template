@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import QuestionCard from "../../components/questioncard";
-import PreviousNext from "../../components/prevNext";
+import React, { useState, useEffect } from 'react';
+import QuestionCard from '../../components/questioncard';
+import PreviousNext from '../../components/prevNext';
 
 function exam() {
   const [questions, setQuestions] = useState([]);
@@ -12,9 +12,9 @@ function exam() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch("http://localhost:5002/questions");
+        const response = await fetch('http://localhost:5002/questions');
         if (!response.ok) {
-          throw new Error("Failed to fetch questions");
+          throw new Error('Failed to fetch questions');
         }
         const data = await response.json();
 
@@ -23,7 +23,7 @@ function exam() {
           .slice(0, 40);
         setQuestions(shuffledQuestions);
       } catch (error) {
-        console.error("Error fetching questions:", error);
+        console.error('Error fetching questions:', error);
       }
     };
 
@@ -58,8 +58,8 @@ function exam() {
   const answers = currentQuestion.answers;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-white">
-      <div className="card bg-white rounded-xl p-10 mx-auto w-full max-w-4xl">
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="card mx-auto w-full max-w-4xl rounded-xl bg-white p-10">
         <QuestionCard
           question={currentQuestion.question}
           answers={answers}
@@ -74,7 +74,7 @@ function exam() {
             onNext={handleNext}
           />
         </div>
-        <div className="page-counter text-sm text-gray-600 text-center mt-5">
+        <div className="page-counter mt-5 text-center text-sm text-gray-600">
           <strong>
             {currentQuestionIndex + 1} / {questions.length}
           </strong>

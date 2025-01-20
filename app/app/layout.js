@@ -1,17 +1,17 @@
-import "./globals.css";
 
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
+import './globals.css';
+import Navbar from '@/components/navbar';
 
 export const metadata = {
-  title: "DKTestPrep",
+  title: 'HackYourFuture',
+
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar/>
+        <Navbar />
         {children}
         <Footer />
       </body>
