@@ -1,10 +1,9 @@
 import User from "../models/user-model.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 const createNewUser = async (req, res) => {
   const { name, email, password, role } = req.value.body;
-  console.log("received below info", req.body);
   const createdAt = new Date();
 
   try {
@@ -22,7 +21,6 @@ const createNewUser = async (req, res) => {
       createdAt,
       role,
     });
-    console.log("user created :", user);
     res.status(201).json({
       message: "User created successfully!",
       user,

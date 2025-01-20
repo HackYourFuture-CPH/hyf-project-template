@@ -4,9 +4,8 @@ import bcrypt from "bcrypt";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const loginHandler = async (req, res) => {
-  console.log("received info");
   const { email, password } = req.value.body;
-  
+
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -32,6 +31,11 @@ export const loginHandler = async (req, res) => {
       success: true,
       message: "Login successful",
       token: token,
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     return res.status(500).json({

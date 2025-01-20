@@ -4,7 +4,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const authenticateToken = (req, res, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-  console.log("token :", token);
   if (!token) {
     return res.status(403).json({ error: "Access denied" });
   }
@@ -13,7 +12,6 @@ const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ error: "Invalid token" });
     }
-    console.log("after jwt verified", user);
     req.user = user;
     next();
   });
