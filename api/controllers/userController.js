@@ -3,12 +3,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const createNewUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role } = req.value.body;
   console.log("received below info", req.body);
   const createdAt = new Date();
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ message: "All fields must be provided" });
-  }
+  
   try {
     const existingUser = await User.findOne({ where: { email } });
 
@@ -44,22 +42,6 @@ const findUserDetails = async (req, res) => {
     return res.status(401).json({ message: "JWT must be provided" });
   }
   try {
-    // const decoded = jwt.verify(token, JWT_SECRET);
-    // console.log("decoded data", decoded);
-    // const userId = decoded.sub;
-    // // Find the user based on the decoded token (usually using user ID)
-    // const user = await User.findOne({ where: { id: userId } });
-    // console.log("User from id :", user);
-    // if (!user) {
-    //   return res.status(404).json({ message: "user not found" });
-    // }
-    // return {
-    //   id: user.id,
-    //   name: user.name,
-    //   email: user.email,
-    //   role: user.role,
-    // };
-    // res.status(200).json(user);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded || !decoded.sub) {
       throw new Error("Invalid token format");

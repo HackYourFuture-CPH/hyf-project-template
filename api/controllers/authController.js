@@ -5,10 +5,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const loginHandler = async (req, res) => {
   console.log("received info");
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(404).json({ message: "Provide email and password" });
-  }
+  const { email, password } = req.value.body;
+  
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
