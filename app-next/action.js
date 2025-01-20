@@ -1,8 +1,10 @@
+
 "use server";
 
 import connection from "./lib/database_client";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+
 
 export async function register(formData) {
   const name = formData.get("name");
@@ -19,7 +21,7 @@ export async function register(formData) {
 
   console.log("User successfully registered:", { username: name, email });
 
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
 
   await cookieStore.set({
     name: "username",
@@ -34,6 +36,7 @@ export async function register(formData) {
   redirect("/");
 }
 
+
 export async function login(formData) {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -45,7 +48,7 @@ export async function login(formData) {
   if (user) {
     console.log("User found:", user);
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
 
     await cookieStore.set({
       name: "username",
@@ -64,6 +67,25 @@ export async function login(formData) {
   }
 }
 
+
+export async function logout() {
+  const cookieStore = cookies();
+
+  await cookieStore.set({
+    name: "username",
+    value: "",
+    httpOnly: false,
+    secure: false,
+    path: "/",
+    expires: new Date(0), 
+  });
+
+  console.log("User successfully logged out");
+
+  redirect("/");
+}
+
+
 export async function updateAvatar(userId, avatarUrl) {
   try {
     await connection("user")
@@ -77,6 +99,7 @@ export async function updateAvatar(userId, avatarUrl) {
     throw new Error("Failed to update avatar.");
   }
 }
+
 
 export async function getUserProfile(userId) {
   try {

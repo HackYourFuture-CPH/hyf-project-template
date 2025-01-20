@@ -1,7 +1,11 @@
+
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { logout } from "../../action"
+
+ 
 
 export default function Profile() {
   const router = useRouter();
@@ -32,10 +36,12 @@ export default function Profile() {
     }
   };
 
-  const handleLogout = () => {
-    document.cookie =
-      "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await logout(); 
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const handleCloseForm = () => {
@@ -44,7 +50,6 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-900 to-black text-white flex justify-center items-center relative">
-      
       <button
         onClick={handleCloseForm}
         className="absolute top-4 right-4 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md shadow text-sm transition transform hover:scale-105"
@@ -126,3 +131,4 @@ export default function Profile() {
     </div>
   );
 }
+
