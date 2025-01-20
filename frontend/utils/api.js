@@ -10,10 +10,8 @@ export async function handleApiResponse(
   onErrorCallback
 ) {
   try {
-    console.log("Handling API response...");
     if (response.ok) {
       const result = await response.json();
-      console.log("API response successful, data:", result);
       if (onSuccessCallback) {
         onSuccessCallback(result);
       } else {
@@ -21,12 +19,6 @@ export async function handleApiResponse(
       }
       return result;
     } else {
-      // const errorText = await response.text();
-      // if (onErrorCallback) {
-      //   onErrorCallback(errorText);
-      // } else {
-      //   toast.error(errorText || "Something went wrong. Please try again.");
-      // }
       const errorText = await response.text();
       if (errorText) {
         if (onErrorCallback) {

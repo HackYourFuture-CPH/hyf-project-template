@@ -25,43 +25,26 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await makePostRequest(
-        "api/login",
-        formData,
-        { credentials: "include" },
-        async () => {
-          //console.log("Login successful, now getting user info...");
+      const userInfo = await makePostRequest("api/login", formData, {
+        credentials: "include",
+      });
+      const { user } = userInfo;
 
-          const userInfo = await makeGetRequest(
-            "api/user",
-            { credentials: "include" },
-            (result) => {
-              console.log("User Info: ", result);
-            },
-            (error) => {
-              console.log("Error: ", error);
-            }
-          );
-          console.log("User info received:", userInfo);
+      // Set cookies
+      Cookies.set("userName", user.name);
+      Cookies.set("userRole", user.role);
+      Cookies.set("userEmail", user.email);
 
-          // Set cookies
-          Cookies.set("userName", userInfo.name);
-          Cookies.set("userRole", userInfo.role);
-          Cookies.set("userId", userInfo.id);
-          Cookies.set("userEmail", userInfo.email);
+      toast.success("Logged in successfully! 🎉");
 
-          toast.success("Logged in successfully! 🎉");
-
-          // Redirect based on role
-          const dashboardPath = returnPathByRole(userInfo.role);
-          console.log("Redirecting to:", dashboardPath);
-          window.location.replace(dashboardPath);
-        }
-      );
-      setIsLoading(false);
+      // Redirect based on role
+      const dashboardPath = returnPathByRole(user.role);
+      window.location.replace(dashboardPath);
     } catch (error) {
       console.error("Error during login process:", error);
       toast.error("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
