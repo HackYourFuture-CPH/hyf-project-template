@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'prop-types';
 
 export default function Explore({ icon, title }) {
   return (
@@ -7,8 +8,13 @@ export default function Explore({ icon, title }) {
         <div className="flex size-[60px] items-center justify-center rounded-full bg-blue-500 p-3">
           <FontAwesomeIcon className="w-10 text-blue-100" icon={icon} />
         </div>
-        <h3 className="text-l font-semibold">{title}</h3>
+        <h3 className="text-lg font-semibold">{title}</h3>
       </div>
     </>
   );
 }
+
+Explore.propTypes = {
+  icon: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+};
