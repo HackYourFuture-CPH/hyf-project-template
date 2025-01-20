@@ -1,68 +1,3 @@
-/*"use server";
-
-import connection from "./lib/database_client";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-
-export async function register(formData) {
-  const name = formData.get("name");
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  console.log("Registration data:", name, email, password);
-
-  await connection("user").insert({
-    username: name,
-    email,
-    password,
-  });
-
-  console.log("User successfully registered:", { username: name, email });
-
-  const cookieStore = await cookies();
-
-  await cookieStore.set({
-    name: "username",
-    value: name,
-    httpOnly: false,
-    secure: false,
-    path: "/",
-  });
-
-  console.log("Cookie successfully set for:", name);
-
-  redirect("/");
-}
-
-export async function login(formData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  console.log("Login attempt with:", email, password);
-
-  const user = await connection("user").where({ email, password }).first();
-
-  if (user) {
-    console.log("User found:", user);
-
-    const cookieStore = await cookies();
-
-    await cookieStore.set({
-      name: "username",
-      value: user.username,
-      httpOnly: false,
-      secure: false,
-      path: "/",
-    });
-
-    console.log("Cookie set successfully for:", user.username);
-
-    redirect("/");
-  } else {
-    console.error("Invalid credentials for email:", email);
-    throw new Error("Invalid credentials");
-  }
-}*/
 "use server";
 
 import connection from "./lib/database_client";
@@ -162,4 +97,3 @@ export async function getUserProfile(userId) {
     throw new Error("Failed to fetch profile.");
   }
 }
-
