@@ -6,7 +6,7 @@ const createNewUser = async (req, res) => {
   const { name, email, password, role } = req.value.body;
   console.log("received below info", req.body);
   const createdAt = new Date();
-  
+
   try {
     const existingUser = await User.findOne({ where: { email } });
 
@@ -34,24 +34,13 @@ const createNewUser = async (req, res) => {
   }
 };
 
-//function to get user details from token
+// Route handler for fetching user details
 const findUserDetails = async (req, res) => {
-  const token = req.cookies.token || req.body.token;
-  if (!token) {
-    console.error("No token provided");
-    return res.status(401).json({ message: "JWT must be provided" });
-  }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded || !decoded.sub) {
-      throw new Error("Invalid token format");
-    }
-    const userId = decoded.sub;
-    //console.log("Decoded token: " + JSON.stringify(decoded));
-
-    const user = await User.findOne({ where: { id: userId } });
+    // `req.user` comes from the middleware
+    const user = await User.findOne({ where: { id: req.user.sub } });
     if (!user) {
-      throw new Error("User not found");
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res.status(200).json({
