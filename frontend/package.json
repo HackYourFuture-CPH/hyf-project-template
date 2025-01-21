@@ -21,8 +21,9 @@
     "@mui/material": "^6.1.7",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-slider": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.11.17",
@@ -40,8 +41,7 @@
     "shadcn-ui": "^0.9.3",
     "sharp": "^0.33.5",
     "simple-icons": "^13.18.0",
-    "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7",
+    "tailwind-merge": "^2.6.0",
     "undici-types": "^6.20.0"
   },
   "devDependencies": {
