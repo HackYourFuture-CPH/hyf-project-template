@@ -12,27 +12,47 @@
     "dev": "nodemon src/index.mjs",
     "start": "node src/index.mjs",
     "format": "npx prettier . --write",
-    "check": "npx eslint . --fix"
+    "check": "npx eslint . --fix",
+    "test": "jest; npx mocha test/api.test.cjs"
   },
   "dependencies": {
+    "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
-    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
-    "mongoose": "^8.9.3",
-    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.10.0",
-    "pg": "^8.11.5"
+    "pdf-lib": "^1.17.1",
+    "pdfkit": "^0.15.1",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "prop-types": "^15.8.1",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "swagger-test-templates": "^1.6.0",
+    "swagger-ui-dist": "^5.18.2"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
     "@eslint/js": "^9.0.0",
+    "babel-jest": "^29.7.0",
+    "chai": "^5.1.2",
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
+    "jest": "^29.7.0",
+    "mocha": "^10.8.2",
     "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "supertest": "^7.0.0"
+  },
+  "eslintConfig": {
+    "extends": []
   }
 }
