@@ -28,7 +28,7 @@ const Enrollment = sequelize.define("Enrollment", {
     onDelete: "CASCADE",
   },
   progress: {
-    type: DataTypes.ARRAY, // Store progress percentage (0-100)
+    type: DataTypes.ARRAY, 
     allowNull: false,
     defaultValue: 0,
   },
