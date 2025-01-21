@@ -1,10 +1,10 @@
 import HeroSection from "./_components/HomePageComponents/Hero";
-import CategorySection from "./_components/HomePageComponents/CategorySection";
+import CategoryTabs from "./_components/HomePageComponents/CategoryTabs";
 export default function Home() {
   return (
     <div>
       <HeroSection />
-      <CategorySection />
+      <CategoryTabs />
     </div>
   );
 }
