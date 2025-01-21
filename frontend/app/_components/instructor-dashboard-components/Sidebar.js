@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FaBars, FaHome, FaSignOutAlt, FaUserAlt } from "react-icons/fa";
 import { MdOutlineCastForEducation } from "react-icons/md";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import LogOutButton from "../authComponent/LogOutButton";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
@@ -13,12 +14,13 @@ const Sidebar = () => {
         return <DashboardContent />;
       case "profile":
         return <DashboardContent />;
-      case "enrolled":
-        return <DashboardContent />;
+      case "logout":
+        return <LogOutButton />;
       default:
         return <DashboardContent />;
     }
   };
+
   return (
     <div className="flex">
       <div
@@ -26,7 +28,6 @@ const Sidebar = () => {
           isOpen ? "w-64" : "wd-20"
         }`}
       >
-
         <div className="flex items-center justify-center p-4">
           <h2
             className={`text-xl font-bold md:block ${
@@ -53,17 +54,6 @@ const Sidebar = () => {
               <FaHome size={24} />
               <span className={`ml-4 md:block ${isOpen ? "block" : "hidden"}`}>
                 Home
-              </span>
-            </li>
-            <li
-              className={`flex items-center p-4 hover:bg-gray-700 cursor-pointer ${
-                activeTab === "enrolled" ? "bg-gray-700" : ""
-              }`}
-              onClick={() => setActiveTab("enrolled")}
-            >
-              <MdOutlineCastForEducation size={24} />
-              <span className={`ml-4 md:block ${isOpen ? "block" : "hidden"}`}>
-                Enrolled Courses
               </span>
             </li>
             <li
