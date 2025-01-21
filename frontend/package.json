@@ -24,6 +24,10 @@
     "@radix-ui/react-slider": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+   
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.11.17",
