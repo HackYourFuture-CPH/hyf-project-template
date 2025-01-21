@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const Button = ({ styles, value, onClick, type = 'button' }) => {
   return (
@@ -12,6 +12,13 @@ const Button = ({ styles, value, onClick, type = 'button' }) => {
       {value}
     </button>
   );
+};
+
+Button.propTypes = {
+  styles: PropTypes.string,
+  value: PropTypes.node.isRequired,
+  onClick: PropTypes.func.isRequired,
+  type: PropTypes.string,
 };
 
 export default Button;

@@ -13,7 +13,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { AccountCircle } from '@mui/icons-material';
-import styles from '../app/globals.css';
 import Link from 'next/link';
 
 const pages = ['Start', 'Om Os', 'Test', 'Mine Resultater', 'Blog'];
@@ -85,7 +84,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              {pages.map((page, index) => (
+              {pages.map((page) => (
                 <MenuItem
                   key={page}
                   onClick={handleCloseNavMenu}
