@@ -1,42 +1,9 @@
 import React from "react";
 import Image from "next/image";
+import { courses } from "../../../constants";
 
 const CourseGrid = () => {
-  const courses = [
-    {
-      image: "/js.png",
-      name: "Introduction to Javascript",
-      description: "Learn Javascript FullStack",
-      instructor: "HackYourFuture",
-      price: "20.00",
-      sellingprice: "10.00",
-    },
-    {
-      image: "/js.png",
-      name: "Introduction to Javascript",
-      description: "Learn Javascript FullStack",
-      instructor: "Google",
-      price: "20.00",
-      sellingprice: "10.00",
-    },
-    {
-      image: "/js.png",
-      name: "Introduction to Javascript",
-      description: "Learn Javascript FullStack",
-      instructor: "IBM",
-      price: "20.00",
-      sellingprice: "10.00",
-    },
-    {
-      image: "/js.png",
-      name: "Introduction to Javascript",
-      description: "Learn Javascript FullStack",
-      instructor: "Meta",
-      price: "20.00",
-      sellingprice: "10.00",
-    },
-  ];
-
+  
   return (
     <div className="container my-10 mx-auto">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
