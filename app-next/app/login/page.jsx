@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import React from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
@@ -7,8 +7,12 @@ import { login } from "@/action";
 
 const LoginForm = () => {
   const googleLogin = useGoogleLogin({
-    onSuccess: (response) => console.log("Google Login Success:", response),
-    onError: () => console.error("Google Login Failed"),
+    onSuccess: (response) => {
+      console.log("Google Login Success:", response);
+    },
+    onError: () => {
+      console.error("Google Login Failed");
+    },
   });
 
   const handleAppleLogin = () => {
@@ -72,7 +76,10 @@ const LoginForm = () => {
                   Remember me
                 </label>
               </div>
-              <a href="#" className="text-blue-500 text-sm hover:underline">
+              <a
+                href="/forgotPassword"
+                className="text-blue-500 text-sm hover:underline"
+              >
                 Forgot password?
               </a>
             </div>
@@ -89,7 +96,7 @@ const LoginForm = () => {
 
         <div className="space-y-2">
           <button
-            onClick={() => googleLogin()}
+            onClick={googleLogin}
             className="flex items-center justify-center w-full bg-white text-gray-700 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
           >
             <svg
@@ -160,7 +167,7 @@ const LoginForm = () => {
 };
 
 const App = () => (
-  <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+  <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
     <LoginForm />
   </GoogleOAuthProvider>
 );
