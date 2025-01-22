@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/authRouter.js";
 import courseRouter from "./routers/courseRouter.js";
+
 const app = express();
 
 app.use(
