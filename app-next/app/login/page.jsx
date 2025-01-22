@@ -5,8 +5,6 @@ import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { PlayCircle } from "lucide-react";
 import { login } from "@/action";
 
-
-
 const LoginForm = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
@@ -78,7 +76,10 @@ const LoginForm = () => {
                   Remember me
                 </label>
               </div>
-              <a href="/forgotPassword" className="text-blue-500 text-sm hover:underline">
+              <a
+                href="/forgotPassword"
+                className="text-blue-500 text-sm hover:underline"
+              >
                 Forgot password?
               </a>
             </div>
@@ -164,7 +165,6 @@ const LoginForm = () => {
     </div>
   );
 };
-
 
 const App = () => (
   <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
