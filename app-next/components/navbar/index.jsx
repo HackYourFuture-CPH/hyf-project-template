@@ -20,7 +20,16 @@ export default function Navbar() {
 
           <h1 className="text-2xl font-bold text-blue-500">MovieApp</h1>
         </div>
+
         <div className="space-x-4">
+          <Link href="/room">
+            <Button
+              variant="ghost"
+              className="text-gray-300 hover:text-blue-400"
+            >
+              Create Room
+            </Button>
+          </Link>
           <Link href="/login">
             <Button
               variant="ghost"
