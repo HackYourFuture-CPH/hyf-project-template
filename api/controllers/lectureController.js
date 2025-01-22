@@ -8,7 +8,7 @@ const createLecture = async (req, res) => {
     // Ensure the course exists
     const course = await Course.findByPk(courseId);
     if (!course) {
-      return res.status(404).json({ message: "Course not found." });
+      return res.status(404).json({ message: "You do not own this course." });
     }
 
     // Add the lecture to the course

@@ -4,7 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/authRouter.js";
-
+import courseRouter from "./routers/courseRouter.js";
 const app = express();
 
 app.use(
@@ -20,6 +20,7 @@ app.use(cookieParser());
 const apiRouter = express.Router();
 
 apiRouter.use("/", authRouter);
+apiRouter.use("/courses", courseRouter);
 
 app.use("/api", apiRouter);
 
