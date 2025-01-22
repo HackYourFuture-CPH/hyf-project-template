@@ -1,8 +1,6 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
-
-
 import {
   Maximize,
   Minimize,
@@ -13,15 +11,15 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { Slider } from "@radix-ui/react-slider";
+import { Slider } from "@/components/ui/Slider";
 import { Button } from "@mui/material";
+import Image from "next/image";
 
 function VideoPlayer({
   width = "100%",
   height = "100%",
   url,
-  onProgressUpdate,
-  progressData,
+
 }) {
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
@@ -118,14 +116,7 @@ function VideoPlayer({
     };
   }, []);
 
-  useEffect(() => {
-    if (played === 1) {
-      onProgressUpdate({
-        ...progressData,
-        progressValue: played,
-      });
-    }
-  }, [played]);
+
 
   return (
     <div
@@ -205,7 +196,7 @@ function VideoPlayer({
                 )}
               </Button>
               <Slider
-                value={[volume * 1]}
+                value={[volume * 100]}
                 max={100}
                 step={1}
                 onValueChange={(value) => handleVolumeChange([value[0] / 100])}
@@ -229,6 +220,9 @@ function VideoPlayer({
                   <Maximize className="h-30 w-6" />
                 )}
               </Button>
+              <div>
+                <Image src="/upSkillLogo_nobg.png" width={100} height={100} alt="UpSkillLogo"/>
+              </div>
             </div>
           </div>
         </div>
