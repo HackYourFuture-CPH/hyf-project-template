@@ -1,4 +1,3 @@
-
 "use server";
 
 import connection from "./lib/database_client";
@@ -12,7 +11,6 @@ export async function register(formData) {
 
   console.log("Registration data:", name, email, password);
 
-
   await connection("user").insert({
     username: name,
     email,
@@ -21,8 +19,8 @@ export async function register(formData) {
 
   console.log("User successfully registered:", { username: name, email });
 
-  
-  const cookieStore = cookies();
+  // Используем await перед cookies()
+  const cookieStore = await cookies();
 
   await cookieStore.set({
     name: "username",
@@ -34,7 +32,6 @@ export async function register(formData) {
 
   console.log("Cookie successfully set for:", name);
 
-  
   redirect("/login");
 }
 
@@ -44,14 +41,13 @@ export async function login(formData) {
 
   console.log("Login attempt with:", email, password);
 
-
   const user = await connection("user").where({ email, password }).first();
 
   if (user) {
     console.log("User found:", user);
 
-   
-    const cookieStore = cookies();
+    // Используем await перед cookies()
+    const cookieStore = await cookies();
 
     await cookieStore.set({
       name: "username",
@@ -63,7 +59,6 @@ export async function login(formData) {
 
     console.log("Cookie set successfully for:", user.username);
 
-    
     redirect("/");
   } else {
     console.error("Invalid credentials for email:", email);
@@ -72,9 +67,9 @@ export async function login(formData) {
 }
 
 export async function logout() {
-  const cookieStore = cookies();
+  // Используем await перед cookies()
+  const cookieStore = await cookies();
 
-  
   await cookieStore.set({
     name: "username",
     value: "",
@@ -86,13 +81,11 @@ export async function logout() {
 
   console.log("User successfully logged out");
 
- 
   redirect("/");
 }
 
 export async function updateAvatar(userId, avatarUrl) {
   try {
-   
     await connection("user")
       .where({ id: userId })
       .update({ avatar_url: avatarUrl });
@@ -107,7 +100,6 @@ export async function updateAvatar(userId, avatarUrl) {
 
 export async function getUserProfile(userId) {
   try {
-    
     const user = await connection("user").where({ id: userId }).first();
 
     if (!user) {
@@ -126,3 +118,24 @@ export async function getUserProfile(userId) {
   }
 }
 
+export async function resetPassword(formData) {
+  const token = formData.get("token");
+  const password = formData.get("password");
+
+  console.log("Reset password attempt with token:", token);
+
+  const user = await connection("user").where({ reset_token: token }).first();
+
+  if (!user) {
+    console.error("Invalid or expired reset token");
+    throw new Error("Invalid or expired reset token");
+  }
+
+  await connection("user").where({ reset_token: token }).update({
+    password,
+    reset_token: null,
+  });
+
+  console.log(`Password reset successfully for user: ${user.email}`);
+  return { success: true };
+}
