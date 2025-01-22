@@ -3,7 +3,7 @@ import User from "../models/user-model.js";
 import Lecture from "../models/lecture-model.js";
 const createCourse = async (req, res) => {
   const instructorId = req.user.id;
-  const { title, description, imageUrl } = req.body;
+  const { title, description, price, imageUrl } = req.body;
 
   try {
     // Ensure the instructor exists and is valid
@@ -22,6 +22,7 @@ const createCourse = async (req, res) => {
       description,
       instructorId,
       imageUrl,
+      price,
     });
 
     res.status(201).json(course);
@@ -85,22 +86,22 @@ const getCoursesByInstructor = async (req, res) => {
 
 const getCourseById = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
 
     const course = await Course.findByPk(id, {
       include: [
         {
           model: User,
-          as: "instructor", 
-          attributes: ["id", "name", "email"], 
+          as: "instructor",
+          attributes: ["id", "name", "email"],
         },
         {
           model: Lecture,
-          as: "lectures", 
-          attributes: ["id", "title", "description","videoUrl", "createdAt"], 
+          as: "lectures",
+          attributes: ["id", "title", "description", "videoUrl", "createdAt"],
         },
       ],
-      attributes: ["id", "title", "description", "imageUrl", "createdAt"], 
+      attributes: ["id", "title", "description", "imageUrl", "createdAt"],
     });
 
     if (!course) {
@@ -116,4 +117,4 @@ const getCourseById = async (req, res) => {
   }
 };
 
-export { createCourse, getCoursesByInstructor, getAllCourses , getCourseById};
+export { createCourse, getCoursesByInstructor, getAllCourses, getCourseById };

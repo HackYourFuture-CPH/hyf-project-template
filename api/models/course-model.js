@@ -14,7 +14,7 @@ const Course = sequelize.define("Course", {
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: true,
+    allowNull: false,
   },
   instructorId: {
     type: DataTypes.INTEGER,
@@ -25,9 +25,13 @@ const Course = sequelize.define("Course", {
     },
     onDelete: "CASCADE",
   },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   imageUrl: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
