@@ -1,7 +1,8 @@
+"use client"
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
-import { Slider } from "../ui/slider";
-import { Button } from "../ui/button";
+
+
 import {
   Maximize,
   Minimize,
@@ -12,6 +13,8 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
+import { Slider } from "@radix-ui/react-slider";
+import { Button } from "@mui/material";
 
 function VideoPlayer({
   width = "100%",
@@ -202,7 +205,7 @@ function VideoPlayer({
                 )}
               </Button>
               <Slider
-                value={[volume * 100]}
+                value={[volume * 1]}
                 max={100}
                 step={1}
                 onValueChange={(value) => handleVolumeChange([value[0] / 100])}
@@ -221,9 +224,9 @@ function VideoPlayer({
                 onClick={handleFullScreen}
               >
                 {isFullScreen ? (
-                  <Minimize className="h-6 w-6" />
+                  <Minimize className="30-6 w-6" />
                 ) : (
-                  <Maximize className="h-6 w-6" />
+                  <Maximize className="h-30 w-6" />
                 )}
               </Button>
             </div>
