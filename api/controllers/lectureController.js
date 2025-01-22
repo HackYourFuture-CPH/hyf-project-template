@@ -1,7 +1,10 @@
 import Lecture from "../models/lecture-model.js";
 import Course from "../models/course-model.js";
 const createLecture = async (req, res) => {
-  const { courseId } = req.params;
+  const courseId = req.params.id;
+  if (!courseId) {
+    return res.status(404).json({ message: "courseID is not found" });
+  }
   const { title, description, videoUrl } = req.body;
 
   try {
@@ -26,4 +29,29 @@ const createLecture = async (req, res) => {
   }
 };
 
-export { createLecture };
+const getLecturesByCourseId = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const course = await Course.findByPk(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course does not exist" });
+    }
+    // Fetch all lectures that belong to the given courseId
+    const lectures = await Lecture.findAll({
+      where: { courseId },
+    });
+
+    if (!lectures || lectures.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No lectures found for this course" });
+    }
+
+    return res.status(200).json(lectures);
+  } catch (error) {
+    console.error("Error fetching lectures:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { createLecture, getLecturesByCourseId };

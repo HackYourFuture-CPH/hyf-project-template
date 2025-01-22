@@ -1,26 +1,119 @@
 import Course from "../models/course-model.js";
 import User from "../models/user-model.js";
+import Lecture from "../models/lecture-model.js";
+const createCourse = async (req, res) => {
+  const instructorId = req.user.id;
+  const { title, description, imageUrl } = req.body;
 
-const createCourse = async (req, res) => {;
-    const instructorId = req.user.id
-    const { title, description, imageUrl } = req.body;
-
-    try {
-      // Ensure the instructor exists and is valid
-      const instructor = await User.findOne({ where: { id: instructorId, role: "instructor" } });
-      if (!instructor) {
-        return res.status(404).json({ message: "Instructor not found or invalid." });
-      }
-  
-      // Create the course
-      const course = await Course.create({ title, description, instructorId, imageUrl });
-  
-      res.status(201).json(course);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error creating course." });
+  try {
+    // Ensure the instructor exists and is valid
+    const instructor = await User.findOne({
+      where: { id: instructorId, role: "instructor" },
+    });
+    if (!instructor) {
+      return res
+        .status(404)
+        .json({ message: "Instructor not found or invalid." });
     }
+
+    // Create the course
+    const course = await Course.create({
+      title,
+      description,
+      instructorId,
+      imageUrl,
+    });
+
+    res.status(201).json(course);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error creating course." });
+  }
 };
 
+const getAllCourses = async (req, res) => {
+  try {
+    // Fetch all courses along with their instructor details
+    const courses = await Course.findAll({
+      include: {
+        model: User,
+        as: "instructor",
+        attributes: ["id", "name", "email"], // Select specific fields for the instructor
+      },
+      attributes: ["id", "title", "description", "imageUrl", "createdAt"], // Select specific fields for the course
+    });
 
-export { createCourse };
+    if (!courses.length) {
+      return res.status(404).json({ message: "No courses found" });
+    }
+
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ error: "Failed to fetch courses" });
+  }
+};
+
+const getCoursesByInstructor = async (req, res) => {
+  try {
+    const instructorId = req.user.sub; // Extracted from the token middleware
+
+    if (!instructorId) {
+      return res
+        .status(404)
+        .json({ message: "Instructor ID not found in token" });
+    }
+
+    // Fetch all courses for this instructor
+    const courses = await Course.findAll({
+      where: { instructorId },
+      attributes: ["id", "title", "description", "imageUrl", "createdAt"], // Include only the required fields
+    });
+
+    if (!courses.length) {
+      return res
+        .status(404)
+        .json({ message: "No courses found for this instructor" });
+    }
+
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ error: "Failed to fetch courses" });
+  }
+};
+
+const getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params; 
+
+    const course = await Course.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "instructor", 
+          attributes: ["id", "name", "email"], 
+        },
+        {
+          model: Lecture,
+          as: "lectures", 
+          attributes: ["id", "title", "description","videoUrl", "createdAt"], 
+        },
+      ],
+      attributes: ["id", "title", "description", "imageUrl", "createdAt"], 
+    });
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    res.status(200).json(course);
+  } catch (error) {
+    console.error("Error fetching course by ID:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the course" });
+  }
+};
+
+export { createCourse, getCoursesByInstructor, getAllCourses , getCourseById};
