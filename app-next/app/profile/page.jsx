@@ -1,11 +1,8 @@
-
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { logout } from "../../action"
-
- 
+import { logout } from "../../action";
 
 export default function Profile() {
   const router = useRouter();
@@ -38,7 +35,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await logout(); 
+      await logout();
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -131,4 +128,3 @@ export default function Profile() {
     </div>
   );
 }
-

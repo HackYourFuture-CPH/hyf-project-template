@@ -19,7 +19,6 @@ export async function register(formData) {
 
   console.log("User successfully registered:", { username: name, email });
 
-  // Используем await перед cookies()
   const cookieStore = await cookies();
 
   await cookieStore.set({
@@ -46,7 +45,6 @@ export async function login(formData) {
   if (user) {
     console.log("User found:", user);
 
-    // Используем await перед cookies()
     const cookieStore = await cookies();
 
     await cookieStore.set({
@@ -67,7 +65,6 @@ export async function login(formData) {
 }
 
 export async function logout() {
-  // Используем await перед cookies()
   const cookieStore = await cookies();
 
   await cookieStore.set({
