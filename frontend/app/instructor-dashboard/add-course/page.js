@@ -2,7 +2,10 @@
 import Button from "@mui/material/Button";
 import { Card, CardContent } from "@/components/ui/card";
 import React, { useState } from "react";
+import { handleFileUpload } from "@/utils/handleFileUpload";
+import { toast } from "react-toastify";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
 import {
   Alert,
   AlertTitle,
@@ -22,22 +25,29 @@ const CreateCourse = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
-
+  const router = useRouter();
   const handleImageChange = (event) => {
     const selectedImage = event.target.files[0];
+
+    // Clean up any previously set preview URL
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
     if (selectedImage && selectedImage.size / (1024 * 1024) > 10) {
       setErrors((prevState) => ({
         ...prevState,
         image: "File size exceeds 10MB limit",
       }));
       setImagePreview(null);
-      event.target.value = "";
+      event.target.value = ""; 
     } else {
       setImage(selectedImage);
-      setImagePreview(URL.createObjectURL(selectedImage));
+      setImagePreview(URL.createObjectURL(selectedImage)); // Create new preview URL
       setErrors((prevState) => ({ ...prevState, image: null }));
     }
   };
+
   const checkForErrors = () => {
     const errors = {};
     if (!title || title.trim() === "") {
@@ -56,18 +66,48 @@ const CreateCourse = () => {
     }
     return errors;
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const errorFields = checkForErrors();
-    console.log("error fields", errorFields);
     if (Object.keys(errorFields).length > 0) {
       setErrors(errorFields);
       setIsLoading(false);
       return;
     }
     try {
-      console.log("submitting data...");
+      const coverImageUrl = await handleFileUpload(image);
+
+      // Send course details to the backend
+      const apiResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            title,
+            description,
+            imageUrl: coverImageUrl,
+            price,
+          }),
+        }
+      );
+      if (apiResponse.ok) {
+        const result = await apiResponse.json();
+        toast.success("Created new course");
+        setTitle("");
+        setDescription("");
+        setPrice("");
+        setImage(null);
+        setImagePreview(null);
+        router.push("/instructor-dashboard");
+      } else {
+        const error = await apiResponse.json();
+        console.error("Error creating the course", error);
+      }
     } catch (error) {
       console.error("error while submitting data", error.message);
     } finally {

@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
           theme="colored"
         />
         {children}
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );

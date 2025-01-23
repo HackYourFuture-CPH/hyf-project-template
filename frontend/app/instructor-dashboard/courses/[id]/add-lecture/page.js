@@ -2,6 +2,8 @@
 import Button from "@mui/material/Button";
 import { Card, CardContent } from "@/components/ui/card";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { handleFileUpload } from "@/utils/handleFileUpload";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Alert,
@@ -14,7 +16,8 @@ import {
 } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 
-const CreateLecture = () => {
+const CreateLecture = ({ params }) => {
+  const { id } = React.use(params);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState(null);
@@ -22,21 +25,53 @@ const CreateLecture = () => {
   const [errors, setErrors] = useState({});
   const [videoPreview, setVideoPreview] = useState(null);
 
-  const handleVideoChange = (event) => {
+const MAX_FILE_SIZE_MB = 200; //maximum file size limit
+
+const handleVideoChange = (event) => {
+  try {
     const selectedVideo = event.target.files[0];
-    if (selectedVideo && selectedVideo.size / (1024 * 1024) > 200) {
+
+    if (!selectedVideo) {
       setErrors((prevState) => ({
         ...prevState,
-        video: "File size exceeds 200MB limit",
+        video: "No file selected",
+      }));
+      return;
+    }
+
+    const fileSizeMB = selectedVideo.size / (1024 * 1024); // Converting file size to MB
+    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+      setErrors((prevState) => ({
+        ...prevState,
+        video: `File size exceeds ${MAX_FILE_SIZE_MB}MB limit`,
       }));
       setVideoPreview(null);
-      event.target.value = "";
-    } else {
-      setVideo(selectedVideo);
-      setVideoPreview(URL.createObjectURL(selectedVideo));
-      setErrors((prevState) => ({ ...prevState, video: null }));
+      setVideo(null); 
+      event.target.value = ""; // Clearing input value
+      return;
     }
-  };
+
+    // Revoke any existing video preview URL to avoid memory leaks
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
+    // Set the new video and preview URL
+    setVideo(selectedVideo);
+    setVideoPreview(URL.createObjectURL(selectedVideo));
+    setErrors((prevState) => ({
+      ...prevState,
+      video: null,
+    }));
+  } catch (error) {
+    console.error("Error handling video upload:", error);
+    setErrors((prevState) => ({
+      ...prevState,
+      video: "An unexpected error occurred. Please try again.",
+    }));
+  }
+};
+
   const checkForErrors = () => {
     const errors = {};
     if (!title || title.trim() === "") {
@@ -52,20 +87,41 @@ const CreateLecture = () => {
     }
     return errors;
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const errorFields = checkForErrors();
-    console.log("error fields", errorFields);
     if (Object.keys(errorFields).length > 0) {
       setErrors(errorFields);
       setIsLoading(false);
       return;
     }
     try {
-      console.log("submitting data...");
+      const videoUrl = await handleFileUpload(video);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${id}/lectures`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description, videoUrl }),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success("Created new lecture ! 🎉");
+        setTitle("");
+        setDescription("");
+        setVideo(null);
+        setVideoPreview(null);
+        router.push("/instructor-dashboard");
+      } else {
+        const { message } = await response.json();
+        console.error(`Error details: ${message}`);
+      }
     } catch (error) {
-      console.error("error while submitting data", error.message);
+      console.error("Error creating lecture:", error);
     } finally {
       setIsLoading(false);
     }

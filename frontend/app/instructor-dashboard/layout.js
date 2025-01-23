@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
     <div className="flex flex-col h-screen ">
       <Navbar/>
       <main
-        className="h-full overflow-hidden relative
+        className="min-h-screen overflow-hidden relative
       bg-gradient-to-r from-white via-[#f7f9fc] to-[#e9f3ff]"
       >
         {children}
