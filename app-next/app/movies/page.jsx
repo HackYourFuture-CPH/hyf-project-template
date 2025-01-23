@@ -24,6 +24,9 @@ export default function ExplorePage() {
   const [movieDetails, setMovieDetails] = useState(null);
   const [favorites, setFavorites] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
+
   const fetchMovies = async (e) => {
     if (e) e.preventDefault();
     setError("");
@@ -42,10 +45,12 @@ export default function ExplorePage() {
         ...(year && { primary_release_year: year }),
         ...(language && { with_original_language: language }),
         sort_by: "popularity.desc",
+        page: currentPage, 
       });
 
       const movieResponse = await axios.get(`${endpoint}?${params}`);
       setMovies(movieResponse.data.results);
+      setTotalPages(movieResponse.data.total_pages); 
     } catch (err) {
       setError("Error fetching movie data.");
       console.error(err);
@@ -53,6 +58,68 @@ export default function ExplorePage() {
       setLoading(false);
     }
   };
+
+  
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchMovies(); 
+  };
+ 
+  const Pagination = ({ totalPages, currentPage, onPageChange }) => {
+    const [visiblePages] = useState(4); 
+    const pageNumbers = [];
+
+    
+    const startPage = Math.max(currentPage - Math.floor(visiblePages / 2), 1);
+    const endPage = Math.min(startPage + visiblePages - 1, totalPages);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    const handlePageChange = (page) => {
+      onPageChange(page);
+    };
+
+    return (
+      <div className="flex justify-center mt-8">
+        {/* Previous Button */}
+        {currentPage > 1 && (
+          <Button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="bg-gray-700 text-white px-4 py-2 mx-1"
+          >
+            Previous
+          </Button>
+        )}
+
+        {/* Render the limited page numbers */}
+        {pageNumbers.map((number) => (
+          <Button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={`${
+              currentPage === number ? "bg-blue-600" : "bg-gray-700"
+            } text-white px-4 py-2 mx-1`}
+          >
+            {number}
+          </Button>
+        ))}
+
+        {/* Next Button */}
+        {currentPage < totalPages && (
+          <Button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="bg-gray-700 text-white px-4 py-2 mx-1"
+          >
+            Next
+          </Button>
+        )}
+      </div>
+    );
+  };
+
+  
 
   const fetchMovieDetails = async (movieId) => {
     try {
@@ -109,9 +176,9 @@ export default function ExplorePage() {
             <Button
               onClick={() => setShowFilters(!showFilters)}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-white"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className="h-4 w-4 text-white" />
               Filters
             </Button>
           </div>
@@ -122,7 +189,7 @@ export default function ExplorePage() {
               showFilters ? "translate-x-0" : "translate-x-full"
             } z-50`}
           >
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 ">
               <h2 className="text-xl font-semibold text-white">Filters</h2>
               <button
                 onClick={() => setShowFilters(false)}
@@ -269,7 +336,7 @@ export default function ExplorePage() {
                       favorites.includes(movie.id) ? "default" : "outline"
                     }
                     size="sm"
-                    className="w-full flex items-center justify-center gap-2"
+                    className="w-full flex items-center justify-center gap-2 text-white"
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavorite(movie.id);
@@ -421,6 +488,12 @@ export default function ExplorePage() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination 
+         totalPages={totalPages}
+         currentPage={currentPage}
+         onPageChange={handlePageChange}/>
       </div>
       <Footer />
     </div>
