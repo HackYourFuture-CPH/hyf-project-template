@@ -1,6 +1,15 @@
 'use client';
 
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${secs
+    .toString()
+    .padStart(2, '0')}`;
+}
 
 function CountdownTimer({ duration, onTimeUp }) {
   const [timeLeft, setTimeLeft] = useState(duration);
@@ -19,14 +28,6 @@ function CountdownTimer({ duration, onTimeUp }) {
 
     return () => clearInterval(timer);
   }, [onTimeUp]);
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs
-      .toString()
-      .padStart(2, '0')}`;
-  };
 
   return (
     <div className="text-center text-lg font-bold">
