@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 function QuestionCard({ question, answers, selectedAnswer, onAnswer }) {
   return (
@@ -10,11 +11,15 @@ function QuestionCard({ question, answers, selectedAnswer, onAnswer }) {
         <div className="flex w-full flex-col items-center gap-3">
           {Object.keys(answers).map((key) => (
             <button
-              className={`w-full max-w-3xl cursor-pointer rounded-lg border p-2 text-lg shadow-md transition-colors duration-300 focus:outline-none ${
-                selectedAnswer === key
-                  ? 'border-gray-100  bg-gray-400 text-black'
-                  : 'border-gray-100 bg-gray-100 text-gray-800'
-              }`}
+              className={clsx(
+                'w-full max-w-3xl cursor-pointer rounded-lg border p-2 text-lg shadow-md transition-colors duration-300 focus:outline-none',
+                {
+                  'border-gray-100 bg-gray-400 text-black':
+                    selectedAnswer === key,
+                  'border-gray-100 bg-gray-100 text-gray-800':
+                    selectedAnswer !== key,
+                },
+              )}
               onClick={() => onAnswer(key)}
               key={key}
             >
