@@ -3,6 +3,7 @@ import { useState } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
+import Chat from "@/components/Chat";
 
 export default function WatchPage() {
   const [videoUrl, setVideoUrl] = useState("");
@@ -57,6 +58,9 @@ export default function WatchPage() {
             ></iframe>
           </div>
         )}
+        <div className="w-1/3 bg-gray-900 text-gray-300 rounded-lg shadow-lg p-4">
+          <Chat />
+        </div>
       </main>
       <Footer />
     </div>
