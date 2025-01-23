@@ -10,12 +10,12 @@ export default function Navbar() {
         <h1 className="text-2xl font-bold text-blue-500">GroupApp</h1>
       </div>
       <div className="space-x-4">
-        <Link href="/auth/login">
+        <Link href="/login">
           <Button variant="ghost" className="text-gray-300 hover:text-blue-400">
             Login
           </Button>
         </Link>
-        <Link href="/auth/signup">
+        <Link href="/signup">
           <Button className="bg-blue-500 text-white hover:bg-blue-600">
             Sign Up
           </Button>
