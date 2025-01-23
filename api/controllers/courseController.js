@@ -2,7 +2,7 @@ import Course from "../models/course-model.js";
 import User from "../models/user-model.js";
 import Lecture from "../models/lecture-model.js";
 const createCourse = async (req, res) => {
-  const instructorId = req.user.id;
+  const instructorId = req.user.sub;
   const { title, description, price, imageUrl } = req.body;
 
   try {
@@ -12,7 +12,7 @@ const createCourse = async (req, res) => {
     });
     if (!instructor) {
       return res
-        .status(404)
+        .status(403)
         .json({ message: "Instructor not found or invalid." });
     }
 
@@ -58,7 +58,6 @@ const getAllCourses = async (req, res) => {
 const getCoursesByInstructor = async (req, res) => {
   try {
     const instructorId = req.user.sub; // Extracted from the token middleware
-
     if (!instructorId) {
       return res
         .status(404)

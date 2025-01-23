@@ -2,6 +2,7 @@ import Lecture from "../models/lecture-model.js";
 import Course from "../models/course-model.js";
 const createLecture = async (req, res) => {
   const courseId = req.params.id;
+  console.log("Course Id lecture:", courseId);
   if (!courseId) {
     return res.status(404).json({ message: "courseID is not found" });
   }
@@ -21,7 +22,6 @@ const createLecture = async (req, res) => {
       description,
       videoUrl,
     });
-
     res.status(201).json(lecture);
   } catch (error) {
     console.error(error);
