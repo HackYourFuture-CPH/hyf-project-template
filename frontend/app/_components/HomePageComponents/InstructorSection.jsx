@@ -6,7 +6,7 @@ const InstructorSection = () => {
     <div className="container mx-auto flex flex-col md:flex-row items-center justify-center bg-white p-8 md:p-12 gap-4 md:gap-8">
       <div className="w-full md:w-1/2 flex justify-center">
         <Image
-          src="/images/instructor.png"
+          src="/instructor.png"
           alt="Instructor Image"
           className="rounded-lg shadow-lg object-contain max-w-full h-auto"
           unoptimized={true}
