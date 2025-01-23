@@ -1,87 +1,88 @@
+/* eslint-disable @next/next/no-img-element -- Disabling because this i am having problems using the optimized component for images */
 'use client';
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowsRotate,
+  faClock,
+  faForward,
+  faListCheck,
+} from '@fortawesome/free-solid-svg-icons';
+import Button from '../../components/Button';
 
-import React, { useState, useEffect } from 'react';
-import QuestionCard from '../../components/questioncard';
-import PreviousNext from '../../components/prevNext';
-
-function exam() {
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState({});
-
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await fetch('http://localhost:5002/questions');
-        if (!response.ok) {
-          throw new Error('Failed to fetch questions');
-        }
-        const data = await response.json();
-
-        const shuffledQuestions = data
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 40);
-        setQuestions(shuffledQuestions);
-      } catch (error) {
-        console.error('Error fetching questions:', error);
-      }
-    };
-
-    fetchQuestions();
-  }, []);
-
-  const handleAnswer = (answer) => {
-    const updatedAnswers = { ...userAnswers, [currentQuestionIndex]: answer };
-    setUserAnswers(updatedAnswers);
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  if (questions.length === 0) {
-    return <div>Loading...</div>;
-  }
-
-  const currentQuestion = questions[currentQuestionIndex];
-  const answers = currentQuestion.answers;
-
+const ExamInstructions = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <div className="card mx-auto w-full max-w-4xl rounded-xl bg-white p-10">
-        <QuestionCard
-          question={currentQuestion.question}
-          answers={answers}
-          onAnswer={handleAnswer}
-        />
-
-        <div>
-          <PreviousNext
-            showPrevious={currentQuestionIndex > 0}
-            showNext={currentQuestionIndex < questions.length - 0}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center rounded-lg bg-gray-100 p-8">
+        <div className="mb-6 flex w-full justify-center">
+          <img
+            src="https://c8.alamy.com/comp/2YXN0R4/edtech-concept-student-undertaking-an-online-test-with-a-ticking-clock-signaling-limited-time-efficient-assessment-in-digital-education-vector-illustration-2YXN0R4.jpg"
+            alt="Exam Instructions"
+            width={500}
+            height={300}
+            className="max-h-60 w-1/2 rounded-lg object-cover"
           />
         </div>
-        <div className="page-counter mt-5 text-center text-sm text-gray-600">
-          <strong>
-            {currentQuestionIndex + 1} / {questions.length}
-          </strong>
+
+        <h1 className="mb-6 text-center text-3xl font-bold text-blue-600">
+          Velkommen til din eksamen
+        </h1>
+
+        <div className="mb-6 grid grid-cols-1 gap-6 text-lg text-gray-700 md:grid-cols-2">
+          <div className="flex items-start gap-4">
+            <FontAwesomeIcon
+              icon={faArrowsRotate}
+              className="size-6 text-blue-500"
+            />
+            <span>
+              <h2 className="font-bold">Undgå at opdatere eller genindlæse:</h2>{' '}
+              Hvis du opdaterer eller genindlæser eksamenssiden, vil du miste
+              alt dit fremskridt. Undgå at gøre dette under eksamen.
+            </span>
+          </div>
+          <div className="flex items-start gap-4">
+            <FontAwesomeIcon icon={faClock} className="size-6 text-green-500" />
+            <span>
+              <h2 className="font-bold">Timeren starter:</h2> Eksamens timeren
+              begynder, så snart du klikker på knappen “Start Eksamen”.
+            </span>
+          </div>
+          <div className="flex items-start gap-4">
+            <FontAwesomeIcon
+              icon={faForward}
+              className="size-6 text-purple-500"
+            />
+            <span>
+              <h2 className="font-bold">Spring spørgsmål over:</h2> Hvis du er
+              usikker på et spørgsmål, kan du springe det over og vende tilbage
+              til det senere. Du kan også gå tilbage til tidligere spørgsmål for
+              at ændre dine svar.
+            </span>
+          </div>
+          <div className="flex items-start gap-4 ">
+            <FontAwesomeIcon
+              icon={faListCheck}
+              className="size-6 text-red-500"
+            />
+            <span>
+              <h2 className="font-bold">Eksamensoversigt:</h2> Brug
+              eksamensoversigten til at overvåge dit fremskridt. Den giver et
+              klart overblik over besvarede og ubesvarede spørgsmål, så du kan
+              holde dig organiseret under testen. Ved at klikke på et nummer i
+              oversigten vil du blive ført til det spørgsmål.
+            </span>
+          </div>
         </div>
+
+        <Link href="/questions">
+          <Button
+            value="Start Eksamen"
+            className="mt-10 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+          />
+        </Link>
       </div>
     </div>
   );
-}
+};
 
-export default exam;
+export default ExamInstructions;
