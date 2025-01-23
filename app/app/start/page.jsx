@@ -10,6 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faComments } from '@fortawesome/free-regular-svg-icons';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function WelcomePage() {
   const exploreFeatures = [
@@ -58,7 +59,14 @@ function WelcomePage() {
           </Link>
         </div>
         <div className={`${style.flexCenter} max-w-[600px] rounded-2xl`}>
-          <img src="/imageWelcome.jpg" alt="image" className="rounded-2xl" />
+          <Image
+            src="/imageWelcome.jpg"
+            alt="welcome"
+            className="rounded-2xl"
+            width={600}
+            height={400}
+            priority
+          />
         </div>
       </div>
       <div
