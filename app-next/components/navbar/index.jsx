@@ -1,4 +1,5 @@
-"use client";
+
+  "use client";
 
 import { PlayCircle, User } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +16,7 @@ export default function Navbar() {
     const usernameCookie = cookies.find((row) => row.startsWith("username="));
     if (usernameCookie) {
       const value = usernameCookie.split("=")[1];
-      setUsername(value);
+      setUsername(decodeURIComponent(value)); 
     }
   }, []);
 
@@ -50,7 +51,7 @@ export default function Navbar() {
                 Login
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/signup">
               <Button className="bg-blue-500 text-white hover:bg-blue-600">
                 Sign Up
               </Button>
@@ -61,3 +62,4 @@ export default function Navbar() {
     </header>
   );
 }
+

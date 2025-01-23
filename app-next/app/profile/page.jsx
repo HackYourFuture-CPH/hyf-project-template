@@ -3,6 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { logout } from "../../action";
+import {
+  FaArrowRight,
+  FaStar,
+  FaListAlt,
+  FaUserAlt,
+  FaLanguage,
+  FaCog,
+  FaFileAlt,
+} from "react-icons/fa";
 
 const modals = {
   privacy: {
@@ -188,14 +197,23 @@ export default function Profile() {
         </div>
 
         <div className="mt-6 space-y-3">
-          <button className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm">
-            My List
+          <button className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm">
+            <div className="flex items-center">
+              <FaListAlt className="mr-3" /> My List
+            </div>
+            <FaArrowRight />
           </button>
-          <button className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm">
-            Account Details
+          <button className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm">
+            <div className="flex items-center">
+              <FaUserAlt className="mr-3" /> Account Details
+            </div>
+            <FaArrowRight />
           </button>
-          <button className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm">
-            Rate Us
+          <button className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm">
+            <div className="flex items-center">
+              <FaStar className="mr-3" /> Rate Us
+            </div>
+            <FaArrowRight />
           </button>
         </div>
 
@@ -204,21 +222,30 @@ export default function Profile() {
         <div className="space-y-3">
           <button
             onClick={() => setModal(modals.terms)}
-            className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm"
+            className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm"
           >
-            Terms
+            <div className="flex items-center">
+              <FaFileAlt className="mr-3" /> Terms
+            </div>
+            <FaArrowRight />
           </button>
           <button
             onClick={() => setModal(modals.privacy)}
-            className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm"
+            className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm"
           >
-            Privacy
+            <div className="flex items-center">
+              <FaCog className="mr-3" /> Privacy
+            </div>
+            <FaArrowRight />
           </button>
           <button
             onClick={() => setModal(modals.support)}
-            className="w-full flex items-center justify-center py-2 bg-blue-700 hover:bg-blue-600 rounded-lg shadow text-sm"
+            className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm"
           >
-            Support
+            <div className="flex items-center">
+              <FaLanguage className="mr-3" /> Support
+            </div>
+            <FaArrowRight />
           </button>
         </div>
 
@@ -237,11 +264,13 @@ export default function Profile() {
       {modal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
           <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">{modal.title}</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white\">
+              {modal.title}
+            </h2>
             {modal.content}
             <button
               onClick={() => setModal(null)}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md"
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
             >
               Close
             </button>
