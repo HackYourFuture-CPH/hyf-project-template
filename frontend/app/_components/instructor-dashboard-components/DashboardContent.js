@@ -20,11 +20,16 @@ const DashboardContent = () => {
     const fetchProjectsByInstructor = async () => {
       try {
         const apiResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/courses/all`, {
+          `${process.env.NEXT_PUBLIC_API_URL}/api/courses/all`,
+          {
             method: "GET",
             credentials: "include", // This ensures cookies are sent with the request
           }
         );
+        if (apiResponse.status === 404) {
+          setCourses([]);
+          return;
+        }
         if (apiResponse.ok) {
           const courses = await apiResponse.json();
           console.log("API Response Body:", courses);
