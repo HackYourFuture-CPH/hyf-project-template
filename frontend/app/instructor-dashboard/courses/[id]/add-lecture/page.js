@@ -20,13 +20,12 @@ import { useRouter } from "next/navigation";
 const CreateLecture = ({ params }) => {
   const { id } = React.use(params);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [video, setVideo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [videoPreview, setVideoPreview] = useState(null);
   const router = useRouter();
-  
+
   const MAX_FILE_SIZE_MB = 100; //maximum file size limit
 
   const handleVideoChange = (event) => {
@@ -79,9 +78,7 @@ const CreateLecture = ({ params }) => {
     if (!title || title.trim() === "") {
       errors.title = "Please provide valid title";
     }
-    if (!description || description.trim() === "") {
-      errors.description = "Please provide valid description";
-    }
+
     if (!video || video.size === 0) {
       errors.video = "Please upload a video";
     }
@@ -103,7 +100,7 @@ const CreateLecture = ({ params }) => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, description, videoKey }),
+          body: JSON.stringify({ title, videoKey }),
           credentials: "include",
         }
       );
@@ -112,7 +109,6 @@ const CreateLecture = ({ params }) => {
         const result = await response.json();
         toast.success("Created new lecture ! 🎉");
         setTitle("");
-        setDescription("");
         setVideo(null);
         setVideoPreview(null);
         router.push("/instructor-dashboard");
@@ -139,7 +135,7 @@ const CreateLecture = ({ params }) => {
             Create a new lecture
           </Typography>
           <Typography variant="body1" align="center">
-            Add title ,description , video to add a new lecture to the course
+            Add title , video to add a new lecture to the course
           </Typography>
         </Box>
         <Container maxWidth="sm">
@@ -159,20 +155,6 @@ const CreateLecture = ({ params }) => {
               {errors.title && (
                 <span style={{ color: "red" }}>{errors.title}</span>
               )}
-              <TextField
-                fullWidth
-                label="Description"
-                name="description"
-                type="text"
-                value={description}
-                margin="normal"
-                size="small"
-                multiline
-                rows={4}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-              {errors.description && <span>{errors.description}</span>}
 
               {videoPreview && (
                 <Box sx={{ mt: 2, textAlign: "center" }}>
