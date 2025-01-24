@@ -1,7 +1,7 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import ReactPlayer from "react-player";
+import ReactPlayer from "react-player"; 
 import Image from "next/image";
 
 const CoursePage = () => {
@@ -37,7 +37,10 @@ const CoursePage = () => {
               <h2 className="text-4xl font-semibold mb-3">{course.name}</h2>
               <h3 className="text-lg font-medium mb-3">
                 Course By:{" "}
-                <span className="text-xl font-normal">{course.instructor}</span>
+
+                <span className="text-xl font-normal">
+                  {course.instructor}
+                </span>
               </h3>
               <p className="text-gray-400 mb-3">{course.description}</p>
             </div>
