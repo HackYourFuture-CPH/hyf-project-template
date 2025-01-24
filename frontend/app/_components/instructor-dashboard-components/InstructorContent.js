@@ -79,7 +79,9 @@ export default function InstructorContent() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses.map((course, index) => (
+          {
+          courses.length > 0 ?
+          courses.map((course, index) => (
             <StyledTableRow key={`${index}-course`}>
               <StyledTableCell component="th" scope="row">
                 {course.title}
@@ -99,7 +101,14 @@ export default function InstructorContent() {
                 </IconButton>
               </StyledTableCell>
             </StyledTableRow>
-          ))}
+          ))
+         :
+         <StyledTableRow>
+          <StyledTableCell>
+            There are no courses found
+          </StyledTableCell>
+         </StyledTableRow>
+        }
         </TableBody>
       </Table>
     </TableContainer>
