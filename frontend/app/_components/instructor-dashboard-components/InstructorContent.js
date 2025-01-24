@@ -79,36 +79,33 @@ export default function InstructorContent() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {
-          courses.length > 0 ?
-          courses.map((course, index) => (
-            <StyledTableRow key={`${index}-course`}>
-              <StyledTableCell component="th" scope="row">
-                {course.title}
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                {dateFormat(course.createdAt)}
-              </StyledTableCell>
-              <StyledTableCell align="right">{2}</StyledTableCell>{" "}
-              {/*dummy data*/}
-              <StyledTableCell align="right">
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEdit(course.id)}
-                  aria-label="edit"
-                >
-                  <EditIcon />
-                </IconButton>
-              </StyledTableCell>
+          {courses.length > 0 ? (
+            courses.map((course, index) => (
+              <StyledTableRow key={`${index}-course`}>
+                <StyledTableCell component="th" scope="row">
+                  {course.title}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {dateFormat(course.createdAt)}
+                </StyledTableCell>
+                <StyledTableCell align="right">{2}</StyledTableCell>{" "}
+                {/*dummy data*/}
+                <StyledTableCell align="right">
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEdit(course.id)}
+                    aria-label="edit"
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </StyledTableCell>
+              </StyledTableRow>
+            ))
+          ) : (
+            <StyledTableRow>
+              <StyledTableCell>There are no courses found</StyledTableCell>
             </StyledTableRow>
-          ))
-         :
-         <StyledTableRow>
-          <StyledTableCell>
-            There are no courses found
-          </StyledTableCell>
-         </StyledTableRow>
-        }
+          )}
         </TableBody>
       </Table>
     </TableContainer>
