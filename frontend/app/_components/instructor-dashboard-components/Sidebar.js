@@ -5,14 +5,15 @@ import { FaBars, FaHome, FaSignOutAlt, FaUserAlt } from "react-icons/fa";
 import { MdOutlineCastForEducation } from "react-icons/md";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import LogOutButton from "../authComponent/LogOutButton";
+import InstructorContent from "./InstructorContent";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const renderContent = () => {
     switch (activeTab) {
-      case "home":
-        return <DashboardContent />;
-      case "profile":
+      case "dashboard":
+        return < InstructorContent/>;
+      case "course":
         return <DashboardContent />;
       case "logout":
         return <LogOutButton />;
@@ -49,20 +50,20 @@ const Sidebar = () => {
               className={`flex items-center p-4 hover:bg-gray-700 cursor-pointer ${
                 activeTab === "home" ? "bg-gray-700" : ""
               }`}
-              onClick={() => setActiveTab("home")}
+              onClick={() => setActiveTab("dashboard")}
             >
               <FaHome size={24} />
               <span className={`ml-4 md:block ${isOpen ? "block" : "hidden"}`}>
-                Home
+                Dashboard
               </span>
             </li>
             <li
               className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"
-              onClick={() => setActiveTab("profile")}
+              onClick={() => setActiveTab("course")}
             >
               <FaUserAlt size={24} />
               <span className={`ml-4 md:block ${isOpen ? "block" : "hidden"}`}>
-                Profile
+                Course Management
               </span>
             </li>
             <li
