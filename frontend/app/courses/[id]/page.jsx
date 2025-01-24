@@ -37,6 +37,7 @@ const CoursePage = () => {
               <h2 className="text-4xl font-semibold mb-3">{course.name}</h2>
               <h3 className="text-lg font-medium mb-3">
                 Course By:{" "}
+
                 <span className="text-xl font-normal">
                   {course.instructor}
                 </span>
