@@ -8,6 +8,7 @@ import { getCoursesByInstructor } from "../../controllers/courseController.js";
 import { getAllCourses } from "../../controllers/courseController.js";
 import { getCourseById } from "../../controllers/courseController.js";
 import { getLecturesByCourseId } from "../../controllers/lectureController.js";
+import { updateCourse } from "../../controllers/courseController.js";
 const courseRouter = express.Router();
 
 courseRouter.post(
@@ -19,16 +20,18 @@ courseRouter.post(
 courseRouter.get("/all", authenticateToken, getCoursesByInstructor);
 courseRouter.get("/", authenticateToken, getAllCourses);
 courseRouter.get("/:id", authenticateToken, getCourseById);
+courseRouter.put(
+  "/:id",
+  authenticateToken,
+  authorizeRole("instructor"),
+  updateCourse
+);
 courseRouter.post(
   "/:id/lectures",
   authenticateToken,
   authorizeRole("instructor"),
   createLecture
 );
-courseRouter.get(
-  "/courses/:id/lectures",
-  authenticateToken,
-  getLecturesByCourseId
-);
+courseRouter.get("/:id/lectures", authenticateToken, getLecturesByCourseId);
 
 export default courseRouter;

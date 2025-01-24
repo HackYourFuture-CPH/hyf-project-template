@@ -47,7 +47,7 @@ const getAllCourses = async (req, res) => {
         as: "instructor",
         attributes: ["id", "name", "email"], // Select specific fields for the instructor
       },
-      attributes: ["id", "title", "description", "imageUrl", "createdAt"], // Select specific fields for the course
+      attributes: ["id", "title", "description", "imageKey", "createdAt"], // Select specific fields for the course
     });
 
     if (!courses.length) {
@@ -73,7 +73,7 @@ const getCoursesByInstructor = async (req, res) => {
     // Fetch all courses for this instructor
     const courses = await Course.findAll({
       where: { instructorId },
-      attributes: ["id", "title", "description", "imageKey", "createdAt"], 
+      attributes: ["id", "title", "description", "imageKey", "createdAt"],
     });
 
     if (!courses.length) {
@@ -85,7 +85,7 @@ const getCoursesByInstructor = async (req, res) => {
     // Add full S3 URL for each course
     const coursesWithUrls = courses.map((course) => ({
       ...course.dataValues, // using the datValues to get all the fields
-      imageUrl: generateS3Url(course.imageKey), 
+      imageUrl: generateS3Url(course.imageKey),
     }));
 
     res.status(200).json(coursesWithUrls);
@@ -109,15 +109,42 @@ const getCourseById = async (req, res) => {
         {
           model: Lecture,
           as: "lectures",
-          attributes: ["id", "title", "description", "videoUrl", "createdAt"],
+          attributes: ["id", "title", "videoKey", "createdAt"],
         },
       ],
-      attributes: ["id", "title", "description", "imageUrl", "createdAt"],
+      attributes: ["id", "title", "description", "imageKey", "createdAt"],
     });
 
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
+    res.status(200).json(course);
+  } catch (error) {
+    console.error("Error fetching course by ID:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the course" });
+  }
+};
+
+const updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description } = req.body;
+    const course = await Course.findByPk(id);
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    if (course.instructorId !== req.user.sub) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to edit this course" });
+    }
+
+    // Update the course with the new data
+    await course.update({ title, description });
 
     res.status(200).json(course);
   } catch (error) {
@@ -128,4 +155,10 @@ const getCourseById = async (req, res) => {
   }
 };
 
-export { createCourse, getCoursesByInstructor, getAllCourses, getCourseById };
+export {
+  createCourse,
+  getCoursesByInstructor,
+  getAllCourses,
+  getCourseById,
+  updateCourse,
+};

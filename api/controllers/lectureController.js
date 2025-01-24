@@ -12,7 +12,7 @@ const createLecture = async (req, res) => {
   if (!courseId) {
     return res.status(404).json({ message: "courseID is not found" });
   }
-  const { title, description, videoKey } = req.body;
+  const { title, videoKey } = req.body;
 
   try {
     // Ensure the course exists
@@ -25,7 +25,6 @@ const createLecture = async (req, res) => {
     const lecture = await Lecture.create({
       courseId,
       title,
-      description,
       videoKey,
     });
     res.status(201).json(lecture);
@@ -56,7 +55,7 @@ const getLecturesByCourseId = async (req, res) => {
     // Add full S3 URL for each lecture
     const lecturesWithUrls = lectures.map((lecture) => ({
       ...lecture.dataValues, // using the datValues to get all the fields
-      videoUrl : generateS3Url(lecture.videoKey),
+      videoUrl: generateS3Url(lecture.videoKey),
     }));
 
     res.status(200).json(lecturesWithUrls);
