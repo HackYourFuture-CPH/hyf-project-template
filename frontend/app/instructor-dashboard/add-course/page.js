@@ -34,13 +34,13 @@ const CreateCourse = () => {
       URL.revokeObjectURL(imagePreview);
     }
 
-    if (selectedImage && selectedImage.size / (1024 * 1024) > 10) {
+    if (selectedImage && selectedImage.size / (1024 * 1024) > 5) {
       setErrors((prevState) => ({
         ...prevState,
-        image: "File size exceeds 10MB limit",
+        image: "File size exceeds 5MB limit",
       }));
       setImagePreview(null);
-      event.target.value = ""; 
+      event.target.value = "";
     } else {
       setImage(selectedImage);
       setImagePreview(URL.createObjectURL(selectedImage)); // Create new preview URL
@@ -52,8 +52,6 @@ const CreateCourse = () => {
     const errors = {};
     if (!title || title.trim() === "") {
       errors.title = "Please provide valid title";
-    } else if (!/^[a-zA-Z\s]+$/.test(title.trim())) {
-      errors.title = "Title should contain only letters";
     }
     if (!description || description.trim() === "") {
       errors.description = "Please provide valid description";
@@ -76,7 +74,7 @@ const CreateCourse = () => {
       return;
     }
     try {
-      const coverImageUrl = await handleFileUpload(image);
+      const imageKey = await handleFileUpload(image);
 
       // Send course details to the backend
       const apiResponse = await fetch(
@@ -90,7 +88,7 @@ const CreateCourse = () => {
           body: JSON.stringify({
             title,
             description,
-            imageUrl: coverImageUrl,
+            imageKey,
             price,
           }),
         }

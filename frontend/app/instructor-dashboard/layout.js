@@ -9,9 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <div className="flex flex-col h-screen ">
-      <Navbar/>
+      <Navbar />
       <main
-        className="min-h-screen overflow-hidden relative
+        className="min-h-screen 
       bg-gradient-to-r from-white via-[#f7f9fc] to-[#e9f3ff]"
       >
         {children}

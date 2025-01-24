@@ -1,9 +1,15 @@
 import Course from "../models/course-model.js";
 import User from "../models/user-model.js";
 import Lecture from "../models/lecture-model.js";
+
+const generateS3Url = (fileKey) => {
+  const baseUrl = process.env.AWS_S3_BASE_URL;
+  return `${baseUrl}/${fileKey}`;
+};
+
 const createCourse = async (req, res) => {
   const instructorId = req.user.sub;
-  const { title, description, price, imageUrl } = req.body;
+  const { title, description, price, imageKey } = req.body;
 
   try {
     // Ensure the instructor exists and is valid
@@ -21,7 +27,7 @@ const createCourse = async (req, res) => {
       title,
       description,
       instructorId,
-      imageUrl,
+      imageKey,
       price,
     });
 
@@ -67,7 +73,7 @@ const getCoursesByInstructor = async (req, res) => {
     // Fetch all courses for this instructor
     const courses = await Course.findAll({
       where: { instructorId },
-      attributes: ["id", "title", "description", "imageUrl", "createdAt"], // Include only the required fields
+      attributes: ["id", "title", "description", "imageKey", "createdAt"], 
     });
 
     if (!courses.length) {
@@ -76,7 +82,13 @@ const getCoursesByInstructor = async (req, res) => {
         .json({ message: "No courses found for this instructor" });
     }
 
-    res.status(200).json(courses);
+    // Add full S3 URL for each course
+    const coursesWithUrls = courses.map((course) => ({
+      ...course.dataValues, // using the datValues to get all the fields
+      imageUrl: generateS3Url(course.imageKey), 
+    }));
+
+    res.status(200).json(coursesWithUrls);
   } catch (error) {
     console.error("Error fetching courses:", error);
     res.status(500).json({ error: "Failed to fetch courses" });

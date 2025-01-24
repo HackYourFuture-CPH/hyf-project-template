@@ -31,7 +31,7 @@ const Course = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    imageUrl: {
+    imageKey: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -9,7 +9,7 @@ export const handleFileUpload = async (file) => {
 
     if (response.ok) {
       const data = await response.json();
-      return data.fileLocation;
+      return data.fileKey;
     } else {
       const error = await response.json();
       console.error("Error details :", error);

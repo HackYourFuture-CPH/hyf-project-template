@@ -14,7 +14,7 @@ const Lecture = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Course, 
+        model: Course,
         key: "id",
       },
       onDelete: "CASCADE",
@@ -23,7 +23,7 @@ const Lecture = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    videoUrl: {
+    videoKey: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -34,7 +34,7 @@ const Lecture = sequelize.define(
     },
   },
   {
-    tableName: "Lectures", 
+    tableName: "Lectures",
   }
 );
 

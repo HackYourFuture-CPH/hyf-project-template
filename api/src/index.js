@@ -40,7 +40,9 @@ const upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: (req, file, cb) => {
-      cb(null, file.originalname); // Store with original filename
+      // unique key or path for the file
+      const fileKey = `uploads/${Date.now()}-${file.originalname}`;
+      cb(null, fileKey); // Save only the key
     },
   }),
 });
@@ -53,10 +55,11 @@ app.post("/upload", upload.single("file"), async (req, res, next) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-
+    // Extracting  the key (path) of the uploaded file
+    const fileKey = req.file.key;
     res.json({
       message: "File uploaded successfully",
-      fileLocation: req.file.location, // Location of the uploaded file
+      fileKey: fileKey, 
     });
   } catch (error) {
     console.error("Error uploading file:", error);

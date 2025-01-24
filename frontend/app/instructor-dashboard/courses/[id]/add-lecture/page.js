@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useRouter } from "next/navigation";
 
 const CreateLecture = ({ params }) => {
   const { id } = React.use(params);
@@ -24,60 +25,59 @@ const CreateLecture = ({ params }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [videoPreview, setVideoPreview] = useState(null);
+  const router = useRouter();
+  
+  const MAX_FILE_SIZE_MB = 100; //maximum file size limit
 
-const MAX_FILE_SIZE_MB = 200; //maximum file size limit
+  const handleVideoChange = (event) => {
+    try {
+      const selectedVideo = event.target.files[0];
 
-const handleVideoChange = (event) => {
-  try {
-    const selectedVideo = event.target.files[0];
+      if (!selectedVideo) {
+        setErrors((prevState) => ({
+          ...prevState,
+          video: "No file selected",
+        }));
+        return;
+      }
 
-    if (!selectedVideo) {
+      const fileSizeMB = selectedVideo.size / (1024 * 1024); // Converting file size to MB
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        setErrors((prevState) => ({
+          ...prevState,
+          video: `File size exceeds ${MAX_FILE_SIZE_MB}MB limit`,
+        }));
+        setVideoPreview(null);
+        setVideo(null);
+        event.target.value = ""; // Clearing input value
+        return;
+      }
+
+      // Revoke any existing video preview URL to avoid memory leaks
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
+
+      // Set the new video and preview URL
+      setVideo(selectedVideo);
+      setVideoPreview(URL.createObjectURL(selectedVideo));
       setErrors((prevState) => ({
         ...prevState,
-        video: "No file selected",
+        video: null,
       }));
-      return;
-    }
-
-    const fileSizeMB = selectedVideo.size / (1024 * 1024); // Converting file size to MB
-    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+    } catch (error) {
+      console.error("Error handling video upload:", error);
       setErrors((prevState) => ({
         ...prevState,
-        video: `File size exceeds ${MAX_FILE_SIZE_MB}MB limit`,
+        video: "An unexpected error occurred. Please try again.",
       }));
-      setVideoPreview(null);
-      setVideo(null); 
-      event.target.value = ""; // Clearing input value
-      return;
     }
-
-    // Revoke any existing video preview URL to avoid memory leaks
-    if (videoPreview) {
-      URL.revokeObjectURL(videoPreview);
-    }
-
-    // Set the new video and preview URL
-    setVideo(selectedVideo);
-    setVideoPreview(URL.createObjectURL(selectedVideo));
-    setErrors((prevState) => ({
-      ...prevState,
-      video: null,
-    }));
-  } catch (error) {
-    console.error("Error handling video upload:", error);
-    setErrors((prevState) => ({
-      ...prevState,
-      video: "An unexpected error occurred. Please try again.",
-    }));
-  }
-};
+  };
 
   const checkForErrors = () => {
     const errors = {};
     if (!title || title.trim() === "") {
       errors.title = "Please provide valid title";
-    } else if (!/^[a-zA-Z\s]+$/.test(title.trim())) {
-      errors.title = "Title should contain only letters and spaces";
     }
     if (!description || description.trim() === "") {
       errors.description = "Please provide valid description";
@@ -97,13 +97,13 @@ const handleVideoChange = (event) => {
       return;
     }
     try {
-      const videoUrl = await handleFileUpload(video);
+      const videoKey = await handleFileUpload(video);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/courses/${id}/lectures`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, description, videoUrl }),
+          body: JSON.stringify({ title, description, videoKey }),
           credentials: "include",
         }
       );
