@@ -18,6 +18,7 @@ export const courses = [
     sellingprice: "10.00",
   },
   {
+
     id: 4,
     image: "/js.png",
     name: "Introduction to Javascript",
@@ -27,6 +28,7 @@ export const courses = [
     sellingprice: "10.00",
   },
   {
+
     id: 5,
     image: "/js.png",
     name: "Introduction to Javascript",
