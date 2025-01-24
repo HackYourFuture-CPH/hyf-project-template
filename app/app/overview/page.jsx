@@ -3,7 +3,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 
 const OverviewPage = () => {
-  const [questions, setQuestions] = useState(
+  const [questions] = useState(
     Array.from({ length: 40 }, (_, i) => ({
       id: i + 1,
       answered: i === 0, //first question as answered
