@@ -1,9 +1,9 @@
 import React from "react";
-
+import Sidebar from "../_components/instructor-dashboard-components/Sidebar";
 const InstructorDashboard = () => {
   return (
     <div>
-      <h1>Welcome to Instructor Dashboard</h1>
+     <Sidebar/>
     </div>
   );
 };
