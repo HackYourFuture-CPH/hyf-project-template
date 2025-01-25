@@ -1,3 +1,4 @@
+
 "use server";
 
 import connection from "./lib/database_client";
@@ -11,15 +12,21 @@ export async function register(formData) {
 
   console.log("Registration data:", name, email, password);
 
-  await connection("user").insert({
+  const [userId] = await connection("user")
+    .insert({
+      username: name,
+      email,
+      password,
+    })
+    .returning("id"); 
+
+  console.log("User successfully registered:", {
     username: name,
     email,
-    password,
+    userId,
   });
 
-  console.log("User successfully registered:", { username: name, email });
-
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
 
   await cookieStore.set({
     name: "username",
@@ -29,7 +36,15 @@ export async function register(formData) {
     path: "/",
   });
 
-  console.log("Cookie successfully set for:", name);
+  await cookieStore.set({
+    name: "userId",
+    value: userId,
+    httpOnly: false,
+    secure: false,
+    path: "/",
+  });
+
+  console.log("Cookies successfully set for:", { name, userId });
 
   redirect("/login");
 }
@@ -45,7 +60,7 @@ export async function login(formData) {
   if (user) {
     console.log("User found:", user);
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
 
     await cookieStore.set({
       name: "username",
@@ -55,7 +70,15 @@ export async function login(formData) {
       path: "/",
     });
 
-    console.log("Cookie set successfully for:", user.username);
+    await cookieStore.set({
+      name: "userId",
+      value: user.id,
+      httpOnly: false,
+      secure: false,
+      path: "/",
+    });
+
+    console.log("Cookies set successfully for:", user.username);
 
     redirect("/");
   } else {
@@ -65,10 +88,19 @@ export async function login(formData) {
 }
 
 export async function logout() {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
 
   await cookieStore.set({
     name: "username",
+    value: "",
+    httpOnly: false,
+    secure: false,
+    path: "/",
+    expires: new Date(0),
+  });
+
+  await cookieStore.set({
+    name: "userId",
     value: "",
     httpOnly: false,
     secure: false,
@@ -81,19 +113,7 @@ export async function logout() {
   redirect("/");
 }
 
-export async function updateAvatar(userId, avatarUrl) {
-  try {
-    await connection("user")
-      .where({ id: userId })
-      .update({ avatar_url: avatarUrl });
 
-    console.log(`Avatar updated for user ${userId}: ${avatarUrl}`);
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating avatar:", error);
-    throw new Error("Failed to update avatar.");
-  }
-}
 
 export async function getUserProfile(userId) {
   try {
@@ -103,11 +123,12 @@ export async function getUserProfile(userId) {
       throw new Error("User not found.");
     }
 
-    console.log(`Profile fetched for user ${userId}:`, user);
+    console.log(`Fetched user profile:`, user);
 
     return {
       username: user.username,
       avatarUrl: user.avatar_url,
+      dob: user.dob,
     };
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -115,46 +136,22 @@ export async function getUserProfile(userId) {
   }
 }
 
-export async function resetPassword(formData) {
-  const token = formData.get("token");
-  const password = formData.get("password");
-
-  console.log("Reset password attempt with token:", token);
-
-  const user = await connection("user").where({ reset_token: token }).first();
-
-  if (!user) {
-    console.error("Invalid or expired reset token");
-    throw new Error("Invalid or expired reset token");
-  }
-
-  await connection("user").where({ reset_token: token }).update({
-    password,
-    reset_token: null,
-  });
-
-  console.log(`Password reset successfully for user: ${user.email}`);
-  return { success: true };
-}
-
-export async function saveReview(formData) {
-  const rating = formData.get("rating");
-  const title = formData.get("title");
-  const review = formData.get("review");
-
-  console.log("Received data in saveReview:", { rating, title, review }); 
-
+export async function updateProfile(userId, dob, avatarUrl) {
   try {
-    await connection("reviews").insert({
-      rating: parseInt(rating, 10), 
-      title,
-      review,
-    });
+    console.log("Updating profile with:", { userId, dob, avatarUrl });
 
-    console.log("Review successfully saved."); 
+    await connection("user")
+      .where({ id: userId })
+      .update({
+        updated_at: new Date(),
+        avatar_url: avatarUrl,
+        dob: dob || null, 
+      });
+
+    console.log("Profile updated successfully.");
     return { success: true };
   } catch (error) {
-    console.error("Error saving review to database:", error.message); 
-    throw new Error("Failed to save review.");
+    console.error("Error updating profile:", error);
+    throw new Error("Failed to update profile.");
   }
 }

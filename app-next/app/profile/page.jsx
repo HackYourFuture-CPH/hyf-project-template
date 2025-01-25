@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -13,6 +14,8 @@ import {
 } from "react-icons/fa";
 import { logout } from "../../action";
 import RateUs from "../rateus/RateUs";
+import EditProfile from "@/app/Accountdetails/EditProfile";
+
 
 const modalContent = {
   privacy: {
@@ -118,6 +121,7 @@ export default function Profile() {
   const [avatar, setAvatar] = useState(null);
   const [modal, setModal] = useState(null);
   const [showRateUs, setShowRateUs] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   useEffect(() => {
     const usernameCookie = document.cookie
@@ -209,7 +213,10 @@ export default function Profile() {
             </div>
             <FaArrowRight />
           </button>
-          <button className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm">
+          <button
+            onClick={() => setShowEditProfile(true)}
+            className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm"
+          >
             <div className="flex items-center">
               <FaUserAlt className="mr-3" /> Account Details
             </div>
@@ -278,6 +285,22 @@ export default function Profile() {
           <RateUs onClose={() => setShowRateUs(false)} />
         </div>
       )}
+
+      {showEditProfile && (
+        <div
+          className=" fixed inset-0 bg-gradient-to-b from-black to-blue-900
+ flex items-center justify-center"
+        >
+          <button
+            onClick={() => setShowEditProfile(false)}
+            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow"
+          >
+            ✕
+          </button>
+          <EditProfile onClose={() => setShowEditProfile(false)} />
+        </div>
+      )}
     </div>
   );
 }
+
