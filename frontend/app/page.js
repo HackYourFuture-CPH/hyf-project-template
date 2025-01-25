@@ -1,5 +1,5 @@
+import InvestSection from "@/components/InvestSection";
 import HeroSection from "./_components/HomePageComponents/Hero";
-import CategorySection from "./_components/HomePageComponents/CategorySection";
 import FAQ from "./_components/HomePageComponents/FAQ";
 import Testimonial from "./_components/HomePageComponents/Testimonial";
 import CategoryTabs from "./_components/HomePageComponents/CategoryTabs";
@@ -11,11 +11,11 @@ export default function Home() {
     <div>
       <Navbar/>
       <HeroSection />
-      <CategorySection />
-      <FAQ />
-      <CategoryTabs />
-      <CoursesGrid />
+ <CategoryTabs />
+     <CoursesGrid />
+      <InvestSection />     
      <Testimonial />
+ <FAQ />
 
     </div>
   );
