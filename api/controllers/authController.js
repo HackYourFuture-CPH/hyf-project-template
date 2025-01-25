@@ -23,7 +23,7 @@ export const loginHandler = async (req, res) => {
       httpOnly: true, // Prevent client-side JS from accessing cookie
       secure: process.env.NODE_ENV === "production", // Only over HTTPS in production
       sameSite: "lax",
-      maxAge: 3600000, // 1 hour expiration
+      maxAge: 24 * 60 * 60 * 1000, // 1 day expiration (24 hours in milliseconds)
       path: "/", // Accessible on all paths
     });
 
@@ -56,7 +56,7 @@ const generateToken = (user) => {
       },
       JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "1d",
         algorithm: "HS256",
       }
     );
