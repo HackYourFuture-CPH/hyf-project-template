@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Check, GraduationCap, X } from "lucide-react";
+import { Check, GraduationCap, X, ArrowLeft } from "lucide-react";
 import VideoPlayer from "../student-dashboard/components/VideoPlayer";
 import { completeCourse } from "@/constants";
 import { Button } from "@mui/material";
+import Link from "next/link";
 
 const CourseProgress = () => {
   const [selectedLecture, setSelectedLecture] = useState(null);
@@ -47,6 +48,15 @@ const CourseProgress = () => {
   return (
     <div className="bg-white w-full h-full">
       <div className="container mx-auto bg-white p-5">
+        <div className="w-full bg-green-100 py-2 px-5 rounded-lg ">
+          <Link
+            href="/student-dashboard"
+            className="flex gap-2 text-green-600 font-semibold"
+          >
+            <ArrowLeft /> Back To Dashboard
+          </Link>
+        </div>
+
         {completeCourse?.map((course) => (
           <div key={course.id} className="p-5 my-5">
             <div className="flex justify-between items-center mb-5 px-3">

@@ -11,6 +11,7 @@ import Navbar from "./_components/HomePageComponents/Navbar";
 export default function Home() {
   return (
     <div>
+    
        <HeroSection />
          <CategoryTabs />
      <CoursesGrid />
