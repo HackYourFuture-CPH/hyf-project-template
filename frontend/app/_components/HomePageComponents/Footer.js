@@ -6,173 +6,179 @@ import {
   FaInstagram,
   FaRss,
 } from "react-icons/fa";
-import styles from "./footer.module.css";
+
 import Image from "next/image";
+import {
+  whoWeAre,
+  course,
+  topcategories,
+  support,
+  recommend,
+} from "@/constants";
+import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className={styles.footer}>
+    <footer className="bg-black">
       {/* Top Section */}
-      <div className={styles.footerTop}>
-        <div className={styles.feature}>
-          <i className={styles.icon}>✔️</i>
-          <p>30 day money back guarantee</p>
+      <div className="container mx-auto pt-32">
+        <div className="flex justify-center items-center flex-wrap gap-10 lg:gap-20 pb-24">
+          <div className="flex items-center gap-4">
+            <Image
+              src="/guarantee.png"
+              height={40}
+              width={40}
+              alt="UpSkillpro"
+            />
+            <p className="text-white font-semibold text-lg">
+              30 day money back guarantee
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Image src="/support.png" height={40} width={40} alt="UpSkillpro" />
+            <p className="text-white font-semibold text-lg">
+              Support teams across the world
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Image src="/save.png" height={40} width={40} alt="UpSkillpro" />
+            <p className="text-white font-semibold text-lg">
+              Safe & Secure online payment
+            </p>
+          </div>
         </div>
-        <div className={styles.feature}>
-          <i className={styles.icon}>🌍</i>
-          <p>Support teams across the world</p>
-        </div>
-        <div className={styles.feature}>
-          <i className={styles.icon}>🔒</i>
-          <p>Safe & Secure online payment</p>
+
+        <hr className="" />
+
+        {/* Middle Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 px-5 justify-center gap-8 lg:px-32  pt-20 pb-10">
+          <div>
+            <h3 className="text-white font-semibold text-xl mb-4">
+              WHO WE ARE
+            </h3>
+            <div className="flex flex-col gap-3">
+              {whoWeAre.map((item, index) => (
+                <Link
+                  href={item.path}
+                  key={index}
+                  className="text-white hover:text-darkColor text-sm"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="">
+            <h3 className="text-white font-semibold text-xl mb-4">COURSES</h3>
+            <div className="flex flex-col gap-3">
+              {course.map((items, index) => (
+                <Link
+                  href={items.path}
+                  key={index}
+                  className="text-white hover:text-darkColor text-sm"
+                >
+                  {items.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-xl mb-4">
+              TOP CATEGORIES
+            </h3>
+            <div className="flex flex-col gap-3">
+              {topcategories.map((items, index) => (
+                <Link
+                  href={items.path}
+                  key={index}
+                  className="text-white hover:text-darkColor text-sm"
+                >
+                  {items.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="">
+            <h3 className="text-white font-semibold text-xl mb-4">SUPPORT</h3>
+            <div className="flex flex-col gap-3">
+              {support.map((items, index) => (
+                <Link
+                  href={items.path}
+                  key={index}
+                  className="text-white hover:text-darkColor text-sm"
+                >
+                  {items.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="">
+            <h3 className="text-white font-semibold text-xl mb-4">
+              WE RECOMMEND
+            </h3>
+            <div className="flex flex-col gap-3">
+              {recommend.map((items, index) => (
+                <Link
+                  href={items.path}
+                  key={index}
+                  className="text-white hover:text-darkColor text-sm"
+                >
+                  {items.name}
+                </Link>
+              ))}
+            </div>
+            <div>
+              <h3 className="font-semibold text-xl text-white my-4">
+                NEWSLETTER
+              </h3>
+              <p className="text-white text-sm mb-4">
+                Subscribe to our newsletter
+              </p>
+              <form className="space-y-3 flex flex-col gap-3">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-
-      <hr className={styles.divider} />
-
-      {/* Middle Section */}
-      <div className={styles.footerMiddle}>
-        <div className={styles.column}>
-          <h3>WHO WE ARE</h3>
-          <ul>
-            <li>
-              <a href="#">About Us</a>
-            </li>
-            <li>
-              <a href="#">Team</a>
-            </li>
-            <li>
-              <a href="#">Work With Us</a>
-            </li>
-          </ul>
-        </div>
-        <div className={styles.column}>
-          <h3>COURSES</h3>
-          <ul>
-            <li>
-              <a href="#">Python</a>
-            </li>
-            <li>
-              <a href="#">PHP</a>
-            </li>
-            <li>
-              <a href="#">JavaScript</a>
-            </li>
-            <li>
-              <a href="#">React</a>
-            </li>
-            <li>
-              <a href="#">Nodejs</a>
-            </li>
-            <li>
-              <a href="#">eCommerce</a>
-            </li>
-            <li>
-              <a href="#">Machine Learning</a>
-            </li>
-            <li>
-              <a href="#">Angular</a>
-            </li>
-            <li>
-              <a href="#">React Native</a>
-            </li>
-            <li>
-              <a href="#">Java</a>
-            </li>
-            <li>
-              <a href="#">Rust</a>
-            </li>
-            <li>
-              <a href="#">Media Buying</a>
-            </li>
-          </ul>
-        </div>
-        <div className={styles.column}>
-          <h3>TOP CATEGORIES</h3>
-          <ul>
-            <li>
-              <a href="#">Programming</a>
-            </li>
-            <li>
-              <a href="#">Design</a>
-            </li>
-            <li>
-              <a href="#">Animation</a>
-            </li>
-            <li>
-              <a href="#">Data</a>
-            </li>
-            <li>
-              <a href="#">Engineering</a>
-            </li>
-          </ul>
-        </div>
-        <div className={styles.column}>
-          <h3>SUPPORT</h3>
-          <ul>
-            <li>
-              <a href="#">Documentation</a>
-            </li>
-            <li>
-              <a href="#">Cookie Policy</a>
-            </li>
-            <li>
-              <a href="#">Support Policy</a>
-            </li>
-            <li>
-              <a href="#">Contact</a>
-            </li>
-            <li>
-              <a href="#">COVID-19 Resources</a>
-            </li>
-          </ul>
-        </div>
-        <div className={styles.column}>
-          <h3>WE RECOMMEND</h3>
-          <ul>
-            <li>
-              <a href="#">Community</a>
-            </li>
-            <li>
-              <a href="#">FAQ</a>
-            </li>
-            <li>
-              <a href="#">Success Stories</a>
-            </li>
-            <li>
-              <a href="#">Take a Quiz</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
       {/* Bottom Section */}
-      <div className={styles.footerBottom}>
-        <div className={styles.socialIcons}>
+      <div className="bg-white flex justify-between items-center py-5 px-10">
+        <div className="flex gap-5">
           <a href="#">
-            <FaTwitter className={styles.icon} />
+            <FaTwitter className="size-7" />
           </a>
           <a href="#">
-            <FaFacebook className={styles.icon} />
+            <FaFacebook className="size-7" />
           </a>
           <a href="#">
-            <FaRss className={styles.icon} />
+            <FaRss className="size-7" />
           </a>
           <a href="#">
-            <FaInstagram className={styles.icon} />
+            <FaInstagram className="size-7" />
           </a>
         </div>
-        <p>
-          &copy; COPYRIGHT BYTECODERS 2024 - Terms & Conditions | Privacy Policy
+        <p className="text-black font-medium text-lg">
+          &copy; COPYRIGHT BYTECODERS 2025 - Terms & Conditions | Privacy Policy
         </p>
         {/* UpSkillPro Logo */}
-        <div className={styles.logoContainer}>
+        <div className="">
           <Image
             src="/upskillpro_logo.png"
             alt="UpSkillPro Logo"
-            height={20}
-            width={20}
-            className={styles.logo}
+            height={100}
+            width={100}
+            className=""
           />
         </div>
       </div>
