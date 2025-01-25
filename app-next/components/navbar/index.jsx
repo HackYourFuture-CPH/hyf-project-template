@@ -16,7 +16,7 @@ export default function Navbar() {
     const usernameCookie = cookies.find((row) => row.startsWith("username="));
     if (usernameCookie) {
       const value = usernameCookie.split("=")[1];
-      setUsername(value);
+      setUsername(decodeURIComponent(value));
     }
   }, []);
 
