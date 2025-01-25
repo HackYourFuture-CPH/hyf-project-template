@@ -1,9 +1,10 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getUserProfile, updateProfile } from "@/action"; 
+import { getUserProfile, updateProfile } from "@/action";
 
-export default function EditProfile() {
+export default function EditProfile({ onClose, updateAvatar }) {
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState(null);
@@ -17,41 +18,30 @@ export default function EditProfile() {
     { id: 4, src: "/images/avatar4.png" },
     { id: 5, src: "/images/avatar5.png" },
     { id: 6, src: "/images/avatar6.png" },
-    
   ];
 
-  
   useEffect(() => {
     const username = Cookies.get("username");
     const userIdFromCookie = Cookies.get("userId");
-
-    console.log("Fetched from cookies:", {
-      username,
-      userId: userIdFromCookie,
-    });
 
     if (username) {
       setName(username);
     }
     if (userIdFromCookie) {
       setUserId(userIdFromCookie);
-      fetchUserProfile(userIdFromCookie); 
+      fetchUserProfile(userIdFromCookie);
     }
   }, []);
 
   const fetchUserProfile = async (userId) => {
     try {
       const profile = await getUserProfile(userId);
-
       if (profile) {
         setName(profile.username || "");
-
-        
-       const formattedDob = profile.dob
-         ? new Date(profile.dob).toISOString().split("T")[0]
-         : "";
-       setDob(formattedDob);
-
+        const formattedDob = profile.dob
+          ? new Date(profile.dob).toISOString().split("T")[0]
+          : "";
+        setDob(formattedDob);
 
         if (profile.avatarUrl) {
           const avatar = avatars.find((a) => a.src === profile.avatarUrl);
@@ -84,39 +74,44 @@ export default function EditProfile() {
     setCustomAvatar(null);
   };
 
-  
-      const handleSave = async () => {
-        const avatarUrl =
-          customAvatar ||
-          avatars.find((avatar) => avatar.id === selectedAvatar)?.src;
+  const handleSave = async () => {
+    const avatarUrl =
+      customAvatar ||
+      avatars.find((avatar) => avatar.id === selectedAvatar)?.src;
 
-        try {
-          if (!userId) {
-            alert("User ID not found. Please log in again.");
-            return;
-          }
+    try {
+      if (!userId) {
+        alert("User ID not found. Please log in again.");
+        return;
+      }
 
-          console.log("Sending to updateProfile:", { userId, dob, avatarUrl });
+      const result = await updateProfile(userId, dob, avatarUrl);
 
-          const result = await updateProfile(userId, dob, avatarUrl);
-
-          if (result.success) {
-            alert("Profile saved successfully!");
-          } else {
-            alert("Failed to save profile.");
-          }
-        } catch (error) {
-          console.error("Error saving profile:", error);
-          alert("An error occurred while saving your profile.");
+      if (result.success) {
+        alert("Profile saved successfully!");
+        if (avatarUrl) {
+          updateAvatar(avatarUrl);
         }
-      };
-
-
-
+        onClose();
+      } else {
+        alert("Failed to save profile.");
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("An error occurred while saving your profile.");
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center  min-h-screen p-4">
-      <div className="w-full max-w-md bg-[#1e1e2e] rounded-2xl shadow-lg p-6">
+    <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-75 fixed inset-0">
+      <div className="relative w-full max-w-md bg-[#1e1e2e] rounded-2xl shadow-lg p-6">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow"
+        >
+          ✕
+        </button>
+
         <h1 className="text-white text-xl font-semibold mb-6 text-center">
           Edit Profile
         </h1>

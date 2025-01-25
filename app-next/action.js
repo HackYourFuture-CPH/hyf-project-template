@@ -1,4 +1,3 @@
-
 "use server";
 
 import connection from "./lib/database_client";
@@ -18,7 +17,7 @@ export async function register(formData) {
       email,
       password,
     })
-    .returning("id"); 
+    .returning("id");
 
   console.log("User successfully registered:", {
     username: name,
@@ -113,8 +112,6 @@ export async function logout() {
   redirect("/");
 }
 
-
-
 export async function getUserProfile(userId) {
   try {
     const user = await connection("user").where({ id: userId }).first();
@@ -128,7 +125,7 @@ export async function getUserProfile(userId) {
     return {
       username: user.username,
       avatarUrl: user.avatar_url,
-      dob: user.dob,
+      dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : null,
     };
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -145,7 +142,7 @@ export async function updateProfile(userId, dob, avatarUrl) {
       .update({
         updated_at: new Date(),
         avatar_url: avatarUrl,
-        dob: dob || null, 
+        dob: dob || null,
       });
 
     console.log("Profile updated successfully.");

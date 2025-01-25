@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -12,10 +11,18 @@ import {
   FaCog,
   FaFileAlt,
 } from "react-icons/fa";
-import { logout } from "../../action";
+import { logout, getUserProfile, updateProfile } from "@/action";
 import RateUs from "../rateus/RateUs";
 import EditProfile from "@/app/Accountdetails/EditProfile";
 
+const avatars = [
+  { id: 1, src: "/images/avatar7.png" },
+  { id: 2, src: "/images/avatar8.png" },
+  { id: 3, src: "/images/avatar9.png" },
+  { id: 4, src: "/images/avatar4.png" },
+  { id: 5, src: "/images/avatar5.png" },
+  { id: 6, src: "/images/avatar6.png" },
+];
 
 const modalContent = {
   privacy: {
@@ -119,31 +126,53 @@ export default function Profile() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(null); 
   const [modal, setModal] = useState(null);
   const [showRateUs, setShowRateUs] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showMyList, setShowMyList] = useState(false); 
 
   useEffect(() => {
-    const usernameCookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("username="))
-      ?.split("=")[1];
+    const fetchProfile = async () => {
+      try {
+        const userIdFromCookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("userId="))
+          ?.split("=")[1];
 
-    if (!usernameCookie) {
-      router.push("/login");
-    } else {
-      setUsername(usernameCookie);
-    }
-  }, [router]);
+        if (userIdFromCookie) {
+          const profile = await getUserProfile(userIdFromCookie);
+          setUsername(profile.username);
+          setAvatar(profile.avatarUrl);
+          setSelectedAvatar(
+            avatars.find((a) => a.src === profile.avatarUrl)?.id || null
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
+    fetchProfile();
+  }, []);
+
+  const handleAvatarSelect = async (id) => {
+    const avatarUrl = avatars.find((avatar) => avatar.id === id)?.src;
+    setSelectedAvatar(id);
+    setAvatar(avatarUrl);
+
+    try {
+      const userIdFromCookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("userId="))
+        ?.split("=")[1];
+
+      if (userIdFromCookie) {
+        await updateProfile(userIdFromCookie, null, avatarUrl);
+        console.log("Avatar updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating avatar:", error);
     }
   };
 
@@ -180,34 +209,35 @@ export default function Profile() {
                 <span className="text-3xl font-bold mt-1">?</span>
               </div>
             )}
-            <label
-              className="absolute bottom-0 right-0 bg-blue-500 w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-lg hover:scale-110 transition-transform"
-              style={{
-                transform: "translate(8%, 8%)",
-              }}
-            >
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarChange}
-              />
-              <span
-                className="text-white font-bold text-lg"
-                style={{
-                  transform: "translate(-5px, -5px)",
-                }}
-              >
-                +
-              </span>
-            </label>
           </div>
           <h1 className="mt-4 text-xl font-semibold">{username || "User"}</h1>
-          <p className="text-gray-400 text-sm">Your personal profile</p>
+        </div>
+
+        <div className="flex overflow-x-auto space-x-4 pb-2 mb-6">
+          {avatars.map((avatar) => (
+            <button
+              key={avatar.id}
+              onClick={() => handleAvatarSelect(avatar.id)}
+              className={`relative w-16 h-16 rounded-full flex-shrink-0 p-1 border-2 ${
+                selectedAvatar === avatar.id
+                  ? "border-blue-500"
+                  : "border-transparent"
+              }`}
+            >
+              <img
+                src={avatar.src}
+                alt={`Avatar ${avatar.id}`}
+                className="w-full h-full rounded-full object-cover"
+              />
+            </button>
+          ))}
         </div>
 
         <div className="mt-6 space-y-3">
-          <button className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm">
+          <button
+            onClick={() => setShowMyList(true)}
+            className="w-full flex items-center justify-between py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow text-sm"
+          >
             <div className="flex items-center">
               <FaListAlt className="mr-3" /> My List
             </div>
@@ -286,21 +316,34 @@ export default function Profile() {
         </div>
       )}
 
+      {showMyList && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-lg">
+            <h2 className="text-xl font-semibold mb-4">My List</h2>
+            <p>Your favorite movies will appear here.</p>
+            <button
+              onClick={() => setShowMyList(false)}
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {showEditProfile && (
-        <div
-          className=" fixed inset-0 bg-gradient-to-b from-black to-blue-900
- flex items-center justify-center"
-        >
-          <button
-            onClick={() => setShowEditProfile(false)}
-            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow"
-          >
-            ✕
-          </button>
-          <EditProfile onClose={() => setShowEditProfile(false)} />
+        <div className="fixed inset-0 bg-gradient-to-b from-black to-blue-900 flex items-center justify-center">
+          <EditProfile
+            onClose={() => setShowEditProfile(false)}
+            updateAvatar={(newAvatar) => {
+              setAvatar(newAvatar);
+              setSelectedAvatar(
+                avatars.find((avatar) => avatar.src === newAvatar)?.id || null
+              );
+            }}
+          />
         </div>
       )}
     </div>
   );
 }
-
