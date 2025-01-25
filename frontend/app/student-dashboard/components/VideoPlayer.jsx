@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import {
@@ -19,7 +19,7 @@ function VideoPlayer({
   width = "100%",
   height = "100%",
   url,
-
+  onVideoEnd, // added this prop
 }) {
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
@@ -116,8 +116,6 @@ function VideoPlayer({
     };
   }, []);
 
-
-
   return (
     <div
       ref={playerContainerRef}
@@ -137,7 +135,7 @@ function VideoPlayer({
         playing={playing}
         volume={volume}
         muted={muted}
-        onProgress={handleProgress}
+        onEnded={onVideoEnd}
       />
       {showControls && (
         <div
@@ -221,7 +219,12 @@ function VideoPlayer({
                 )}
               </Button>
               <div>
-                <Image src="/upSkillLogo_nobg.png" width={100} height={100} alt="UpSkillLogo"/>
+                <Image
+                  src="/upSkillLogo_nobg.png"
+                  width={100}
+                  height={100}
+                  alt="UpSkillLogo"
+                />
               </div>
             </div>
           </div>

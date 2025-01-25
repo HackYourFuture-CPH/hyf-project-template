@@ -12,8 +12,7 @@ export default function Home() {
   return (
     <div>
        <HeroSection />
-      <CategorySection />
-      <CategoryTabs />
+         <CategoryTabs />
      <CoursesGrid />
      <InstructorSection />
       <InvestSection />     
