@@ -1,7 +1,6 @@
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import PropTypes from 'prop-types';
-import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'HackYourFuture',
