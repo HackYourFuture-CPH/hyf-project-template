@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
 import QuestionCard from '../../components/Questioncard';
 import PreviousNext from '../../components/Prevnext';
 import Button from '../../components/Button';
+import CountdownTimer from '../../components/CountdownTimer';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import '../globals.css';
 /* import Overview from '../../components/Overview'; -- to be used to connect to overview page*/
 
 function Exam() {
@@ -50,12 +52,14 @@ function Exam() {
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      speechSynthesis.cancel();
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+      speechSynthesis.cancel();
     }
   };
 
@@ -80,8 +84,20 @@ function Exam() {
     );
   } */
 
+  const handleTimeUp = () => {
+    (''); // to be used for time up, automatically submit the exam
+  };
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <AutorenewIcon
+          className="animate-spin text-blue-500"
+          style={{ fontSize: 40 }}
+        />{' '}
+        {/* Show the loading icon */}
+      </div>
+    );
   }
 
   if (error) {
@@ -105,14 +121,16 @@ function Exam() {
   const selectedAnswer = userAnswers[currentQuestionIndex] || null;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-white">
+    <section className="relative flex min-h-screen items-center justify-center">
       <button
         // onClick={handleOverviewButtonClick}
         className="absolute right-4 top-4 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         Overview
       </button>
-
+      <div className="absolute inset-x-0 top-4">
+        <CountdownTimer duration={2700} onTimeUp={handleTimeUp} />{' '}
+      </div>
       <div className="mx-auto w-full max-w-4xl rounded-xl p-10">
         <QuestionCard
           question={currentQuestion.question}
@@ -135,7 +153,7 @@ function Exam() {
           </strong>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
