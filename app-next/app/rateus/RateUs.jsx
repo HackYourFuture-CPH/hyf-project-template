@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { saveReview } from "@/action"; 
+// import { saveReview } from "@/action";
 const RateUs = ({ onClose }) => {
   const [rating, setRating] = useState(0);
   const [title, setTitle] = useState("");
@@ -21,8 +21,8 @@ const RateUs = ({ onClose }) => {
     console.log("Submitting review:", { rating, title, review });
 
     try {
-      const result = await saveReview(formData); 
-      console.log("Review submitted successfully:", result);
+      // const result = await saveReview(formData);
+      // console.log("Review submitted successfully:", result);
 
       setShowThankYou(true);
       setTimeout(() => {
