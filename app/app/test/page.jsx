@@ -9,23 +9,24 @@ import {
   faListCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/Button';
+import '../globals.css';
 
 const ExamInstructions = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="flex w-full max-w-4xl flex-col items-center justify-center rounded-lg bg-gray-100 p-8">
+    <section className="flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="flex w-full max-w-4xl flex-col items-center justify-center rounded-lg p-8">
         <div className="mb-6 flex w-full justify-center">
           <img
-            src="https://c8.alamy.com/comp/2YXN0R4/edtech-concept-student-undertaking-an-online-test-with-a-ticking-clock-signaling-limited-time-efficient-assessment-in-digital-education-vector-illustration-2YXN0R4.jpg"
-            alt="Exam Instructions"
+            src="/istructionImage.jpg"
             width={500}
             height={300}
             className="max-h-60 w-1/2 rounded-lg object-cover"
+            alt="Instruction"
           />
         </div>
 
         <h1 className="mb-6 text-center text-3xl font-bold text-blue-600">
-          Velkommen til din eksamen
+          Velkommen til eksamen
         </h1>
 
         <div className="mb-6 grid grid-cols-1 gap-6 text-lg text-gray-700 md:grid-cols-2">
@@ -81,7 +82,7 @@ const ExamInstructions = () => {
           />
         </Link>
       </div>
-    </div>
+    </section>
   );
 };
 
