@@ -80,7 +80,7 @@ function QuestionCard({ question, answers, selectedAnswer, onAnswer }) {
                     selectedAnswer !== key,
                 },
               )}
-              onClick={() => handleAnswer(key)} // Use the modified handleAnswer
+              onClick={() => handleAnswer(key)}
               key={key}
             >
               {key}: {answers[key]}
