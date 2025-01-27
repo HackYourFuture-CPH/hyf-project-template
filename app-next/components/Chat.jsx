@@ -1,13 +1,25 @@
 "use client";
 import React, { useState } from "react";
+import { sendMessage } from "@/roomActions";
 
-const Chat = ({ messages, onSendMessage }) => {
+const Chat = ({ initialMessages, roomId }) => {
+  const [messages, setMessages] = useState(initialMessages);
   const [inputMessage, setInputMessage] = useState("");
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputMessage.trim() === "") return;
-    onSendMessage(inputMessage);
-    setInputMessage("");
+
+    try {
+      const userId = 5;
+      await sendMessage(roomId, userId, inputMessage);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: inputMessage, sender: "You" },
+      ]);
+      setInputMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   return (
