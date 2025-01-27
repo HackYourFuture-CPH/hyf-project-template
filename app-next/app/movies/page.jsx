@@ -6,6 +6,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontal, X, Clock, Heart } from "lucide-react";
+import { addToFavorites, removeFromFavorites, getFavorites } from "@/action";
 
 const API_KEY = "8ec0629bf685d1704229f499278c23a5";
 const API_URL = "https://api.themoviedb.org/3";
@@ -23,9 +24,8 @@ export default function ExplorePage() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
   const [favorites, setFavorites] = useState([]);
-
-  const [currentPage, setCurrentPage] = useState(1); 
-  const [totalPages, setTotalPages] = useState(1); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchMovies = async (e) => {
     if (e) e.preventDefault();
@@ -45,12 +45,12 @@ export default function ExplorePage() {
         ...(year && { primary_release_year: year }),
         ...(language && { with_original_language: language }),
         sort_by: "popularity.desc",
-        page: currentPage, 
+        page: currentPage,
       });
 
       const movieResponse = await axios.get(`${endpoint}?${params}`);
       setMovies(movieResponse.data.results);
-      setTotalPages(movieResponse.data.total_pages); 
+      setTotalPages(movieResponse.data.total_pages);
     } catch (err) {
       setError("Error fetching movie data.");
       console.error(err);
@@ -59,17 +59,15 @@ export default function ExplorePage() {
     }
   };
 
-  
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchMovies(); 
+    fetchMovies();
   };
- 
+
   const Pagination = ({ totalPages, currentPage, onPageChange }) => {
-    const [visiblePages] = useState(4); 
+    const [visiblePages] = useState(4);
     const pageNumbers = [];
 
-    
     const startPage = Math.max(currentPage - Math.floor(visiblePages / 2), 1);
     const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
@@ -83,7 +81,6 @@ export default function ExplorePage() {
 
     return (
       <div className="flex justify-center mt-8">
-        
         {currentPage > 1 && (
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -93,7 +90,6 @@ export default function ExplorePage() {
           </Button>
         )}
 
-        
         {pageNumbers.map((number) => (
           <Button
             key={number}
@@ -106,7 +102,6 @@ export default function ExplorePage() {
           </Button>
         ))}
 
-        
         {currentPage < totalPages && (
           <Button
             onClick={() => handlePageChange(currentPage + 1)}
@@ -119,8 +114,6 @@ export default function ExplorePage() {
     );
   };
 
-  
-
   const fetchMovieDetails = async (movieId) => {
     try {
       const response = await axios.get(
@@ -132,29 +125,49 @@ export default function ExplorePage() {
     }
   };
 
-  const toggleFavorite = (movieId) => {
+  const toggleFavorite = async (movieId) => {
     setFavorites((prev) => {
-      const newFavorites = prev.includes(movieId)
+      const isFavorite = prev.includes(movieId);
+      return isFavorite
         ? prev.filter((id) => id !== movieId)
         : [...prev, movieId];
-      localStorage.setItem("movieFavorites", JSON.stringify(newFavorites));
-      return newFavorites;
     });
+
+    try {
+      if (favorites.includes(movieId)) {
+        const result = await removeFromFavorites(movieId);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+      } else {
+        const result = await addToFavorites(movieId);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating favorites:", error);
+      alert("Failed to update favorites. Please try again.");
+    }
   };
-  
-
-      
-
 
   useEffect(() => {
-    fetchMovies();
-    const savedFavorites = localStorage.getItem("movieFavorites");
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
-  }, []);
-  
+    const fetchFavorites = async () => {
+      try {
+        const result = await getFavorites();
+        if (result.success) {
+          setFavorites(result.favorites.map((movie) => movie.id));
+        } else {
+          console.warn(result.message || "Failed to fetch favorites.");
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
 
+    fetchMovies();
+    fetchFavorites();
+  }, []);
 
   useEffect(() => {
     if (selectedMovie) {
@@ -189,7 +202,6 @@ export default function ExplorePage() {
             </Button>
           </div>
 
-          
           <div
             className={`fixed inset-y-0 right-0 w-80 bg-gray-900 p-6 shadow-2xl transform transition-transform duration-300 ease-in-out ${
               showFilters ? "translate-x-0" : "translate-x-full"
@@ -306,7 +318,6 @@ export default function ExplorePage() {
             <div className="text-red-500 text-center mb-8">{error}</div>
           )}
 
-          
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {movies.map((movie) => (
               <div
@@ -338,15 +349,15 @@ export default function ExplorePage() {
                     {new Date(movie.release_date).getFullYear()}
                   </p>
                   <Button
-                    variant={
-                      favorites.includes(movie.id) ? "default" : "outline"
-                    }
-                    size="sm"
-                    className="w-full flex items-center justify-center gap-2 text-white"
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavorite(movie.id);
                     }}
+                    className={`mx-auto py-0.5 px-3 text-sm rounded-md ${
+                      favorites.includes(movie.id)
+                        ? "bg-pink-600 hover:bg-pink-700"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    } flex items-center justify-center gap-2 text-white`}
                   >
                     <Heart
                       className={`h-4 w-4 ${
@@ -354,7 +365,7 @@ export default function ExplorePage() {
                       }`}
                     />
                     {favorites.includes(movie.id)
-                      ? "Added to Favorites"
+                      ? "Remove from Favorites"
                       : "Add to Favorites"}
                   </Button>
                 </div>
@@ -368,7 +379,6 @@ export default function ExplorePage() {
             </div>
           )}
 
-          
           {selectedMovie && movieDetails && (
             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
               <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
@@ -467,7 +477,6 @@ export default function ExplorePage() {
                             ))}
                         </div>
                       </div>
-
                       <Button
                         onClick={() => toggleFavorite(movieDetails.id)}
                         className={`w-full md:w-auto ${
@@ -495,11 +504,11 @@ export default function ExplorePage() {
           )}
         </div>
 
-        
-        <Pagination 
-         totalPages={totalPages}
-         currentPage={currentPage}
-         onPageChange={handlePageChange}/>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
       <Footer />
     </div>

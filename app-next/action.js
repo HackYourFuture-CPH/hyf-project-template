@@ -193,21 +193,26 @@ export async function saveContactMessage(formData) {
     throw new Error("Failed to save contact message.");
   }
 }
-
-export async function addToFavorites(userId, movieId) {
+export async function addToFavorites(movieId) {
   try {
+    const cookieStore = cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      console.error("User ID not found in cookies");
+      return { success: false, message: "User not authenticated." };
+    }
+
     console.log("Adding movie to favorites:", { userId, movieId });
 
-    
     const movieExists = await fetch(
-      `https://api.example.com/movies/${movieId}`
+      `https://api.themoviedb.org/3/movie/${movieId}?api_key=8ec0629bf685d1704229f499278c23a5`
     );
     if (!movieExists.ok) {
       console.error("Movie does not exist in API:", movieId);
       return { success: false, message: "Movie does not exist." };
     }
 
-    
     const existing = await connection("favorites")
       .where({ user_id: userId, movie_id: movieId })
       .first();
@@ -217,7 +222,6 @@ export async function addToFavorites(userId, movieId) {
       return { success: false, message: "Movie already in favorites." };
     }
 
-    
     await connection("favorites").insert({
       user_id: userId,
       movie_id: movieId,
@@ -234,8 +238,17 @@ export async function addToFavorites(userId, movieId) {
     };
   }
 }
-export async function removeFromFavorites(userId, movieId) {
+
+export async function removeFromFavorites(movieId) {
   try {
+    const cookieStore = cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      console.error("User ID not found in cookies");
+      return { success: false, message: "User not authenticated." };
+    }
+
     console.log("Removing movie from favorites:", { userId, movieId });
 
     const result = await connection("favorites")
@@ -258,26 +271,47 @@ export async function removeFromFavorites(userId, movieId) {
     };
   }
 }
-export async function getFavorites(userId) {
+
+export async function getFavorites() {
   try {
+    console.log("Step 1: Extracting userId from cookies...");
+
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      console.error("User ID not found in cookies");
+      return { success: false, message: "User not authenticated." };
+    }
+
     console.log("Fetching favorites for user:", userId);
 
-  
+    console.log("Step 2: Fetching favorites from database...");
     const favorites = await connection("favorites")
       .where({ user_id: userId })
       .select("movie_id");
 
+    console.log("Favorites fetched from database:", favorites);
+
     if (favorites.length === 0) {
       console.log("No favorites found for user:", userId);
-      return { success: true, message: "No favorites found.", favorites: [] };
+      return {
+        success: true,
+        message: "No favorites found.",
+        favorites: [],
+      };
     }
 
-   
+    console.log("Step 3: Fetching movie details from API...");
     const movieIds = favorites.map((fav) => fav.movie_id);
     const movies = await Promise.all(
       movieIds.map(async (id) => {
         try {
-          const response = await fetch(`https://api.example.com/movies/${id}`);
+          const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${id}?api_key=8ec0629bf685d1704229f499278c23a5`
+          );
+          console.log("API Response for movie ID", id, ":", response.status);
+
           if (response.ok) {
             return await response.json();
           } else {
@@ -291,8 +325,9 @@ export async function getFavorites(userId) {
       })
     );
 
-    
+    console.log("Step 4: Filtering valid movies...");
     const validMovies = movies.filter((movie) => movie !== null);
+    console.log("Valid movies after filtering:", validMovies);
 
     console.log("Favorites fetched successfully:", validMovies);
     return { success: true, favorites: validMovies };
