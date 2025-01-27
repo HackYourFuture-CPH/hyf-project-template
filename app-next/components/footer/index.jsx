@@ -1,11 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Github, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { saveContactMessage } from "@/action";
 
 export default function Footer() {
   const [activeModal, setActiveModal] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus(null);
+
+    startTransition(async () => {
+      try {
+        await saveContactMessage(formData);
+        setStatus({
+          type: "success",
+          message: "Thank you! We will get back to you as soon as possible.",
+        });
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 3000);
+      } catch (error) {
+        console.error("Error sending message:", error);
+        setStatus({
+          type: "error",
+          message: "Something went wrong. Please try again later.",
+        });
+      }
+    });
+  };
 
   const modals = {
     privacy: {
@@ -20,14 +58,12 @@ export default function Footer() {
             services. This includes: - Favorites list preferences - Basic usage
             statistics - Browser information
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">Cookies</h3>
           <p>
             We use cookies to enhance your browsing experience and remember your
             preferences. You can control cookie settings through your browser
             preferences.
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">
             Third-Party Services
           </h3>
@@ -35,7 +71,6 @@ export default function Footer() {
             We use The Movie Database (TMDB) API for movie information. Their
             privacy policy applies to data received from their services.
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">Data Security</h3>
           <p>
             We implement security measures to protect your information. However,
@@ -56,7 +91,6 @@ export default function Footer() {
             By accessing and using this website, you accept and agree to be
             bound by these Terms of Service and our Privacy Policy.
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">
             User Responsibilities
           </h3>
@@ -65,7 +99,6 @@ export default function Footer() {
             lawful purposes - Not attempt to breach security measures - Respect
             intellectual property rights
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">
             Content and Copyright
           </h3>
@@ -74,7 +107,6 @@ export default function Footer() {
             respective owners. User-generated content remains the property of
             the user.
           </p>
-
           <h3 className="text-lg font-semibold text-blue-400">
             Service Modifications
           </h3>
@@ -100,15 +132,19 @@ export default function Footer() {
             </p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
                 Name
               </label>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 className="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                 placeholder="Your name"
+                required
               />
             </div>
 
@@ -118,8 +154,12 @@ export default function Footer() {
               </label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                 placeholder="your@email.com"
+                required
               />
             </div>
 
@@ -128,17 +168,32 @@ export default function Footer() {
                 Message
               </label>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none min-h-[120px]"
                 placeholder="Your message..."
+                required
               />
             </div>
 
             <Button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600"
+              disabled={isPending}
             >
-              Send Message
+              {isPending ? "Sending..." : "Send Message"}
             </Button>
+
+            {status && (
+              <p
+                className={`text-center mt-4 ${
+                  status.type === "success" ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {status.message}
+              </p>
+            )}
           </form>
         </div>
       ),
@@ -183,7 +238,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Modal */}
       {activeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">

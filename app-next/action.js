@@ -152,3 +152,44 @@ export async function updateProfile(userId, dob, avatarUrl) {
     throw new Error("Failed to update profile.");
   }
 }
+export async function saveReview(formData) {
+  const rating = formData.get("rating");
+  const title = formData.get("title");
+  const review = formData.get("review");
+  console.log("Received data in saveReview:", { rating, title, review });
+  try {
+    await connection("reviews").insert({
+      rating: parseInt(rating, 10),
+      title,
+      review,
+    });
+    console.log("Review successfully saved.");
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving review to database:", error.message);
+    throw new Error("Failed to save review.");
+  }
+}
+
+export async function saveContactMessage(formData) {
+  const { name, email, message } = formData;
+
+  console.log("Received contact form data:", { name, email, message });
+
+  try {
+    const currentTime = new Date().toISOString();
+
+    const result = await connection("contact_messages").insert({
+      name,
+      email,
+      message,
+      created_at: currentTime,
+    });
+
+    console.log("Contact message successfully saved:", result);
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving contact message:", error);
+    throw new Error("Failed to save contact message.");
+  }
+}
