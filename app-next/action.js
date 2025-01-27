@@ -193,3 +193,111 @@ export async function saveContactMessage(formData) {
     throw new Error("Failed to save contact message.");
   }
 }
+
+export async function addToFavorites(userId, movieId) {
+  try {
+    console.log("Adding movie to favorites:", { userId, movieId });
+
+    
+    const movieExists = await fetch(
+      `https://api.example.com/movies/${movieId}`
+    );
+    if (!movieExists.ok) {
+      console.error("Movie does not exist in API:", movieId);
+      return { success: false, message: "Movie does not exist." };
+    }
+
+    
+    const existing = await connection("favorites")
+      .where({ user_id: userId, movie_id: movieId })
+      .first();
+
+    if (existing) {
+      console.log("Movie already in favorites.");
+      return { success: false, message: "Movie already in favorites." };
+    }
+
+    
+    await connection("favorites").insert({
+      user_id: userId,
+      movie_id: movieId,
+    });
+
+    console.log("Movie added to favorites successfully.");
+    return { success: true, message: "Movie added to favorites." };
+  } catch (error) {
+    console.error("Error adding movie to favorites:", error);
+    return {
+      success: false,
+      message: "Failed to add movie to favorites.",
+      error,
+    };
+  }
+}
+export async function removeFromFavorites(userId, movieId) {
+  try {
+    console.log("Removing movie from favorites:", { userId, movieId });
+
+    const result = await connection("favorites")
+      .where({ user_id: userId, movie_id: movieId })
+      .delete();
+
+    if (result === 0) {
+      console.warn("No favorite found to remove for:", { userId, movieId });
+      return { success: false, message: "Movie not found in favorites." };
+    }
+
+    console.log("Movie removed from favorites successfully.");
+    return { success: true, message: "Movie removed from favorites." };
+  } catch (error) {
+    console.error("Error removing movie from favorites:", error);
+    return {
+      success: false,
+      message: "Failed to remove movie from favorites.",
+      error,
+    };
+  }
+}
+export async function getFavorites(userId) {
+  try {
+    console.log("Fetching favorites for user:", userId);
+
+  
+    const favorites = await connection("favorites")
+      .where({ user_id: userId })
+      .select("movie_id");
+
+    if (favorites.length === 0) {
+      console.log("No favorites found for user:", userId);
+      return { success: true, message: "No favorites found.", favorites: [] };
+    }
+
+   
+    const movieIds = favorites.map((fav) => fav.movie_id);
+    const movies = await Promise.all(
+      movieIds.map(async (id) => {
+        try {
+          const response = await fetch(`https://api.example.com/movies/${id}`);
+          if (response.ok) {
+            return await response.json();
+          } else {
+            console.warn("Failed to fetch movie from API:", id);
+            return null;
+          }
+        } catch (error) {
+          console.error("Error fetching movie from API:", id, error);
+          return null;
+        }
+      })
+    );
+
+    
+    const validMovies = movies.filter((movie) => movie !== null);
+
+    console.log("Favorites fetched successfully:", validMovies);
+    return { success: true, favorites: validMovies };
+  } catch (error) {
+    console.error("Error fetching favorites:", error);
+    return { success: false, message: "Failed to fetch favorites.", error };
+  }
+}

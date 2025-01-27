@@ -83,7 +83,7 @@ export default function ExplorePage() {
 
     return (
       <div className="flex justify-center mt-8">
-        {/* Previous Button */}
+        
         {currentPage > 1 && (
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -93,7 +93,7 @@ export default function ExplorePage() {
           </Button>
         )}
 
-        {/* Render the limited page numbers */}
+        
         {pageNumbers.map((number) => (
           <Button
             key={number}
@@ -106,7 +106,7 @@ export default function ExplorePage() {
           </Button>
         ))}
 
-        {/* Next Button */}
+        
         {currentPage < totalPages && (
           <Button
             onClick={() => handlePageChange(currentPage + 1)}
@@ -141,6 +141,10 @@ export default function ExplorePage() {
       return newFavorites;
     });
   };
+  
+
+      
+
 
   useEffect(() => {
     fetchMovies();
@@ -149,6 +153,8 @@ export default function ExplorePage() {
       setFavorites(JSON.parse(savedFavorites));
     }
   }, []);
+  
+
 
   useEffect(() => {
     if (selectedMovie) {
@@ -183,7 +189,7 @@ export default function ExplorePage() {
             </Button>
           </div>
 
-          {/* Filters Drawer */}
+          
           <div
             className={`fixed inset-y-0 right-0 w-80 bg-gray-900 p-6 shadow-2xl transform transition-transform duration-300 ease-in-out ${
               showFilters ? "translate-x-0" : "translate-x-full"
@@ -300,7 +306,7 @@ export default function ExplorePage() {
             <div className="text-red-500 text-center mb-8">{error}</div>
           )}
 
-          {/* Movies Grid */}
+          
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {movies.map((movie) => (
               <div
@@ -362,7 +368,7 @@ export default function ExplorePage() {
             </div>
           )}
 
-          {/* Movie Details Modal */}
+          
           {selectedMovie && movieDetails && (
             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
               <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
@@ -489,7 +495,7 @@ export default function ExplorePage() {
           )}
         </div>
 
-        {/* Pagination */}
+        
         <Pagination 
          totalPages={totalPages}
          currentPage={currentPage}
