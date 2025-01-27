@@ -28,7 +28,7 @@ const modalContent = {
   privacy: {
     title: "Privacy Policy",
     content: (
-      <div className="space-y-4">
+      <div className="space-y-4 overflow-y-auto h-64">
         <h3 className="text-lg font-semibold text-blue-400">
           Data Collection and Usage
         </h3>
@@ -66,7 +66,7 @@ const modalContent = {
   terms: {
     title: "Terms of Service",
     content: (
-      <div className="space-y-4">
+      <div className="space-y-4 overflow-y-auto h-64">
         <h3 className="text-lg font-semibold text-blue-400">
           Acceptance of Terms
         </h3>
@@ -126,11 +126,11 @@ export default function Profile() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(null);
-  const [selectedAvatar, setSelectedAvatar] = useState(null); 
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [modal, setModal] = useState(null);
   const [showRateUs, setShowRateUs] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showMyList, setShowMyList] = useState(false); 
+  const [showMyList, setShowMyList] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
