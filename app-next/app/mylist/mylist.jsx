@@ -64,13 +64,13 @@ export default function MyList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-white mb-8">My Favorite Movies</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {favorites.map((movie) => (
           <div
             key={movie.id}
-            className="bg-gray-900 rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-200"
+            className="bg-gray-900 rounded-lg overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-200 flex flex-col"
           >
+            
             <div className="relative pb-[150%]">
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -82,7 +82,9 @@ export default function MyList() {
                 }}
               />
             </div>
-            <div className="p-4">
+
+            
+            <div className="p-4 flex flex-col flex-grow">
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h3 className="text-lg font-semibold text-white line-clamp-1">
                   {movie.title}
@@ -94,27 +96,28 @@ export default function MyList() {
               <p className="text-gray-400 text-sm mb-3">
                 {new Date(movie.release_date).getFullYear()}
               </p>
+
+              
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleFavorite(movie.id);
                 }}
-                className={`mx-auto py-0.5 px-3 text-sm rounded-md ${
+                className={`w-full py-2 px-4 text-sm font-medium rounded-md ${
                   favorites.some((fav) => fav.id === movie.id)
                     ? "bg-pink-600 hover:bg-pink-700"
                     : "bg-blue-500 hover:bg-blue-600"
                 } flex items-center justify-center gap-2 text-white`}
               >
-                <Heart
-                  className={`h-4 w-4 ${
-                    favorites.some((fav) => fav.id === movie.id)
-                      ? "fill-current"
-                      : ""
-                  }`}
-                />
-                {favorites.some((fav) => fav.id === movie.id)
-                  ? "Remove from Favorites"
-                  : "Add to Favorites"}
+                {favorites.some((fav) => fav.id === movie.id) ? (
+                  <>
+                    Remove from <Heart className="h-4 w-4 fill-current" />
+                  </>
+                ) : (
+                  <>
+                    Add to <Heart className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
