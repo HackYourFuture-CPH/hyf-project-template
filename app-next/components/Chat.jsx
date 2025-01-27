@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
 
-const Chat = () => {
-  const [messages, setMessages] = useState([]);
+const Chat = ({ messages, onSendMessage }) => {
   const [inputMessage, setInputMessage] = useState("");
 
-  const sendMessage = () => {
+  const handleSendMessage = () => {
     if (inputMessage.trim() === "") return;
-    setMessages([...messages, { text: inputMessage, sender: "You" }]);
+    onSendMessage(inputMessage);
     setInputMessage("");
   };
 
@@ -16,7 +15,6 @@ const Chat = () => {
       <h2 className="text-lg font-semibold text-gray-100 border-b border-gray-700 pb-2">
         Live Chat
       </h2>
-
       <div className="messages flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
         {messages.length > 0 ? (
           messages.map((message, index) => (
@@ -24,8 +22,10 @@ const Chat = () => {
               key={index}
               className="p-2 rounded-md bg-gray-800 hover:bg-gray-700 transition"
             >
-              <strong className="text-blue-400">{message.sender}:</strong>{" "}
-              {message.text}
+              <strong className="text-blue-400">User:</strong> {message.content}
+              <span className="text-gray-500 text-sm ml-2">
+                {new Date(message.timestamp).toLocaleTimeString()}
+              </span>
             </div>
           ))
         ) : (
@@ -34,7 +34,6 @@ const Chat = () => {
           </p>
         )}
       </div>
-
       <div className="flex items-center space-x-2">
         <input
           type="text"
@@ -44,7 +43,7 @@ const Chat = () => {
           className="flex-1 p-2 bg-gray-800 text-gray-200 rounded-lg outline-none border border-gray-700 focus:ring-2 focus:ring-blue-500"
         />
         <button
-          onClick={sendMessage}
+          onClick={handleSendMessage}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
         >
           Send
