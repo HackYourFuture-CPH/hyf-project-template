@@ -14,6 +14,7 @@ import {
 import { logout, getUserProfile, updateProfile } from "@/action";
 import RateUs from "../rateus/RateUs";
 import EditProfile from "@/app/Accountdetails/EditProfile";
+import MyList from "@/app/mylist/mylist";
 
 const avatars = [
   { id: 1, src: "/images/avatar7.png" },
@@ -193,7 +194,6 @@ export default function Profile() {
       >
         Close
       </button>
-
       <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full">
         <div className="flex flex-col items-center">
           <div className="relative w-28 h-28 flex justify-center items-center bg-gray-900 rounded-full border-4 border-blue-500 overflow-hidden">
@@ -294,7 +294,6 @@ export default function Profile() {
           </button>
         </div>
       </div>
-
       {modal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
           <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-lg">
@@ -309,7 +308,6 @@ export default function Profile() {
           </div>
         </div>
       )}
-
       {showRateUs && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
           <RateUs onClose={() => setShowRateUs(false)} />
@@ -317,20 +315,28 @@ export default function Profile() {
       )}
 
       {showMyList && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">My List</h2>
-            <p>Your favorite movies will appear here.</p>
-            <button
-              onClick={() => setShowMyList(false)}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
-            >
-              Close
-            </button>
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h2 className="text-xl font-semibold text-white">
+                My Favorite Movies
+              </h2>
+              <button
+                onClick={() => setShowMyList(false)}
+                className="py-1 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="p-4">
+              <div className="overflow-y-auto max-h-[70vh]">
+                <MyList />
+              </div>
+            </div>
           </div>
         </div>
       )}
-
       {showEditProfile && (
         <div className="fixed inset-0 bg-gradient-to-b from-black to-blue-900 flex items-center justify-center">
           <EditProfile
