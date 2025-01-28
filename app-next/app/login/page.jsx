@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { PlayCircle } from "lucide-react";
 import { login } from "@/action";
 
 const LoginForm = () => {
+  const router = useRouter();
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
       console.log("Google Login Success:", response);
@@ -22,10 +24,21 @@ const LoginForm = () => {
   const handleFacebookLogin = () => {
     console.log("Facebook login clicked");
   };
+  const handleClose = () => {
+    router.push("/");
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
+        >
+          Close
+        </button>
+
         <div className="text-center flex items-center justify-center space-x-2">
           <h1 className="text-2xl font-bold text-blue-500 flex items-center">
             Welcome to{" "}
