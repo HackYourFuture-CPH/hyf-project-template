@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { sendMessage } from "@/roomActions";
+import MessageUpdater from "@/components/MessageUpdater";
 
 const Chat = ({ initialMessages, roomId }) => {
   const [messages, setMessages] = useState(initialMessages);
@@ -22,8 +23,13 @@ const Chat = ({ initialMessages, roomId }) => {
     }
   };
 
+  const updateMessages = (newMessages) => {
+    setMessages(newMessages);
+  };
+
   return (
     <div className="chat-container bg-gray-900 text-gray-300 p-4 rounded-lg shadow-md flex flex-col space-y-4 h-80">
+      <MessageUpdater roomId={roomId} onUpdate={updateMessages} />
       <h2 className="text-lg font-semibold text-gray-100 border-b border-gray-700 pb-2">
         Live Chat
       </h2>
