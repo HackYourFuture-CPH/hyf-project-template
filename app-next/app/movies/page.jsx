@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
@@ -23,7 +24,17 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
+
   const [favorites, setFavorites] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -126,49 +137,76 @@ export default function ExplorePage() {
   };
 
   const toggleFavorite = async (movieId) => {
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
     setFavorites((prev) => {
       const isFavorite = prev.includes(movieId);
-      return isFavorite
-        ? prev.filter((id) => id !== movieId)
+      const updatedFavorites = isFavorite
+        ? 
+          prev.filter((id) => id !== movieId)
         : [...prev, movieId];
-    });
 
-    try {
-      if (favorites.includes(movieId)) {
-        const result = await removeFromFavorites(movieId);
-        if (!result.success) {
-          throw new Error(result.message);
-        }
+      if (isFavorite) {
+        removeFromFavorites(movieId);
       } else {
-        const result = await addToFavorites(movieId);
-        if (!result.success) {
-          throw new Error(result.message);
-        }
+        addToFavorites(movieId);
+      }
+      return updatedFavorites;
+    });
+  };
+
+  //   try {
+  //     if (favorites.includes(movieId)) {
+  //       const result = await removeFromFavorites(movieId);
+  //       if (!result.success) {
+  //         throw new Error(result.message);
+  //       }
+  //     } else {
+  //       const result = await addToFavorites(movieId);
+  //       if (!result.success) {
+  //         throw new Error(result.message);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating favorites:", error);
+  //     alert("Failed to update favorites. Please try again.");
+  //   }
+  // };
+
+  const fetchFavorites = async () => {
+    try {
+      const result = await getFavorites();
+      if (result.success) {
+        setFavorites(result.favorites.map((movie) => movie.id));
+      } else {
+        console.warn(result.message || "Failed to fetch favorites.");
       }
     } catch (error) {
-      console.error("Error updating favorites:", error);
-      alert("Failed to update favorites. Please try again.");
+      console.error("Error fetching favorites:", error);
     }
   };
 
+  // Check if user is logged in
+  const checkAuth = async () => {
+    if (!isMounted) return;
+    const loggedIn = await checkUserLoginStatus();
+    setIsLoggedIn(loggedIn);
+  };
+  // First useEffect: Runs when the component is mounted
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const result = await getFavorites();
-        if (result.success) {
-          setFavorites(result.favorites.map((movie) => movie.id));
-        } else {
-          console.warn(result.message || "Failed to fetch favorites.");
-        }
-      } catch (error) {
-        console.error("Error fetching favorites:", error);
-      }
-    };
-
-    fetchMovies();
-    fetchFavorites();
+    setIsMounted(true);
   }, []);
 
+  // Second useEffect: Runs on mount to check user login, fetch movies and favorites
+  useEffect(() => {
+    fetchMovies();
+    fetchFavorites();
+    checkAuth();
+  }, []);
+
+  // Third useEffect: Runs when selectedMovie changes to fetch movie details
   useEffect(() => {
     if (selectedMovie) {
       fetchMovieDetails(selectedMovie);
@@ -177,6 +215,12 @@ export default function ExplorePage() {
       document.body.style.overflow = "unset";
     }
   }, [selectedMovie]);
+  //Forth useEffect: Use the router only when isMounted is true
+  useEffect(() => {
+    if (isMounted && !isLoggedIn) {
+      router.push("/login");
+    }
+  }, [isMounted, isLoggedIn, router]);
 
   const formatRuntime = (minutes) => {
     const hours = Math.floor(minutes / 60);
@@ -349,24 +393,31 @@ export default function ExplorePage() {
                     {new Date(movie.release_date).getFullYear()}
                   </p>
                   <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
+                      
                       toggleFavorite(movie.id);
                     }}
-                    className={`mx-auto py-0.5 px-3 text-sm rounded-md ${
-                      favorites.includes(movie.id)
-                        ? "bg-pink-600 hover:bg-pink-700"
-                        : "bg-blue-500 hover:bg-blue-600"
-                    } flex items-center justify-center gap-2 text-white`}
+                    className={`${
+                      !isLoggedIn
+                        ? "bg-gray-400 glow-gray" 
+                        : favorites.includes(movie.id)
+                        ? "bg-red-600"
+                        : "bg-gray-700"
+                    } text-white px-4 py-2 mx-1`}
                   >
+                    {favorites.includes(movie.id) ? <Heart /> : <Heart className="outline-none" />}
                     <Heart
                       className={`h-4 w-4 ${
-                        favorites.includes(movie.id) ? "fill-current" : ""
+                        favorites.includes(movie.id) && isLoggedIn
+                          ? "fill-current"
+                          : ""
                       }`}
                     />
-                    {favorites.includes(movie.id)
-                      ? "Remove from Favorites"
-                      : "Add to Favorites"}
+                    {isLoggedIn
+                      ? favorites.includes(movie.id)
+                        ? "Remove from Favorites"
+                        : "Add to Favorites"
+                      : "Login to Add to Favorites"}
                   </Button>
                 </div>
               </div>
