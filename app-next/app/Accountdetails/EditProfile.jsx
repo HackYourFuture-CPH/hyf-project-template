@@ -37,11 +37,11 @@ export default function EditProfile({ onClose, updateAvatar }) {
     try {
       const profile = await getUserProfile(userId);
       if (profile) {
+        console.log("Fetched user profile:", profile);
+
         setName(profile.username || "");
-        const formattedDob = profile.dob
-          ? new Date(profile.dob).toISOString().split("T")[0]
-          : "";
-        setDob(formattedDob);
+
+        setDob(profile.dob || "");
 
         if (profile.avatarUrl) {
           const avatar = avatars.find((a) => a.src === profile.avatarUrl);
