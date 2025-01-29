@@ -346,3 +346,24 @@ export async function getFavorites() {
     return { success: false, message: "Failed to fetch favorites.", error };
   }
 }
+export async function saveAvatar(userId, avatarUrl) {
+  if (!userId || !avatarUrl) {
+    throw new Error("Missing parameters: userId or avatarUrl");
+  }
+
+  try {
+    console.log("Updating avatar for user:", userId);
+
+    await connection("user").where({ id: userId }).update({
+      avatar_url: avatarUrl, 
+      updated_at: new Date(),
+    });
+
+    console.log("Avatar updated successfully for user:", userId);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    throw new Error("Failed to update avatar.");
+  }
+}
