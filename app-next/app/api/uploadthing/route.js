@@ -1,4 +1,16 @@
-import { createRouteHandler } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core"; 
+import { createUploadthing, createNextRouteHandler } from "uploadthing/server";
 
-export const { GET, POST } = createRouteHandler(ourFileRouter);
+const f = createUploadthing();
+
+export const ourFileRouter = {
+  userImage: f({ image: { maxFileSize: "4MB" } }).onUploadComplete(
+    ({ file }) => {
+      console.log("✅ File uploaded:", file.url);
+    }
+  ),
+};
+
+
+export const { GET, POST } = createNextRouteHandler({
+  router: ourFileRouter,
+});

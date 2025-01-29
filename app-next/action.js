@@ -141,18 +141,45 @@ export async function getUserProfile(userId) {
   }
 }
 
+//export async function updateProfile(userId, dob, avatarUrl) {
+  //try {
+    //console.log("Updating profile with:", { userId, dob, avatarUrl });
+
+    //const formattedDob = dob ? dob.split("T")[0] : null;
+    //console.log("Formatted DOB for saving:", formattedDob);
+
+    //await connection("user").where({ id: userId }).update({
+      //updated_at: new Date(),
+      //avatar_url: avatarUrl,
+      //dob: formattedDob,
+    //});
+
+    //console.log("Profile updated successfully.");
+    //return { success: true };
+  //} catch (error) {
+    //console.error("Error updating profile:", error);
+    //throw new Error("Failed to update profile.");
+  //}
+//}
 export async function updateProfile(userId, dob, avatarUrl) {
   try {
     console.log("Updating profile with:", { userId, dob, avatarUrl });
 
     const formattedDob = dob ? dob.split("T")[0] : null;
-    console.log("Formatted DOB for saving:", formattedDob);
 
-    await connection("user").where({ id: userId }).update({
+    const updateData = {
       updated_at: new Date(),
-      avatar_url: avatarUrl,
-      dob: formattedDob,
-    });
+    };
+
+    if (avatarUrl) {
+      updateData.avatar_url = avatarUrl; 
+    }
+
+    if (formattedDob) {
+      updateData.dob = formattedDob; 
+    }
+
+    await connection("user").where({ id: userId }).update(updateData);
 
     console.log("Profile updated successfully.");
     return { success: true };
@@ -161,6 +188,7 @@ export async function updateProfile(userId, dob, avatarUrl) {
     throw new Error("Failed to update profile.");
   }
 }
+
 
 export async function saveReview(formData) {
   const rating = formData.get("rating");
@@ -344,26 +372,5 @@ export async function getFavorites() {
   } catch (error) {
     console.error("Error fetching favorites:", error);
     return { success: false, message: "Failed to fetch favorites.", error };
-  }
-}
-export async function saveAvatar(userId, avatarUrl) {
-  if (!userId || !avatarUrl) {
-    throw new Error("Missing parameters: userId or avatarUrl");
-  }
-
-  try {
-    console.log("Updating avatar for user:", userId);
-
-    await connection("user").where({ id: userId }).update({
-      avatar_url: avatarUrl, 
-      updated_at: new Date(),
-    });
-
-    console.log("Avatar updated successfully for user:", userId);
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating avatar:", error);
-    throw new Error("Failed to update avatar.");
   }
 }

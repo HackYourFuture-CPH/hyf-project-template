@@ -231,6 +231,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [customAvatar, setCustomAvatar] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [isUploading, setIsUploading] = useState(false); // Индикатор загрузки
 
   const avatars = [
     { id: 1, src: "/images/avatar7.png" },
@@ -262,10 +263,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         setDob(profile.dob || "");
 
         if (profile.avatarUrl) {
-          // Make sure avatars is an array before calling .find()
-          const avatar = Array.isArray(avatars)
-            ? avatars.find((a) => a.src === profile.avatarUrl)
-            : null;
+          const avatar = avatars.find((a) => a.src === profile.avatarUrl);
           if (avatar) {
             setSelectedAvatar(avatar.id);
           } else {
@@ -277,11 +275,6 @@ export default function EditProfile({ onClose, updateAvatar }) {
       console.error("Error fetching user profile:", error);
       alert("Failed to load profile. Please try again.");
     }
-  };
-
-  const handleCustomAvatarUpload = async (url) => {
-    setCustomAvatar(url);
-    setSelectedAvatar(null);
   };
 
   const handleAvatarClick = (id) => {
@@ -306,7 +299,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         alert("Profile saved successfully!");
         if (avatarUrl) {
           updateAvatar(avatarUrl);
-          Cookies.set("avatar", avatarUrl, { expires: 7 }); // Update cookies
+          Cookies.set("avatar", avatarUrl, { expires: 7 });
         }
         onClose();
       } else {
@@ -354,26 +347,27 @@ export default function EditProfile({ onClose, updateAvatar }) {
                 <p>?</p>
               </div>
             )}
-
-            <UploadButton
-              endpoint="imageUploader"
-              onClientUploadComplete={(res) => {
-                console.log("Upload Response:", res);
-
-                if (Array.isArray(res) && res.length > 0) {
-                  const uploadedFile = res[0];
-                  handleCustomAvatarUpload(uploadedFile.url);
-                } else {
-                  console.error("Invalid response from UploadThing:", res);
-                }
-              }}
-              onUploadError={(error) => {
-                console.error("Upload failed:", error);
-                alert("Image upload failed.");
-              }}
-            />
           </div>
         </div>
+
+        <UploadButton
+          endpoint="userImage"
+          onUploadStart={() => setIsUploading(true)}
+          onClientUploadComplete={(res) => {
+            if (res && res[0]) {
+              handleCustomAvatarUpload(res[0].url); 
+            }
+            setIsUploading(false);
+          }}
+          onUploadError={(error) => {
+            console.error("Ошибка загрузки:", error);
+            setIsUploading(false);
+          }}
+        />
+
+        {isUploading && (
+          <p className="text-blue-500 text-center mt-4">Uploading...</p>
+        )}
 
         <div className="flex overflow-x-auto space-x-4 pb-2 mb-6">
           {avatars.map((avatar) => (
