@@ -262,7 +262,10 @@ export default function EditProfile({ onClose, updateAvatar }) {
         setDob(profile.dob || "");
 
         if (profile.avatarUrl) {
-          const avatar = avatars.find((a) => a.src === profile.avatarUrl);
+          // Make sure avatars is an array before calling .find()
+          const avatar = Array.isArray(avatars)
+            ? avatars.find((a) => a.src === profile.avatarUrl)
+            : null;
           if (avatar) {
             setSelectedAvatar(avatar.id);
           } else {
@@ -272,6 +275,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
+      alert("Failed to load profile. Please try again.");
     }
   };
 
@@ -302,6 +306,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         alert("Profile saved successfully!");
         if (avatarUrl) {
           updateAvatar(avatarUrl);
+          Cookies.set("avatar", avatarUrl, { expires: 7 }); // Update cookies
         }
         onClose();
       } else {
@@ -349,20 +354,22 @@ export default function EditProfile({ onClose, updateAvatar }) {
                 <p>?</p>
               </div>
             )}
+
             <UploadButton
-              endpoint="imageUploader" 
+              endpoint="imageUploader"
               onClientUploadComplete={(res) => {
                 console.log("Upload Response:", res);
 
                 if (Array.isArray(res) && res.length > 0) {
-                  const uploadedFile = res[0]; 
-                  console.log("Uploaded file URL:", uploadedFile.url);
+                  const uploadedFile = res[0];
+                  handleCustomAvatarUpload(uploadedFile.url);
                 } else {
                   console.error("Invalid response from UploadThing:", res);
                 }
               }}
               onUploadError={(error) => {
                 console.error("Upload failed:", error);
+                alert("Image upload failed.");
               }}
             />
           </div>
@@ -411,7 +418,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         <button
           onClick={handleSave}
           className={`w-full py-2 rounded-lg font-semibold transition-all ${
-            customAvatar || selectedAvatar || dob
+            dob || customAvatar || selectedAvatar
               ? "bg-blue-500 hover:bg-blue-600 text-white"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}
@@ -423,4 +430,3 @@ export default function EditProfile({ onClose, updateAvatar }) {
     </div>
   );
 }
-

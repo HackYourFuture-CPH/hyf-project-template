@@ -1,17 +1,12 @@
-const { createUploadthing } = require("uploadthing/next");
+import { createUploadthing } from "uploadthing/server";
 
 const f = createUploadthing();
 
-const ourFileRouter = {
+export const ourFileRouter = {
   imageUploader: f({
-    image: {
-      maxFileSize: "4MB",
-      maxFileCount: 1,
-    },
-  }).onUploadComplete(async ({ metadata, file }) => {
-    console.log("Upload complete for user:", metadata.userId);
-    console.log("Uploaded file URL:", file.url);
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+  }).onUploadComplete(({ file }) => {
+    console.log("✅ file uploaded:", file);
+    return { url: file.url };
   }),
 };
-
-module.exports = { ourFileRouter };
