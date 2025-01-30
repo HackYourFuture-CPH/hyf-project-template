@@ -35,14 +35,11 @@ const Chat = ({ initialMessages, roomId }) => {
   };
 
   const updateMessages = (newMessages) => {
-    setMessages((prevMessages) => {
-      const existingMessageIds = new Set(prevMessages.map((msg) => msg.id));
-      const updatedMessages = [
-        ...prevMessages,
-        ...newMessages.filter((msg) => !existingMessageIds.has(msg.id)),
-      ];
-      return updatedMessages;
-    });
+    setMessages((prevMessages) =>
+      [...prevMessages, ...newMessages].filter(
+        (msg, index, self) => index === self.findIndex((t) => t.id === msg.id)
+      )
+    );
   };
 
   return (
