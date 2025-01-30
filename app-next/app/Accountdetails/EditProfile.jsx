@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { getUserProfile, updateProfile } from "@/action";
+import { UploadButton } from "@/utils/uploadthing";
 
 export default function EditProfile({ onClose, updateAvatar }) {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [customAvatar, setCustomAvatar] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const avatars = [
     { id: 1, src: "/images/avatar7.png" },
@@ -18,6 +20,9 @@ export default function EditProfile({ onClose, updateAvatar }) {
     { id: 4, src: "/images/avatar4.png" },
     { id: 5, src: "/images/avatar5.png" },
     { id: 6, src: "/images/avatar6.png" },
+    { id: 7, src: "/images/avatar3.png" },
+    { id: 8, src: "/images/avatar2.png" },
+    { id: 9, src: "/images/avatar1.png" },
   ];
 
   useEffect(() => {
@@ -38,10 +43,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
       const profile = await getUserProfile(userId);
       if (profile) {
         setName(profile.username || "");
-        const formattedDob = profile.dob
-          ? new Date(profile.dob).toISOString().split("T")[0]
-          : "";
-        setDob(formattedDob);
+        setDob(profile.dob || "");
 
         if (profile.avatarUrl) {
           const avatar = avatars.find((a) => a.src === profile.avatarUrl);
@@ -54,24 +56,18 @@ export default function EditProfile({ onClose, updateAvatar }) {
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
-    }
-  };
-
-  const handleCustomAvatarUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setCustomAvatar(reader.result);
-        setSelectedAvatar(null);
-      };
-      reader.readAsDataURL(file);
+      alert("Failed to load profile. Please try again.");
     }
   };
 
   const handleAvatarClick = (id) => {
     setSelectedAvatar(id);
     setCustomAvatar(null);
+  };
+
+  const handleCustomAvatarUpload = (url) => {
+    setCustomAvatar(url);
+    setSelectedAvatar(null);
   };
 
   const handleSave = async () => {
@@ -91,6 +87,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         alert("Profile saved successfully!");
         if (avatarUrl) {
           updateAvatar(avatarUrl);
+          Cookies.set("avatar", avatarUrl, { expires: 7 });
         }
         onClose();
       } else {
@@ -138,30 +135,50 @@ export default function EditProfile({ onClose, updateAvatar }) {
                 <p>?</p>
               </div>
             )}
-            <label className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleCustomAvatarUpload}
-                className="hidden"
-              />
+          </div>
+        </div>
+
+        <UploadButton
+          endpoint="imageUploader"
+          onUploadStart={() => setIsUploading(true)}
+          onClientUploadComplete={(res) => {
+            if (res && res[0]) {
+              handleCustomAvatarUpload(res[0].url);
+            }
+            setIsUploading(false);
+          }}
+          onUploadError={(error) => {
+            console.error("upload error:", error);
+            setIsUploading(false);
+          }}
+        >
+          {({ open }) => (
+            <button
+              onClick={open}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold flex items-center justify-center space-x-2 shadow-lg transition-transform transform hover:scale-105"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="white"
-                className="w-4 h-4"
+                strokeWidth={2}
+                stroke="currentColor"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M12 4v16m8-8H4"
+                  d="M12 16.5v-9m0 0L9.75 8.25M12 7.5l2.25 1.5M21 21H3M16.5 3h-9a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h9a2.25 2.25 0 002.25-2.25V5.25A2.25 2.25 0 0016.5 3z"
                 />
               </svg>
-            </label>
-          </div>
-        </div>
+              <span>Upload Avatar</span>
+            </button>
+          )}
+        </UploadButton>
+
+        {isUploading && (
+          <p className="text-blue-500 text-center mt-4">Uploading...</p>
+        )}
 
         <div className="flex overflow-x-auto space-x-4 pb-2 mb-6">
           {avatars.map((avatar) => (
@@ -206,7 +223,7 @@ export default function EditProfile({ onClose, updateAvatar }) {
         <button
           onClick={handleSave}
           className={`w-full py-2 rounded-lg font-semibold transition-all ${
-            customAvatar || selectedAvatar || dob
+            dob || customAvatar || selectedAvatar
               ? "bg-blue-500 hover:bg-blue-600 text-white"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}

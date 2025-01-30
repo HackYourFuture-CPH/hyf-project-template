@@ -25,7 +25,7 @@ export async function register(formData) {
     userId,
   });
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   await cookieStore.set({
     name: "username",
@@ -59,7 +59,7 @@ export async function login(formData) {
   if (user) {
     console.log("User found:", user);
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     await cookieStore.set({
       name: "username",
@@ -87,7 +87,7 @@ export async function login(formData) {
 }
 
 export async function logout() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   await cookieStore.set({
     name: "username",
@@ -114,18 +114,26 @@ export async function logout() {
 
 export async function getUserProfile(userId) {
   try {
-    const user = await connection("user").where({ id: userId }).first();
+    const user = await connection("user")
+      .select(
+        "id",
+        "username",
+        "avatar_url",
+        connection.raw(`TO_CHAR(dob, 'YYYY-MM-DD') AS dob`)
+      )
+      .where({ id: userId })
+      .first();
 
     if (!user) {
       throw new Error("User not found.");
     }
 
-    console.log(`Fetched user profile:`, user);
+    console.log("Fetched user profile from DB:", user);
 
     return {
       username: user.username,
       avatarUrl: user.avatar_url,
-      dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : null,
+      dob: user.dob || null,
     };
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -133,17 +141,45 @@ export async function getUserProfile(userId) {
   }
 }
 
+//export async function updateProfile(userId, dob, avatarUrl) {
+  //try {
+    //console.log("Updating profile with:", { userId, dob, avatarUrl });
+
+    //const formattedDob = dob ? dob.split("T")[0] : null;
+    //console.log("Formatted DOB for saving:", formattedDob);
+
+    //await connection("user").where({ id: userId }).update({
+      //updated_at: new Date(),
+      //avatar_url: avatarUrl,
+      //dob: formattedDob,
+    //});
+
+    //console.log("Profile updated successfully.");
+    //return { success: true };
+  //} catch (error) {
+    //console.error("Error updating profile:", error);
+    //throw new Error("Failed to update profile.");
+  //}
+//}
 export async function updateProfile(userId, dob, avatarUrl) {
   try {
     console.log("Updating profile with:", { userId, dob, avatarUrl });
 
-    await connection("user")
-      .where({ id: userId })
-      .update({
-        updated_at: new Date(),
-        avatar_url: avatarUrl,
-        dob: dob || null,
-      });
+    const formattedDob = dob ? dob.split("T")[0] : null;
+
+    const updateData = {
+      updated_at: new Date(),
+    };
+
+    if (avatarUrl) {
+      updateData.avatar_url = avatarUrl; 
+    }
+
+    if (formattedDob) {
+      updateData.dob = formattedDob; 
+    }
+
+    await connection("user").where({ id: userId }).update(updateData);
 
     console.log("Profile updated successfully.");
     return { success: true };
@@ -152,6 +188,8 @@ export async function updateProfile(userId, dob, avatarUrl) {
     throw new Error("Failed to update profile.");
   }
 }
+
+
 export async function saveReview(formData) {
   const rating = formData.get("rating");
   const title = formData.get("title");
@@ -195,7 +233,7 @@ export async function saveContactMessage(formData) {
 }
 export async function addToFavorites(movieId) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {
@@ -241,7 +279,7 @@ export async function addToFavorites(movieId) {
 
 export async function removeFromFavorites(movieId) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {
