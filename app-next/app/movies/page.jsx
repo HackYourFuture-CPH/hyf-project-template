@@ -1,7 +1,6 @@
 "use client";
-
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import axios from "axios";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
@@ -24,19 +23,11 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
-
   const [favorites, setFavorites] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const fetchMovies = async (e) => {
     if (e) e.preventDefault();
@@ -137,76 +128,55 @@ export default function ExplorePage() {
   };
 
   const toggleFavorite = async (movieId) => {
-    if (!isLoggedIn) {
-      router.push("/login");
+    if (!user) {
+      console.error("User not authenticated.");
+      window.location.href = "/login";
       return;
     }
     setFavorites((prev) => {
       const isFavorite = prev.includes(movieId);
-      const updatedFavorites = isFavorite
-        ? 
-          prev.filter((id) => id !== movieId)
+      return isFavorite
+        ? prev.filter((id) => id !== movieId)
         : [...prev, movieId];
-
-      if (isFavorite) {
-        removeFromFavorites(movieId);
-      } else {
-        addToFavorites(movieId);
-      }
-      return updatedFavorites;
     });
-  };
 
-  //   try {
-  //     if (favorites.includes(movieId)) {
-  //       const result = await removeFromFavorites(movieId);
-  //       if (!result.success) {
-  //         throw new Error(result.message);
-  //       }
-  //     } else {
-  //       const result = await addToFavorites(movieId);
-  //       if (!result.success) {
-  //         throw new Error(result.message);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating favorites:", error);
-  //     alert("Failed to update favorites. Please try again.");
-  //   }
-  // };
-
-  const fetchFavorites = async () => {
     try {
-      const result = await getFavorites();
-      if (result.success) {
-        setFavorites(result.favorites.map((movie) => movie.id));
+      if (favorites.includes(movieId)) {
+        const result = await removeFromFavorites(movieId);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
       } else {
-        console.warn(result.message || "Failed to fetch favorites.");
+        const result = await addToFavorites(movieId);
+        if (!result.success) {
+          throw new Error(result.message);
+        }
       }
     } catch (error) {
-      console.error("Error fetching favorites:", error);
+      console.error("Error updating favorites:", error);
+      //window.location.href = "/login";
+      
     }
   };
 
-  // Check if user is logged in
-  const checkAuth = async () => {
-    if (!isMounted) return;
-    const loggedIn = await checkUserLoginStatus();
-    setIsLoggedIn(loggedIn);
-  };
-  // First useEffect: Runs when the component is mounted
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    const fetchFavorites = async () => {
+      try {
+        const result = await getFavorites();
+        if (result.success) {
+          setFavorites(result.favorites.map((movie) => movie.id));
+        } else {
+          console.warn(result.message || "Failed to fetch favorites.");
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
 
-  // Second useEffect: Runs on mount to check user login, fetch movies and favorites
-  useEffect(() => {
     fetchMovies();
     fetchFavorites();
-    checkAuth();
   }, []);
 
-  // Third useEffect: Runs when selectedMovie changes to fetch movie details
   useEffect(() => {
     if (selectedMovie) {
       fetchMovieDetails(selectedMovie);
@@ -215,12 +185,6 @@ export default function ExplorePage() {
       document.body.style.overflow = "unset";
     }
   }, [selectedMovie]);
-  //Forth useEffect: Use the router only when isMounted is true
-  useEffect(() => {
-    if (isMounted && !isLoggedIn) {
-      router.push("/login");
-    }
-  }, [isMounted, isLoggedIn, router]);
 
   const formatRuntime = (minutes) => {
     const hours = Math.floor(minutes / 60);
@@ -393,31 +357,25 @@ export default function ExplorePage() {
                     {new Date(movie.release_date).getFullYear()}
                   </p>
                   <Button
-                    onClick={() => {
-                      
+                    onClick={(e) => {
+                      e.stopPropagation();
                       toggleFavorite(movie.id);
                     }}
+                    // .glow-gray {
+                    //   background-color: gray;
+                    //   box-shadow: 0 0 10px gray;
+                    //   cursor: not-allowed;
+                    // }
+
                     className={`${
-                      !isLoggedIn
-                        ? "bg-gray-400 glow-gray" 
-                        : favorites.includes(movie.id)
-                        ? "bg-red-600"
-                        : "bg-gray-700"
-                    } text-white px-4 py-2 mx-1`}
+                      favorites.includes(movie.id) ? "bg-red-500" : user ? "bg-gray-700" : "bg-gray-500 box-shadow: 0 0 10px gray cursor: not-allowed;"
+                    } text-white px-4 py-2 rounded-lg flex items-center gap-2`}
                   >
-                    {favorites.includes(movie.id) ? <Heart /> : <Heart className="outline-none" />}
-                    <Heart
-                      className={`h-4 w-4 ${
-                        favorites.includes(movie.id) && isLoggedIn
-                          ? "fill-current"
-                          : ""
-                      }`}
-                    />
-                    {isLoggedIn
-                      ? favorites.includes(movie.id)
-                        ? "Remove from Favorites"
-                        : "Add to Favorites"
-                      : "Login to Add to Favorites"}
+                    <Heart className={`${favorites.includes(movie.id) ? "text-red-500" : "text-white"} h-5 w-5`} />
+
+                    {favorites.includes(movie.id)
+                      ? "Remove from Favorites"
+                      : "Add to Favorites"}
                   </Button>
                 </div>
               </div>
