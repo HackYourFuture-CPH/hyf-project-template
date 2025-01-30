@@ -3,6 +3,7 @@ import { getRoom, getMessages } from "@/roomActions";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Chat from "@/components/Chat";
+import CopyRoomUrlButton from "@/components/CopyRoomUrlButton";
 
 export async function generateMetadata({ params }) {
   const room = await getRoom(params.id);
@@ -44,6 +45,7 @@ export default async function RoomPage({ params }) {
           </div>
           <div className="col-span-2 bg-gray-900 text-gray-300 rounded-lg shadow-lg p-4 h-full flex flex-col">
             <Chat initialMessages={messages} roomId={params.id} />
+            <CopyRoomUrlButton roomId={params.id} />
           </div>
         </div>
       </main>
