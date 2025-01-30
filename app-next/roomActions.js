@@ -27,22 +27,31 @@ export async function getRoom(roomId) {
 
 export async function sendMessage(roomId, userId, content) {
   try {
-    await connection("messages").insert({
-      room_id: roomId,
-      user_id: userId,
-      content,
-    });
+    const [message] = await connection("messages")
+      .insert({
+        room_id: roomId,
+        user_id: userId,
+        content,
+      })
+      .returning("*");
+    return message;
   } catch (error) {
     console.error("Error sending message:", error);
     throw new Error("Failed to send message");
   }
 }
 
-export async function getMessages(roomId) {
+export async function getMessages(roomId, sinceTimestamp = null) {
   try {
-    const messages = await connection("messages")
+    let query = connection("messages")
       .where({ room_id: roomId })
       .orderBy("timestamp", "asc");
+
+    if (sinceTimestamp) {
+      query = query.where("timestamp", ">", new Date(sinceTimestamp));
+    }
+
+    const messages = await query;
     return messages;
   } catch (error) {
     console.error("Error fetching messages:", error);
