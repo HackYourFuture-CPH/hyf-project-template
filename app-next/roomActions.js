@@ -1,5 +1,6 @@
 "use server";
 import connection from "./lib/database_client";
+import { cookies } from "next/headers";
 
 export async function createRoom(videoUrl) {
   try {
@@ -25,8 +26,18 @@ export async function getRoom(roomId) {
   }
 }
 
-export async function sendMessage(roomId, userId, content) {
+export async function sendMessage(roomId, content) {
   try {
+    const cookieStore = cookies();
+    const userIdCookie = cookieStore.get("userId")?.value;
+    const usernameCookie = cookieStore.get("username")?.value;
+
+    if (!userIdCookie || !usernameCookie) {
+      return { error: "User not authenticated." };
+    }
+
+    const userId = parseInt(userIdCookie, 10);
+
     const [message] = await connection("messages")
       .insert({
         room_id: roomId,
@@ -34,10 +45,11 @@ export async function sendMessage(roomId, userId, content) {
         content,
       })
       .returning("*");
-    return message;
+
+    return { ...message, sender: usernameCookie };
   } catch (error) {
     console.error("Error sending message:", error);
-    throw new Error("Failed to send message");
+    return { error: error.message };
   }
 }
 
