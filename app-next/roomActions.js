@@ -44,11 +44,20 @@ export async function sendMessage(roomId, userId, content) {
 export async function getMessages(roomId, sinceTimestamp = null) {
   try {
     let query = connection("messages")
-      .where({ room_id: roomId })
-      .orderBy("timestamp", "asc");
+      .select(
+        "messages.id",
+        "messages.room_id",
+        "messages.user_id",
+        "messages.content",
+        "messages.timestamp",
+        "user.username"
+      )
+      .join("user", "messages.user_id", "=", "user.id")
+      .where({ "messages.room_id": roomId })
+      .orderBy("messages.timestamp", "asc");
 
     if (sinceTimestamp) {
-      query = query.where("timestamp", ">", new Date(sinceTimestamp));
+      query = query.where("messages.timestamp", ">", new Date(sinceTimestamp));
     }
 
     const messages = await query;

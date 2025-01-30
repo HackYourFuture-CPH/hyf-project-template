@@ -55,7 +55,9 @@ const Chat = ({ initialMessages, roomId }) => {
               key={index}
               className="p-2 rounded-md bg-gray-800 hover:bg-gray-700 transition"
             >
-              <strong className="text-blue-400">{message.sender}:</strong>{" "}
+              <strong className="text-blue-400">
+                {message.username || "User"}:
+              </strong>{" "}
               {message.content}
               <span className="text-gray-500 text-sm ml-2">
                 {new Date(message.timestamp).toLocaleTimeString()}
