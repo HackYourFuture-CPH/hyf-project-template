@@ -25,7 +25,7 @@ export async function register(formData) {
     userId,
   });
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   await cookieStore.set({
     name: "username",
@@ -59,7 +59,7 @@ export async function login(formData) {
   if (user) {
     console.log("User found:", user);
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     await cookieStore.set({
       name: "username",
@@ -87,7 +87,7 @@ export async function login(formData) {
 }
 
 export async function logout() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   await cookieStore.set({
     name: "username",
@@ -233,7 +233,7 @@ export async function saveContactMessage(formData) {
 }
 export async function addToFavorites(movieId) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {
@@ -279,7 +279,7 @@ export async function addToFavorites(movieId) {
 
 export async function removeFromFavorites(movieId) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {

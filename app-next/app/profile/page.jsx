@@ -23,6 +23,9 @@ const avatars = [
   { id: 4, src: "/images/avatar4.png" },
   { id: 5, src: "/images/avatar5.png" },
   { id: 6, src: "/images/avatar6.png" },
+  { id: 7, src: "/images/avatar3.png" },
+  { id: 8, src: "/images/avatar2.png" },
+  { id: 9, src: "/images/avatar1.png" },
 ];
 
 const modalContent = {
