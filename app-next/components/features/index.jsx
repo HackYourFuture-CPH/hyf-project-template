@@ -1,11 +1,12 @@
 import Link from "next/link"; 
+import { link } from "node:fs";
 
 export default function Features() {
   const features = [
     {
       title: "Create Room",
       description:
-        "Start your own room to share and discuss movies with friends.",
+        "Start your own room to share and discuss YouTube videos with friends.",
       icon: "🏠",
       link: "/room",
     },
@@ -14,18 +15,21 @@ export default function Features() {
       description:
         "Save your favorite movies and create a personalized watchlist for later viewing",
       icon: "🎬",
+      link: "/movies",
     },
     {
       title: "Advanced Filters",
       description:
         "Find exactly what you want with filters for genre, year, rating, and more",
       icon: "🔍",
+      link: "/movies",
     },
     {
       title: "Movie Ratings",
       description:
         "See what others think and share your own ratings and reviews",
       icon: "⭐",
+      link: "/movies",
     },
   ];
 

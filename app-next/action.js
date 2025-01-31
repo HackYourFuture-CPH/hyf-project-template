@@ -141,26 +141,6 @@ export async function getUserProfile(userId) {
   }
 }
 
-//export async function updateProfile(userId, dob, avatarUrl) {
-  //try {
-    //console.log("Updating profile with:", { userId, dob, avatarUrl });
-
-    //const formattedDob = dob ? dob.split("T")[0] : null;
-    //console.log("Formatted DOB for saving:", formattedDob);
-
-    //await connection("user").where({ id: userId }).update({
-      //updated_at: new Date(),
-      //avatar_url: avatarUrl,
-      //dob: formattedDob,
-    //});
-
-    //console.log("Profile updated successfully.");
-    //return { success: true };
-  //} catch (error) {
-    //console.error("Error updating profile:", error);
-    //throw new Error("Failed to update profile.");
-  //}
-//}
 export async function updateProfile(userId, dob, avatarUrl) {
   try {
     console.log("Updating profile with:", { userId, dob, avatarUrl });
