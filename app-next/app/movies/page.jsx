@@ -147,7 +147,8 @@ export default function ExplorePage() {
       }
     } catch (error) {
       console.error("Error updating favorites:", error);
-      alert("Failed to update favorites. Please try again.");
+      window.location.href = "/login";
+      
     }
   };
 
