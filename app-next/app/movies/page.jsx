@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "@/components/navbar";
@@ -26,8 +26,6 @@ export default function ExplorePage() {
   const [favorites, setFavorites] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { data: session } = useSession();
-  const user = session?.user;
 
   const fetchMovies = async (e) => {
     if (e) e.preventDefault();
@@ -128,11 +126,6 @@ export default function ExplorePage() {
   };
 
   const toggleFavorite = async (movieId) => {
-    if (!user) {
-      console.error("User not authenticated.");
-      window.location.href = "/login";
-      return;
-    }
     setFavorites((prev) => {
       const isFavorite = prev.includes(movieId);
       return isFavorite
@@ -154,7 +147,7 @@ export default function ExplorePage() {
       }
     } catch (error) {
       console.error("Error updating favorites:", error);
-      //window.location.href = "/login";
+      window.location.href = "/login";
       
     }
   };
@@ -361,18 +354,17 @@ export default function ExplorePage() {
                       e.stopPropagation();
                       toggleFavorite(movie.id);
                     }}
-                    // .glow-gray {
-                    //   background-color: gray;
-                    //   box-shadow: 0 0 10px gray;
-                    //   cursor: not-allowed;
-                    // }
-
-                    className={`${
-                      favorites.includes(movie.id) ? "bg-red-500" : user ? "bg-gray-700" : "bg-gray-500 box-shadow: 0 0 10px gray cursor: not-allowed;"
-                    } text-white px-4 py-2 rounded-lg flex items-center gap-2`}
+                    className={`mx-auto py-0.5 px-3 text-sm rounded-md ${
+                      favorites.includes(movie.id)
+                        ? "bg-pink-600 hover:bg-pink-700"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    } flex items-center justify-center gap-2 text-white`}
                   >
-                    <Heart className={`${favorites.includes(movie.id) ? "text-red-500" : "text-white"} h-5 w-5`} />
-
+                    <Heart
+                      className={`h-4 w-4 ${
+                        favorites.includes(movie.id) ? "fill-current" : ""
+                      }`}
+                    />
                     {favorites.includes(movie.id)
                       ? "Remove from Favorites"
                       : "Add to Favorites"}
