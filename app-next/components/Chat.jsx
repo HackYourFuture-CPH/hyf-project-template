@@ -2,34 +2,54 @@
 import React, { useState } from "react";
 import { sendMessage } from "@/roomActions";
 import MessageUpdater from "@/components/MessageUpdater";
+import AutoScroll from "@/components/AutoScroll";
 
 const Chat = ({ initialMessages, roomId }) => {
   const [messages, setMessages] = useState(initialMessages);
   const [inputMessage, setInputMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSendMessage = async () => {
     if (inputMessage.trim() === "") return;
 
     try {
-      const userId = 5;
-      await sendMessage(roomId, userId, inputMessage);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: inputMessage, sender: "You" },
-      ]);
+      const response = await sendMessage(roomId, inputMessage);
+
+      if (response.error) {
+        setErrorMessage(response.error);
+        return;
+      }
+
+      setMessages((prevMessages) => {
+        return [...prevMessages, response].filter(
+          (msg, index, self) => index === self.findIndex((t) => t.id === msg.id)
+        );
+      });
+
       setInputMessage("");
+      setErrorMessage(null);
     } catch (error) {
       console.error("Error sending message:", error);
+      setErrorMessage("Failed to send message.");
     }
   };
 
   const updateMessages = (newMessages) => {
-    setMessages(newMessages);
+    setMessages((prevMessages) =>
+      [...prevMessages, ...newMessages].filter(
+        (msg, index, self) => index === self.findIndex((t) => t.id === msg.id)
+      )
+    );
   };
 
   return (
     <div className="chat-container bg-gray-900 text-gray-300 p-4 rounded-lg shadow-md flex flex-col space-y-4 h-80">
-      <MessageUpdater roomId={roomId} onUpdate={updateMessages} />
+      {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
+      <MessageUpdater
+        roomId={roomId}
+        onUpdate={updateMessages}
+        initialMessages={initialMessages}
+      />
       <h2 className="text-lg font-semibold text-gray-100 border-b border-gray-700 pb-2">
         Live Chat
       </h2>
@@ -40,7 +60,10 @@ const Chat = ({ initialMessages, roomId }) => {
               key={index}
               className="p-2 rounded-md bg-gray-800 hover:bg-gray-700 transition"
             >
-              <strong className="text-blue-400">User:</strong> {message.content}
+              <strong className="text-blue-400">
+                {message.username || message.sender || "User"}:
+              </strong>{" "}
+              {message.content}
               <span className="text-gray-500 text-sm ml-2">
                 {new Date(message.timestamp).toLocaleTimeString()}
               </span>
@@ -51,6 +74,7 @@ const Chat = ({ initialMessages, roomId }) => {
             No messages yet. Start the chat!
           </p>
         )}
+        <AutoScroll messages={messages} />
       </div>
       <div className="flex items-center space-x-2">
         <input

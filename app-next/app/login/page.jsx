@@ -186,6 +186,7 @@ const LoginForm = () => {
             </svg>
             Continue with Google
           </button>
+
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
@@ -200,6 +201,7 @@ const LoginForm = () => {
             </svg>
             Continue with Apple
           </button>
+
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
