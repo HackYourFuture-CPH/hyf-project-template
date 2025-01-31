@@ -49,19 +49,17 @@ const LoginForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    
     if (!email.trim() || !password.trim()) {
       setError("Please fill in both fields.");
       return;
     }
 
     try {
-      
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
 
-      setError(""); 
+      setError("");
       await login(formData);
     } catch (e) {
       console.error(e);
@@ -142,6 +140,10 @@ const LoginForm = () => {
               <a
                 href="/forgotPassword"
                 className="text-blue-500 text-sm hover:underline"
+                onClick={(e) => {
+                  e.preventDefault(); 
+                  openModal(); 
+                }}
               >
                 Forgot password?
               </a>
