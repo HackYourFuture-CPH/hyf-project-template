@@ -29,6 +29,9 @@ const ComingSoon = ({ onClose }) => {
 const LoginForm = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
@@ -42,6 +45,29 @@ const LoginForm = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const handleCloseLoginForm = () => router.push("/");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    
+    if (!email.trim() || !password.trim()) {
+      setError("Please fill in both fields.");
+      return;
+    }
+
+    try {
+      
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+
+      setError(""); 
+      await login(formData);
+    } catch (e) {
+      console.error(e);
+      setError("Invalid email or password.");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 relative">
@@ -69,7 +95,11 @@ const LoginForm = () => {
           Please log in using the form below.
         </p>
 
-        <form className="mt-6 space-y-4" action={login}>
+        {error && (
+          <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+        )}
+
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -79,6 +109,8 @@ const LoginForm = () => {
               name="email"
               placeholder="example@gmail.com"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
@@ -90,6 +122,8 @@ const LoginForm = () => {
               name="password"
               placeholder="Password"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <div className="flex justify-between items-center mt-1">
               <div className="flex items-center">
