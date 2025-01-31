@@ -1,13 +1,36 @@
+
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { PlayCircle } from "lucide-react";
 import { login } from "@/action";
 
+const ComingSoon = ({ onClose }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-gradient-to-b from-gray-900 to-blue-900 p-6 rounded-3xl shadow-2xl border border-blue-700/50 backdrop-blur-md text-white text-center relative w-96">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center"
+        >
+          ✖
+        </button>
+        <h1 className="text-3xl font-bold text-blue-300">Coming Soon</h1>
+        <p className="text-blue-200 mt-2">
+          This feature is under development and will be available soon. Stay
+          tuned!
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const LoginForm = () => {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
       console.log("Google Login Success:", response);
@@ -17,28 +40,24 @@ const LoginForm = () => {
     },
   });
 
-  const handleAppleLogin = () => {
-    console.log("Apple login clicked");
-  };
-
-  const handleFacebookLogin = () => {
-    console.log("Facebook login clicked");
-  };
-  const handleClose = () => {
-    router.push("/");
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const handleCloseLoginForm = () => router.push("/");
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
-        >
-          Close
-        </button>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 relative">
+      
+      <button
+        onClick={handleCloseLoginForm}
+        className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
+      >
+        Close
+      </button>
 
+     
+      {isModalOpen && <ComingSoon onClose={closeModal} />}
+
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <div className="text-center flex items-center justify-center space-x-2">
           <h1 className="text-2xl font-bold text-blue-500 flex items-center">
             Welcome to{" "}
@@ -108,8 +127,9 @@ const LoginForm = () => {
         <div className="my-4 text-center text-gray-600">Or</div>
 
         <div className="space-y-2">
+          
           <button
-            onClick={googleLogin}
+            onClick={openModal}
             className="flex items-center justify-center w-full bg-white text-gray-700 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
           >
             <svg
@@ -137,8 +157,9 @@ const LoginForm = () => {
             Continue with Google
           </button>
 
+          
           <button
-            onClick={handleAppleLogin}
+            onClick={openModal}
             className="flex items-center justify-center w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
           >
             <svg
@@ -152,8 +173,9 @@ const LoginForm = () => {
             Continue with Apple
           </button>
 
+          
           <button
-            onClick={handleFacebookLogin}
+            onClick={openModal}
             className="flex items-center justify-center w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
             <svg
