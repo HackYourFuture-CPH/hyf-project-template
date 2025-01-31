@@ -36,7 +36,7 @@ const SignUpForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        {/* Close button */}
+        
         <button
           onClick={handleClose}
           className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
@@ -142,3 +142,4 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
+
