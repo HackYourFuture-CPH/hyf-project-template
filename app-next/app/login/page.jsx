@@ -29,8 +29,6 @@ const ComingSoon = ({ onClose }) => {
 const LoginForm = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
@@ -44,38 +42,6 @@ const LoginForm = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const handleCloseLoginForm = () => router.push("/");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const email = e.target.email.value.trim();
-    const password = e.target.password.value.trim();
-
-    if (!email || !password) {
-      setFormError("All fields are required.");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setFormError("Please enter a valid email.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setFormError("");
-
-    try {
-      await login({ email, password });
-      router.push("/dashboard");
-    } catch (error) {
-      if (error.response?.status === 401) {
-        setFormError("Invalid email or password.");
-      } else {
-        setFormError("Something went wrong. Please try again later.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 relative">
@@ -103,13 +69,7 @@ const LoginForm = () => {
           Please log in using the form below.
         </p>
 
-        {formError && (
-          <div className="text-red-500 text-sm mb-4 bg-red-100 p-2 rounded-lg">
-            {formError}
-          </div>
-        )}
-
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-4" action={login}>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -119,7 +79,6 @@ const LoginForm = () => {
               name="email"
               placeholder="example@gmail.com"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
             />
           </div>
           <div>
@@ -131,7 +90,6 @@ const LoginForm = () => {
               name="password"
               placeholder="Password"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
             />
             <div className="flex justify-between items-center mt-1">
               <div className="flex items-center">
@@ -157,14 +115,9 @@ const LoginForm = () => {
           </div>
           <button
             type="submit"
-            className={`w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black ${
-              isSubmitting
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:from-blue-600 hover:to-gray-800"
-            }`}
-            disabled={isSubmitting}
+            className="w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black hover:from-blue-600 hover:to-gray-800"
           >
-            {isSubmitting ? "Logging in..." : "Log in"}
+            Log in
           </button>
         </form>
 
@@ -199,6 +152,7 @@ const LoginForm = () => {
             </svg>
             Continue with Google
           </button>
+
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
@@ -213,6 +167,7 @@ const LoginForm = () => {
             </svg>
             Continue with Apple
           </button>
+
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
