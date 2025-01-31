@@ -1,5 +1,4 @@
 "use client";
-
 import { PlayCircle, User, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -37,7 +36,15 @@ export default function Navbar() {
           </Link>
           <h1 className="text-2xl font-bold text-blue-500">MovieApp</h1>
         </div>
-        <div className="space-x-4">
+        <div className="flex items-center space-x-4">
+          <Link href="/room">
+            <Button
+              variant="ghost"
+              className="text-gray-300 hover:text-blue-400"
+            >
+              Create Room
+            </Button>
+          </Link>
           {username ? (
             <div
               onClick={goToProfile}
@@ -48,14 +55,6 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link href="/room">
-                <Button
-                  variant="ghost"
-                  className="text-gray-300 hover:text-blue-400"
-                >
-                  Create Room
-                </Button>
-              </Link>
               <Link href="/login">
                 <Button
                   variant="ghost"
