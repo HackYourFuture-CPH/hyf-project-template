@@ -11,24 +11,84 @@ const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [formError, setFormError] = useState({});
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    if (confirmPassword && e.target.value !== confirmPassword) {
-      setError("Passwords do not match");
+  const validateField = (field, value) => {
+    let error = "";
+
+    if (field === "name" && !value.trim()) {
+      error = "Name is required";
+    }
+    if (
+      field === "email" &&
+      (!value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+    ) {
+      error = "Valid email is required";
+    }
+    if (field === "password" && !value.trim()) {
+      error = "Password is required";
+    }
+    if (field === "confirmPassword") {
+      if (!value.trim()) {
+        error = "Please confirm your password";
+      } else if (value !== password) {
+        error = "Passwords do not match";
+      }
+    }
+
+    setFormError((prev) => ({ ...prev, [field]: error }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const fieldsToValidate = ["name", "email", "password", "confirmPassword"];
+    let isValid = true;
+
+    fieldsToValidate.forEach((field) => {
+      const value =
+        field === "name"
+          ? name
+          : field === "email"
+          ? email
+          : field === "password"
+          ? password
+          : confirmPassword;
+      validateField(field, value);
+      if (!value || (field === "confirmPassword" && value !== password)) {
+        isValid = false;
+      }
+    });
+
+    if (isValid) {
+      try {
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("password", password);
+
+        const result = await register(formData);
+
+        if (result.success) {
+          router.push("/login");
+        } else {
+          setError("Registration failed. Please try again."); 
+        }
+      } catch (err) {
+        setError("An unexpected error occurred. Please try again later.");
+        console.error("Error during registration:", err);
+      }
     } else {
-      setError("");
+      setError("Please correct the highlighted errors."); 
     }
   };
 
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-    if (password && password !== e.target.value) {
-      setError("Passwords do not match");
-    } else {
-      setError("");
-    }
+  const handleBlur = (field, value) => {
+    validateField(field, value);
   };
+
   const handleClose = () => {
     router.push("/");
   };
@@ -36,7 +96,6 @@ const SignUpForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        
         <button
           onClick={handleClose}
           className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
@@ -57,7 +116,13 @@ const SignUpForm = () => {
           Create your account to get started.
         </p>
 
-        <form className="mt-6 space-y-4" action={register}>
+        {Object.values(formError).some((err) => err) && (
+          <p className="text-red-500 text-center text-sm mt-2">
+            Please fix the highlighted errors.
+          </p>
+        )}
+
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               User name
@@ -66,8 +131,16 @@ const SignUpForm = () => {
               type="text"
               name="name"
               placeholder="John Doe"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={(e) => handleBlur("name", e.target.value)}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                formError.name ? "border-red-500" : ""
+              }`}
             />
+            {formError.name && (
+              <p className="text-red-500 text-sm mt-1">{formError.name}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -77,8 +150,16 @@ const SignUpForm = () => {
               type="email"
               name="email"
               placeholder="example@gmail.com"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={(e) => handleBlur("email", e.target.value)}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                formError.email ? "border-red-500" : ""
+              }`}
             />
+            {formError.email && (
+              <p className="text-red-500 text-sm mt-1">{formError.email}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -89,9 +170,15 @@ const SignUpForm = () => {
               name="password"
               placeholder="Create a strong password"
               value={password}
-              onChange={handlePasswordChange}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={(e) => handleBlur("password", e.target.value)}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                formError.password ? "border-red-500" : ""
+              }`}
             />
+            {formError.password && (
+              <p className="text-red-500 text-sm mt-1">{formError.password}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -99,12 +186,20 @@ const SignUpForm = () => {
             </label>
             <input
               type={showPassword ? "text" : "password"}
+              name="confirmPassword"
               placeholder="Re-enter your password"
               value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onBlur={(e) => handleBlur("confirmPassword", e.target.value)}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                formError.confirmPassword ? "border-red-500" : ""
+              }`}
             />
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {formError.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {formError.confirmPassword}
+              </p>
+            )}
           </div>
           <div className="flex items-center">
             <input
@@ -124,7 +219,6 @@ const SignUpForm = () => {
           <button
             type="submit"
             className="w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black hover:from-blue-600 hover:to-gray-800"
-            disabled={!!error || !password || !confirmPassword}
           >
             Sign Up
           </button>
@@ -142,4 +236,3 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
-
