@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -30,6 +29,8 @@ const ComingSoon = ({ onClose }) => {
 const LoginForm = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
@@ -44,9 +45,40 @@ const LoginForm = () => {
   const closeModal = () => setIsModalOpen(false);
   const handleCloseLoginForm = () => router.push("/");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+
+    if (!email || !password) {
+      setFormError("All fields are required.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFormError("Please enter a valid email.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError("");
+
+    try {
+      await login({ email, password });
+      router.push("/dashboard");
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setFormError("Invalid email or password.");
+      } else {
+        setFormError("Something went wrong. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 relative">
-      
       <button
         onClick={handleCloseLoginForm}
         className="absolute top-2 right-2 text-black-500 hover:text-gray-700 bg-blue-500 hover:bg-gray-600 rounded-full w-20 h-8 flex items-center justify-center"
@@ -54,7 +86,6 @@ const LoginForm = () => {
         Close
       </button>
 
-     
       {isModalOpen && <ComingSoon onClose={closeModal} />}
 
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -72,7 +103,13 @@ const LoginForm = () => {
           Please log in using the form below.
         </p>
 
-        <form className="mt-6 space-y-4" action={login}>
+        {formError && (
+          <div className="text-red-500 text-sm mb-4 bg-red-100 p-2 rounded-lg">
+            {formError}
+          </div>
+        )}
+
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -82,6 +119,7 @@ const LoginForm = () => {
               name="email"
               placeholder="example@gmail.com"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
             />
           </div>
           <div>
@@ -93,6 +131,7 @@ const LoginForm = () => {
               name="password"
               placeholder="Password"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
             />
             <div className="flex justify-between items-center mt-1">
               <div className="flex items-center">
@@ -118,16 +157,20 @@ const LoginForm = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black hover:from-blue-600 hover:to-gray-800"
+            className={`w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black ${
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:from-blue-600 hover:to-gray-800"
+            }`}
+            disabled={isSubmitting}
           >
-            Log in
+            {isSubmitting ? "Logging in..." : "Log in"}
           </button>
         </form>
 
         <div className="my-4 text-center text-gray-600">Or</div>
 
         <div className="space-y-2">
-          
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-white text-gray-700 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
@@ -156,8 +199,6 @@ const LoginForm = () => {
             </svg>
             Continue with Google
           </button>
-
-          
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
@@ -172,8 +213,6 @@ const LoginForm = () => {
             </svg>
             Continue with Apple
           </button>
-
-          
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
