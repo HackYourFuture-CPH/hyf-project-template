@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { PlayCircle } from "lucide-react";
 import { login } from "@/action";
+
+
 
 const ComingSoon = ({ onClose }) => {
   return (
@@ -32,25 +34,32 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const googleLogin = useGoogleLogin({
-    onSuccess: (response) => {
-      console.log("Google Login Success:", response);
-    },
-    onError: () => {
-      console.error("Google Login Failed");
-    },
-  });
+  const [validationErrors, setValidationErrors] = useState({});
+  const [rememberMe, setRememberMe] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const handleCloseLoginForm = () => router.push("/");
 
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setError("Please fill in both fields.");
+    let newErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Valid email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setError("Please fix the highlighted errors.");
+      setValidationErrors(newErrors);
       return;
     }
 
@@ -65,6 +74,18 @@ const LoginForm = () => {
       console.error(e);
       setError("Invalid email or password.");
     }
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setError("");
+    setValidationErrors((prev) => ({ ...prev, email: "" }));
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    setError("");
+    setValidationErrors((prev) => ({ ...prev, password: "" }));
   };
 
   return (
@@ -106,11 +127,19 @@ const LoginForm = () => {
               type="email"
               name="email"
               placeholder="example@gmail.com"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                validationErrors.email ? "border-red-500" : "border-gray-300"
+              }`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
             />
+            {validationErrors.email && (
+              <p className="text-red-500 text-xs mt-1">
+                {validationErrors.email}
+              </p>
+            )}
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Password
@@ -119,36 +148,42 @@ const LoginForm = () => {
               type="password"
               name="password"
               placeholder="Password"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                validationErrors.password ? "border-red-500" : "border-gray-300"
+              }`}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
             />
-            <div className="flex justify-between items-center mt-1">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="remember"
-                  className="ml-2 text-sm text-gray-600"
-                >
-                  Remember me
-                </label>
-              </div>
-              <a
-                href="/forgotPassword"
-                className="text-blue-500 text-sm hover:underline"
-                onClick={(e) => {
-                  e.preventDefault(); 
-                  openModal(); 
-                }}
-              >
-                Forgot password?
-              </a>
-            </div>
+            {validationErrors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {validationErrors.password}
+              </p>
+            )}
           </div>
+
+          <div className="flex justify-between items-center">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+            </label>
+
+            <a
+              href="#"
+              className="text-blue-500 text-sm hover:underline"
+              onClick={(e) => {
+                e.preventDefault();
+                openModal();
+              }}
+            >
+              Forgot password?
+            </a>
+          </div>
+
           <button
             type="submit"
             className="w-full py-2 text-white rounded-lg bg-gradient-to-r from-blue-500 to-black hover:from-blue-600 hover:to-gray-800"
@@ -188,7 +223,6 @@ const LoginForm = () => {
             </svg>
             Continue with Google
           </button>
-
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
@@ -203,7 +237,6 @@ const LoginForm = () => {
             </svg>
             Continue with Apple
           </button>
-
           <button
             onClick={openModal}
             className="flex items-center justify-center w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
@@ -231,10 +264,10 @@ const LoginForm = () => {
   );
 };
 
-const App = () => (
-  <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-    <LoginForm />
-  </GoogleOAuthProvider>
-);
-
-export default App;
+export default function App() {
+  return (
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+      <LoginForm />
+    </GoogleOAuthProvider>
+  );
+}
