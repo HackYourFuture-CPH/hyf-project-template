@@ -80,7 +80,7 @@ export default function ExplorePage() {
     };
 
     return (
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-8 mb-8">
         {currentPage > 1 && (
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
