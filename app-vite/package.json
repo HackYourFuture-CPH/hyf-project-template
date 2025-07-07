@@ -1,0 +1,31 @@
+{
+  "name": "app",
+  "private": true,
+  "version": "1.0.0",
+  "main": "src/main.jsx",
+  "type": "module",
+  "engines": {
+    "node": "^20.12.1",
+    "npm": "^10.5.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "format": "npx prettier . --write",
+    "check": "npx eslint . --fix"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "globals": "^15.0.0",
+    "prettier": "^3.2.5",
+    "vite": "^5.2.0"
+  }
+}
