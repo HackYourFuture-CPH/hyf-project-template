@@ -14,9 +14,9 @@ const apiRouter = express.Router();
 // You can delete this route once you add your own routes
 apiRouter.get("/", async (req, res) => {
   const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg"
-      ? "SELECT * FROM pg_catalog.pg_tables;"
-      : "SHOW TABLES;";
+    process.env.DB_CLIENT === "pg" ? "SELECT * FROM pg_catalog.pg_tables;"
+      : process.env.DB_CLIENT === "sqlite3" ? "SELECT name FROM sqlite_master WHERE type='table';" :
+      "SHOW TABLES;";
   const tables = await knex.raw(SHOW_TABLES_QUERY);
   res.json({ tables });
 });
