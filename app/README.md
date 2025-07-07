@@ -1,1 +1,0 @@
-Your app code goes here. Start from scratch, or copy one of the templates from "templates/app" to get up and running.

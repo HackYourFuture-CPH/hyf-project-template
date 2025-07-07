@@ -1,9 +1,0 @@
-{
-  "name": "hyf-template-app",
-  "version": "1.0.0",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "dev": "live-server"
-  }
-}
