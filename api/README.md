@@ -1,32 +1,41 @@
 # The API package
 
-This package sets up a [Express](https://expressjs.com/) API server and a connection to a SQL database using [Knex](https://knexjs.org/).
+This package sets up a [Express](https://expressjs.com/) API server and a connection to a database (SQLite by default) using [Knex](https://knexjs.org/).
 
-For development you can run the command `npm run dev` which uses `nodemon` to watch files and restarts the server when a change happens.  
-You can visit [http://localhost:3001/api](http://localhost:3001/api) which will test the connection to the database.
+For development you can run the command `npm run dev` which uses `nodemon` to watch files and restarts the server when a change happens. You can find the API at [http://localhost:3001/api](http://localhost:3001/api). 
 
-There is no build step so when deploying it is enough to run `npm run start`.
+There is an example route set up at "/" which you can implement to quickly test the connection to the database.
+
+There is no build step, so when deploying it is enough to just run `npm run start`.
 
 ## Environment variables
 
-You can set environment variables in the `.env` file or in the Render.com environment variables section.  
-When you start a fresh project, make sure to copy the `.env` file by using `cp .env-example .env`.
+You can set environment variables in the `.env` file or in the Render.com environment variables section.
+
+When you start a fresh project, check out `.env-template` to get started. Create a file called `.env` and copy the contents of the template as a starting point (or just run `cp .env-template .env`).
 
 ## Database clients
 
-The package comes installed with both a MySQL client for local development and a PostgreSQL client to use on [Render.com](https://render.com).  
-You can change which client to use by changing the `DB_CLIENT` environment variable (either `mysql2` or `pg`).
+The package comes installed with an SQLite, MySQL, and PostgreSQL client. Here's a quick suggestion for use cases:
+1. SQLite for quick, simple file-based storage
+2. MySQL for more advanced data storage (requires you to run a database service)
+3. PostgreSQL, similar to MySQL and used on our recommended hosting platform Render.com
 
-## Database managed with code
+You can decide which client to use by changing the `DB_CLIENT` environment variable. See `.env-template` for more info. 
+
+## Advanced database management
 
 You can get far with a simple `.sql` file to manage your database but if you'd prefer to manage your database with Knex, you can use [Knex Migrations](https://knexjs.org/guide/migrations.html) to set up your schema (as well as rollback schema changes across versions).  
+
 You can also use [Knex Seeds](https://knexjs.org/guide/migrations.html#seed-files) to populate your database with data.  
+
 Combined, these two techniques make it very easy to experiment with changes to your database or recover your database if something happens to it.  
+
 It also makes it possible to share temporary schema changes with others during Pull Request testing.
 
 ## Deploying
 
-> Last tested: 2024-04-11
+> Last tested: 2025-07-08
 
 ### Deploying a PostgreSQL database
 
@@ -123,6 +132,6 @@ In the next screen you'll see the output of your build step which is downloading
 
 ![](../images/render/api/step15.png)
 
-Once you see the text "Your service is live" you can test your API with Postman by using the deployed URL, which should be something like `https://hyf-template-api.onrender.com/api`. You should see the output from the database.
+Once you see the text "Your service is live" you can test your API with Postman by using the deployed URL, which should be something like `https://hyf-template-api.onrender.com/api`. You should see the output the response from your "/" route.
 
-Next, let's deploy the web app by following the steps [here](../app/README.md#deploying).
+If you've got this far, you probably want to deploy your web app next. Head over to the README.md in your app directory for instructions.
