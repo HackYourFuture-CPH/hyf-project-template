@@ -11,21 +11,19 @@ app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
-// You can delete this route once you add your own routes
+// This is an example of how to set up a route. Replace it with your own.
 apiRouter.get("/", async (req, res) => {
-  const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg" ? "SELECT * FROM pg_catalog.pg_tables;" :
-      process.env.DB_CLIENT === "sqlite3" ? "SELECT name FROM sqlite_master WHERE type='table';" :
-      "SHOW TABLES;";
-  const tables = await knex.raw(SHOW_TABLES_QUERY);
-  res.json({ tables });
+
+  // Here is an example of making a query to the database you set up:
+  const query = "";
+  const result = await knex.raw(query);
+  res.json({ query });
 });
 
-// This nested router example can also be replaced with your own sub-router
+// Here is an example of optionally setting up nested routes. Replace it or delete as needed.
 apiRouter.use("/nested", nestedRouter);
 
 app.use("/api", apiRouter);
-
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
 });
