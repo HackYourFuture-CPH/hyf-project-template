@@ -17,7 +17,7 @@ apiRouter.get("/", async (req, res) => {
   // Here is an example of making a query to the database you set up:
   const query = "";
   const result = await knex.raw(query);
-  res.json({ query });
+  res.json({ result });
 });
 
 // Here is an example of optionally setting up nested routes. Replace it or delete as needed.
