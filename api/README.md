@@ -12,7 +12,7 @@ There is no build step, so when deploying it is enough to just run `npm run star
 
 You can set environment variables in the `.env` file or in the Render.com environment variables section.
 
-When you start a fresh project, check out `.env-template` to get started. Create a file called `.env` and copy the contents of the template as a starting point (or just run `cp .env-template .env`).
+When you start a fresh project, check out `.env-template` to get started. Create a file called `.env` and copy the contents of the template as a starting point (or just run `cp .env-template .env`). You should comment in/out the sections you need, and add any additional configuration as necessary.
 
 ## Database clients
 
