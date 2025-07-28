@@ -2,45 +2,64 @@
 
 # HackYourFuture project template
 
-This template is meant to be used as part of the meal-sharing and Final Project modules,
-but can work as a starting point for any full stack project.
+This full-stack app template is meant to be used as the starting point of any projects (including meal-sharing and final projects).
 
 It consists of two packages:
 
-- `api` which is a NodeJS project using Express for the API
-- `app` which is Next project using React for the web app
+- `api` which is a NodeJS project using Express for the API, with options to connect to SQLite, MySQL and PostgreSQL databases.
+- `app` which has templates for Vanilla JS, Vite/React or NextJS/React for the web app
 
-Both packages are as small as possible but feel free to add more tools as you see fit.
+Both packages are as small as possible, but feel free to add more tools and templates as you see fit.
 
-## Prerequisites
+## Pre-requisites
 
-This template assumes that there is a database already set up with tables and data.
 
-You can start a MySQL instance using Docker with the below command:  
-`docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql-root-password -e MYSQL_DATABASE=my-database -d -p 3306:3306 mysql:latest`
-
-Then connect to this instance using any database management tool you prefer, such as MySQL Workbench, to set up your tables and add data.
-![Testing your database](./images/db_test.png)
 
 ## Getting started
 
-> Before you start, make sure no other projects are running, in order to have the ports free.
+> Before you start, make sure no other projects are running, in order to have the required ports free.
 
-To get started you'll need two terminals.
+### Setting up the Database
 
-In the first terminal run the following commands:
+This project template defaults to using an SQLite database, which is stored in a generated file in the api directory. It doesn't need a separate service to run. 
+
+If you wish to use MySQL instead, here's a quick way to get one set up and running using Docker: 
+`docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql-root-password -e MYSQL_DATABASE=my-database -d -p 3306:3306 mysql:latest`
+
+Whichever database you set up, connect to it using any database management tool of your choice, such as MySQL Workbench or DBeaver, to create your tables and add data.
+![Testing your database](./images/db_test.png)
+
+### Setting up the API
+
+In a terminal, run the following commands:
 
 ```
 cd api
-cp .env-example .env
+cp .env-template .env
+```
+
+Open your .env file and configure the options as appropriate. The first thing you need to do is comment out/in the correct section in Database Configuration, depending on the database you chose in the first step. Set the variables to the correct values based on your set up.
+
+Then you're ready to start it up:
+
+```
 npm install
 npm run dev
 ```
 
-You can then test the API using [Postman](https://www.postman.com/) at [http://localhost:3001/api](http://localhost:3001/api).
+You can then test the API using [Postman](https://www.postman.com/) at [http://localhost:3001/api](http://localhost:3001/api) - or just open it in your browser, for a quick peek that things are connecting successfully!
+
 ![Testing the API with Postman](./images/api_test.png)
 
-In the second terminal run the following commands:
+### Setting up the App
+
+The app can be found in the `app` directory... but if this is a new project, it will be empty! Check out the `templates` directory, and copy over one of the options that best suits your needs (or you've been instructed to use).
+
+1. `app-vite-vanilla` - This is a vanilla js app, that is best suited for simple apps like the foundation final project.
+2. `app-vite` - Great for a more complex React app.
+3. `app-next` - Suitable for when you'd like to use the NextJS framework to build your app.
+
+In a second terminal, run the following commands:
 
 ```
 cd app
