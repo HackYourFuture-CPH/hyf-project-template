@@ -1,0 +1,1 @@
+This is where your web app code will live. Start from scratch, or copy a template from `templates/app` to get up and running quickly. Read the [main readme](../README.md) for more help.
