@@ -13,11 +13,10 @@ const apiRouter = express.Router();
 
 // This is an example of how to set up a route. Replace it with your own.
 apiRouter.get("/", async (req, res) => {
-
   // Here is an example of making a query to the database you set up:
-  const query = "";
+  const query = "SELECT 'Hello, world!' AS message;";
   const result = await knex.raw(query);
-  res.json({ result });
+  res.json(result);
 });
 
 // Here is an example of optionally setting up nested routes. Replace it or delete as needed.
