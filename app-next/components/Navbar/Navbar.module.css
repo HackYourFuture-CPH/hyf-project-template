@@ -26,7 +26,7 @@
 .logoText {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #40d5b0;
 }
 
 .navItems {
@@ -52,7 +52,7 @@
 }
 
 .navLink:hover {
-  color: #2563eb;
+  color: #40d5b0;
   background-color: #eff6ff;
 }
 
@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #2563eb;
+  background: #40d5b0;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -76,7 +76,6 @@
 }
 
 .loginButton:hover {
-  background: #1d4ed8;
   transform: translateY(-1px);
 }
 
@@ -84,11 +83,11 @@
   .container {
     padding: 1rem;
   }
-  
+
   .navItems {
     display: none;
   }
-  
+
   .loginButton span {
     display: none;
   }

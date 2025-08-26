@@ -98,36 +98,36 @@
 }
 
 .categoryCard:hover .categoryName {
-  color: #2563eb;
+  color: #40d5b0;
 }
 
 @media (max-width: 768px) {
   .categorySection {
     padding: 3rem 0;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
-  
+
   .title {
     font-size: 2rem;
   }
-  
+
   .subtitle {
     font-size: 1rem;
   }
-  
+
   .categoriesGrid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .imageContainer {
     width: 120px;
     height: 120px;
   }
-  
+
   .categoryName {
     font-size: 1.1rem;
   }

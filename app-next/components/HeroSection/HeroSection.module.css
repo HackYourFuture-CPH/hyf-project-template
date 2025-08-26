@@ -58,7 +58,7 @@
 }
 
 .shopButton {
-  background: #f97316;
+  background: #40d5b0;
   color: white;
   border: none;
   padding: 1rem 3rem;
@@ -69,11 +69,9 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
 }
 
 .shopButton:hover {
-  background: #ea580c;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(249, 115, 22, 0.6);
 }
@@ -82,16 +80,16 @@
   .heroTitle {
     font-size: 2.5rem;
   }
-  
+
   .heroDescription {
     font-size: 1.1rem;
   }
-  
+
   .shopButton {
     padding: 0.875rem 2rem;
     font-size: 1rem;
   }
-  
+
   .heroContent {
     padding: 0 1rem;
   }
@@ -101,7 +99,7 @@
   .heroTitle {
     font-size: 2rem;
   }
-  
+
   .heroDescription {
     font-size: 1rem;
   }

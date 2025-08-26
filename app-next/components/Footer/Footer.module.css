@@ -26,7 +26,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #f97316;
+  color: #40d5b0;
 }
 
 .description {
@@ -51,7 +51,7 @@
 }
 
 .contactItem svg {
-  color: #f97316;
+  color: #40d5b0;
   flex-shrink: 0;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .footerLink:hover {
-  color: #f97316;
+  color: #40d5b0;
   padding-left: 0.5rem;
 }
 
@@ -106,12 +106,12 @@
 
 .emailInput:focus {
   outline: none;
-  border-color: #f97316;
+  border-color: #40d5b0;
   background: rgba(255, 255, 255, 0.15);
 }
 
 .subscribeButton {
-  background: #f97316;
+  background: #40d5b0;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -123,7 +123,7 @@
 }
 
 .subscribeButton:hover {
-  background: #ea580c;
+ 
   transform: translateY(-1px);
 }
 
@@ -156,7 +156,7 @@
 }
 
 .socialLink:hover {
-  background: #f97316;
+  background: #40d5b0;
   color: white;
   transform: translateY(-2px);
 }
@@ -186,7 +186,7 @@
 }
 
 .legalLink:hover {
-  color: #f97316;
+  color: #40d5b0;
 }
 
 .separator {
@@ -204,33 +204,33 @@
   .footer {
     padding: 3rem 0 0;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
-  
+
   .footerContent {
     grid-template-columns: 1fr;
     gap: 2rem;
     text-align: center;
   }
-  
+
   .contactInfo {
     align-items: center;
   }
-  
+
   .linkList {
     align-items: center;
   }
-  
+
   .footerLink:hover {
     padding-left: 0;
   }
-  
+
   .footerBottom {
     padding: 1.5rem 0;
   }
-  
+
   .legalLinks {
     font-size: 0.8rem;
   }
@@ -240,17 +240,17 @@
   .socialMedia {
     gap: 0.75rem;
   }
-  
+
   .socialLink {
     width: 40px;
     height: 40px;
   }
-  
+
   .legalLinks {
     flex-direction: column;
     gap: 0.25rem;
   }
-  
+
   .separator {
     display: none;
   }

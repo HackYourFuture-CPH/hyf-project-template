@@ -87,7 +87,7 @@
 }
 
 .shopButton {
-  background: #f97316;
+  background: #40d5b0;
   color: white;
   border: none;
   padding: 1rem 2.5rem;
@@ -98,22 +98,14 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
 }
 
 .shopButton:hover {
-  background: #ea580c;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
 }
 
 .promotionCard:hover .shopButton {
-  background: #2563eb;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-}
-
-.promotionCard:hover .shopButton:hover {
-  background: #1d4ed8;
+  background: #40d5b0;
 }
 
 @media (max-width: 968px) {
@@ -121,7 +113,7 @@
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .imageContainer {
     height: 250px;
   }
@@ -131,23 +123,23 @@
   .promotionalSection {
     padding: 3rem 0;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
-  
+
   .content {
     padding: 1.5rem;
   }
-  
+
   .title {
     font-size: 1.25rem;
   }
-  
+
   .description {
     font-size: 0.9rem;
   }
-  
+
   .shopButton {
     padding: 0.875rem 2rem;
     font-size: 0.9rem;
@@ -158,11 +150,11 @@
   .imageContainer {
     height: 200px;
   }
-  
+
   .title {
     font-size: 1.125rem;
   }
-  
+
   .shopButton {
     width: 100%;
     padding: 1rem;

@@ -63,7 +63,7 @@
 }
 
 .learnMoreButton {
-  background: #2563eb;
+  background: #40d5b0;
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -76,9 +76,7 @@
 }
 
 .learnMoreButton:hover {
-  background: #1d4ed8;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
 }
 
 .imageContent {
@@ -129,7 +127,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #f97316;
+  color: #40d5b0;
 }
 
 .overlayContent p {
@@ -142,25 +140,25 @@
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-  
+
   .textContent {
     padding-right: 0;
     order: 2;
   }
-  
+
   .imageContent {
     order: 1;
   }
-  
+
   .title {
     font-size: 2rem;
     text-align: center;
   }
-  
+
   .description {
     text-align: center;
   }
-  
+
   .features {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -172,27 +170,27 @@
   .aboutSection {
     padding: 4rem 0;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
-  
+
   .content {
     gap: 2rem;
   }
-  
+
   .title {
     font-size: 1.75rem;
   }
-  
+
   .description {
     font-size: 1rem;
   }
-  
+
   .features {
     grid-template-columns: 1fr;
   }
-  
+
   .imageContainer {
     height: 400px;
   }
@@ -202,12 +200,12 @@
   .title {
     font-size: 1.5rem;
   }
-  
+
   .learnMoreButton {
     width: 100%;
     padding: 1rem;
   }
-  
+
   .imageContainer {
     height: 350px;
   }
