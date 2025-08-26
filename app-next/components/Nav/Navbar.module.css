@@ -1,0 +1,33 @@
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* .nav ul li a {
+  color:  #fbfcfe;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 400;
+} */
+
+.link{
+ 
+  text-decoration: none;
+  color:  #fbfcfe;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.active {
+  color: blue;
+  /* font-weight: bold; */
+  text-decoration: none;
+    font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+}
