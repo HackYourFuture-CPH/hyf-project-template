@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
+
+.hero {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  padding: 2rem 3rem;
+}
+
+.title {
+  text-align: center;
+  font-family: "Archivo", sans-serif;
+  color: #f8fafc;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 1);
+  font-size: 2.6rem;
+}
+
+.visuallyHidden {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  width: 100%;
+  min-width: 0;
+  border-radius: 32px;
+  font-size: 1.5rem;
+  border: solid 2px #f8fafc;
+  background-color: transparent;
+  padding: 10px;
+  padding-right: 3.5rem;
+  color: #e9e9e9;
+  box-sizing: border-box;
+}
+
+.searchInput::placeholder {
+  padding: 5px;
+  color: #c0bebe;
+}
+
+.searchInput:focus {
+  color: #e9e9e9;
+  outline: none;
+  box-shadow: none;
+}
+
+.searchButton {
+  cursor: pointer;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchButton img {
+  width: 2rem;
+  height: 2rem;
+  padding-right: 5px;
+  filter: brightness(0) invert(1);
+  transition: filter 0.2s;
+}
+
+.searchButton:hover img {
+  filter: brightness(0) invert(0.7); /* Slightly dim on hover */
+}
