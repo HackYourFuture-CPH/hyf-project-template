@@ -4,6 +4,7 @@
   left: 0px;
   height: 80px;
   background: #171a1fff;
+  z-index: 1;
   /* display: flex;
   justify-content: space-around;
   align-items: center; */
