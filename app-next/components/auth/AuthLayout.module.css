@@ -1,0 +1,43 @@
+/* AuthLayout.module.css */
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.leftPanel {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.bgImage {
+  object-fit: cover;
+}
+.bgImageLogo {
+  object-fit: cover;
+  height: auto;
+  width: auto;
+  max-width: 40%;
+  max-height: 40%;
+}
+
+.rightPanel {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  padding: 0 10px;
+}
+
+.innerWrapper {
+  max-width: 100vw;
+  position: relative;
+}
+
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+}

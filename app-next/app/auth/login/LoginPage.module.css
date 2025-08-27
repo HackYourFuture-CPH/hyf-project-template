@@ -1,0 +1,77 @@
+/* old code  in tailwind used chatgpt to convert  to module css */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  background: #ffede1;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: box-shadow 150ms, border-color 150ms;
+  font-size: 1rem;
+}
+
+.input::placeholder {
+  color: #6b7280;
+}
+
+.input:focus {
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.button {
+  width: 100%;
+  background: #000000;
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: opacity 150ms, transform 150ms;
+}
+
+.button:hover {
+  opacity: 0.95;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.helper {
+  text-align: center;
+  color: #3f3d56;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
