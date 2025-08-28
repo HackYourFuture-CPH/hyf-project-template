@@ -1,0 +1,54 @@
+.header {
+  position: sticky;
+  top: 0px;
+  left: 0px;
+  height: 80px;
+  background: #171a1fff;
+  z-index: 1;
+  /* display: flex;
+  justify-content: space-around;
+  align-items: center; */
+}
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 1rem 0; */
+}
+.logoDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.logoName{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+.logoName span:first-child {
+  color: rgb(73, 243, 184);
+  font-weight: bold;
+
+}
+
+.logoName span:last-child {
+  color: orange;
+  font-style: italic;
+  font-size: larger;
+}
+
+.login {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  gap: 8px;              
+  color: aliceblue;
+  text-decoration: none;
+}
+
+.login svg {
+  fill: aliceblue;
+  width: 25px;  
+  height: 25px;
+}
