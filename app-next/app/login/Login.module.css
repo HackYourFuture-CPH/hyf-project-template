@@ -74,7 +74,7 @@
   white-space: pre-line;
   box-shadow: 0 2px 6px rgba(176, 0, 32, 0.05);
   display: block;
-  max-width: 300px;
+  max-width: 400px;
   word-break: break-word;
   overflow-wrap: break-word;
 }
