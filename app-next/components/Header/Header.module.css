@@ -28,7 +28,19 @@
 .logo a:hover {
   color: #0066cc;
 }
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between image and text */
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: inherit; /* so it inherits theme color */
+}
 
+.logoLink span {
+  margin-left: 4px;
+}
 .navList {
   display: flex;
   gap: 30px;

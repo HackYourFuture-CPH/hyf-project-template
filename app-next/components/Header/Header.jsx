@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
+import Image from "next/image";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,7 +18,15 @@ export default function Header() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.logo}>
-        <Link href="/">CareConnect</Link>
+        <Link href="/" className={styles.logoLink}>
+          <Image
+            src="/logo.png"
+            alt="CareConnect Logo"
+            width={40}
+            height={40}
+          />
+          <span>CareConnect</span>
+        </Link>
       </div>
 
       <nav className={styles.nav}>
@@ -36,6 +45,9 @@ export default function Header() {
           </li>
           <li>
             <Link href="/contact">Contact</Link>
+          </li>
+          <li>
+            <Link href="/Services">Services</Link>
           </li>
         </ul>
       </nav>
