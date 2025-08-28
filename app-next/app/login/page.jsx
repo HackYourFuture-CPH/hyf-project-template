@@ -6,6 +6,7 @@ import styles from "./Login.module.css";
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
 
+  // Login function
   async function submitLogin(data, event) {
     try {
       const response = await fetch("http://localhost:3000/api/auth/login", {
@@ -24,6 +25,18 @@ export default function Login() {
       event.target.reset();
     } catch (error) {
       alert(error.message || "An error occurred");
+    }
+  }
+
+  // Registration function
+  async function submitRegistration(data, event) {
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {"Content-Type, application.json"}
+      })
+    } catch (error) {
+      
     }
   }
 
