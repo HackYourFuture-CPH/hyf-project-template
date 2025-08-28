@@ -1,31 +1,22 @@
-import "dotenv/config";
 import express from "express";
+import petsRouter from "./routers/petsRouter.js";
+import usersRouter from "./routers/usersRouter.js";
+
 import cors from "cors";
-import bodyParser from "body-parser";
-import knex from "./database_client.js";
-import nestedRouter from "./routers/nested.js";
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
-const apiRouter = express.Router();
+app.use(cors({ origin: "*", credentials: true }));
 
-// You can delete this route once you add your own routes
-apiRouter.get("/", async (req, res) => {
-  const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg"
-      ? "SELECT * FROM pg_catalog.pg_tables;"
-      : "SHOW TABLES;";
-  const tables = await knex.raw(SHOW_TABLES_QUERY);
-  res.json({ tables });
+app.use(express.json());
+
+app.get("/", (request, response) => {
+  response.send("Welcome to Pet Pass");
 });
 
-// This nested router example can also be replaced with your own sub-router
-apiRouter.use("/nested", nestedRouter);
+app.use(petsRouter);
+app.use(usersRouter);
 
-app.use("/api", apiRouter);
-
-app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
+app.listen(() => {
+  console.log(`Server is running`);
 });
