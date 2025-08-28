@@ -16,11 +16,11 @@ usersRouter.post("/api/users", async (request, response) => {
 
 usersRouter.get("/api/users/:id", async (request, response) => {
   const id = Number(request.query);
-  if (!id) return response.status(400).send({ error: `No users here` });
+  if (!id) return response.status(400).send({ error: `No id is provided` });
 
   const user = await db.getUserByGoogleId(id);
 
-  if (!user) return response.status(404).send({ error: `user with such ID has no users` });
+  if (!user) return response.status(404).send({ error: `user with such ID has no data` });
 
   response.send(user);
 });
