@@ -6,15 +6,32 @@ import styles from "./Login.module.css";
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
 
-  // Will create functions to submit the login and reservations later
-  // and use them inside the handler functions
+  async function submitLogin(data, event) {
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          login_identifier: data.login_identifier,
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to login");
+      }
+      alert("Welcome!");
+      event.target.reset();
+    } catch (error) {
+      alert(error.message || "An error occurred");
+    }
+  }
 
   function handleLoginSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    // handler function
-    console.log("Login data:", data);
+    submitLogin(data, e);
   }
 
   function handleRegisterSubmit(e) {
