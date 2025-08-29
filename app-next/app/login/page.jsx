@@ -1,7 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Login.module.css";
+
+const images = [
+  "/hero-images/dino-reichmuth-A5rCN8626Ck-unsplash.webp",
+  "/hero-images/drif-riadh-YpkuRn54y4w-unsplash.webp",
+  "/hero-images/jack-anstey-XVoyX7l9ocY-unsplash.webp",
+  "/hero-images/neom-STV2s3FYw7Y-unsplash.webp",
+  "/hero-images/nils-nedel-ONpGBpns3cs-unsplash.webp",
+  "/hero-images/pietro-de-grandi-T7K4aEPoGGk-unsplash.webp",
+  "/hero-images/rebe-adelaida-zunQwMy5B6M-unsplash.webp",
+];
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +19,21 @@ export default function Login() {
   const [registerError, setRegisterError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
+  const [currentImage, setCurrentImage] = useState(0);
+
+  // Implement background images transition
+  useEffect(() => {
+    if (currentImage >= images.length) {
+      setCurrentImage(0);
+    }
+  }, [images.length, currentImage]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [images.length]);
 
   // Login function
   async function submitLogin(data, event) {
@@ -90,7 +115,12 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div
+      className={styles.backgroundWrapper}
+      style={{
+        backgroundImage: `url(${images[currentImage]})`,
+      }}
+    >
       <div className={styles.loginContainer}>
         <div className={styles.toggle}>
           <button className={isLogin ? styles.active : ""} onClick={() => setIsLogin(true)}>
@@ -100,52 +130,57 @@ export default function Login() {
             Register
           </button>
         </div>
-        {isLogin ? (
-          <form className={styles.form} onSubmit={handleLoginSubmit}>
-            <h2>Login</h2>
-            {loginSuccess && (
-              <div className={styles.success} aria-live="polite">
-                {loginSuccess}
-              </div>
-            )}
-            {loginError && (
-              <div className={styles.error} aria-live="polite">
-                {loginError}
-              </div>
-            )}
-            <input name="login_identifier" type="text" placeholder="Username or email" required />
-            <input name="password" type="password" placeholder="Password" required />
-            <button type="submit">Login</button>
-          </form>
-        ) : (
-          <form className={styles.form} onSubmit={handleRegisterSubmit}>
-            <h2>Register</h2>
-            {registerSuccess && (
-              <div className={styles.success} aria-live="polite">
-                {registerSuccess}
-              </div>
-            )}
-            {registerError && (
-              <div className={styles.error} aria-live="polite">
-                {registerError}
-              </div>
-            )}
-            <input name="first_name" type="text" placeholder="First name" required />
-            <input name="last_name" type="text" placeholder="Last name" required />
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="username" type="text" placeholder="Username" required />
-            <input name="password" type="password" placeholder="Password" required />
-            <input
-              name="password_confirmation"
-              type="password"
-              placeholder="Confirm password"
-              required
-            />
-            <input name="mobile" type="text" placeholder="Mobile" required />
-            <button type="submit">Register</button>
-          </form>
-        )}
+        {/* Login Form */}
+        <form
+          className={`${styles.form} ${!isLogin ? styles.hidden : ""}`}
+          onSubmit={handleLoginSubmit}
+        >
+          <h2 className={styles.title}>Login</h2>
+          {loginSuccess && (
+            <div className={styles.success} aria-live="polite">
+              {loginSuccess}
+            </div>
+          )}
+          {loginError && (
+            <div className={styles.error} aria-live="polite">
+              {loginError}
+            </div>
+          )}
+          <input name="login_identifier" type="text" placeholder="Username or email" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+        {/* Register Form */}
+        <form
+          className={`${styles.form} ${isLogin ? styles.hidden : ""}`}
+          onSubmit={handleRegisterSubmit}
+        >
+          <h2 className={styles.title}>Register</h2>
+          {registerSuccess && (
+            <div className={styles.success} aria-live="polite">
+              {registerSuccess}
+            </div>
+          )}
+          {registerError && (
+            <div className={styles.error} aria-live="polite">
+              {registerError}
+            </div>
+          )}
+          <input name="first_name" type="text" placeholder="First name" required />
+          <input name="last_name" type="text" placeholder="Last name" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="username" type="text" placeholder="Username" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <input
+            name="password_confirmation"
+            type="password"
+            placeholder="Confirm password"
+            required
+          />
+          <input name="mobile" type="text" placeholder="Mobile" required />
+          <button type="submit">Register</button>
+        </form>
       </div>
-    </>
+    </div>
   );
 }
