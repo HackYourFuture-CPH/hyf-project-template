@@ -9,7 +9,7 @@ export default function () {
         <div className={`container  ${styles.footerContainer}`}>
           <div>
             <Link href="/" className={styles.logoDiv}>
-              <Image src={logo} alt="logo" height={100} width={100} />
+              <Image src={logo} alt="logo" height={60} width={60} />
               <p className={styles.logoName}>
                 <span>Better</span> <span>Travel</span>
               </p>

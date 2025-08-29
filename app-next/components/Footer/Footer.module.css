@@ -9,16 +9,16 @@
 .footer {
   background: #171a1fff;
 
-  margin-top: 4em;
   font-family: Inter, sans-serif;
-  position: fixed;
+  /* position: fixed; */
   bottom: 0;
   width: 100%;
-  z-index: 1;
+  /* z-index: 1; */
 }
 .footerContainer {
   display: flex;
-  align-items: flex-start;
+  /* align-items: flex-start; */
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 2em; /* space between logo & links */
