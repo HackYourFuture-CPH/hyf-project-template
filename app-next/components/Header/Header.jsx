@@ -41,7 +41,7 @@ export default function Header() {
             <Link href="/offer-help">Offer Help</Link>
           </li>
           <li>
-            <Link href="/about">About</Link>
+            <Link href="/About">About</Link>
           </li>
           <li>
             <Link href="/contact">Contact</Link>
