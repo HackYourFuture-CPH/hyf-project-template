@@ -1,3 +1,29 @@
+.burgerRight {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 102;
+}
+/* Desktop nav visible by default, mobile nav hidden */
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.mobileNav {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .desktopNav {
+    display: none;
+  }
+  .mobileNav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
 .header {
   position: fixed;
   top: 0px;
@@ -10,6 +36,40 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 2rem;
+}
+
+@media (max-width: 900px) {
+  .headerContainer {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    height: 64px;
+  }
+  .headerContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+  .logoDiv {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .logoName {
+    font-size: 1rem;
+  }
+  .login {
+    font-size: 0.95rem;
+    gap: 4px;
+  }
+  .login svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 .logoDiv{
     display: flex;
