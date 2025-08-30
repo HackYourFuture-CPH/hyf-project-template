@@ -17,8 +17,13 @@ export default function Navbar() {
           <ul>
             <li>
               <Link
-                href="/"
-                className={path === "/" ? styles.active : styles.link}
+                to="home"
+                smooth={true}
+                duration={600}
+                offset={-70}
+                activeClass={styles.active}
+                className={styles.link}
+                spy={true}
               >
                 Home
               </Link>
@@ -32,6 +37,7 @@ export default function Navbar() {
                 offset={-70}
                 activeClass={styles.active}
                 className={styles.link}
+                spy={true}
               >
                 Trips
               </Link>
@@ -44,6 +50,7 @@ export default function Navbar() {
                 offset={-70}
                 activeClass={styles.active}
                 className={styles.link}
+                spy={true}
               >
                 Destination
               </Link>
@@ -57,6 +64,7 @@ export default function Navbar() {
                 offset={-70}
                 activeClass={styles.active}
                 className={styles.link}
+                spy={true}
               >
                 Community
               </Link>
