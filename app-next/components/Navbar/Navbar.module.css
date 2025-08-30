@@ -79,7 +79,29 @@
   transform: translateY(-1px);
 }
 
+.logo__img {
+  height: 60px;
+  width: auto;
+  display: block;
+}
+
+.logo__text {
+  color: #F2C94C;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .2px;
+}
+
 @media (max-width: 768px) {
+  .logo__img {
+    height: 28px;
+  }
+
+  .logo__text {
+    font-size: 1.6rem;
+  }
+
   .container {
     padding: 1rem;
   }
