@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'PetPass - Everything Your Pet Needs',
   description: 'Premium pet products, expert advice, and caring services for your beloved companions.',
+  icons: {
+    icon: '/icons/favicon.png',
+  },
 };
 
 export default function RootLayout({ children }) {
