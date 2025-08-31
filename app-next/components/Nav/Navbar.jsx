@@ -1,5 +1,4 @@
 "use client";
-//import Link from "next/link";
 import { Link } from "react-scroll";
 
 import styles from "./Navbar.module.css";
