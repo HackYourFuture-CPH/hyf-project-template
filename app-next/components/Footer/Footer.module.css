@@ -1,3 +1,73 @@
+@media (max-width: 600px) {
+  .footerLinksContainer ul {
+    width: 100vw;
+ 
+    box-sizing: border-box;
+    padding: 0;
+  }
+  .footerLinksContainer ul li {
+    width: 100vw;
+  
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: #23272f;
+  }
+}
+@media (max-width: 600px) {
+  .footerLinksContainer ul {
+    width: 100vw;
+ 
+    box-sizing: border-box;
+    padding: 0;
+  }
+  .footerLinksContainer ul li {
+    width: 100vw;
+   
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+@media (max-width: 600px) {
+  .footerLinksContainer ul li {
+    width: 100%;
+    padding: 0.75em 1em;
+    margin-bottom: 0.75em;
+    background: #23272f;
+    border-radius: 8px;
+    color: #38bdf8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-bottom: none;
+    text-align: center;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .footerLinksContainer ul li:last-child {
+    margin-bottom: 0;
+  }
+  .footerLinksContainer ul li a {
+    color: #38bdf8;
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    font-size: 1.1em;
+  }
+}
+@media (max-width: 600px) {
+  .footerContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+  }
+  .logoDiv {
+    margin-bottom: 1em;
+  }
+  .footerLinksContainer {
+    width: 100%;
+    align-items: center;
+  }
+}
 .footerLinksContainer {
   display: flex;
   flex: 1; /* take remaining space */
@@ -5,6 +75,30 @@
   gap: 2em;
   flex-wrap: wrap; /* wrap on smaller screens */
 }
+
+@media (max-width: 600px) {
+  .footerLinksContainer {
+    flex-direction: column;
+    gap: 1em;
+    width: 100%;
+    align-items: stretch;
+  }
+  .footerLinksContainer ul {
+    min-width: unset;
+    width: 100%;
+    margin-bottom: 1em;
+    padding: 0 0.5em;
+  }
+  .footerLinksContainer ul li {
+    width: 100%;
+    padding: 0.5em 0;
+    border-bottom: 1px solid #222;
+  }
+  .footerLinksContainer ul li:last-child {
+    border-bottom: none;
+  }
+}
+
 
 .footer {
   background: #171a1fff;
@@ -16,12 +110,8 @@
   /* z-index: 1; */
 }
 .footerContainer {
-  display: flex;
-  /* align-items: flex-start; */
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 2em; /* space between logo & links */
+  /* display: flex; */
+  width: 100%;
 }
 
 .footerLinksContainer ul li {
