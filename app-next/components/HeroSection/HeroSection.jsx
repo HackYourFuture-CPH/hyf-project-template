@@ -6,6 +6,10 @@ import styles from "./HeroSection.module.css";
 const images = [
   "/hero-images/dino-reichmuth-A5rCN8626Ck-unsplash.webp",
   "/hero-images/drif-riadh-YpkuRn54y4w-unsplash.webp",
+  "/hero-images/jack-anstey-XVoyX7l9ocY-unsplash.webp",
+  "/hero-images/neom-STV2s3FYw7Y-unsplash.webp",
+  "/hero-images/nils-nedel-ONpGBpns3cs-unsplash.webp",
+  "/hero-images/pietro-de-grandi-T7K4aEPoGGk-unsplash.webp",
   "/hero-images/rebe-adelaida-zunQwMy5B6M-unsplash.webp",
 ];
 
