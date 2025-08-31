@@ -4,7 +4,6 @@ import styles from "./Homepage.module.css";
 export default function Homepage() {
   return (
     <div className={styles.container}>
-      <Header />
       {/* Hero Section */}
       <section className={styles.hero}>
         <h1>CareConnect</h1>
