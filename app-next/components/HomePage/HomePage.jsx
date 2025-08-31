@@ -1,6 +1,5 @@
 import Link from "next/link";
 import styles from "./Homepage.module.css";
-import Header from "../Header/Header";
 
 export default function Homepage() {
   return (
