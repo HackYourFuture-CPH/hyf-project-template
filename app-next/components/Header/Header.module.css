@@ -1,0 +1,110 @@
+.burgerRight {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 102;
+}
+/* Desktop nav visible by default, mobile nav hidden */
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.mobileNav {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .desktopNav {
+    display: none;
+  }
+  .mobileNav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+.header {
+  position: fixed;
+  top: 0px;
+  height: 80px;
+  background: #171a1fff;
+  z-index: 10;
+  width: 100%;
+}
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+@media (max-width: 900px) {
+  .headerContainer {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    height: 64px;
+  }
+  .headerContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+  .logoDiv {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .logoName {
+    font-size: 1rem;
+  }
+  .login {
+    font-size: 0.95rem;
+    gap: 4px;
+  }
+  .login svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+.logoDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.logoName{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+.logoName span:first-child {
+  color: rgb(73, 243, 184);
+  font-weight: bold;
+
+}
+
+.logoName span:last-child {
+  color: orange;
+  font-style: italic;
+  font-size: larger;
+}
+
+.login {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  gap: 8px;              
+  color: aliceblue;
+  text-decoration: none;
+}
+
+.login svg {
+  fill: aliceblue;
+  width: 25px;  
+  height: 25px;
+}
