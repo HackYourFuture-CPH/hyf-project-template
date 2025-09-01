@@ -6,7 +6,6 @@
   padding-left: 2rem;
   padding-right: 2rem;
   font-family: "Archivo", sans-serif;
-  height: 100vh;
 }
 
 .titleWrapper {
@@ -14,6 +13,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
 }
 
 .gridContainer {
@@ -28,6 +32,7 @@
 .exploreBtn {
   background-color: #1f84ca;
   font-family: "Archivo", sans-serif;
+  font-weight: bold;
   color: white;
   border: none;
   border-radius: 6px;
