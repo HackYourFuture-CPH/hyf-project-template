@@ -7,3 +7,7 @@
 .message {
   margin: auto;
 }
+
+.sectionWrapper {
+  margin-bottom: 3rem; /* or whatever spacing you want */
+}
