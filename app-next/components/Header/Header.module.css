@@ -53,23 +53,6 @@
   align-items: center;
 }
 
-/* .logoName {
-  margin: 0;
-  padding: 0;
-  text-decoration: none;
-}
-
-.logoName span:first-child {
-  color: rgb(73, 243, 184);
-  font-weight: bold;
-}
-
-.logoName span:last-child {
-  color: orange;
-  font-style: italic;
-  font-size: larger;
-} */
-
 .login {
   display: flex;
   justify-content: center;
