@@ -7,29 +7,17 @@
   font-family: Inter, sans-serif;
 }
 
-/* .nav ul li a {
-  color:  #fbfcfe;
+.link {
+  cursor: pointer;
   text-decoration: none;
-  font-size: 16px;
-  line-height: 26px;
-  font-weight: 400;
-} */
-
-.link{
- 
-  text-decoration: none;
-  color:  #fbfcfe;
+  color: #fbfcfe;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 1.2rem;
+  font-weight: 500;
   line-height: 26px;
 }
 
-.active {
-  color: blue;
-  /* font-weight: bold; */
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 26px;
+.link:hover {
+  color: #2563eb;
   transition: color 0.2s;
 }
