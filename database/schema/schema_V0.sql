@@ -1,5 +1,5 @@
 -- =================================================================
---  Schema Definition
+--  Schema Definition 
 -- =================================================================
 
 
@@ -27,7 +27,8 @@ CREATE TABLE travel_plans (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     duration_days INTEGER,
-    price_usd NUMERIC(10, 2),
+    price BIGINT, 
+    price_currency CHAR(3), -- currency code (e.g., 'USD')
     description TEXT,
     cover_image_url VARCHAR(255),
     -- owner_id is NULL for pre-defined tours, and points to a user for their personal trips.
@@ -80,7 +81,8 @@ CREATE TABLE tour_flights (
     tour_id UUID NOT NULL REFERENCES travel_plans(id) ON DELETE CASCADE,
     airline VARCHAR(100),
     flight_number VARCHAR(50),
-    price_usd NUMERIC(10, 2),
+    price BIGINT,
+    price_currency CHAR(3),
     departure_airport VARCHAR(50),
     arrival_airport VARCHAR(50)
 );
@@ -92,7 +94,8 @@ CREATE TABLE tour_accommodations (
     name VARCHAR(100),
     type VARCHAR(50) CHECK (type IN ('hotel', 'hostel', 'guesthouse')),
     rating NUMERIC(2, 1),
-    price_per_night_usd NUMERIC(10, 2),
+    price_per_night BIGINT,
+    price_per_night_currency CHAR(3),
     address VARCHAR(255)
 );
 
@@ -103,7 +106,9 @@ CREATE TABLE tour_reviews (
     tour_id UUID NOT NULL REFERENCES travel_plans(id) ON DELETE CASCADE,
     rating INTEGER CHECK (rating >= 1 AND rating <= 5),
     content TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    -- Ensures a user can only review a tour once.
+    UNIQUE(user_id, tour_id)
 );
 
 -- Stores user-submitted comments on other users' blog posts.
@@ -142,4 +147,3 @@ CREATE TABLE user_favorites (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(user_id, item_id, item_type)
 );
-
