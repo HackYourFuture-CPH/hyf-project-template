@@ -43,7 +43,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                to="destination"
+                to="blogposts"
                 smooth={true}
                 duration={600}
                 offset={-70}

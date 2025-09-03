@@ -1,8 +1,8 @@
 import "./HomePage.css";
 import HeroSection from "../HeroSection/HeroSection";
-import ToursSection from "../ToursSection/ToursSection";
-import Destination from "../Destination/Destination";
+import ToursSection from "../ToursSection/ToursSection"; 
 import Community from "../Community/Community";
+import BlogPostsSection from "../BlogPostsSection/BlogPostsSection";
 
 function HomePage() {
   return (
@@ -13,8 +13,8 @@ function HomePage() {
       <section id="trips" className="sectionWrapper">
         <ToursSection />
       </section>
-      <section id="destination" className="sectionWrapper">
-        <Destination />
+      <section id="blogposts" className="sectionWrapper">
+        <BlogPostsSection />
       </section>
       <section id="community" className="sectionWrapper">
         <Community />
