@@ -32,6 +32,7 @@ export default function TripPage() {
       }
 
       const response = await fetch(`http://localhost:3001/api/tours?${params.toString()}`);
+      // This is for testing will be replaced when the route is ready 
       const data = await response.json();
       setTours(data.travel_plans || []);
       // Get unique destinations (if you have them in the tours data)
