@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import styles from "./LoginPage.module.css";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const initialLoginFormdata = {
   email: "",
@@ -12,27 +13,32 @@ export const initialLoginFormdata = {
 
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
-  const [isLoading, setIsloading] = useState(false);
-  /* for testing */
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const router = useRouter();
-
+  const { isLoading, login } = useAuthStore();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
       [event.target.name]: event.target.value,
     }));
   };
-  /* login logic will be updated here */
-  useEffect(() => {
-    if (loginSuccess) {
-      router.push("/");
-    }
-  }, [loginSuccess]);
+
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log(formData);
-    setLoginSuccess(true);
+
+    const loginSuccess = await login(formData.email, formData.password);
+    console.log(loginSuccess);
+    if (loginSuccess) {
+      alert("login Successful");
+    }
+    const user = useAuthStore.getState().user;
+    console.log(user);
+    if (user?.role === "ADMIN") {
+      router.push("/admin");
+    } else if (user?.role === "VOLUNTEER") {
+      router.push("/services");
+    } else {
+      router.push("/");
+    }
   };
 
   return (
