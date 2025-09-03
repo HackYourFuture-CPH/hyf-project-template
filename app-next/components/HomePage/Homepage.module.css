@@ -8,7 +8,7 @@
 
 /* Hero Section */
 .hero {
-  background: url("../../../images/background.jpg") top center/cover no-repeat;
+  background: url("/images/background.jpg") top center/cover no-repeat;
   min-height: 100vh;
   background-attachment: fixed;
   display: flex;
