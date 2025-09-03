@@ -5,29 +5,35 @@
   "main": "src/index.js",
   "type": "module",
   "engines": {
-    "node": "^20.12.1",
-    "npm": "^10.5.0"
+    "node": ">=20.12.1",
+    "npm": ">=10.5.0"
   },
   "scripts": {
     "dev": "nodemon src/index.mjs",
     "start": "node src/index.mjs",
     "format": "npx prettier . --write",
-    "check": "npx eslint . --fix"
+    "check": "npx eslint . --fix",
+    "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "@prisma/client": "^6.15.0",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
-    "mysql2": "^3.10.0",
-    "pg": "^8.11.5"
+    "mysql2": "^3.14.4",
+    "pg": "^8.16.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
-    "eslint": "^9.0.0",
-    "globals": "^15.0.0",
-    "nodemon": "^3.1.0",
-    "prettier": "^3.2.5"
+    "@eslint/js": "^9.34.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "prisma": "^6.15.0"
   }
 }
