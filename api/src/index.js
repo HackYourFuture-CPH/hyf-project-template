@@ -6,7 +6,11 @@ import bodyParser from "body-parser";
 import { PrismaClient } from "./generated/prisma/index.js";
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 export const prisma = new PrismaClient();
