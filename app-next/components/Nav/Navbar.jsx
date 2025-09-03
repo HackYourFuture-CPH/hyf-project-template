@@ -38,7 +38,7 @@ export default function Navbar() {
                 className={styles.link}
                 spy={true}
               >
-                Trips
+                Tours
               </Link>
             </li>
             <li>
@@ -51,7 +51,7 @@ export default function Navbar() {
                 className={styles.link}
                 spy={true}
               >
-                Destination
+                Blog Posts
               </Link>
             </li>
 
@@ -65,7 +65,7 @@ export default function Navbar() {
                 className={styles.link}
                 spy={true}
               >
-                Community
+                Attractions
               </Link>
             </li>
           </ul>

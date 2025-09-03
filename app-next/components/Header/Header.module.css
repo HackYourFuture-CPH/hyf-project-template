@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
+
 .burgerRight {
   position: absolute;
   top: 16px;
@@ -10,33 +12,76 @@
   align-items: center;
   gap: 1rem;
 }
+
 .mobileNav {
   display: none;
 }
 
-@media (max-width: 600px) {
-  .desktopNav {
-    display: none;
-  }
-  .mobileNav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+.logo {
+  height: 60px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s;
 }
+
+.logo:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s;
+}
+
 .header {
+  font-family: "Archivo", sans-serif;
   position: fixed;
   top: 0px;
-  height: 80px;
   background: #171a1fff;
   z-index: 10;
   width: 100%;
+  padding: 16px 0 16px 0;
 }
+
 .headerContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
+}
+
+.logoDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: aliceblue;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.login:hover {
+  color: #2563eb;
+  transition: color 0.2s;
+}
+
+.login svg {
+  fill: aliceblue;
+  width: 25px;
+  height: 25px;
+}
+
+.login svg:hover {
+  fill: #2563eb;
+  transition: color 0.2s;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
 }
 
 @media (max-width: 900px) {
@@ -45,16 +90,36 @@
   }
 }
 
+@media (max-width: 700px) {
+  .headerContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
 @media (max-width: 600px) {
   .header {
     height: 64px;
   }
+
   .headerContainer {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
     padding: 0 0.5rem;
   }
+
+  .desktopNav {
+    display: none;
+  }
+  .mobileNav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .logoDiv {
     flex-direction: row;
     gap: 0.5rem;
@@ -70,41 +135,4 @@
     width: 20px;
     height: 20px;
   }
-}
-.logoDiv{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.logoName{
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-}
-.logoName span:first-child {
-  color: rgb(73, 243, 184);
-  font-weight: bold;
-
-}
-
-.logoName span:last-child {
-  color: orange;
-  font-style: italic;
-  font-size: larger;
-}
-
-.login {
-  display: flex;
-  justify-content: center; 
-  align-items: center;    
-  gap: 8px;              
-  color: aliceblue;
-  text-decoration: none;
-}
-
-.login svg {
-  fill: aliceblue;
-  width: 25px;  
-  height: 25px;
 }

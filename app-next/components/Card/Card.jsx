@@ -1,44 +1,42 @@
 "use client";
-import Link from "next/link";
 import styles from "./Card.module.css";
 import { useState } from "react";
 import Image from "next/image";
 
 export default function Card({ card }) {
-  const [rating, setRating] = useState(card.rating);
-  const [favourite, setFavourite] = useState(false);
+  const [favourite, setFavourite] = useState(card.favourite);
+
   return (
-    <>
-      <div className={`container`}>
-        <div className={styles.travelCard}>
-         <Image src={card.image} alt="travel image" height={100} width={100} />
-          <h3>{card.destination}</h3>
-          <p className={styles.description}>{card.description}</p>
-
-          <div className={styles.cardFooter}>
-            <div className={styles.stars}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  className={
-                    star <= rating ? styles.filledStar : styles.emptyStar
-                  }
-                  onClick={() => setRating(star)}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-
-            <span
-              className={`${styles.heart} ${favourite ? styles.fav : ""}`}
-              onClick={() => setFavourite(!favourite)}
-            >
-              ♥
-            </span>
-          </div>
+    <div className={styles.travelCard}>
+      <div className={styles.imageWrapper}>
+        <Image
+          src={card.image}
+          alt={card.destination || "travel image"}
+          fill
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+      <div className={styles.cardContent}>
+        <h4 className={styles.cardTitle}>{card.destination}</h4>
+        <div className={styles.cardDetails}>
+          <span className={styles.price}>${card.price}</span>
+          <span className={styles.duration}>{card.duration}</span>
+          <span className={styles.rating}>
+            <span className={styles.star}>★</span> {card.rating}
+          </span>
+        </div>
+        <p className={styles.description}>{card.description}</p>
+        <div className={styles.cardFooter}>
+          <button
+            className={`${styles.heart} ${favourite ? styles.fav : ""}`}
+            onClick={() => setFavourite((f) => !f)}
+            aria-label="Add to favorites"
+            type="button"
+          >
+            ♥
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
