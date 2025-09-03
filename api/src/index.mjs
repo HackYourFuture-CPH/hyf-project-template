@@ -2,11 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import knex from "./database_client.js";
+import knex from "./db.mjs";
 import nestedRouter from "./routers/nested.js";
 import authRouter from "./routers/auth.js";
 import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
+import healthCheckRoute from "./routers/healthCheck.mjs";
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,8 @@ app.use(bodyParser.json());
 const apiRouter = express.Router();
 
 // Health check route
+app.use("/api", healthCheckRoute);
+
 apiRouter.get("/", async (req, res) => {
   const SHOW_TABLES_QUERY =
     process.env.DB_CLIENT === "pg"
