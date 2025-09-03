@@ -9,9 +9,9 @@
     "npm": "^10.5.0"
   },
   "scripts": {
-    "db:start": "docker-compose -f ../docker-compose.yml --env-file .env up -d",
-    "db:stop": "docker-compose -f ../docker-compose.yml down",
-    "db:clean": "docker-compose -f ../docker-compose.yml down -v",
+    "db:start": "docker compose -f ../docker-compose.yml --env-file .env up -d",
+    "db:stop": "docker compose -f ../docker-compose.yml --env-file .env down",
+    "db:clean": "docker compose -f ../docker-compose.yml --env-file .env down -v",
     "db:reset": "node scripts/db-init.js",
     "db:setup": "npm-run-all db:clean db:start db:reset",
     "dev": "npm-run-all --parallel db:start start",
@@ -24,9 +24,8 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
@@ -42,4 +41,3 @@
     "prettier": "^3.2.5"
   }
 }
-
