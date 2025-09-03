@@ -1,5 +1,5 @@
 import express from "express";
-import knex from "../database_client.js";
+import knex from "../db.mjs";
 import { authenticateToken } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/validation.js";
 import { postSchema } from "../validation/schemas.js";

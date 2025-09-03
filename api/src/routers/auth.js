@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import knex from "../database_client.js";
-import { generateToken } from "../middleware/auth.js";
+import knex from "../db.mjs";
 import { validateRequest } from "../middleware/validation.js";
 import { registerSchema, loginSchema } from "../validation/schemas.js";
 
