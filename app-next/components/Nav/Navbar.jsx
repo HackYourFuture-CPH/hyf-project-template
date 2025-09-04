@@ -57,7 +57,7 @@ export default function Navbar() {
 
             <li>
               <Link
-                to="community"
+                to="attractions"
                 smooth={true}
                 duration={600}
                 offset={-70}
