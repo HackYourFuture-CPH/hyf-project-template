@@ -12,22 +12,32 @@
   min-height: 100vh;
   background-attachment: fixed;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-top: 40px;
-  color: rgb(0, 0, 0);
+  justify-content: center;
+  align-items: center;
   padding: 100px 20px 60px;
-  text-align: center;
 }
 
-.hero h1 {
+.heroCard {
+  background-color: rgba(255, 255, 255, 0.1); /* transparent white */
+  backdrop-filter: blur(2px); /* blur background behind card */
+  padding: 10px 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  margin-top: -450px;
+}
+
+.heroCard h1 {
   font-size: 48px;
   margin-bottom: 20px;
+  color: #000;
 }
 
-.hero p {
+.heroCard p {
   font-size: 20px;
   margin-bottom: 40px;
+  color: #000;
 }
 
 /* Button Group */
@@ -105,7 +115,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hero h1 {
+  .heroCard h1 {
     font-size: 36px;
   }
 
