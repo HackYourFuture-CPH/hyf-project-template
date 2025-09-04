@@ -1,8 +1,7 @@
 -- =================================================================
---  Simplified, Comprehensive Mock Data Seed Script (V1)
+--  Simplified, Comprehensive Mock Data
 -- =================================================================
--- This script populates the simplified schema with 200+ rows of diverse,
--- realistic data for robust development and testing.
+-- This script populates the simplified schema with 150+ rows of diverse,
 -- =================================================================
 
 DO $$
@@ -42,22 +41,33 @@ BEGIN
     ON CONFLICT (code) DO NOTHING;
     INSERT INTO temp_currency_codes SELECT code FROM currencies;
 
-    -- 2. Seed Users (200)
-    FOR i IN 1..200 LOOP
+    -- 2. Seed Users (150)
+    FOR i IN 1..150 LOOP
         fname := first_names[floor(random() * array_length(first_names, 1)) + 1];
         lname := last_names[floor(random() * array_length(last_names, 1)) + 1];
-        INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, role)
+        INSERT INTO users (username, email, password, first_name, last_name, mobile, profile_image, role, is_active, email_verified_at, last_login_at)
         VALUES (
             LOWER(fname || lname || i),
             LOWER(fname || '.' || lname || i) || '@example.com',
-            'hash', fname, lname, '555-010' || i,
-            CASE WHEN i % 20 = 0 THEN 'admin' ELSE 'user' END
+            'hashed_password', -- Use a static hashed password for all mock users
+            fname, 
+            lname, 
+            '555-' || LPAD(i::text, 4, '0'), -- Patched mobile number generation
+            '/images/profiles/default.png',
+            CASE 
+                WHEN i % 15 = 0 THEN 'admin' 
+                WHEN i % 7 = 0 THEN 'moderator'
+                ELSE 'user' 
+            END,
+            (random() > 0.1),
+            CASE WHEN random() > 0.3 THEN NOW() - (random() * 300 || ' days')::interval ELSE NULL END,
+            NOW() - (random() * 60 || ' days')::interval
         );
     END LOOP;
     INSERT INTO temp_user_ids SELECT id FROM users;
 
-    -- 3. Seed Travel Plans (Tours) (20)
-    FOR i IN 1..20 LOOP
+    -- 3. Seed Travel Plans (Tours) (30)
+    FOR i IN 1..30 LOOP
         INSERT INTO travel_plans (name, description, start_date, duration_days, price_minor, currency_code, capacity, cover_image_url, plan_type)
         VALUES (
             tour_names[floor(random() * array_length(tour_names, 1)) + 1],
@@ -95,8 +105,8 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    -- 5. Seed Attraction Posts (200)
-    FOR i IN 1..200 LOOP
+    -- 5. Seed Attraction Posts (100)
+    FOR i IN 1..100 LOOP
         dest_text := destinations[floor(random() * array_length(destinations, 1)) + 1];
         dest_parts := string_to_array(dest_text, ',');
         WITH inserted AS (
@@ -108,8 +118,8 @@ BEGIN
     END LOOP;
     INSERT INTO attraction_post_photos(post_id, image_url, caption) SELECT id, '/images/attractions/attraction.jpg', 'A beautiful shot.' FROM temp_attraction_post_ids;
 
-    -- 6. Seed User Posts (200)
-    FOR i IN 1..200 LOOP
+    -- 6. Seed User Posts (150)
+    FOR i IN 1..150 LOOP
         WITH inserted AS (
             INSERT INTO user_posts(user_id, title, content, category)
             VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), user_post_titles[floor(random() * array_length(user_post_titles, 1)) + 1], 'This is a recap of my latest adventure. It was an experience I''ll never forget!', 'Adventure')
@@ -119,11 +129,21 @@ BEGIN
     END LOOP;
     INSERT INTO user_post_photos(post_id, image_url, caption) SELECT id, '/images/posts/user_post.jpg', 'A photo from my trip!' FROM temp_user_post_ids;
 
-    -- 7. Seed Tour Reviews (200)
+    -- 7. Seed Tour Reviews (200) and Update Travel Plan Ratings
     FOR i IN 1..200 LOOP
+        user_id_temp := (SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1);
+        tour_id_temp := (SELECT id FROM temp_tour_ids ORDER BY random() LIMIT 1);
+
         INSERT INTO tour_reviews(user_id, tour_id, rating, content)
-        VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), (SELECT id FROM temp_tour_ids ORDER BY random() LIMIT 1), (floor(random() * 3) + 3)::int, review_contents[floor(random() * array_length(review_contents, 1)) + 1])
+        VALUES (user_id_temp, tour_id_temp, (floor(random() * 3) + 3)::int, review_contents[floor(random() * array_length(review_contents, 1)) + 1])
         ON CONFLICT (user_id, tour_id) DO NOTHING;
+
+        -- Update the average rating on the travel_plan
+        UPDATE travel_plans
+        SET 
+            rating_count = (SELECT COUNT(*) FROM tour_reviews WHERE tour_id = tour_id_temp),
+            rating = (SELECT AVG(rating) FROM tour_reviews WHERE tour_id = tour_id_temp)
+        WHERE id = tour_id_temp;
     END LOOP;
 
     -- 8. Seed User Post Comments (200)
@@ -147,4 +167,3 @@ BEGIN
     RAISE NOTICE 'Mock data seeded successfully! All tables are populated.';
 
 END $$;
-
