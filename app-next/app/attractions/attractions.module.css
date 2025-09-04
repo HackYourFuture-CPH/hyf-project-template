@@ -1,1 +1,105 @@
 
+@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
+
+.pageWrapper {
+  flex-grow: 1;
+  max-width: 1200px;
+  margin: 5em auto;
+  padding: 2rem;
+  font-family: "Archivo", sans-serif;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.gridContainer {
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.searchAndSortWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.searchInput {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.filterSelect {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+}
+
+.loadingDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+.loadingDots span {
+  width: 12px;
+  height: 12px;
+  margin: 0 4px;
+  background: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.loadingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loadingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  to {
+    opacity: 0.3;
+    transform: translateY(-16px);
+  }
+}
+
+@media (max-width: 900px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .pageWrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+  .searchAndSortWrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}

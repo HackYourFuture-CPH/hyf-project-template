@@ -2,11 +2,14 @@
 import styles from "./BlogCard.module.css";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function BlogCard({ card }) {
   const [favourite, setFavourite] = useState(card.favourite);
 
   return (
+    <Link href={`/blogposts/${card.id}`} style={{ textDecoration: "none" }}>
+   
     <div className={styles.travelCard}>
       <div className={styles.imageWrapper}>
         <Image
@@ -24,5 +27,6 @@ export default function BlogCard({ card }) {
         <p className={styles.description}>{card.excerpt}</p>
       </div>
     </div>
+     </Link>
   );
 }

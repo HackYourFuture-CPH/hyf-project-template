@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "name": "Sahara Adventure",
+    "description": "Explore the vast Sahara desert with guided tours and camel rides.",
+    "price_minor": 120000,
+    "currency_code": "USD",
+    "duration_days": 7,
+    "rating": 4.7,
+    "favourite": false,
+    "cover_image_url": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500"
+  },
+  {
+    "id": 2,
+    "name": "Nile Cruise",
+    "description": "Enjoy a luxury cruise along the Nile river with stops at ancient sites.",
+    "price_minor": 95000,
+    "currency_code": "USD",
+    "duration_days": 5,
+    "rating": 4.5,
+    "favourite": true,
+    "cover_image_url": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500"
+  },
+  {
+    "id": 3,
+    "name": "Kilimanjaro Trek",
+    "description": "Climb Africa's highest peak with experienced guides.",
+    "price_minor": 150000,
+    "currency_code": "USD",
+    "duration_days": 10,
+    "rating": 4.9,
+    "favourite": false,
+    "cover_image_url": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500"
+  },
+  {
+    "id": 4,
+    "name": "Victoria Falls Tour",
+    "description": "Witness the breathtaking Victoria Falls and enjoy local activities.",
+    "price_minor": 80000,
+    "currency_code": "USD",
+    "duration_days": 3,
+    "rating": 4.6,
+    "favourite": false,
+    "cover_image_url": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500"
+  }
+]

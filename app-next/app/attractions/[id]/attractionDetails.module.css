@@ -1,10 +1,24 @@
 .pageWrapper {
   flex-grow: 1;
-  max-width: 1200px;
-  margin: 0 auto;
+  margin: 7em auto;
   padding: 2rem;
   font-family: "Archivo", sans-serif;
+  max-width: 900px;
+  width: 100%;
 }
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+}
+
 
 .travelCard {
   background: #fff;
@@ -60,7 +74,7 @@
 .cardDestination {
   color: #6b7280;
   font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+  /* margin-bottom: 0.5rem; */
 }
 
 .description {
@@ -73,6 +87,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom: 1px solid #ced0d6; /* fallback grey */
+  padding: 1.5em 0em;
 }
 
 .cardFooter {
@@ -82,7 +98,6 @@
   display: flex;
   justify-content: flex-end;
 }
-
 
 @media (max-width: 900px) {
   .imageWrapper {
