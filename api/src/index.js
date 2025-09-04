@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import bodyParser from "body-parser";
-import { PrismaClient } from "./generated/prisma/index.js";
 
 const app = express();
 const corsOptions = {
