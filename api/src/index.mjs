@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import errorHandler from "./middleware/errorHandler.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import knex from "./db.mjs";
@@ -8,10 +9,12 @@ import authRouter from "./routers/auth.js";
 import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
+import morgan from "morgan";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(morgan("dev"));
 
 const apiRouter = express.Router();
 
@@ -48,6 +51,9 @@ apiRouter.use("/posts", postsRouter);
 apiRouter.use("/nested", nestedRouter);
 
 app.use("/api", apiRouter);
+
+// global error handler
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);
