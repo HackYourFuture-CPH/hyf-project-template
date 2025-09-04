@@ -2,17 +2,28 @@
 
 import { useEffect, useState } from "react";
 import styles from "./ToursSection.module.css";
-import traveldata from "../../mockData/travel-cards.json";
 import Card from "../Card/Card";
 import Link from "next/link";
 
 export default function ToursSection() {
   const [travelCardData, setTravelCardData] = useState([]);
 
-  // simulate API fetch while there is no DB data
+  // Function to fetch data from the API
+  async function fetchTravelCards() {
+    try {
+      const response = await fetch("http://localhost:3001/api/health");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTravelCardData(data.travel_plans || []);
+    } catch (error) {
+      console.error("Error fetching travel cards:", error);
+    }
+  }
+
   useEffect(() => {
-    setTravelCardData(traveldata);
-    console.log("travelCardData", traveldata);
+    fetchTravelCards();
   }, []);
 
   return (
@@ -20,13 +31,15 @@ export default function ToursSection() {
       <div className={styles.toursWrapper}>
         <div className={styles.titleWrapper}>
           <h1 className={styles.title}>Popular Tours</h1>
-          <Link href="/trips" style={{ textDecoration: "none" }}>
+          <Link href="/tours" style={{ textDecoration: "none" }}>
             <button className={styles.exploreBtn}>Show all</button>
           </Link>
         </div>
         <div className={styles.gridContainer}>
           {travelCardData.slice(0, 3).map((card) => (
-            <Card key={card.id} card={card} />
+            <Link key={card.id} href={`/tours/${card.id}`} style={{ textDecoration: "none" }}>
+              <Card card={card} />
+            </Link>
           ))}
         </div>
       </div>

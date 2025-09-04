@@ -10,20 +10,23 @@ export default function Card({ card }) {
     <div className={styles.travelCard}>
       <div className={styles.imageWrapper}>
         <Image
-          src={card.image}
-          alt={card.destination || "travel image"}
+          src={card.cover_image_url || "/images/tours/default.jpg"}
+          alt={card.name || "travel image"}
           fill
           style={{ objectFit: "cover" }}
+          onError={(e) => {
+            e.target.src = "/images/tours/default.jpg";
+          }}
         />
       </div>
       <div className={styles.cardContent}>
-        <h4 className={styles.cardTitle}>{card.destination}</h4>
+        <h4 className={styles.cardTitle}>{card.name}</h4>
         <div className={styles.cardDetails}>
-          <span className={styles.price}>${card.price}</span>
-          <span className={styles.duration}>{card.duration}</span>
-          <span className={styles.rating}>
-            <span className={styles.star}>★</span> {card.rating}
+          <span className={styles.price}>
+            {card.currency_code} {(Number(card.price_minor) / 100).toLocaleString()}
           </span>
+          <span className={styles.duration}>{card.duration_days} days</span>
+          {card.rating !== undefined && <span className={styles.rating}>★ {card.rating}</span>}
         </div>
         <p className={styles.description}>{card.description}</p>
         <div className={styles.cardFooter}>
