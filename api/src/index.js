@@ -1,27 +1,24 @@
-import "dotenv/config";
 import express from "express";
-import cors from "cors";
-import authRoutes from "./routes/authRoutes.js";
-import bodyParser from "body-parser";
+import eldersRouter from "./routes/elders.js";
+import volunteersRouter from "./routes/volunteers.js";
+import servicesRouter from "./routes/services.js";
+import volunteerServicesRouter from "./routes/volunteerServices.js";
+import availableTimeRouter from "./routes/availableTime.js";
+import reviewsRouter from "./routes/reviews.js";
 
 const app = express();
-const corsOptions = {
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-  credentials: true,
-};
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-export const prisma = new PrismaClient();
+app.use(express.json()); // parse JSON bodies
 
-app.use("/api/auth", authRoutes);
-app.get("/", (req, res) => {
-  res.send("Hello from backend");
-});
-app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
-});
-process.on("SIGINT", async () => {
-  await prisma.$disconnect();
-  process.exit();
+// Connect routes
+app.use("/api/elders", eldersRouter);
+app.use("/api/volunteers", volunteersRouter);
+app.use("/api/services", servicesRouter);
+app.use("/api/volunteer-services", volunteerServicesRouter);
+app.use("/api/available-time", availableTimeRouter);
+app.use("/api/reviews", reviewsRouter);
+
+// Start server
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
