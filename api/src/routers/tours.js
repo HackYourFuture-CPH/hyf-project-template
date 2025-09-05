@@ -1,5 +1,6 @@
 import express from "express";
 import knex from "../db.mjs";
+import reviewsRouter from "./reviews.js";
 
 const router = express.Router();
 
@@ -299,7 +300,7 @@ router.post("/", async (req, res) => {
 
     try {
       // Create tour
-      const [tourId] = await trx("travel_plans")
+      const [{ id: tourId }] = await trx("travel_plans")
         .insert({
           name,
           description,
@@ -315,20 +316,20 @@ router.post("/", async (req, res) => {
         })
         .returning("id");
 
-              // Create destinations if provided
-        if (destinations && Array.isArray(destinations)) {
-          const destinationData = destinations.map((dest, index) => ({
-            tour_id: tourId.id,
-            city_name: dest.city_name,
-            country_name: dest.country_name,
-            stop_order: index + 1,
-            duration_days:
-              dest.duration_days ||
-              Math.ceil(duration_days / destinations.length),
-          }));
+      // Create destinations if provided
+      if (destinations && Array.isArray(destinations)) {
+        const destinationData = destinations.map((dest, index) => ({
+          tour_id: tourId,
+          city_name: dest.city_name,
+          country_name: dest.country_name,
+          stop_order: index + 1,
+          duration_days:
+            dest.duration_days ||
+            Math.ceil(duration_days / destinations.length),
+        }));
 
-          await trx("tour_destinations").insert(destinationData);
-        }
+        await trx("tour_destinations").insert(destinationData);
+      }
 
       await trx.commit();
 
@@ -537,5 +538,8 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
+
+// add review to the tour
+router.use("/:id/reviews", reviewsRouter);
 
 export default router;

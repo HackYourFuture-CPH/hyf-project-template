@@ -161,3 +161,29 @@ export const postSchema = z.object({
     .min(10, "Content must be at least 10 characters")
     .max(5000, "Content must be less than 5000 characters"),
 });
+
+// creating or updating a tour review schema
+export const reviewSchema = z.object({
+  rating: z
+    .number({
+      required_error: "Rating is required.",
+      invalid_type_error: "Rating must be a number.",
+    })
+    .int("Rating must be a whole number.")
+    .min(1, "Rating must be at least 1.")
+    .max(5, "Rating cannot be more than 5."),
+
+  content: z
+    .string()
+    .min(1, "Review content is required.")
+    .min(10, "Review must be at least 10 characters long.")
+    .max(1000, "Review cannot be more than 1000 characters long."),
+});
+
+// Schema for creating or updating a post comment
+export const commentSchema = z.object({
+  content: z
+    .string()
+    .min(1, "Comment content is required.")
+    .max(500, "Comment cannot be more than 500 characters long."),
+});
