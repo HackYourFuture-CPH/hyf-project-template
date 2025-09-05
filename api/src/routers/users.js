@@ -16,7 +16,7 @@ router.use(authenticateToken);
 // Get current user profile
 router.get("/profile", async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.id || req.user.sub;
 
     const user = await knex("users")
       .select(
@@ -68,7 +68,7 @@ router.put(
   validateRequest(profileUpdateSchema),
   async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user.id || req.user.sub;
       const { first_name, last_name, mobile, profile_image } =
         req.validatedData;
 
@@ -142,7 +142,7 @@ router.put(
   validateRequest(passwordChangeSchema),
   async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user.id || req.user.sub;
       const { current_password, new_password, new_password_confirmation } =
         req.validatedData;
 
