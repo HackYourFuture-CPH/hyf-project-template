@@ -10,6 +10,8 @@ import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
+import attractionsRouter from "./routers/attractions.js"; 
+
 import morgan from "morgan";
 
 const app = express();
@@ -54,6 +56,9 @@ apiRouter.use("/tours", toursRouter);
 
 // This nested router example can also be replaced with your own sub-router
 apiRouter.use("/nested", nestedRouter);
+
+// Authentication routes (no authentication required)
+apiRouter.use("/attractions", attractionsRouter);
 
 app.use("/api", apiRouter);
 

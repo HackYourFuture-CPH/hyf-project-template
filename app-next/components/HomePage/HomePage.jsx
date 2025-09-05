@@ -16,7 +16,7 @@ function HomePage() {
       <section id="blogposts" className="sectionWrapper">
         <BlogPostsSection />
       </section>
-      <section id="blogposts" className="sectionWrapper">
+      <section id="attractions" className="sectionWrapper">
         <AttractionsSection />
       </section>
     </>

@@ -1,20 +1,17 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
 import Image from "next/image";
-import logo from "../../assets/Logo.png";
+import logo from "../../assets/Logo.svg";
 export default function () {
   return (
     <>
       <footer className={` ${styles.footer}`}>
         <div className={`container  ${styles.footerContainer}`}>
           <div>
-            <Link href="/" className={styles.logoDiv}>
-              <Image src={logo} alt="logo" height={60} width={60} />
-              <p className={styles.logoName}>
-                <span>Better</span> <span>Travel</span>
-              </p>
-            </Link>
-          </div>
+          <Link href="/" className={styles.logoDiv}>
+            <Image className={styles.logo} src={logo} alt="logo" />
+          </Link>
+        </div>
           <div>
             <div className={styles.footerLinksContainer}>
               <ul className={styles.informationUl}>

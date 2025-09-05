@@ -1,0 +1,165 @@
+.pageWrapper {
+  flex-grow: 1;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "Archivo", sans-serif;
+  max-width: 900px;
+  width: 100%;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+
+.travelCard {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 1.5px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s, transform 0.3s;
+  cursor: pointer;
+  width: 100%;
+  max-width: 100%;
+}
+
+.travelCard:hover {
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18), 0 3px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 25rem;
+  overflow: hidden;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardTitle {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.cardDetails {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+
+.cardDestination {
+  color: #6b7280;
+  font-size: 0.95rem;
+  /* margin-bottom: 0.5rem; */
+}
+
+
+.description {
+  color: #6b7280;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #ced0d6; /* fallback grey */
+  padding: 1.5em 0em;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contentBox {
+  max-width: 900px;
+  width: 100%; 
+  padding: 1.5rem 0rem;
+  margin: 0em auto;
+  margin-top: 7em;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #444;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s ease;
+}
+
+.backButton:hover {
+  color: #b0abab;
+}
+
+@media (max-width: 900px) {
+  .imageWrapper {
+    height: 10rem;
+  }
+  .cardContent {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .imageWrapper {
+    height: 9rem;
+  }
+  .cardContent {
+    padding: 0.75rem;
+  }
+   .cardTitle {
+    font-size: 1.25rem;
+  }
+
+  .description {
+    font-size: 0.95rem;
+  }
+   .pageWrapper {
+    padding: 1rem;
+    margin: 3em auto;
+  }
+}
+.meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.meta span {
+  font-weight: 500;
+  color: #6c6a6a;
+}
