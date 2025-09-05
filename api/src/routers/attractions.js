@@ -6,9 +6,24 @@ const router = express.Router();
 // GET all attractions
 router.get("/", async (req, res) => {
   try {
-     const attractions = await knex("attraction_posts").select("*");
+    const { search = "" } = req.query; 
 
-     res.json({
+    // Build the base query
+    let query = knex("attraction_posts as ap").select("*");
+
+    // Apply search filter
+    if (search) {
+      query
+        .where("ap.title", "ilike", `%${search}%`)
+        .orWhere("ap.content", "ilike", `%${search}%`)
+        .orWhere("ap.location", "ilike", `%${search}%`);
+    }
+
+   // const sql ="selct * from attraction_posts as ap where ap.title ilike ? or ap.content ilike ? or ap.location ilike ?"
+
+    const attractions = await query;
+
+    res.json({
       message: "Atrraction retrieved successfully",
       data: attractions,
     });

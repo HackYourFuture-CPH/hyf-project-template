@@ -1,22 +1,24 @@
 "use client"
 import AttractionCard from "@/components/AttractionCard/AttractionCard";
 import styles from "./attractions.module.css";
-import data from "../../mockData/BlogpostsData.json";
 import { useEffect, useState } from "react";
 import api from "../../utils/api.js";
 
 export default function AttractionsPage() {
    const [search, setSearch] = useState("");
-     const [filterDestination, setFilterDestination] = useState("");
-
+    
       const [attractionCardData, setAttractionCardData] = useState([]);
      
        // simulate API fetch while there is no DB data
      
        // Function to fetch data from the API
-       async function fetchAttractionCards() {
+       async function fetchAttractionCards(searchText = "") {
          try {
-           const response = await fetch( api("/attractions"));
+          if(searchText){
+            searchText = `?search=${searchText}`;
+          }
+
+           const response = await fetch( api("/attractions"+searchText));
            if (!response.ok) {
              throw new Error(`HTTP error! Status: ${response.status}`);
            }
@@ -30,6 +32,12 @@ export default function AttractionsPage() {
        useEffect(() => {
          fetchAttractionCards();
        }, []);
+
+       useEffect(() => {
+        // Filter and sort logic
+        console.log("filterAttractions", search);
+         fetchAttractionCards(search);
+       }, [search]);
 
   return (
     <div className={styles.pageWrapper}>
