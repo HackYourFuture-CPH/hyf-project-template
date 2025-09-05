@@ -1,6 +1,6 @@
 .pageWrapper {
   flex-grow: 1;
-  margin: 7em auto;
+  margin: 0 auto;
   padding: 2rem;
   font-family: "Archivo", sans-serif;
   max-width: 900px;
@@ -41,7 +41,7 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: 20rem;
+  height: 25rem;
   overflow: hidden;
 }
 
@@ -98,6 +98,32 @@
   border-top: 1px solid #f3f4f6;
   display: flex;
   justify-content: flex-end;
+}
+
+.contentBox {
+  max-width: 900px;
+  width: 100%; 
+  padding: 1.5rem 0rem;
+  margin: 0em auto;
+  margin-top: 7em;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #444;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s ease;
+}
+
+.backButton:hover {
+  color: #b0abab;
 }
 
 @media (max-width: 900px) {
