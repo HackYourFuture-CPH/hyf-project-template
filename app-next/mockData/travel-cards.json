@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "destination": "Paris, France",
+    "price": 1200,
+    "image": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500",
+    "rating": 5,
+    "favourite": true,
+    "duration": "7 Days",
+    "description": "Experience the city of lights, Eiffel Tower, and fine French cuisine."
+  },
+  {
+    "id": 2,
+    "destination": "Tokyo, Japan",
+    "price": 1500,
+   "image": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500",
+    "rating": 4,
+    "favourite": false,
+    "duration": "10 Days",
+    "description": "Discover futuristic skyscrapers, ancient temples, and authentic sushi."
+  },
+  {
+    "id": 3,
+    "destination": "New York, USA",
+    "price": 999,
+    "image": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500",
+    "rating": 4,
+    "favourite": true,
+    "duration": "5 Days",
+    "description": "Visit Times Square, Statue of Liberty, and explore the city that never sleeps."
+  },
+  {
+    "id": 6,
+    "destination": "New York, USA",
+    "price": 999,
+    "image": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500",
+    "rating": 4,
+    "favourite": true,
+    "duration": "5 Days",
+    "description": "Visit Times Square, Statue of Liberty, and explore the city that never sleeps."
+  },
+  {
+    "id": 5,
+    "destination": "New York, USA",
+    "price": 999,
+    "image": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500",
+    "rating": 4,
+    "favourite": true,
+    "duration": "5 Days",
+    "description": "Visit Times Square, Statue of Liberty, and explore the city that never sleeps."
+  },
+  {
+    "id": 4,
+    "destination": "New York, USA",
+    "price": 999,
+    "image": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500",
+    "rating": 1,
+    "favourite": true,
+    "duration": "5 Days",
+    "description": "Visit Times Square, Statue of Liberty, and explore the city that never sleeps."
+  }
+]

@@ -2,26 +2,39 @@
   "name": "api",
   "private": true,
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/index.mjs",
   "type": "module",
   "engines": {
     "node": "^20.12.1",
     "npm": "^10.5.0"
   },
   "scripts": {
-    "dev": "nodemon src/index.mjs",
-    "start": "node src/index.mjs",
+    "db:start": "docker compose -f ../docker-compose.yml --env-file .env up -d",
+    "db:stop": "docker compose -f ../docker-compose.yml --env-file .env down",
+    "db:clean": "docker compose -f ../docker-compose.yml --env-file .env down -v",
+    "db:reset": "node scripts/db-init.js",
+    "db:setup": "npm-run-all db:clean db:start db:reset",
+    "dev": "npm-run-all --parallel db:start start",
+    "start": "nodemon src/index.mjs",
     "format": "npx prettier . --write",
-    "check": "npx eslint . --fix"
+    "check": "npx eslint . --fix",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "migrate:make": "knex migrate:make"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.0.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
-    "mysql2": "^3.10.0",
-    "pg": "^8.11.5"
+    "morgan": "^1.10.1",
+    "npm-run-all": "^4.1.5",
+    "pg": "^8.11.5",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
