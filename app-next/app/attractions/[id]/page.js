@@ -11,17 +11,24 @@ export default function AttractionDetailsPage() {
   const { id } = useParams();
   const [attraction, setAttraction] = useState(null);
 
-  useEffect(() => {
-    if (id) {
-      // Api Fetch the attraction details based on the id
 
-      // TODO: Replace with actual data fetching logic
-      const found = attractionData.find((item) => item.id === parseInt(id));
-      console.log("Found attraction:", found);
+   // Function to fetch data from the API
+       async function fetchSingleAttraction() {
+         try {
+           const response = await fetch(` http://localhost:3001/api/attractions/${id}`);
+           if (!response.ok) {
+             throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           const attractionData = await response.json();
+           setAttraction(attractionData.data || []);
+         } catch (error) {
+           console.error("Error fetching attraction cards:", error);
+         }
+       }
 
-      setAttraction(found);
-    }
-  }, [id]);
+   useEffect(() => {
+         fetchSingleAttraction();
+       }, []);
 
   if (!attraction) return <p>Loading...</p>;
 
@@ -30,11 +37,12 @@ export default function AttractionDetailsPage() {
       <div className={styles.travelCard}>
         <div className={styles.imageWrapper}>
           <Image
-            src={attraction.image}
-            alt={attraction.destination || "Blog image"}
+            src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
+            alt={attraction.destination || "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"}
             fill
             style={{ objectFit: "cover" }}
-          />
+            className={styles.image}
+                    />
         </div>
         <div className={styles.cardContent}>
           <h4 className={styles.cardTitle}>{attraction.title}</h4>
@@ -42,9 +50,9 @@ export default function AttractionDetailsPage() {
             <PostMeta />
           </div>
           <div className={styles.meta}>
-            <span>{attraction.country}</span>
+            <span>{attraction.location}</span>
           </div>
-          <div className={styles.description}>{attraction.excerpt}</div>
+          <div className={styles.description}>{attraction.content}</div>
         </div>
        <Comment />
       </div>

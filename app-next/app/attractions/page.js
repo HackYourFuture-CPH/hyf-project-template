@@ -2,11 +2,34 @@
 import AttractionCard from "@/components/AttractionCard/AttractionCard";
 import styles from "./attractions.module.css";
 import data from "../../mockData/BlogpostsData.json";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../utils/api.js";
 
 export default function AttractionsPage() {
    const [search, setSearch] = useState("");
      const [filterDestination, setFilterDestination] = useState("");
+
+      const [attractionCardData, setAttractionCardData] = useState([]);
+     
+       // simulate API fetch while there is no DB data
+     
+       // Function to fetch data from the API
+       async function fetchAttractionCards() {
+         try {
+           const response = await fetch( api("/attractions"));
+           if (!response.ok) {
+             throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           const attractionData = await response.json();
+           setAttractionCardData(attractionData.data || []);
+         } catch (error) {
+           console.error("Error fetching attraction cards:", error);
+         }
+       }
+     
+       useEffect(() => {
+         fetchAttractionCards();
+       }, []);
 
   return (
     <div className={styles.pageWrapper}>
@@ -55,7 +78,7 @@ export default function AttractionsPage() {
         ) : (
           data.map((card) => <AttractionCard key={card.id} card={card} />)
         )} */}
-        {data.map((card) => (
+        {attractionCardData.map((card) => (
           <AttractionCard key={card.id} card={card} />
         ))}
       </div>

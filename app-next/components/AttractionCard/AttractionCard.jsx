@@ -1,6 +1,5 @@
 "use client";
 import styles from "./AttractionCard.module.css";
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,7 +9,7 @@ export default function AttractionCard({ card }) {
       <div className={styles.travelCard}>
         <div className={styles.imageWrapper}>
           <Image
-            src={card.image}
+            src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
             alt={card.destination || "Blog image"}
             fill
             style={{ objectFit: "cover" }}
@@ -19,9 +18,9 @@ export default function AttractionCard({ card }) {
         <div className={styles.cardContent}>
           <h4 className={styles.cardTitle}>{card.title}</h4>
           <div className={styles.meta}>
-            <span>{card.country}</span>
+            <span>{card.location}</span>
           </div>
-          <p className={styles.description}>{card.excerpt}</p>
+          <p className={styles.description}>{card.content}</p>
         </div>
       </div>
     </Link>

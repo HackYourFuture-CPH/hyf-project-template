@@ -2,17 +2,35 @@
 
 import { useEffect, useState } from "react";
 import styles from "./AttractionsSection.module.css"; 
-import BlogPostsData from "../../mockData/BlogPostsData.json";
+import api from "../../utils/api.js";
 import Link from "next/link";
 import AttractionCard from "../AttractionCard/AttractionCard";
 
 export default function AttractionsSection() {
-  const [blogPostsCardData, setBlogPostsCardData] = useState([]);
+  const [attractionCardData, setAttractionCardData] = useState([]);
 
   // simulate API fetch while there is no DB data
+
+  // Function to fetch data from the API
+  async function fetchAttractionCards() {
+    try {
+
+     
+      const response = await fetch( api("/attractions"));
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const attractionData = await response.json();
+      setAttractionCardData(attractionData.data || []);
+    } catch (error) {
+      console.error("Error fetching attraction cards:", error);
+    }
+  }
+
   useEffect(() => {
-    setBlogPostsCardData(BlogPostsData);
+    fetchAttractionCards();
   }, []);
+
 
   return (
     <>
@@ -24,7 +42,7 @@ export default function AttractionsSection() {
           </Link>
         </div>
         <div className={styles.gridContainer}>
-          {blogPostsCardData.slice(0, 3).map((card) => (
+          {attractionCardData.slice(0, 3).map((card) => (
             <AttractionCard key={card.id} card={card} />
           ))}
         </div>
