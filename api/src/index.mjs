@@ -8,6 +8,7 @@ import nestedRouter from "./routers/nested.js";
 import authRouter from "./routers/auth.js";
 import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
+import toursRouter from "./routers/tours.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
 import attractionsRouter from "./routers/attractions.js"; 
 
@@ -36,6 +37,7 @@ apiRouter.get("/", async (req, res) => {
       auth: "/api/auth",
       users: "/api/users",
       posts: "/api/posts",
+      tours: "/api/tours",
     },
   });
 });
@@ -48,6 +50,9 @@ apiRouter.use("/users", usersRouter);
 
 // CRUD routes (authentication required)
 apiRouter.use("/posts", postsRouter);
+
+// Tours routes (no authentication required)
+apiRouter.use("/tours", toursRouter);
 
 // This nested router example can also be replaced with your own sub-router
 apiRouter.use("/nested", nestedRouter);
