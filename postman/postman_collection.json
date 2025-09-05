@@ -1,0 +1,795 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-4a3b-8c7d-9f0e1d2c3b4a",
+		"name": "Travel Planner API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// This script runs before the request is sent.",
+									"// It generates a unique username and email for the new user.",
+									"const randomSuffix = Math.random().toString(36).substring(2, 10);",
+									"pm.collectionVariables.set(\"new_user_username\", `testuser_${randomSuffix}`);",
+									"pm.collectionVariables.set(\"new_user_email\", `testuser_${randomSuffix}@example.com`);",
+									"pm.collectionVariables.set(\"new_user_password\", \"SecurePass123\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// This script runs after a successful registration.",
+									"// It automatically saves the new user's ID and JWT token.",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.user && response.user.id) {",
+									"        pm.collectionVariables.set(\"userId\", response.user.id);",
+									"        console.log(`User ID ${response.user.id} saved successfully!`);",
+									"    }",
+									"    if (response.token) {",
+									"        pm.collectionVariables.set(\"jwt_token\", response.token);",
+									"        console.log(\"JWT Token from registration saved successfully!\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"{{$randomFirstName}}\",\n    \"last_name\": \"{{$randomLastName}}\",\n    \"email\": \"{{new_user_email}}\",\n    \"username\": \"{{new_user_username}}\",\n    \"password\": \"{{new_user_password}}\",\n    \"password_confirmation\": \"{{new_user_password}}\",\n    \"mobile\": \"{{$randomPhoneNumber}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Creates a new user account with dynamic credentials and saves them for the Login request."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) {",
+									"        pm.collectionVariables.set(\"jwt_token\", response.token);",
+									"        console.log(\"JWT Token saved successfully!\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login_identifier\": \"{{new_user_email}}\",\n    \"password\": \"{{new_user_password}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in a user and saves the JWT token for all other requests. Uses credentials from the last registered user."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for user registration and login."
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Smith\",\n    \"mobile\": \"+1987654321\",\n    \"profile_image\": \"https://example.com/avatar.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"SecurePass123\",\n    \"new_password\": \"NewSecurePass456\",\n    \"new_password_confirmation\": \"NewSecurePass456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/change-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Add a Favorite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"item_id\": \"{{tourId}}\",\n    \"item_type\": \"tour\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"favorites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a Favorite",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/favorites/{{tourId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"favorites",
+								"{{tourId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create New Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// This script runs after a successful post creation.",
+									"// It automatically saves the new post's ID to a variable.",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set(\"postId\", response.data.id);",
+									"        console.log(`Post ID ${response.data.id} saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"My First Post\",\n    \"content\": \"This is the content of my first post.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/posts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Comments",
+					"item": [
+						{
+							"name": "Get All Comments for a Post",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"{{postId}}",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create New Comment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// This script runs after a successful comment creation.",
+											"// It automatically saves the new comment's ID to a variable.",
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.id) {",
+											"        pm.collectionVariables.set(\"commentId\", response.data.id);",
+											"        console.log(`Comment ID ${response.data.id} saved successfully!`);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"This is a fantastic and insightful article!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"{{postId}}",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Existing Comment",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"This is my updated comment with some new thoughts.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments/{{commentId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"{{postId}}",
+										"comments",
+										"{{commentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Comment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments/{{commentId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"{{postId}}",
+										"comments",
+										"{{commentId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Tours",
+			"item": [
+				{
+					"name": "Get All Tours",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tours?search=europe&sort=price-desc&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tours"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "europe",
+									"description": "Search term for tour name, description, or destination."
+								},
+								{
+									"key": "sort",
+									"value": "price-desc",
+									"description": "Sort order: price-asc, price-desc, rating-desc, name-asc, etc."
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "9",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "100000",
+									"description": "Minimum price in minor units (e.g., cents).",
+									"disabled": true
+								},
+								{
+									"key": "maxPrice",
+									"value": "500000",
+									"disabled": true
+								},
+								{
+									"key": "minDuration",
+									"value": "7",
+									"description": "Minimum duration in days.",
+									"disabled": true
+								},
+								{
+									"key": "maxDuration",
+									"value": "14",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Tour",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tours",
+								"{{tourId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Tour",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// This script runs after a successful tour creation.",
+									"// It automatically saves the new tour's ID to a variable.",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    const tourData = response.data || response.tour;",
+									"    if (tourData && tourData.id) {",
+									"        pm.collectionVariables.set(\"tourId\", tourData.id);",
+									"        console.log(`Tour ID ${tourData.id} saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Asian Capitals Explorer\",\n    \"description\": \"A whirlwind tour of Asia's most vibrant capital cities.\",\n    \"start_date\": \"2026-07-15\",\n    \"duration_days\": 12,\n    \"price_minor\": 350000,\n    \"currency_code\": \"USD\",\n    \"capacity\": 18,\n    \"cover_image_url\": \"https://placehold.co/600x400/1a1a1a/ffffff?text=Asia+Explorer\",\n    \"destinations\": [\n        {\n            \"city_name\": \"Tokyo\",\n            \"country_name\": \"Japan\",\n            \"duration_days\": 4\n        },\n        {\n            \"city_name\": \"Seoul\",\n            \"country_name\": \"South Korea\",\n            \"duration_days\": 4\n        },\n        {\n            \"city_name\": \"Bangkok\",\n            \"country_name\": \"Thailand\",\n            \"duration_days\": 4\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tours",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tours"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Existing Tour",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Tour Name\",\n    \"price_minor\": 400000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tours",
+								"{{tourId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Tour",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tours",
+								"{{tourId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tour Reviews",
+					"item": [
+						{
+							"name": "Get All Reviews for a Tour",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/tours/{{tourId}}/reviews",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"tours",
+										"{{tourId}}",
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create New Review",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// This script runs after a successful review creation.",
+											"// It automatically saves the new review's ID to a variable.",
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.id) {",
+											"        pm.collectionVariables.set(\"reviewId\", response.data.id);",
+											"        console.log(`Review ID ${response.data.id} saved successfully!`);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rating\": 5,\n    \"content\": \"This tour was an amazing experience from start to finish!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/tours/{{tourId}}/reviews",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"tours",
+										"{{tourId}}",
+										"reviews"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Existing Review",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rating\": 4,\n    \"content\": \"This is my updated review. It was still a great tour, but one day was a bit rushed.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/tours/{{tourId}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"tours",
+										"{{tourId}}",
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Review",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/tours/{{tourId}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"tours",
+										"{{tourId}}",
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3001"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		},
+		{
+			"key": "tourId",
+			"value": "713eb327-468a-48c9-babf-883bb27d4d6e"
+		},
+		{
+			"key": "postId",
+			"value": "ea28750f-e4b3-46df-8d9c-9fc3f15bec6b"
+		},
+		{
+			"key": "reviewId",
+			"value": ""
+		},
+		{
+			"key": "commentId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "new_user_email",
+			"value": ""
+		},
+		{
+			"key": "new_user_password",
+			"value": ""
+		},
+		{
+			"key": "new_user_username",
+			"value": ""
+		}
+	]
+}
+
