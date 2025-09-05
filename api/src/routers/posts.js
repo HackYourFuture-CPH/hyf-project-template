@@ -3,6 +3,7 @@ import knex from "../db.mjs";
 import { authenticateToken } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/validation.js";
 import { postSchema } from "../validation/schemas.js";
+import commentsRouter from "./comments.js";
 
 const router = express.Router();
 
@@ -162,5 +163,8 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
+
+// post comments
+router.use("/:id/comments", commentsRouter);
 
 export default router;
