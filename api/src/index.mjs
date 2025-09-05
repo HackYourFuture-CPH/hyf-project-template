@@ -11,6 +11,7 @@ import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
 import morgan from "morgan";
+import favoritesRouter from "./routers/favorites.js";
 
 const app = express();
 app.use(cors());
@@ -59,6 +60,9 @@ app.use("/api", apiRouter);
 
 // global error handler
 app.use(errorHandler);
+
+// favorites add, remove
+app.use("/api/favorites", favoritesRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`API listening on port ${process.env.PORT}`);

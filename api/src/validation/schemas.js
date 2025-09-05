@@ -187,3 +187,13 @@ export const commentSchema = z.object({
     .min(1, "Comment content is required.")
     .max(500, "Comment cannot be more than 500 characters long."),
 });
+
+// Schema for adding a new favorite
+export const favoriteSchema = z.object({
+  item_id: z.string().uuid("A valid item ID is required."),
+  item_type: z.enum(["tour", "post", "attraction"], {
+    required_error: "Item type is required.",
+    invalid_type_error:
+      "Item type must be one of 'tour', 'post', or 'attraction'.",
+  }),
+});
