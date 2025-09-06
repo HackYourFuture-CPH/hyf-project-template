@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../database.js";
+import pool from "../database.js"; // pool is imported from database.js to interact with the database
 
 const router = express.Router();
 
@@ -55,21 +55,29 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      name,
-      email,
-      phone_nr,
-      address,
-      post_nr,
-      service_id,
-      photo,
-      gender,
-    } = req.body;
-    const result = await pool.query(
-      `UPDATE elders SET name=$1,email=$2,phone_nr=$3,address=$4,post_nr=$5,service_id=$6,photo=$7,gender=$8
-       WHERE id=$9 RETURNING *`,
-      [name, email, phone_nr, address, post_nr, service_id, photo, gender, id]
-    );
+    const fields = req.body;
+
+    if (Object.keys(fields).length === 0) {
+      return res.status(400).json({ error: "No fields provided for update" });
+    }
+
+    // Build SET clause dynamically
+    const setClause = Object.keys(fields)
+      .map((key, idx) => `${key} = $${idx + 1}`)
+      .join(", ");
+
+    const values = Object.values(fields);
+
+    const query = `UPDATE elders SET ${setClause} WHERE id = $${
+      values.length + 1
+    } RETURNING *`;
+
+    const result = await pool.query(query, [...values, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Elder not found" });
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

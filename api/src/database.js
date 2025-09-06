@@ -1,10 +1,10 @@
-import pkg from "pg";
+import pkg from "pg"; // pkg means package and is used to import the pg module
 import dotenv from "dotenv";
-dotenv.config(); // load environment variables
+dotenv.config(); // used to load environment variables
 
 const { Pool } = pkg;
 
-// Configures the database connection
+// code below configures the database connection
 const pool = new Pool({
   user: "postgres", // your Postgres username
   host: "localhost", // or remote host if deployed
