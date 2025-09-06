@@ -11,6 +11,7 @@ import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
 import attractionsRouter from "./routers/attractions.js"; 
+import blogpostsRouter from "./routers/blogpost.js";
 
 import morgan from "morgan";
 import favoritesRouter from "./routers/favorites.js";
@@ -60,6 +61,9 @@ apiRouter.use("/nested", nestedRouter);
 
 // Authentication routes (no authentication required)
 apiRouter.use("/attractions", attractionsRouter);
+
+// Authentication routes (no authentication required)
+apiRouter.use("/blogposts", blogpostsRouter);
 
 app.use("/api", apiRouter);
 

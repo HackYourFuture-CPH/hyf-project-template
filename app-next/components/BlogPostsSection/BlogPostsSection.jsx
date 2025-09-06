@@ -2,19 +2,33 @@
 
 import { useEffect, useState } from "react";
 import styles from "./BlogPostsSection.module.css"; 
-import BlogPostsData from "../../mockData/BlogPostsData.json";
-
-import Card from "../Card/Card";
+import api from "../../utils/api.js";
 import Link from "next/link";
 import BlogCard from "../BlogCard/BlogCard";
 
 export default function BlogPostsSection() {
-  const [blogPostsCardData, setBlogPostsCardData] = useState([]);
+  const [blogPostsData, setBlogPostsData] = useState([]);
+  
+    // Function to fetch data from the API
+    async function fetchBlogPopsts() {
+      try {
+  
+       
+        const response = await fetch( api("/blogposts"));
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const blogsData = await response.json();
+        setBlogPostsData(blogsData.data || []);
+      } catch (error) {
+        console.error("Error fetching blog cards:", error);
+      }
+    }
+  
+    useEffect(() => {
+      fetchBlogPopsts();
+    }, []);
 
-  // simulate API fetch while there is no DB data
-  useEffect(() => {
-    setBlogPostsCardData(BlogPostsData);
-  }, []);
 
   return (
     <>
@@ -26,7 +40,7 @@ export default function BlogPostsSection() {
           </Link>
         </div>
         <div className={styles.gridContainer}>
-          {blogPostsCardData.slice(0, 3).map((card) => (
+          {blogPostsData.slice(0, 3).map((card) => (
             <BlogCard key={card.id} card={card} />
           ))}
         </div>

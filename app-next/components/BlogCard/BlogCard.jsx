@@ -8,13 +8,13 @@ export default function BlogCard({ card }) {
   const [favourite, setFavourite] = useState(card.favourite);
 
   return (
-    <Link href={`/blogposts/${card.id}`} style={{ textDecoration: "none" }}>
+    <Link href={`/blogs/${card.id}`} style={{ textDecoration: "none" }}>
    
     <div className={styles.travelCard}>
       <div className={styles.imageWrapper}>
         <Image
-          src={card.image}
-          alt={card.destination || "Blog image"}
+          src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
+          alt={card.title || "Blog image"}
           fill
           style={{ objectFit: "cover" }}
         />
@@ -22,9 +22,9 @@ export default function BlogCard({ card }) {
       <div className={styles.cardContent}>
         <h4 className={styles.cardTitle}>{card.title}</h4>
         <div className={styles.meta}>
-          by <span>{card.author}</span> • <span>{card.category}</span>
+          by <span>{card.created_at}</span> • <span>{card.category}</span>
         </div>
-        <p className={styles.description}>{card.excerpt}</p>
+        <p className={styles.description}>{card.content}</p>
       </div>
     </div>
      </Link>
