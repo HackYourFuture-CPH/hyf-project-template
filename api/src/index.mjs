@@ -20,7 +20,6 @@ import healthCheckRoute from "./routers/healthCheck.mjs";
 
 import blogpostsRouter from "./routers/blogpost.js";
 
-
 // --- Admin Route Imports ---
 import adminUsersRouter from "./routers/admin/users.js";
 import adminToursRouter from "./routers/admin/tours.js";
