@@ -32,6 +32,18 @@ BEGIN
     CREATE TEMP TABLE temp_currency_codes (code CHAR(3)) ON COMMIT DROP;
     CREATE TEMP TABLE temp_all_favoritable_items (id UUID, type TEXT) ON COMMIT DROP;
 
+
+    -- =================================================================
+    --  1. CREATE DEDICATED ADMIN USER
+    -- =================================================================
+    INSERT INTO users (first_name, last_name, email, username, password, mobile, role, is_active)
+    VALUES (
+        'Admin', 'User', 'admin@example.com', 'admin', 
+        '$2a$12$.mbqwDuqyUdJAtc1ixCsP.SPPKXnry2gojRzQck56wzbdvLxT8zjS', -- Correct hash for 'AdminPass123!'
+        '555-ADMIN', 'admin', true
+    ) ON CONFLICT (username) DO NOTHING;
+
+
     -- 1. Seed Currencies
     INSERT INTO currencies (code, name, symbol) VALUES
         ('USD', 'US Dollar', '$'),

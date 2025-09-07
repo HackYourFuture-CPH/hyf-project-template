@@ -197,3 +197,87 @@ export const favoriteSchema = z.object({
       "Item type must be one of 'tour', 'post', or 'attraction'.",
   }),
 });
+
+// --- ADMIN SCHEMAS ---
+
+// Schema for an admin updating a user's details
+export const adminUserUpdateSchema = z.object({
+  role: z
+    .enum(["user", "admin", "moderator"], {
+      errorMap: () => ({ message: "Please select a valid role." }),
+    })
+    .optional(),
+  is_active: z
+    .boolean({
+      errorMap: () => ({ message: "Status must be either true or false." }),
+    })
+    .optional(),
+});
+
+// Schema for an admin CREATING a tour
+export const adminTourCreateSchema = z.object({
+  name: z
+    .string({ required_error: "Tour name is required." })
+    .min(3, "The name must be at least 3 characters long.")
+    .max(100),
+  description: z
+    .string({ required_error: "A description is required." })
+    .min(10, "The description must be at least 10 characters long."),
+  start_date: z.string().optional().nullable(),
+  duration_days: z
+    .number({ required_error: "Please provide the tour's duration." })
+    .int()
+    .min(1),
+  price_minor: z.number({ required_error: "Please set a price." }).int().min(0),
+  currency_code: z
+    .string({ required_error: "A currency code is required." })
+    .length(3, "The currency code must be 3 characters."),
+  capacity: z
+    .number({ required_error: "Please specify the tour capacity." })
+    .int()
+    .min(1),
+  cover_image_url: z
+    .string()
+    .url("Please provide a valid URL for the cover image.")
+    .optional()
+    .nullable(),
+  destinations: z
+    .array(
+      z.object({
+        city_name: z.string().min(1, "City name is required."),
+        country_name: z.string().min(1, "Country name is required."),
+        duration_days: z
+          .number()
+          .int()
+          .min(1, "Duration must be at least 1 day."),
+      })
+    )
+    .optional(),
+});
+
+// Schema for an admin UPDATING a tour.
+export const adminTourUpdateSchema = adminTourCreateSchema.partial();
+
+// Schema for an admin creating or updating a post
+export const adminPostSchema = z.object({
+  title: z
+    .string({ required_error: "A title is required for the post." })
+    .min(3, "The title must be at least 3 characters long.")
+    .max(255, "The title cannot be more than 255 characters."),
+  content: z
+    .string()
+    .min(10, "The post content must be at least 10 characters long."),
+  category: z.string().optional().nullable(),
+});
+
+// Schema for an admin creating or updating an attraction
+export const adminAttractionSchema = z.object({
+  title: z
+    .string({ required_error: "A title is required for the attraction." })
+    .min(3, "The title must be at least 3 characters long.")
+    .max(255, "The title cannot be more than 255 characters."),
+  content: z
+    .string()
+    .min(10, "The content must be at least 10 characters long."),
+  location: z.string().optional().nullable(),
+});
