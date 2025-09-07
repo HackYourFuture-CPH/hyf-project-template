@@ -8,8 +8,8 @@ const { Pool } = pkg;
 const pool = new Pool({
   user: "postgres", // your Postgres username
   host: "localhost", // or remote host if deployed
-  database: "careconnect", // your database name
-  password: process.env.DB_PASSWORD, // your Postgres password (set in environment variable)
+  database: "postgres", // your database name
+  password: "daraz12345", // your Postgres password (set in environment variable)
   port: 5432, // default Postgres port
 });
 
