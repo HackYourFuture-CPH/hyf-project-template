@@ -6,7 +6,7 @@ const router = express.Router();
 // GET all attractions
 router.get("/", async (req, res) => {
   try {
-    const { search = "" } = req.query; 
+    const { search = "", location = "" } = req.query;
 
     // Build the base query
     let query = knex("attraction_posts as ap").select("*");
@@ -17,9 +17,9 @@ router.get("/", async (req, res) => {
         .where("ap.title", "ilike", `%${search}%`)
         .orWhere("ap.content", "ilike", `%${search}%`)
         .orWhere("ap.location", "ilike", `%${search}%`);
+    } else if (location) {
+      query.where("ap.location", "ilike", `%${location}%`);
     }
-
-   // const sql ="selct * from attraction_posts as ap where ap.title ilike ? or ap.content ilike ? or ap.location ilike ?"
 
     const attractions = await query;
 
@@ -33,6 +33,25 @@ router.get("/", async (req, res) => {
       error: "Atrraction retrieval failed",
       message:
         "We encountered an error while loading the attractions. Please try again later.",
+    });
+  }
+});
+
+router.get("/locations", async (req, res) => {
+  try {
+    const locations = await knex("attraction_posts")
+      .distinct("location")
+      .orderBy("location");
+    res.json({
+      message: "Locations retrieved successfully",
+      data: locations.map((loc) => loc.location),
+    });
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    res.status(500).json({
+      error: "Locations retrieval failed",
+      message:
+        "We encountered an error while loading locations. Please try again later.",
     });
   }
 });
