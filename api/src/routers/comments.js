@@ -7,7 +7,7 @@ import { authenticateToken } from "../middleware/auth.js";
 const commentsRouter = express.Router({ mergeParams: true });
 
 // Apply authentication to all routes
-commentsRouter.use(authenticateToken);
+//commentsRouter.use(authenticateToken);
 
 // get all comments for a specific post
 commentsRouter.get("/", async (req, res) => {

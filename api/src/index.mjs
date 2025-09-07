@@ -18,6 +18,10 @@ import attractionsRouter from "./routers/attractions.js";
 import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
 
+import attractionsRouter from "./routers/attractions.js"; 
+import blogpostsRouter from "./routers/blogpost.js";
+
+
 // --- Admin Route Imports ---
 import adminUsersRouter from "./routers/admin/users.js";
 import adminToursRouter from "./routers/admin/tours.js";
@@ -66,6 +70,10 @@ app.use("/api/tours", toursRouter);
 app.use("/api/attractions", attractionsRouter);
 app.use("/api/favorites", favoritesRouter);
 
+// Authentication routes (no authentication required)
+apiRouter.use("/blogposts", blogpostsRouter);
+
+app.use("/api", apiRouter);
 // Admin Routes
 app.use("/api/admin/users", adminUsersRouter);
 app.use("/api/admin/tours", adminToursRouter);

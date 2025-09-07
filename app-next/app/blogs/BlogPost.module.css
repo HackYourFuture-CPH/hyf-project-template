@@ -52,7 +52,6 @@
   font-size: 1rem;
 }
 
-
 .loadingDots {
   display: flex;
   justify-content: center;
@@ -75,19 +74,6 @@
 }
 .loadingDots span:nth-child(3) {
   animation-delay: 0.4s;
-}
-.filterButton {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
-  font-size: 1rem;
-  background-color: #fff;
-  transition: background-color 0.2s;
-}
-.filterButton:hover {
-  background-color: #f3f4f6;
-  cursor: pointer;
-  border-color: rgb(155, 157, 157);
 }
 
 @keyframes bounce {
