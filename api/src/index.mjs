@@ -18,7 +18,6 @@ import attractionsRouter from "./routers/attractions.js";
 import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
 
-import attractionsRouter from "./routers/attractions.js"; 
 import blogpostsRouter from "./routers/blogpost.js";
 
 
@@ -31,6 +30,8 @@ import adminDashboardRouter from "./routers/admin/dashboard.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const apiRouter = express.Router();
 
 // --- Core Middleware Setup ---
 app.use(cors());
