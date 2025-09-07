@@ -82,10 +82,14 @@ export default function AttractionsPage() {
           />
           <button
             className={styles.filterButton}
-            value=""
-            onClick={() => fetchAttractionCards()}
+            onClick={() => {
+              setSearch(""); // clear search field
+              setSortKey(""); // reset sort if you want
+              setFilterDestination(""); // reset filter if needed
+              fetchAttractionCards(); // reload default data
+            }}
           >
-            All
+             Clear
           </button>
 
           <select
@@ -93,7 +97,7 @@ export default function AttractionsPage() {
             value=""
             onChange={(e) => setSortKey(e.target.value)}
           >
-            <option value="">Sort by City</option>
+            <option value="">Filter by City</option>
             {locations.map((loc) => (
               <option key={loc} value={loc}>
                 {loc}
