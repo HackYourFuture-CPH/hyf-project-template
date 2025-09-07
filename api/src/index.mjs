@@ -1,78 +1,90 @@
+// --- CRITICAL: LOAD ENVIRONMENT VARIABLES FIRST ---
 import "dotenv/config";
+
+// --- Core Imports ---
 import express from "express";
-import errorHandler from "./middleware/errorHandler.js";
 import cors from "cors";
-import bodyParser from "body-parser";
-import knex from "./db.mjs";
-import nestedRouter from "./routers/nested.js";
+import morgan from "morgan";
+
+// --- Middleware Imports ---
+import errorHandler from "./middleware/errorHandler.js";
+
+// --- Public Route Imports ---
 import authRouter from "./routers/auth.js";
 import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
+import attractionsRouter from "./routers/attractions.js";
+import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
+
 import attractionsRouter from "./routers/attractions.js"; 
 import blogpostsRouter from "./routers/blogpost.js";
 
-import morgan from "morgan";
-import favoritesRouter from "./routers/favorites.js";
+
+// --- Admin Route Imports ---
+import adminUsersRouter from "./routers/admin/users.js";
+import adminToursRouter from "./routers/admin/tours.js";
+import adminPostsRouter from "./routers/admin/posts.js";
+import adminAttractionsRouter from "./routers/admin/attractions.js";
+import adminDashboardRouter from "./routers/admin/dashboard.js";
 
 const app = express();
+const PORT = process.env.PORT || 3001;
+
+// --- Core Middleware Setup ---
 app.use(cors());
-app.use(bodyParser.json());
 app.use(morgan("dev"));
+app.use(express.json());
+app.use(express.static("public"));
 
-const apiRouter = express.Router();
+// --- Optional: Response Body Logger for Debugging ---
+const logResponseBody = (req, res, next) => {
+  const oldSend = res.send;
+  res.send = function (body) {
+    const contentType = res.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      console.log("<<-- RESPONSE BODY -->>");
+      try {
+        console.dir(JSON.parse(body), { depth: null, colors: true });
+      } catch (e) {
+        // Not a JSON response, ignore.
+      }
+      console.log("<<------------------->>");
+    }
+    return oldSend.apply(res, arguments);
+  };
+  next();
+};
+app.use(logResponseBody);
 
-// Health check route
-app.use("/api", healthCheckRoute);
+// --- API ROUTE SETUP ---
+// Health Check
+app.use("/api/health", healthCheckRoute);
 
-apiRouter.get("/", async (req, res) => {
-  const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg"
-      ? "SELECT * FROM pg_catalog.pg_tables;"
-      : "SHOW TABLES;";
-  const tables = await knex.raw(SHOW_TABLES_QUERY);
-  res.json({
-    message: "API is running",
-    tables,
-    endpoints: {
-      auth: "/api/auth",
-      users: "/api/users",
-      posts: "/api/posts",
-      tours: "/api/tours",
-    },
-  });
-});
-
-// Authentication routes (no authentication required)
-apiRouter.use("/auth", authRouter);
-
-// User management routes (authentication required)
-apiRouter.use("/users", usersRouter);
-
-// CRUD routes (authentication required)
-apiRouter.use("/posts", postsRouter);
-
-// Tours routes (no authentication required)
-apiRouter.use("/tours", toursRouter);
-
-// This nested router example can also be replaced with your own sub-router
-apiRouter.use("/nested", nestedRouter);
-
-// Authentication routes (no authentication required)
-apiRouter.use("/attractions", attractionsRouter);
+// Public Routes
+app.use("/api/auth", authRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/posts", postsRouter);
+app.use("/api/tours", toursRouter);
+app.use("/api/attractions", attractionsRouter);
+app.use("/api/favorites", favoritesRouter);
 
 // Authentication routes (no authentication required)
 apiRouter.use("/blogposts", blogpostsRouter);
 
 app.use("/api", apiRouter);
+// Admin Routes
+app.use("/api/admin/users", adminUsersRouter);
+app.use("/api/admin/tours", adminToursRouter);
+app.use("/api/admin/posts", adminPostsRouter);
+app.use("/api/admin/attractions", adminAttractionsRouter);
+app.use("/api/admin", adminDashboardRouter);
 
-// global error handler
+// --- Global Error Handler ---
 app.use(errorHandler);
 
-// favorites add, remove
-app.use("/api/favorites", favoritesRouter);
-
-app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
+// --- Start Server ---
+app.listen(PORT, () => {
+  console.log(`API listening on port ${PORT}`);
 });
