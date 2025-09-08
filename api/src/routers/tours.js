@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
       maxPrice,
       minDuration,
       maxDuration,
-      currency = "USD",
+      currency, // **FIX 1:** Removed ' = "USD" ' default to make currency filter optional.
     } = req.query;
 
     // Build the base query
@@ -79,49 +79,13 @@ router.get("/", async (req, res) => {
     }
 
     // Get total count for pagination
-    const countQuery = knex("travel_plans as tp")
-      .leftJoin("currencies as c", "tp.currency_code", "c.code")
-      .where("tp.plan_type", "tour");
-
-    // Apply the same filters to count query
-    if (search) {
-      countQuery.where(function () {
-        this.where("tp.name", "ilike", `%${search}%`)
-          .orWhere("tp.description", "ilike", `%${search}%`)
-          .orWhereExists(function () {
-            this.select(1)
-              .from("tour_destinations as td")
-              .whereRaw("td.tour_id = tp.id")
-              .andWhere(function () {
-                this.where("td.city_name", "ilike", `%${search}%`).orWhere(
-                  "td.country_name",
-                  "ilike",
-                  `%${search}%`
-                );
-              });
-          });
-      });
-    }
-
-    if (minPrice !== undefined) {
-      countQuery.where("tp.price_minor", ">=", parseInt(minPrice));
-    }
-    if (maxPrice !== undefined) {
-      countQuery.where("tp.price_minor", "<=", parseInt(maxPrice));
-    }
-
-    if (minDuration !== undefined) {
-      countQuery.where("tp.duration_days", ">=", parseInt(minDuration));
-    }
-    if (maxDuration !== undefined) {
-      countQuery.where("tp.duration_days", "<=", parseInt(maxDuration));
-    }
-
-    if (currency) {
-      countQuery.where("tp.currency_code", currency);
-    }
-
-    const totalItems = await countQuery.count("* as count").first();
+    const countQuery = query
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count("* as count")
+      .first();
+    const totalItems = await countQuery;
     const total = parseInt(totalItems.count);
 
     // Apply sorting
@@ -139,17 +103,7 @@ router.get("/", async (req, res) => {
       validSortFields.includes(sortField) &&
       validSortOrders.includes(sortOrder)
     ) {
-      if (sortField === "price_minor") {
-        query = query.orderBy("tp.price_minor", sortOrder);
-      } else if (sortField === "duration_days") {
-        query = query.orderBy("tp.duration_days", sortOrder);
-      } else if (sortField === "rating") {
-        query = query.orderBy("tp.rating", sortOrder);
-      } else if (sortField === "created_at") {
-        query = query.orderBy("tp.created_at", sortOrder);
-      } else {
-        query = query.orderBy("tp.name", sortOrder);
-      }
+      query = query.orderBy(`tp.${sortField}`, sortOrder);
     } else {
       // Default sorting
       query = query.orderBy("tp.name", "asc");
@@ -214,36 +168,27 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    // Get destinations for this tour
-    const destinations = await knex("tour_destinations")
-      .where("tour_id", id)
-      .orderBy("stop_order", "asc");
+    // **FIX 3:** Replaced sequential awaits with Promise.all for better performance.
+    const [destinations, accommodations, flights, reviews] = await Promise.all([
+      knex("tour_destinations")
+        .where("tour_id", id)
+        .orderBy("stop_order", "asc"),
+      knex("tour_accommodations").where("tour_id", id),
+      knex("tour_flights").where("tour_id", id),
+      knex("tour_reviews as tr")
+        .select("tr.*", "u.first_name", "u.last_name", "u.profile_image")
+        .leftJoin("users as u", "tr.user_id", "u.id")
+        .where("tr.tour_id", id)
+        .orderBy("tr.created_at", "desc"),
+    ]);
 
-    // Get accommodations for this tour
-    const accommodations = await knex("tour_accommodations").where(
-      "tour_id",
-      id
-    );
-
-    // Get flights for this tour
-    const flights = await knex("tour_flights").where("tour_id", id);
-
-    // Get reviews for this tour
-    const reviews = await knex("tour_reviews as tr")
-      .select("tr.*", "u.first_name", "u.last_name", "u.profile_image")
-      .leftJoin("users as u", "tr.user_id", "u.id")
-      .where("tr.tour_id", id)
-      .orderBy("tr.created_at", "desc");
-
-    const tourDetails = {
+    res.json({
       ...tour,
       destinations,
       accommodations,
       flights,
       reviews,
-    };
-
-    res.json(tourDetails);
+    });
   } catch (error) {
     console.error("Error fetching tour:", error);
     res.status(500).json({
@@ -268,7 +213,6 @@ router.post("/", async (req, res) => {
       destinations,
     } = req.body;
 
-    // Validation
     if (
       !name ||
       !description ||
@@ -284,7 +228,6 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Check if currency exists
     const currency = await knex("currencies")
       .where("code", currency_code)
       .first();
@@ -295,12 +238,10 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Start transaction
-    const trx = await knex.transaction();
-
-    try {
-      // Create tour
-      const [{ id: tourId }] = await trx("travel_plans")
+    // **FIX 2:** Replaced manual transaction handling with a safer block pattern.
+    // Added a check for destinations.length to prevent empty query error.
+    await knex.transaction(async (trx) => {
+      const [tour] = await trx("travel_plans")
         .insert({
           name,
           description,
@@ -311,15 +252,16 @@ router.post("/", async (req, res) => {
           capacity,
           cover_image_url,
           plan_type: "tour",
-          rating: 0,
-          rating_count: 0,
         })
-        .returning("id");
+        .returning("*");
 
-      // Create destinations if provided
-      if (destinations && Array.isArray(destinations)) {
+      if (
+        destinations &&
+        Array.isArray(destinations) &&
+        destinations.length > 0
+      ) {
         const destinationData = destinations.map((dest, index) => ({
-          tour_id: tourId,
+          tour_id: tour.id,
           city_name: dest.city_name,
           country_name: dest.country_name,
           stop_order: index + 1,
@@ -331,13 +273,10 @@ router.post("/", async (req, res) => {
         await trx("tour_destinations").insert(destinationData);
       }
 
-      await trx.commit();
-
-      // Get the created tour
-      const newTour = await knex("travel_plans as tp")
+      const newTour = await trx("travel_plans as tp")
         .select("tp.*", "c.symbol as currency_symbol")
         .leftJoin("currencies as c", "tp.currency_code", "c.code")
-        .where("tp.id", tourId)
+        .where("tp.id", tour.id)
         .first();
 
       res.status(201).json({
@@ -355,16 +294,15 @@ router.post("/", async (req, res) => {
           capacity: newTour.capacity,
         },
       });
-    } catch (error) {
-      await trx.rollback();
-      throw error;
-    }
+    });
   } catch (error) {
     console.error("Error creating tour:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to create tour",
-    });
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "Failed to create tour",
+      });
+    }
   }
 });
 
@@ -384,10 +322,8 @@ router.put("/:id", async (req, res) => {
       destinations,
     } = req.body;
 
-    // Check if tour exists
     const existingTour = await knex("travel_plans")
-      .where("id", id)
-      .where("plan_type", "tour")
+      .where({ id, plan_type: "tour" })
       .first();
 
     if (!existingTour) {
@@ -397,7 +333,6 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    // Check if currency exists (if provided)
     if (currency_code) {
       const currency = await knex("currencies")
         .where("code", currency_code)
@@ -410,11 +345,7 @@ router.put("/:id", async (req, res) => {
       }
     }
 
-    // Start transaction
-    const trx = await knex.transaction();
-
-    try {
-      // Update tour
+    await knex.transaction(async (trx) => {
       const updateData = {};
       if (name !== undefined) updateData.name = name;
       if (description !== undefined) updateData.description = description;
@@ -431,32 +362,26 @@ router.put("/:id", async (req, res) => {
         await trx("travel_plans").where("id", id).update(updateData);
       }
 
-      // Update destinations if provided
       if (destinations && Array.isArray(destinations)) {
-        // Delete existing destinations
         await trx("tour_destinations").where("tour_id", id).del();
-
-        // Insert new destinations
-        const destinationData = destinations.map((dest, index) => ({
-          tour_id: id,
-          city_name: dest.city_name,
-          country_name: dest.country_name,
-          stop_order: index + 1,
-          duration_days:
-            dest.duration_days ||
-            Math.ceil(
-              (duration_days || existingTour.duration_days) /
-                destinations.length
-            ),
-        }));
-
-        await trx("tour_destinations").insert(destinationData);
+        if (destinations.length > 0) {
+          const destinationData = destinations.map((dest, index) => ({
+            tour_id: id,
+            city_name: dest.city_name,
+            country_name: dest.country_name,
+            stop_order: index + 1,
+            duration_days:
+              dest.duration_days ||
+              Math.ceil(
+                (duration_days || existingTour.duration_days) /
+                  destinations.length
+              ),
+          }));
+          await trx("tour_destinations").insert(destinationData);
+        }
       }
 
-      await trx.commit();
-
-      // Get the updated tour
-      const updatedTour = await knex("travel_plans as tp")
+      const updatedTour = await trx("travel_plans as tp")
         .select("tp.*", "c.symbol as currency_symbol")
         .leftJoin("currencies as c", "tp.currency_code", "c.code")
         .where("tp.id", id)
@@ -477,16 +402,15 @@ router.put("/:id", async (req, res) => {
           capacity: updatedTour.capacity,
         },
       });
-    } catch (error) {
-      await trx.rollback();
-      throw error;
-    }
+    });
   } catch (error) {
     console.error("Error updating tour:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to update tour",
-    });
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "Failed to update tour",
+      });
+    }
   }
 });
 
@@ -495,10 +419,8 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if tour exists
     const existingTour = await knex("travel_plans")
-      .where("id", id)
-      .where("plan_type", "tour")
+      .where({ id, plan_type: "tour" })
       .first();
 
     if (!existingTour) {
@@ -508,27 +430,17 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    // Start transaction
-    const trx = await knex.transaction();
+    // Rely on ON DELETE CASCADE in the database schema.
+    // We just need to delete the main tour record.
+    const deletedCount = await knex("travel_plans").where({ id }).del();
 
-    try {
-      // Delete related records first (due to foreign key constraints)
-      await trx("tour_accommodations").where("tour_id", id).del();
-      await trx("tour_flights").where("tour_id", id).del();
-      await trx("tour_destinations").where("tour_id", id).del();
-      await trx("tour_reviews").where("tour_id", id).del();
-
-      // Delete the tour
-      await trx("travel_plans").where("id", id).del();
-
-      await trx.commit();
-
+    if (deletedCount > 0) {
       res.json({
-        message: "Tour deleted successfully",
+        message: "Tour and all related data deleted successfully.",
       });
-    } catch (error) {
-      await trx.rollback();
-      throw error;
+    } else {
+      // This case is unlikely if the first check passed, but good for safety.
+      res.status(404).json({ error: "Tour not found during deletion." });
     }
   } catch (error) {
     console.error("Error deleting tour:", error);
