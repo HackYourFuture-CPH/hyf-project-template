@@ -1,0 +1,85 @@
+.volunteer {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.volunteer:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.imageContainer {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.volunteerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  background-color: #f0f0f0;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  padding: 16px 20px;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.address {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.services {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+.availability {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.detailsButton {
+  display: inline-block;
+  padding: 10px 18px;
+  background-color: #1e90ff;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.detailsButton:hover {
+  background-color: #0066cc;
+}
