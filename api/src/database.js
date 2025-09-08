@@ -1,16 +1,15 @@
-import pkg from "pg"; // pkg means package and is used to import the pg module
-import dotenv from "dotenv";
-dotenv.config(); // used to load environment variables
+import knex from "knex";
 
-const { Pool } = pkg;
-
-// code below configures the database connection
-const pool = new Pool({
-  user: "postgres", // your Postgres username
-  host: "localhost", // or remote host if deployed
-  database: "postgres", // your database name
-  password: "daraz12345", // your Postgres password (set in environment variable)
-  port: 5432, // default Postgres port
+const db = knex({
+  client: "pg",
+  connection: {
+    host: process.env.PGHOST || "localhost",
+    user: process.env.PGUSER || "postgres",
+    password: process.env.PGPASSWORD || "daraz12345",
+    database: process.env.PGDATABASE || "postgres",
+    port: Number(process.env.PGPORT) || 5432,
+  },
+  pool: { min: 0, max: 10 },
 });
 
-export default pool;
+export default db;

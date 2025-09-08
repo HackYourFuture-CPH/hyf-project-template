@@ -28,8 +28,8 @@ export const useAuthStore = create(
           set({
             isLoading: false,
             error: axios.isAxiosError(error)
-              ? error?.response.data.error
-              : "Registration Failed",
+              ? error?.response?.data.error
+              : "Login Failed",
           });
           return null;
         }
@@ -51,6 +51,20 @@ export const useAuthStore = create(
               : "Login Failed",
           });
           return null;
+        }
+      },
+      logout: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await axiosInstance.post("/logout");
+          set({ user: null, isLoading: false, error: null });
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: axios.isAxiosError(error)
+              ? error?.response?.data.error
+              : "Logout Failed",
+          });
         }
       },
     }),

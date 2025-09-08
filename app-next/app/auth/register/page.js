@@ -1,8 +1,8 @@
 "use client";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import styles from "./LoginPage.module.css";
+import React, { useState } from "react";
+import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -10,14 +10,14 @@ export const initialLoginFormdata = {
   email: "",
   password: "",
   name: "",
-  role: "VOLUNTEER" | "ELDER",
+  role: "VOLUNTEER",
 };
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
 
   const router = useRouter();
-  const { isLoading, register } = useAuthStore();
+  const { isLoading, register, error } = useAuthStore();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -34,11 +34,12 @@ export default function RegisterPage() {
       formData.password,
       formData.role
     );
+    console.log("user id", userId);
     if (userId) {
       alert("Registration Successful");
       router.push("/auth/login");
     } else {
-      alert("Registration Error");
+      console.log(error);
     }
   };
 
@@ -107,6 +108,7 @@ export default function RegisterPage() {
             <option value="ELDER">Elder</option>
           </select>
         </div>
+        {error ? <p className={styles.red}>{error}</p> : null}
         <button type="submit" className={styles.button}>
           {isLoading ? " Registering.." : "Register"}
         </button>
@@ -120,7 +122,7 @@ export default function RegisterPage() {
 
         <p className={styles.helper}>
           Already have an account{" "}
-          <Link href="/auth/register" className={styles.link}>
+          <Link href="/auth/login" className={styles.link}>
             Sign In
           </Link>
         </p>

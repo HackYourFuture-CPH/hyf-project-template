@@ -1,8 +1,8 @@
 "use client";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import styles from "./LoginPage.module.css";
+import React, { useState } from "react";
+import styles from "../styles/commonStyles.module.css";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -14,7 +14,7 @@ export const initialLoginFormdata = {
 export default function LoginPage() {
   const [formData, setFormData] = useState(initialLoginFormdata);
   const router = useRouter();
-  const { isLoading, login } = useAuthStore();
+  const { isLoading, login, error } = useAuthStore();
   const handleChange = (event) => {
     setFormData((prev) => ({
       ...prev,
@@ -26,18 +26,18 @@ export default function LoginPage() {
     event.preventDefault();
 
     const loginSuccess = await login(formData.email, formData.password);
-    console.log(loginSuccess);
     if (loginSuccess) {
       alert("login Successful");
-    }
-    const user = useAuthStore.getState().user;
-    console.log(user);
-    if (user?.role === "ADMIN") {
-      router.push("/admin");
-    } else if (user?.role === "VOLUNTEER") {
-      router.push("/services");
+      const user = useAuthStore.getState().user;
+      if (user?.role === "ADMIN") {
+        router.push("/admin");
+      } else if (user?.role === "VOLUNTEER") {
+        router.push("/services");
+      } else {
+        router.push("/");
+      }
     } else {
-      router.push("/");
+      console.log(error);
     }
   };
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
             className={styles.input}
           />
         </div>
-
+        {error && <p className={styles.red}>{error}</p>}
         <button type="submit" className={styles.button}>
           {isLoading ? " Login in.." : "Login"}
         </button>
