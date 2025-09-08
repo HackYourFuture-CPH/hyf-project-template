@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import ElderPageComponent from "@/components/account/ElderPageComponent";
 import VolunteerPageComponent from "@/components/account/VolunteerPageComponent";
 const getUser = async () => {
-  const accessToken = cookies().get("accessToken")?.value;
-
+  const accessTokenStore = await cookies();
+  const accessToken = accessTokenStore.get("accessToken")?.value;
   if (!accessToken) return null;
   try {
     const { payload } = await jwtVerify(
@@ -18,12 +18,13 @@ const getUser = async () => {
       email: String(payload.email ?? ""),
       role: String(payload.role ?? ""),
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 export default async function AccountPage() {
   const user = await getUser();
   if (!user) redirect("/auth/login");
-  console.log(user);
   if (user.role === "ADMIN") redirect("/admin");
   return user.role === "ELDER" ? (
     <ElderPageComponent user={user} />

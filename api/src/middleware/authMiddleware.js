@@ -38,7 +38,7 @@ export async function authenticateJwt(req, res, next) {
 
     next();
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res.status(403).json({ success: false, error: "Invalid or expired token" });
   }
 }
