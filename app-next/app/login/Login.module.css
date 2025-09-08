@@ -11,6 +11,7 @@
   background-color: rgba(0, 0, 0, 0.75);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.125);
+  margin-top: 92px;
 }
 
 .toggle {
@@ -35,7 +36,11 @@
   font-size: 1rem;
   font-weight: 500;
   border-radius: 8px;
-  transition: background 0.2s, border 0.2s, color 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    border 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
   backdrop-filter: blur(2px);
   box-shadow: 0 2px 8px rgba(99, 106, 232, 0.05);
 }
@@ -79,7 +84,9 @@
   padding: 0.75rem 0 0.5rem 0;
   margin-bottom: 0.5rem;
   outline: none;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .form input:focus {
@@ -103,7 +110,10 @@
   cursor: pointer;
   box-shadow: 0 4px 24px rgba(99, 106, 232, 0.15);
   backdrop-filter: blur(2px);
-  transition: background 0.2s, box-shadow 0.2s, border 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    border 0.2s;
   font-family: "Inter", sans-serif;
 }
 
@@ -159,14 +169,23 @@
   align-items: center;
   justify-content: center;
   transition: background-image 1s ease-in-out;
+  padding: 1rem 0;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
+  .loginContainer {
+    margin-top: 125px;
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
   .loginContainer {
     min-width: 0;
     width: 100vw;
     padding: 0 1rem;
-    margin: 1rem;
+    margin-top: 92px;
   }
   .form {
     min-width: 0;

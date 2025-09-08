@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import styles from "./Login.module.css";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 const images = [
   "/hero-images/dino-reichmuth-A5rCN8626Ck-unsplash.webp",
   "/hero-images/drif-riadh-YpkuRn54y4w-unsplash.webp",
@@ -21,7 +23,6 @@ export default function Login() {
   const [registerSuccess, setRegisterSuccess] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
 
-  // Implement background images transition
   useEffect(() => {
     if (currentImage >= images.length) {
       setCurrentImage(0);
@@ -35,11 +36,21 @@ export default function Login() {
     return () => clearInterval(interval);
   }, [images.length]);
 
+  // helper to safely parse JSON or return text
+  async function safeParseResponse(res) {
+    const text = await res.text();
+    try {
+      return { body: JSON.parse(text), raw: text };
+    } catch {
+      return { body: null, raw: text };
+    }
+  }
+
   // Login function
   async function submitLogin(data, event) {
     try {
-      setLoginError(""); // Clear previous error
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      setLoginError("");
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,13 +59,18 @@ export default function Login() {
         }),
       });
 
-      const result = await response.json();
-      if (!response.ok) {
-        setLoginError(result.message || "Failed to login");
+      const parsed = await safeParseResponse(res);
+
+      if (!res.ok) {
+        // prefer structured message if available, otherwise show raw text
+        const msg = parsed.body?.message || parsed.raw || `HTTP ${res.status}`;
+        setLoginError(msg);
         return;
       }
-      setLoginError(""); // clear errors
-      setLoginSuccess("Welcome! You are now logged in.");
+
+      // success: parsed.body expected
+      setLoginError("");
+      setLoginSuccess(parsed.body?.message || "Welcome! You are now logged in.");
       event.target.reset();
     } catch (error) {
       setLoginError(error.message || "An error occurred");
@@ -64,8 +80,8 @@ export default function Login() {
   // Registration function
   async function submitRegistration(data, event) {
     try {
-      setRegisterError(""); // Clear previous error
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      setRegisterError("");
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -79,26 +95,28 @@ export default function Login() {
         }),
       });
 
-      const result = await response.json();
+      const parsed = await safeParseResponse(res);
 
-      if (!response.ok) {
-        // Show field-specific errors:
-        if (result.details && Array.isArray(result.details)) {
-          setRegisterError(result.details.map((d) => `${d.field}: ${d.message}`).join("\n"));
+      if (!res.ok) {
+        // handle structured validation details or fallback to raw HTML/text
+        if (parsed.body?.details && Array.isArray(parsed.body.details)) {
+          setRegisterError(parsed.body.details.map((d) => `${d.field}: ${d.message}`).join("\n"));
         } else {
-          setRegisterError(result.message || "Failed to complete registration");
+          const msg = parsed.body?.message || parsed.raw || `HTTP ${res.status}`;
+          setRegisterError(msg);
         }
         return;
       }
-      setRegisterError(""); // clear errors
-      setRegisterSuccess("Registration successful! You can now log in.");
+
+      setRegisterError("");
+      setRegisterSuccess(parsed.body?.message || "Registration successful! You can now log in.");
       event.target.reset();
     } catch (error) {
       setRegisterError(error.message || "An error occurred");
     }
   }
 
-  // function to handle the login submission
+  // handlers unchanged...
   function handleLoginSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -106,7 +124,6 @@ export default function Login() {
     submitLogin(data, e);
   }
 
-  // function to handle the registration submission
   function handleRegisterSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
