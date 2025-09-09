@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS trip_itineraries CASCADE;
 
 DROP TABLE IF EXISTS ai_requests CASCADE;
 
+DROP TABLE IF EXISTS attraction_post_comments CASCADE;
+
 DROP TABLE IF EXISTS user_post_comments CASCADE;
 
 DROP TABLE IF EXISTS tour_reviews CASCADE;
@@ -108,6 +110,7 @@ CREATE TABLE attraction_posts (
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     location VARCHAR(100),
+    category VARCHAR(50), -- << ADDED THIS LINE
     created_at TIMESTAMP
     WITH
         TIME ZONE DEFAULT NOW()
@@ -199,6 +202,17 @@ CREATE TABLE user_post_comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     post_id UUID NOT NULL REFERENCES user_posts (id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW()
+);
+
+-- Stores comments on attraction posts.
+CREATE TABLE attraction_post_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    post_id UUID NOT NULL REFERENCES attraction_posts (id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     created_at TIMESTAMP
     WITH
