@@ -5,26 +5,26 @@ export default function Homepage() {
   return (
     <div className={styles.container}>
       {/* Hero Section */}
-     <section className={styles.hero}>
-  <div className={styles.heroCard}>
-    <h1>CareConnect</h1>
-    <p>Connecting elderly people with helpers in their community</p>
-    <div className={styles["button-group"]}>
-      <Link
-        href="/request-help"
-        className={`${styles.button} ${styles.request}`}
-      >
-        Request Help
-      </Link>
-      <Link
-        href="/offer-help"
-        className={`${styles.button} ${styles.offer}`}
-      >
-        Offer Help
-      </Link>
-    </div>
-  </div>
-</section>
+      <section className={styles.hero}>
+        <div className={styles.heroCard}>
+          <h1>CareConnect</h1>
+          <p>Connecting elderly people with helpers in their community</p>
+          <div className={styles["button-group"]}>
+            <Link
+              href="/volunteers"
+              className={`${styles.button} ${styles.request}`}
+            >
+              Volunteers
+            </Link>
+            <Link
+              href="/offer-help"
+              className={`${styles.button} ${styles.offer}`}
+            >
+              Offer Help
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className={styles.features}>

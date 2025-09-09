@@ -35,7 +35,7 @@ export default function Header() {
             <Link href="/">Home</Link>
           </li>
           <li>
-            <Link href="/request-help">Request Help</Link>
+            <Link href="/volunteers">Volunteers</Link>
           </li>
           <li>
             <Link href="/offer-help">Offer Help</Link>
