@@ -1,42 +1,88 @@
 import express from "express";
 import knex from "../db.mjs";
+import { optionalAuth } from "../middleware/auth.js";
+import commentsRouter from "./attractionComments.js";
 
 const router = express.Router();
 
-// GET all attractions
+// GET all attractions with filtering, sorting, and pagination
 router.get("/", async (req, res) => {
   try {
-    const { search = "", location = "" } = req.query;
+    const {
+      search = "",
+      location = "",
+      category = "",
+      sort = "title-asc",
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-    // Build the base query
-    let query = knex("attraction_posts as ap").select("*");
+    const query = knex("attraction_posts as ap").select("*");
+    const countQuery = knex("attraction_posts as ap");
 
-    // Apply search filter
+    // Apply search filter to title, content, and location
     if (search) {
-      query
-        .where("ap.title", "ilike", `%${search}%`)
-        .orWhere("ap.content", "ilike", `%${search}%`)
-        .orWhere("ap.location", "ilike", `%${search}%`);
-    } else if (location) {
-      query.where("ap.location", "ilike", `%${location}%`);
+      const searchTerm = `%${search}%`;
+      const searchFilter = (builder) =>
+        builder
+          .where("ap.title", "ilike", searchTerm)
+          .orWhere("ap.content", "ilike", searchTerm)
+          .orWhere("ap.location", "ilike", searchTerm);
+      query.where(searchFilter);
+      countQuery.where(searchFilter);
     }
+
+    // Apply specific location filter
+    if (location) {
+      query.where("ap.location", "ilike", `%${location}%`);
+      countQuery.where("ap.location", "ilike", `%${location}%`);
+    }
+
+    // Apply category filter
+    if (category) {
+      query.where("ap.category", "ilike", `%${category}%`);
+      countQuery.where("ap.category", "ilike", `%${category}%`);
+    }
+
+    // Get total count for pagination before sorting and limiting
+    const totalResult = await countQuery.count("* as count").first();
+    const total = parseInt(totalResult.count);
+
+    // Apply sorting
+    const [sortField, sortOrder] = sort.split("-");
+    if (
+      ["title", "location", "created_at", "category"].includes(sortField) &&
+      ["asc", "desc"].includes(sortOrder)
+    ) {
+      query.orderBy(`ap.${sortField}`, sortOrder);
+    }
+
+    // Apply pagination
+    const offset = (page - 1) * limit;
+    query.limit(limit).offset(offset);
 
     const attractions = await query;
 
     res.json({
-      message: "Atrraction retrieved successfully",
+      message: "Attractions retrieved successfully",
       data: attractions,
+      pagination: {
+        totalItems: total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: parseInt(page),
+      },
     });
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    console.error("Error fetching attractions:", error);
     res.status(500).json({
-      error: "Atrraction retrieval failed",
+      error: "Attraction retrieval failed",
       message:
         "We encountered an error while loading the attractions. Please try again later.",
     });
   }
 });
 
+// GET unique locations for filtering
 router.get("/locations", async (req, res) => {
   try {
     const locations = await knex("attraction_posts")
@@ -44,7 +90,7 @@ router.get("/locations", async (req, res) => {
       .orderBy("location");
     res.json({
       message: "Locations retrieved successfully",
-      data: locations.map((loc) => loc.location),
+      data: locations.map((loc) => loc.location).filter(Boolean),
     });
   } catch (error) {
     console.error("Error fetching locations:", error);
@@ -56,8 +102,28 @@ router.get("/locations", async (req, res) => {
   }
 });
 
-// GET single attraction by ID
-router.get("/:id", async (req, res) => {
+// GET unique categories for filtering
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await knex("attraction_posts")
+      .distinct("category")
+      .orderBy("category");
+    res.json({
+      message: "Categories retrieved successfully",
+      data: categories.map((cat) => cat.category).filter(Boolean),
+    });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      error: "Categories retrieval failed",
+      message:
+        "We encountered an error while loading categories. Please try again later.",
+    });
+  }
+});
+
+// GET single attraction by ID with photos and comments
+router.get("/:id", optionalAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -70,9 +136,18 @@ router.get("/:id", async (req, res) => {
       });
     }
 
+    const [photos, comments] = await Promise.all([
+      knex("attraction_post_photos").where("post_id", id),
+      knex("attraction_post_comments as ac")
+        .select("ac.*", "u.username", "u.first_name", "u.last_name")
+        .join("users as u", "ac.user_id", "u.id")
+        .where("ac.post_id", id)
+        .orderBy("ac.created_at", "asc"),
+    ]);
+
     res.json({
       message: "Attraction retrieved successfully",
-      data: attraction,
+      data: { ...attraction, photos, comments },
     });
   } catch (error) {
     console.error("Error fetching attraction:", error);
@@ -83,5 +158,8 @@ router.get("/:id", async (req, res) => {
     });
   }
 });
+
+// Nested router for comments
+router.use("/:id/comments", commentsRouter);
 
 export default router;
