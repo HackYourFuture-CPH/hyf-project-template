@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { Heart, Users, Smartphone, Utensils, Car, Home } from "lucide-react";
 import styles from "./services.module.css";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ServicesPage() {
   const services = [

@@ -33,7 +33,7 @@
   width: 32px;
   height: 32px;
   margin-bottom: 1rem;
-  color: #0070f3; /* CareConnect primary color */
+  color: #0070f3;
 }
 
 .cardTitle {
@@ -46,4 +46,8 @@
   font-size: 0.95rem;
   color: #555;
   line-height: 1.5;
+}
+.backLink {
+  text-align: center;
+  margin-top: 2rem;
 }
