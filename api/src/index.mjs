@@ -11,7 +11,6 @@ import errorHandler from "./middleware/errorHandler.js";
 
 // --- Public Route Imports ---
 import authRouter from "./routers/auth.js";
-import postsRouter from "./routers/posts.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import attractionsRouter from "./routers/attractions.js";
@@ -65,7 +64,6 @@ app.use("/api/health", healthCheckRoute);
 // Public Routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/posts", postsRouter);
 app.use("/api/tours", toursRouter);
 app.use("/api/attractions", attractionsRouter);
 app.use("/api/favorites", favoritesRouter);

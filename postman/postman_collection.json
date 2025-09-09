@@ -365,21 +365,63 @@
 			]
 		},
 		{
-			"name": "Posts",
+			"name": "Blogposts",
 			"item": [
 				{
-					"name": "Get Single Post",
+					"name": "Get All Blogposts (Unfiltered)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/posts/{{postId}}",
+							"raw": "{{baseUrl}}/api/blogposts",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
-								"posts",
+								"blogposts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Blogposts (Filtered by Category)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts?category=Adventure",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Adventure"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Blogpost",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts",
 								"{{postId}}"
 							]
 						}
@@ -387,7 +429,7 @@
 					"response": []
 				},
 				{
-					"name": "Create New Post",
+					"name": "Create New Blogpost",
 					"event": [
 						{
 							"listen": "test",
@@ -410,7 +452,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"My First Post\",\n    \"content\": \"This is the content of my first post.\"\n}",
+							"raw": "{\n    \"title\": \"My First Blogpost\",\n    \"content\": \"This is the content of my first blogpost.\",\n    \"category\": \"Travel\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -418,34 +460,53 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/posts",
+							"raw": "{{baseUrl}}/api/blogposts",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
-								"posts"
+								"blogposts"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Post Comments",
+					"name": "Delete Own Blogpost",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts",
+								"{{postId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Blogpost Comments",
 					"item": [
 						{
-							"name": "Get All Comments for a Post",
+							"name": "Get All Comments for a Blogpost",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"comments"
 									]
@@ -485,13 +546,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"comments"
 									]
@@ -514,13 +575,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments/{{commentId}}",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/comments/{{commentId}}",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"comments",
 										"{{commentId}}"
@@ -535,13 +596,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/comments/{{commentId}}",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/comments/{{commentId}}",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"comments",
 										"{{commentId}}"
@@ -556,7 +617,7 @@
 					"name": "Manage Photos",
 					"item": [
 						{
-							"name": "Add a Photo to Post",
+							"name": "Add a Photo to Blogpost",
 							"event": [
 								{
 									"listen": "test",
@@ -588,13 +649,13 @@
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/photos",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/photos",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"photos"
 									]
@@ -603,18 +664,18 @@
 							"response": []
 						},
 						{
-							"name": "Delete a Photo from Post",
+							"name": "Delete a Photo from Blogpost",
 							"request": {
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/posts/{{postId}}/photos/{{photoId}}",
+									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/photos/{{photoId}}",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"posts",
+										"blogposts",
 										"{{postId}}",
 										"photos",
 										"{{photoId}}"
@@ -636,7 +697,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/tours?search=europe&sort=price-desc&page=1",
+							"raw": "{{baseUrl}}/api/tours?search=Safari",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -647,15 +708,7 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "europe"
-								},
-								{
-									"key": "sort",
-									"value": "price-desc"
-								},
-								{
-									"key": "page",
-									"value": "1"
+									"value": "Safari"
 								}
 							]
 						}
@@ -1692,7 +1745,7 @@
 		},
 		{
 			"key": "tourId",
-			"value": "713eb327-468a-48c9-babf-883bb27d4d6e"
+			"value": "713eb327-468a-4c9-babf-883bb27d4d6e"
 		},
 		{
 			"key": "postId",
@@ -1760,4 +1813,5 @@
 		}
 	]
 }
+
 

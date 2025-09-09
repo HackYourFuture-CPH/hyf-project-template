@@ -198,6 +198,18 @@ export const favoriteSchema = z.object({
   }),
 });
 
+// Schema for a user creating or updating a blog post
+export const userPostSchema = z.object({
+  title: z
+    .string({ required_error: "Title is required." })
+    .min(3, "Title must be at least 3 characters long.")
+    .max(255, "Title cannot be more than 255 characters."),
+  content: z
+    .string({ required_error: "Content is required." })
+    .min(10, "The post content must be at least 10 characters long."),
+  category: z.string().optional().nullable(),
+});
+
 // --- ADMIN SCHEMAS ---
 
 // Schema for an admin updating a user's details

@@ -18,6 +18,25 @@ export const authenticateToken = (req, res, next) => {
   });
 };
 
+// Middleware to optionally check for a JWT token
+export const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  // If no token, continue without a user object
+  if (!token) {
+    return next();
+  }
+
+  // If token is present, verify it but don't block if invalid, just proceed without user
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (!err) {
+      req.user = user;
+    }
+    next();
+  });
+};
+
 // Middleware to generate JWT token
 export const generateToken = (user) => {
   return jwt.sign(
