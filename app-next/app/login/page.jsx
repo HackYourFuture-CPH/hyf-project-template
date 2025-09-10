@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./Login.module.css";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -16,6 +17,7 @@ const images = [
 ];
 
 export default function Login() {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [loginError, setLoginError] = useState("");
   const [registerError, setRegisterError] = useState("");
@@ -71,7 +73,21 @@ export default function Login() {
       // success: parsed.body expected
       setLoginError("");
       setLoginSuccess(parsed.body?.message || "Welcome! You are now logged in.");
+      // persist token so other pages (dashboard) can use it
+      if (parsed.body?.token) {
+        try {
+          localStorage.setItem("token", parsed.body.token);
+        } catch (e) {
+          console.warn("Failed to persist token to localStorage", e);
+        }
+      }
       event.target.reset();
+      // navigate to dashboard so the user sees their profile
+      try {
+        router.push("/user");
+      } catch (e) {
+        /* ignore navigation errors in non-browser tests */
+      }
     } catch (error) {
       setLoginError(error.message || "An error occurred");
     }
@@ -110,7 +126,20 @@ export default function Login() {
 
       setRegisterError("");
       setRegisterSuccess(parsed.body?.message || "Registration successful! You can now log in.");
+      // persist token if returned and redirect to dashboard
+      if (parsed.body?.token) {
+        try {
+          localStorage.setItem("token", parsed.body.token);
+        } catch (e) {
+          console.warn("Failed to persist token to localStorage", e);
+        }
+      }
       event.target.reset();
+      try {
+        router.push("/user");
+      } catch (e) {
+        /* ignore navigation errors in non-browser tests */
+      }
     } catch (error) {
       setRegisterError(error.message || "An error occurred");
     }
