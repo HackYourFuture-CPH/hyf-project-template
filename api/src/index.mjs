@@ -13,6 +13,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import authRouter from "./routers/auth.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
+import tripsRouter from "./routers/trips.js";
 import attractionsRouter from "./routers/attractions.js";
 import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
@@ -65,6 +66,7 @@ app.use("/api/health", healthCheckRoute);
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/tours", toursRouter);
+app.use("/api/trips", tripsRouter);
 app.use("/api/attractions", attractionsRouter);
 app.use("/api/favorites", favoritesRouter);
 
