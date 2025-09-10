@@ -1,4 +1,6 @@
 .container {
+  width: 100%;
+  max-width: 1200px;
   flex-grow: 1;
   padding: 24px;
   max-width: 900px;
@@ -32,12 +34,12 @@
 
 .profile {
   display: flex;
-  gap: 24px;
   align-items: center;
   background: #ffffff;
+  gap: 24px;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
 }
 
 .avatarWrap {
@@ -88,8 +90,8 @@
 /* dashboard and sidebar additions */
 .dashboard {
   display: flex;
-  gap: 24px;
   align-items: flex-start;
+  gap: 24px;
 }
 
 .aside {
@@ -100,7 +102,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
 }
 
 .dashboardTitle {
@@ -133,7 +135,7 @@
 .navItem.active {
   background: #2563eb;
   color: white;
-  box-shadow: 0 8px 20px rgba(37,99,235,0.15);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
 }
 
 .navIcon {
@@ -153,7 +155,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
 }
 
 .statsGrid {
@@ -164,12 +166,12 @@
 }
 
 .statCard {
-  background: #f8fafc;
+  background: #dbeafe;
   padding: 12px;
   border-radius: 12px;
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 12px;
 }
 
 .statIcon {
@@ -216,7 +218,7 @@
   background: #ffffff;
   padding: 12px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.04);
 }
 
 .cardTitle {
@@ -238,4 +240,45 @@
   display: flex;
   gap: 18px;
   align-items: center;
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .profileCard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .profileRow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .avatarWrap {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
 }
