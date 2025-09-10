@@ -49,7 +49,7 @@ export default function UserPage() {
       duration_days: 8,
       price_usd: 3500,
       plan_type: "user",
-      owner_id: "user1",
+      owner_id: "user1", 
     },
   ];
 
