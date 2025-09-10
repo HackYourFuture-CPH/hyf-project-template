@@ -87,6 +87,22 @@ router.get("/", optionalAuth, async (req, res) => {
     });
   }
 });
+// GET /api/blogposts/my-posts - Get all posts for the logged-in user
+router.get("/my-posts", authenticateToken, async (req, res) => {
+  const userId = req.user.id || req.user.sub;
+  try {
+    const myposts = await knex("user_posts")
+      .where({ user_id: userId })
+      .orderBy("created_at", "desc");
+    res.json({
+      message: "Your blogposts have been retrieved successfully.",
+      data: myposts,
+    });
+  } catch (error) {
+    console.error("Error fetching user's blogposts:", error);
+    res.status(500).json({ error: "Failed to retrieve your blogposts." });
+  }
+});
 
 // GET /api/blogposts/:id - Get a single post by ID with photos and comments
 router.get("/:id", optionalAuth, async (req, res) => {
