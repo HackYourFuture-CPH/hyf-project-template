@@ -62,7 +62,7 @@ export default function ToursSection() {
         <div className={styles.gridContainer}>
           {travelCardData.slice(0, 3).map((card) => (
             <Link key={card.id} href={`/tours/${card.id}`} style={{ textDecoration: "none" }}>
-              <Card card={card} />
+              <Card card={card} onFavoriteChange={() => { /* forwarded by Card and global event */ }} />
             </Link>
           ))}
         </div>

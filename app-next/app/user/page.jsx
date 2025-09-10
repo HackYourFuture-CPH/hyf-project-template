@@ -20,6 +20,28 @@ export default function UserPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Handler to update favorites when a Card toggles favorite
+  function handleFavoriteChange({ added, itemId }) {
+    setFavorites((prev) => {
+      const arr = Array.isArray(prev) ? [...prev] : [];
+      if (added) {
+        if (!arr.find((f) => (f.itemId || f.item_id) === itemId)) {
+          arr.push({ itemId, item_type: "tour" });
+        }
+      } else {
+        const filtered = arr.filter((f) => (f.itemId || f.item_id) !== itemId);
+        try {
+          localStorage.setItem("favorites", JSON.stringify(filtered));
+        } catch {}
+        return filtered;
+      }
+      try {
+        localStorage.setItem("favorites", JSON.stringify(arr));
+      } catch {}
+      return arr;
+    });
+  }
+
   // helper to safely parse JSON or return text
   async function safeParseResponse(res) {
     const text = await res.text();
@@ -79,13 +101,27 @@ export default function UserPage() {
           console.debug("Tours request error:", err.message);
         }
 
-        // 4) Favorites
+        // 4) Favorites - try server, fallback to localStorage
         try {
           const resFav = await fetch(`${API_URL}/api/favorites`, { headers });
-          const parsed = await safeParseResponse(resFav);
-          if (resFav.ok && parsed.body) setFavorites(parsed.body.data || parsed.body || []);
+          if (resFav.ok) {
+            const parsed = await safeParseResponse(resFav);
+            const favs = parsed.body?.data || parsed.body || [];
+            if (mounted) {
+              setFavorites(favs);
+              try {
+                localStorage.setItem("favorites", JSON.stringify(favs));
+              } catch {}
+            }
+          } else {
+            // fallback to localStorage
+            const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
+            if (mounted) setFavorites(saved);
+          }
         } catch (err) {
           console.debug("Favorites request error (may be unsupported):", err.message);
+          const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
+          if (mounted) setFavorites(saved);
         }
 
         // 5) Reviews - backend exposes tour reviews under /api/tours/:id/reviews; no user-wide endpoint
@@ -100,6 +136,20 @@ export default function UserPage() {
     fetchData();
     return () => {
       mounted = false;
+    };
+  }, []);
+
+  // listen for global favorite events from Card components
+  useEffect(() => {
+    function onFav(e) {
+      const { added, itemId } = e.detail || {};
+      if (itemId) handleFavoriteChange({ added, itemId });
+    }
+    if (typeof window !== "undefined") {
+      window.addEventListener("favoritesChanged", onFav);
+    }
+    return () => {
+      if (typeof window !== "undefined") window.removeEventListener("favoritesChanged", onFav);
     };
   }, []);
 

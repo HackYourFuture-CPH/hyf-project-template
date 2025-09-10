@@ -160,7 +160,7 @@ export default function TripPage() {
         ) : error ? (
           <div style={{ color: "red" }}>Error: {error}</div>
         ) : (
-          filteredTours.map((card) => <Card key={card.id} card={card} />)
+          filteredTours.map((card) => <Card key={card.id} card={card} onFavoriteChange={() => {}} />)
         )}
       </div>
     </div>
