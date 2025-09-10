@@ -88,6 +88,58 @@
   font-size: 1rem;
 }
 
+.paginationBtn {
+  background-color: #1f84ca;
+  font-family: "Archivo", sans-serif;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-block;
+  text-decoration: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04), transparent);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 6px 18px rgba(31, 132, 202, 0.06);
+  transform: translateZ(0);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.paginationBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(31, 132, 202, 0.12);
+  background-color: #1977b6;
+}
+
+.paginationBtn:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.paginationBtn:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.9);
+  outline-offset: 3px;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paginationBtn {
+    transition: none;
+  }
+}
+
 @media (max-width: 900px) {
   .gridContainer {
     grid-template-columns: repeat(2, 1fr);

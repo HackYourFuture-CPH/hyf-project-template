@@ -7,12 +7,13 @@ import { useState, useEffect } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-
 export default function TripPage() {
   const [search, setSearch] = useState("");
   const [filterDestination, setFilterDestination] = useState("");
   const [destinations, setDestinations] = useState([]);
   const [tours, setTours] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState("");
   const [page, setPage] = useState(1);
@@ -50,6 +51,15 @@ export default function TripPage() {
       else if (Array.isArray(data.travel_plans)) list = data.travel_plans;
       else if (Array.isArray(data)) list = data;
       else if (Array.isArray(data.tours?.items)) list = data.tours.items;
+
+      // pagination info from API
+      const apiTotalPages =
+        data.totalPages ??
+        data.pagination?.totalPages ??
+        Math.ceil((data.totalItems ?? data.pagination?.totalItems ?? list.length) / limit);
+      const apiTotalItems = data.totalItems ?? data.pagination?.totalItems ?? list.length;
+      setTotalPages(Number.isFinite(Number(apiTotalPages)) ? Number(apiTotalPages) : 1);
+      setTotalItems(Number.isFinite(Number(apiTotalItems)) ? Number(apiTotalItems) : list.length);
 
       setTours(list);
 
@@ -160,8 +170,42 @@ export default function TripPage() {
         ) : error ? (
           <div style={{ color: "red" }}>Error: {error}</div>
         ) : (
-          filteredTours.map((card) => <Card key={card.id} card={card} onFavoriteChange={() => {}} />)
+          filteredTours.map((card) => (
+            <Card key={card.id} card={card} onFavoriteChange={() => {}} />
+          ))
         )}
+      </div>
+      {/* Pagination controls */}
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 16,
+        }}
+      >
+        <button
+          className={styles.paginationBtn}
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={loading || page <= 1}
+          aria-label="Previous page"
+        >
+          Prev
+        </button>
+
+        <div>
+          Page {page} of {totalPages} {totalItems ? `(${totalItems} items)` : ""}
+        </div>
+
+        <button
+          className={styles.paginationBtn}
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={loading || page >= totalPages}
+          aria-label="Next page"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
