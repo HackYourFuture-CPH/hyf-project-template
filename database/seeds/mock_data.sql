@@ -2661,7 +2661,9 @@ WHERE
 
 -- =================================================================
 --  2. SEED STATIC & ESSENTIAL DATA
+--  AI-Enhanced, Comprehensive Mock Data (200+ Rows per Table)
 -- =================================================================
+
 INSERT INTO
     currencies (code, name, symbol)
 VALUES ('USD', 'US Dollar', '$'),
