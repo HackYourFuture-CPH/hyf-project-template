@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./User.module.css";
+import Card from "../../components/Card/Card";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 export default function UserPage() {
@@ -15,6 +16,7 @@ export default function UserPage() {
   const [tours, setTours] = useState([]);
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [favoriteTours, setFavoriteTours] = useState([]);
   const [reviews, setReviews] = useState([]);
 
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,74 @@ export default function UserPage() {
       return { body: null, raw: text };
     }
   }
+
+  // Resolve favorite items to tour objects using fetched `tours` and localStorage fallback
+  useEffect(() => {
+    let mounted = true;
+
+    async function resolveFavoriteTours() {
+      try {
+        // prefer in-memory favorites (from server) but fallback to localStorage
+        const saved = Array.isArray(favorites)
+          ? favorites
+          : JSON.parse(localStorage.getItem("favorites") || "[]");
+
+        // collect candidate ids (support different shapes)
+        const ids = [];
+        for (const f of saved || []) {
+          const type = f.item_type || f.type || f.itemType;
+          const id = f.item_id || f.itemId || f.id;
+          if (!id) continue;
+          // if type is present, require 'tour'; otherwise allow and try to resolve from tours
+          if (type && String(type).toLowerCase() !== "tour") continue;
+          ids.push(String(id));
+        }
+
+        const uniq = [...new Set(ids)];
+        if (uniq.length === 0) {
+          if (mounted) setFavoriteTours([]);
+          return;
+        }
+
+        const resolved = [];
+        const missing = [];
+
+        // match against already-fetched tours
+        for (const id of uniq) {
+          const found = tours.find((t) => String(t.id) === String(id));
+          if (found) resolved.push(found);
+          else missing.push(id);
+        }
+
+        // fetch any missing tours individually
+        if (missing.length > 0) {
+          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+          const headers = token ? { Authorization: `Bearer ${token}` } : {};
+          for (const id of missing) {
+            try {
+              const res = await fetch(`${API_URL}/api/tours/${id}`, { headers });
+              const parsed = await safeParseResponse(res);
+              const tour = parsed.body?.data || parsed.body || null;
+              if (tour) resolved.push(tour);
+            } catch (err) {
+              // ignore individual fetch errors
+              console.debug("Failed to fetch favorite tour", id, err?.message || err);
+            }
+          }
+        }
+
+        if (mounted) setFavoriteTours(resolved);
+      } catch (err) {
+        console.debug("resolveFavoriteTours error:", err?.message || err);
+        if (mounted) setFavoriteTours([]);
+      }
+    }
+
+    resolveFavoriteTours();
+    return () => {
+      mounted = false;
+    };
+  }, [favorites, tours]);
 
   useEffect(() => {
     let mounted = true;
@@ -351,19 +421,30 @@ export default function UserPage() {
           <p className={styles.empty}>Sign in to see favorites.</p>
         </div>
       );
-    const myFavorites = favorites.filter(
-      (f) => f.user_id === user.id || f.userId === user.id || f.owner_id === user.id
-    );
+    // We resolve favorite tours into full tour objects in `favoriteTours` state
+    if (!Array.isArray(favoriteTours) || favoriteTours.length === 0) {
+      return (
+        <div className={styles.profileCard}>
+          <h3>Favorites</h3>
+          <p className={styles.empty}>No favorites yet.</p>
+        </div>
+      );
+    }
+
     return (
       <div className={styles.profileCard}>
         <h3>Favorites</h3>
-        {myFavorites.length === 0 && <p className={styles.empty}>No favorites yet.</p>}
-        {myFavorites.map((f, i) => (
-          <div key={i} className={styles.postRow}>
-            <div>{f.item_type || f.type || "item"}</div>
-            <div className={styles.postMeta}>{f.item_id || f.itemId || f.id}</div>
-          </div>
-        ))}
+        <div className={styles.cardGrid}>
+          {favoriteTours.map((t) => (
+            <div key={t.id} className={styles.cardWrapper}>
+              <Card
+                card={t}
+                viewLink={`/tours/${t.id}`}
+                onFavoriteChange={({ added, itemId }) => handleFavoriteChange({ added, itemId })}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

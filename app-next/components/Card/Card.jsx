@@ -2,10 +2,11 @@
 import styles from "./Card.module.css";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export default function Card({ card, onFavoriteChange }) {
+export default function Card({ card, onFavoriteChange, viewLink }) {
   const [favourite, setFavourite] = useState(!!card.favourite);
 
   useEffect(() => {
@@ -160,6 +161,12 @@ export default function Card({ card, onFavoriteChange }) {
         <p className={styles.description}>{card?.destination ?? card?.description ?? ""}</p>
 
         <div className={styles.cardFooter}>
+          {viewLink ? (
+            <Link href={viewLink} className={styles.primary}>
+              View
+            </Link>
+          ) : null}
+
           <button
             className={`${styles.heart} ${favourite ? styles.fav : ""}`}
             onClick={toggleFavorite}
