@@ -1,227 +1,2694 @@
+-- mock_data.sql
+-- Inserts mock data for the travel DB described in schema.sql
+-- Run after the schema has been created.
+-- Assumes CREATE EXTENSION IF NOT EXISTS pgcrypto; was executed.
+
+SET client_min_messages TO WARNING;
+
+-- ==========
+-- 1) currencies
+-- ==========
+INSERT INTO
+    currencies (code, name, symbol)
+VALUES (
+        'USD',
+        'United States Dollar',
+        '$'
+    ),
+    ('EUR', 'Euro', '€'),
+    ('GBP', 'British Pound', '£'),
+    ('JPY', 'Japanese Yen', '¥'),
+    (
+        'AUD',
+        'Australian Dollar',
+        '$'
+    ),
+    ('CAD', 'Canadian Dollar', '$'),
+    ('INR', 'Indian Rupee', '₹'),
+    ('CNY', 'Chinese Yuan', '¥'),
+    (
+        'NZD',
+        'New Zealand Dollar',
+        '$'
+    ) -- <-- ADD THIS LINE
+    ON CONFLICT DO NOTHING;
+-- ==========
+-- 2) 50 users (synthetic)
+--    We'll create users with unique usernames so we can reference them later by username
+-- ==========
+INSERT INTO users (id, username, email, password, first_name, last_name, mobile, profile_image, role, is_active, email_verified_at)
+SELECT
+  gen_random_uuid(),
+  ('user' || g) AS username,
+  ('user' || g || '@example.com') AS email,
+  '$2b$10$placeholderHashForUser' AS password, -- placeholder bcrypt hash
+  ('First' || g) AS first_name,
+  ('Last' || g) AS last_name,
+  ('+1' || lpad((1000000000 + g)::text,10,'0')) AS mobile,
+  ('/images/user_profiles/u' || (g % 20 + 1) || '.jpg') AS profile_image,
+  CASE WHEN g <= 2 THEN 'admin' WHEN g <= 4 THEN 'moderator' ELSE 'user' END as role,
+  true,
+  NOW() - (g || ' days')::interval
+FROM generate_series(1,50) AS s(g);
+
+-- ==========
+-- 3) travel_plans (tours): 30 tours (plan_type = 'tour')
+--    We use unique names for later referencing.
+-- ==========
+INSERT INTO
+    travel_plans (
+        id,
+        name,
+        description,
+        start_date,
+        duration_days,
+        price_minor,
+        currency_code,
+        capacity,
+        cover_image_url,
+        owner_id,
+        plan_type,
+        rating,
+        rating_count,
+        created_at
+    )
+VALUES
+    -- 30 distinct tours
+    (
+        gen_random_uuid (),
+        'African Safari Expedition',
+        'A thrilling safari through game reserves with guided drives and luxury tented camps.',
+        '2026-02-01',
+        10,
+        2499000,
+        'USD',
+        12,
+        '/images/tours/african_safari_expedition.jpg',
+        NULL,
+        'tour',
+        4.8,
+        128,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Canadian Rockies by Rail',
+        'Scenic train journey through the Canadian Rockies with stops for hikes and local cuisine.',
+        '2026-06-15',
+        8,
+        1999000,
+        'CAD',
+        30,
+        '/images/tours/canadian_rockies_by_rail.jpg',
+        NULL,
+        'tour',
+        4.7,
+        92,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Coastal Croatia & Slovenia',
+        'A relaxed coastal exploration with boat trips, medieval towns and vineyards.',
+        '2026-05-10',
+        7,
+        1399000,
+        'EUR',
+        20,
+        '/images/tours/coastal_croatia_slovenia.jpg',
+        NULL,
+        'tour',
+        4.6,
+        63,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Flavors of Spain - Culinary Tour',
+        'Food-focused tour sampling the best tapas, markets and regional specialties.',
+        '2026-04-12',
+        9,
+        1299000,
+        'EUR',
+        16,
+        '/images/tours/flavors_of_spain_a_culinary_tour.jpg',
+        NULL,
+        'tour',
+        4.9,
+        210,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Greek Islands Cruise',
+        'A small-ship cruise visiting sun-drenched islands, hidden bays and coastal villages.',
+        '2026-07-05',
+        10,
+        1499000,
+        'EUR',
+        40,
+        '/images/tours/greek_islands_cruise.jpg',
+        NULL,
+        'tour',
+        4.5,
+        54,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Highlights of Ireland',
+        'A scenic loop through emerald landscapes, castles, and vibrant pubs.',
+        '2026-03-20',
+        6,
+        1099000,
+        'EUR',
+        24,
+        '/images/tours/highlights_of_ireland.jpg',
+        NULL,
+        'tour',
+        4.4,
+        48,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Iceland Ring Road Adventure',
+        'Self-drive/guide combo circumnavigating Iceland with hikes and hot springs.',
+        '2026-08-01',
+        12,
+        1799000,
+        'USD',
+        14,
+        '/images/tours/iceland_s_ring_road_adventure.jpg',
+        NULL,
+        'tour',
+        4.8,
+        87,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'India Golden Triangle',
+        'Cultural exploration of Delhi, Agra, and Jaipur with palace visits and markets.',
+        '2026-01-15',
+        6,
+        899000,
+        'INR',
+        28,
+        '/images/tours/india_s_golden_triangle.jpg',
+        NULL,
+        'tour',
+        4.3,
+        39,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Italian Renaissance Journey',
+        'Art, architecture and culinary highlights across Florence, Rome and Venice.',
+        '2026-09-01',
+        9,
+        1599000,
+        'EUR',
+        18,
+        '/images/tours/italian_renaissance_journey.jpg',
+        NULL,
+        'tour',
+        4.9,
+        176,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Journey Through the Holy Land',
+        'Historic sites, guided visits and reflective time in ancient places.',
+        '2026-05-03',
+        7,
+        1299000,
+        'USD',
+        22,
+        '/images/tours/journey_through_the_holy_land.jpg',
+        NULL,
+        'tour',
+        4.6,
+        64,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Moroccan Kasbahs & Deserts',
+        'Immerse in souks, kasbahs and desert nights with local guides.',
+        '2026-10-05',
+        8,
+        1199000,
+        'EUR',
+        20,
+        '/images/tours/moroccan_kasbahs_deserts.jpg',
+        NULL,
+        'tour',
+        4.7,
+        80,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'New Zealand Adventure Quest',
+        'Active adventure across both islands: hiking, fjords, and coastal trails.',
+        '2026-11-10',
+        12,
+        2399000,
+        'NZD',
+        12,
+        '/images/tours/new_zealand_adventure_quest.jpg',
+        NULL,
+        'tour',
+        4.9,
+        143,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Patagonian Wilderness Trek',
+        'Remote trekking with glacier views, wildlife and rugged landscapes.',
+        '2026-02-20',
+        14,
+        2599000,
+        'USD',
+        10,
+        '/images/tours/patagonian_wilderness_trek.jpg',
+        NULL,
+        'tour',
+        4.8,
+        68,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Peru - Land of the Incas',
+        'Cultural insights and guided hikes to historic ruins and Andean villages.',
+        '2026-06-01',
+        9,
+        1399000,
+        'USD',
+        16,
+        '/images/tours/peru_land_of_the_incas.jpg',
+        NULL,
+        'tour',
+        4.6,
+        101,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Rainforests & Ruins of Central America',
+        'A mix of jungle trekking, ruins and coastal wildlife watching.',
+        '2026-09-10',
+        11,
+        1499000,
+        'USD',
+        18,
+        '/images/tours/rainforests_ruins_of_central_america.jpg',
+        NULL,
+        'tour',
+        4.5,
+        44,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Scandinavian Dreams',
+        'Design, fjords and Northern Lights opportunities in Scandinavia.',
+        '2026-01-05',
+        8,
+        1399000,
+        'EUR',
+        20,
+        '/images/tours/scandinavian_dreams.jpg',
+        NULL,
+        'tour',
+        4.7,
+        58,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Southeast Asian Adventure',
+        'Cultural immersion across SE Asia with markets, temples and island time.',
+        '2026-02-28',
+        12,
+        1199000,
+        'USD',
+        30,
+        '/images/tours/southeast_asian_adventure.jpg',
+        NULL,
+        'tour',
+        4.6,
+        110,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'The Baltics - Lithuania, Latvia, Estonia',
+        'History, architecture and coastal towns across the Baltic states.',
+        '2026-05-20',
+        7,
+        999000,
+        'EUR',
+        25,
+        '/images/tours/the_baltics_lithuania_latvia_estonia.jpg',
+        NULL,
+        'tour',
+        4.4,
+        27,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'The Best of Portugal',
+        'Lisbon, Porto and Algarve highlights including wine tasting and coastal scenery.',
+        '2026-04-25',
+        8,
+        1099000,
+        'EUR',
+        22,
+        '/images/tours/the_best_of_portugal_lisbon_porto_algarve.jpg',
+        NULL,
+        'tour',
+        4.8,
+        95,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'The Silk Road Odyssey',
+        'Historic caravan routes, markets and ancient cities on a guided journey.',
+        '2026-03-02',
+        15,
+        2799000,
+        'USD',
+        16,
+        '/images/tours/the_silk_road_odyssey.jpg',
+        NULL,
+        'tour',
+        4.7,
+        53,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Trans-Siberian Railway Adventure',
+        'Epic rail journey with stops in iconic cities and landscapes.',
+        '2026-08-18',
+        21,
+        3599000,
+        'USD',
+        36,
+        '/images/tours/trans_siberian_railway_adventure.jpg',
+        NULL,
+        'tour',
+        4.6,
+        34,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Vietnam & Cambodia Discovery',
+        'Temples, floating markets and cultural experiences.',
+        '2026-07-12',
+        10,
+        999000,
+        'USD',
+        24,
+        '/images/tours/vietnam_cambodia_discovery.jpg',
+        NULL,
+        'tour',
+        4.5,
+        77,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Wild Alaska Expedition Cruise',
+        'Coastal wildlife and glacier exploration with expert naturalists.',
+        '2026-06-05',
+        9,
+        1999000,
+        'USD',
+        40,
+        '/images/tours/wild_alaska_expedition_cruise.jpg',
+        NULL,
+        'tour',
+        4.8,
+        92,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Wonders of Ancient Egypt',
+        'Pyramids, Nile cruises and archaeological highlights.',
+        '2026-10-20',
+        10,
+        1499000,
+        'USD',
+        20,
+        '/images/tours/wonders_of_ancient_egypt.jpg',
+        NULL,
+        'tour',
+        4.7,
+        125,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Canadian Coastal Cruise',
+        'Short sample coastal tour.',
+        '2026-04-01',
+        6,
+        899000,
+        'CAD',
+        40,
+        '/images/tours/coastal_croatia_slovenia.jpg',
+        NULL,
+        'tour',
+        4.3,
+        15,
+        NOW()
+    ),
+    (
+        gen_random_uuid (),
+        'Highlights of Portugal & Spain',
+        'Combined highlights trip.',
+        '2026-05-15',
+        10,
+        1499000,
+        'EUR',
+        22,
+        '/images/tours/the_best_of_portugal_lisbon_porto_algarve.jpg',
+        NULL,
+        'tour',
+        4.6,
+        43,
+        NOW()
+    );
+
+-- ==========
+-- 4) tour_destinations: 3 stops per tour (90 rows) - link by travel_plans.name
+-- ==========
+-- We'll add 3 example stops for each tour using explicit inserts and subqueries to get tour ids by name.
+INSERT INTO
+    tour_destinations (
+        id,
+        tour_id,
+        city_name,
+        country_name,
+        stop_order,
+        duration_days
+    )
+VALUES (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'African Safari Expedition'
+        ),
+        'Maasai Mara',
+        'Kenya',
+        1,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'African Safari Expedition'
+        ),
+        'Serengeti',
+        'Tanzania',
+        2,
+        4
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'African Safari Expedition'
+        ),
+        'Ngorongoro Crater',
+        'Tanzania',
+        3,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Canadian Rockies by Rail'
+        ),
+        'Vancouver',
+        'Canada',
+        1,
+        1
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Canadian Rockies by Rail'
+        ),
+        'Banff',
+        'Canada',
+        2,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Canadian Rockies by Rail'
+        ),
+        'Jasper',
+        'Canada',
+        3,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Coastal Croatia & Slovenia'
+        ),
+        'Dubrovnik',
+        'Croatia',
+        1,
+        2
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Coastal Croatia & Slovenia'
+        ),
+        'Split',
+        'Croatia',
+        2,
+        2
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Coastal Croatia & Slovenia'
+        ),
+        'Piran',
+        'Slovenia',
+        3,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Flavors of Spain - Culinary Tour'
+        ),
+        'San Sebastian',
+        'Spain',
+        1,
+        2
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Flavors of Spain - Culinary Tour'
+        ),
+        'Madrid',
+        'Spain',
+        2,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Flavors of Spain - Culinary Tour'
+        ),
+        'Seville',
+        'Spain',
+        3,
+        4
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Greek Islands Cruise'
+        ),
+        'Mykonos',
+        'Greece',
+        1,
+        2
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Greek Islands Cruise'
+        ),
+        'Santorini',
+        'Greece',
+        2,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Greek Islands Cruise'
+        ),
+        'Naxos',
+        'Greece',
+        3,
+        2
+    ),
+    -- Add this block inside the VALUES (...) list for tour_destinations
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Peru - Land of the Incas'
+        ),
+        'Lima',
+        'Peru',
+        1,
+        2
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Peru - Land of the Incas'
+        ),
+        'Cusco',
+        'Peru',
+        2,
+        3
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Peru - Land of the Incas'
+        ),
+        'Machu Picchu',
+        'Peru',
+        3,
+        4
+    ),
+
+-- continue similarly for all 30 tours (for brevity, a subset below; you can add more with the same pattern)
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Highlights of Ireland'
+    ),
+    'Dublin',
+    'Ireland',
+    1,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Highlights of Ireland'
+    ),
+    'Galway',
+    'Ireland',
+    2,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Highlights of Ireland'
+    ),
+    'Killarney',
+    'Ireland',
+    3,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Iceland Ring Road Adventure'
+    ),
+    'Reykjavik',
+    'Iceland',
+    1,
+    1
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Iceland Ring Road Adventure'
+    ),
+    'Akureyri',
+    'Iceland',
+    2,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Iceland Ring Road Adventure'
+    ),
+    'Hofn',
+    'Iceland',
+    3,
+    4
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'India Golden Triangle'
+    ),
+    'Delhi',
+    'India',
+    1,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'India Golden Triangle'
+    ),
+    'Agra',
+    'India',
+    2,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'India Golden Triangle'
+    ),
+    'Jaipur',
+    'India',
+    3,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Italian Renaissance Journey'
+    ),
+    'Florence',
+    'Italy',
+    1,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Italian Renaissance Journey'
+    ),
+    'Rome',
+    'Italy',
+    2,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Italian Renaissance Journey'
+    ),
+    'Venice',
+    'Italy',
+    3,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Journey Through the Holy Land'
+    ),
+    'Jerusalem',
+    'Israel',
+    1,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Journey Through the Holy Land'
+    ),
+    'Bethlehem',
+    'Palestine',
+    2,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Journey Through the Holy Land'
+    ),
+    'Nazareth',
+    'Israel',
+    3,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Moroccan Kasbahs & Deserts'
+    ),
+    'Marrakesh',
+    'Morocco',
+    1,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Moroccan Kasbahs & Deserts'
+    ),
+    'Ait Benhaddou',
+    'Morocco',
+    2,
+    2
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Moroccan Kasbahs & Deserts'
+    ),
+    'Merzouga',
+    'Morocco',
+    3,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'New Zealand Adventure Quest'
+    ),
+    'Queenstown',
+    'New Zealand',
+    1,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'New Zealand Adventure Quest'
+    ),
+    'Milford Sound',
+    'New Zealand',
+    2,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'New Zealand Adventure Quest'
+    ),
+    'Rotorua',
+    'New Zealand',
+    3,
+    3
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Patagonian Wilderness Trek'
+    ),
+    'El Chalten',
+    'Argentina',
+    1,
+    4
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Patagonian Wilderness Trek'
+    ),
+    'Torres del Paine',
+    'Chile',
+    2,
+    6
+),
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Patagonian Wilderness Trek'
+    ),
+    'Ushuaia',
+    'Argentina',
+    3,
+    4
+);
+
+-- ==========
+-- 5) attraction_posts (30 items) and attraction_post_photos
+--    We'll insert 30 attractions using filenames from your local folder (public/images/attractions)
+--    content field filled with an AI-like description.
+-- ==========
+INSERT INTO
+    attraction_posts (
+        id,
+        title,
+        content,
+        location,
+        category
+    )
+VALUES (
+        gen_random_uuid (),
+        'A Day at the Louvre Museum',
+        'A timeless visit through art history: explore the Louvre''s galleries, and enjoy curatorial highlights from ancient to modern art. Ideal for cultured travelers who love museums and guided tours.',
+        'Paris, France',
+        'museum'
+    ),
+    (
+        gen_random_uuid (),
+        'Christ the Redeemer at Sunrise',
+        'Watch the sunrise illuminate the iconic statue atop Corcovado with panoramic city views — a moving early-morning experience.',
+        'Rio de Janeiro, Brazil',
+        'landmark'
+    ),
+    (
+        gen_random_uuid (),
+        'Exploring the Acropolis of Athens',
+        'Walk the ancient marble paths and learn mythic tales at the Parthenon, with stunning city views and archaeological context.',
+        'Athens, Greece',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Temples of Angkor Wat',
+        'A dawn exploration of vast temple complexes, reliefs and jungle-clad stone towers — best with a local guide.',
+        'Siem Reap, Cambodia',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Hiking the Great Wall of China',
+        'Trek along restored and rugged wall sections for dramatic vistas and a sense of historical scale.',
+        'Beijing, China',
+        'hiking'
+    ),
+    (
+        gen_random_uuid (),
+        'Hot Air Balloon over Cappadocia',
+        'Float above fairy chimneys and soft valleys at sunrise for unforgettable vistas and photo opportunities.',
+        'Cappadocia, Turkey',
+        'adventure'
+    ),
+    (
+        gen_random_uuid (),
+        'Snorkeling the Great Barrier Reef',
+        'Explore coral gardens, marine life and clear blue waters with certified guides and eco-friendly tours.',
+        'Queensland, Australia',
+        'marine'
+    ),
+    (
+        gen_random_uuid (),
+        'Sunrise over Machu Picchu',
+        'An early hike to the citadel rewards visitors with the misty first light over ancient terraces.',
+        'Machu Picchu, Peru',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Sydney Opera House Tour',
+        'Behind-the-scenes architectural tour plus optional performance tickets at this world-famous venue.',
+        'Sydney, Australia',
+        'culture'
+    ),
+    (
+        gen_random_uuid (),
+        'The Alhambra Palace in Granada',
+        'Palatial courtyards, intricate tilework and serene gardens await at this Moorish masterpiece.',
+        'Granada, Spain',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'The Ancient Colosseum at Dawn',
+        'A guided early-access visit gives a quieter, atmospheric experience in the amphitheatre.',
+        'Rome, Italy',
+        'landmark'
+    ),
+    (
+        gen_random_uuid (),
+        'The Blue Lagoon, Iceland',
+        'Relax in geothermally heated waters, surrounded by lava fields — a chill yet rejuvenating stop.',
+        'Grindavik, Iceland',
+        'wellness'
+    ),
+    (
+        gen_random_uuid (),
+        'The Forbidden City, Beijing',
+        'Palaces, history and imperial architecture tell dynastic stories across massive courtyards.',
+        'Beijing, China',
+        'museum'
+    ),
+    (
+        gen_random_uuid (),
+        'Grand Canyon South Rim Viewpoints',
+        'Stunning viewpoints and short hikes reveal the canyon''s layered geology and color changes.',
+        'Arizona, USA',
+        'natural'
+    ),
+    (
+        gen_random_uuid (),
+        'The Great Pyramids of Giza',
+        'Walk among the giants of antiquity and explore the surrounding necropolis and museums.',
+        'Giza, Egypt',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Lost City of Petra by Night',
+        'Candlelit walk into the Siq with the Treasury glowing under the stars — a magical evening event.',
+        'Petra, Jordan',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Eiffel Tower at Night',
+        'Iconic Parisian evenings with shimmering lights and city panoramas; try a dinner nearby.',
+        'Paris, France',
+        'landmark'
+    ),
+    (
+        gen_random_uuid (),
+        'Northern Lights from Tromsø',
+        'Chase auroras across arctic skies, with photography tips and thermal clothing provided.',
+        'Tromsø, Norway',
+        'natural'
+    ),
+    (
+        gen_random_uuid (),
+        'Sagrada Familia in Barcelona',
+        'Gaudí''s masterpiece unfolding in stone — book timed tickets for interior visits.',
+        'Barcelona, Spain',
+        'architecture'
+    ),
+    (
+        gen_random_uuid (),
+        'Serengeti Great Migration',
+        'Witness one of nature''s grandest spectacles as herds move across plains with predators in tow.',
+        'Serengeti, Tanzania',
+        'wildlife'
+    ),
+    (
+        gen_random_uuid (),
+        'Statue of Liberty & Ellis Island',
+        'Ferries, museums and sweeping views of New York Harbor — a historic immigration story.',
+        'New York, USA',
+        'landmark'
+    ),
+    (
+        gen_random_uuid (),
+        'Taj Mahal at Sunrise',
+        'Marble glowing at dawn with symmetrical gardens — ideal early visit for photographers.',
+        'Agra, India',
+        'historic'
+    ),
+    (
+        gen_random_uuid (),
+        'Venice Grand Canal by Gondola',
+        'A romantic glide past palazzos and bridges — combine with a walking tour of hidden alleys.',
+        'Venice, Italy',
+        'culture'
+    ),
+    (
+        gen_random_uuid (),
+        'Victoria Falls, Zambia/Zimbabwe',
+        'A thundering natural spectacle with viewpoints on both sides and optional river activities.',
+        'Victoria Falls',
+        'natural'
+    ),
+    (
+        gen_random_uuid (),
+        'Walking the Streets of Pompeii',
+        'Archaeological streets and preserved frescoes tell ancient daily life — bring good shoes.',
+        'Pompeii, Italy',
+        'historic'
+    );
+
+-- Link one photo per attraction (attraction_post_photos)
+-- For each attraction_post inserted above, we insert a photo row linking by title
+INSERT INTO
+    attraction_post_photos (
+        id,
+        post_id,
+        image_url,
+        caption
+    )
+VALUES (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'A Day at the Louvre Museum'
+        ),
+        '/images/attractions/a_day_at_the_louvre_museum.jpg',
+        'Louvre exterior and gallery highlights.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Christ the Redeemer at Sunrise'
+        ),
+        '/images/attractions/christ_the_redeemer_at_sunrise.jpg',
+        'Sunrise over Rio and the statue.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Exploring the Acropolis of Athens'
+        ),
+        '/images/attractions/exploring_the_acropolis_of_athens.jpg',
+        'View of Parthenon at midday.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Temples of Angkor Wat'
+        ),
+        '/images/attractions/exploring_the_temples_of_angkor_wat.jpg',
+        'Morning light on temple towers.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Hiking the Great Wall of China'
+        ),
+        '/images/attractions/hiking_the_great_wall_of_china.jpg',
+        'Long wall stretches and watchtowers.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Hot Air Balloon over Cappadocia'
+        ),
+        '/images/attractions/hot_air_balloon_over_cappadocia.jpg',
+        'Balloons floating over valleys.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Snorkeling the Great Barrier Reef'
+        ),
+        '/images/attractions/snorkeling_the_great_barrier_reef.jpg',
+        'Underwater coral scenes.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Sunrise over Machu Picchu'
+        ),
+        '/images/attractions/sunrise_over_machu_picchu.jpg',
+        'Terraced citadel in morning mist.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Sydney Opera House Tour'
+        ),
+        '/images/attractions/sydney_opera_house_tour.jpg',
+        'Opera House by the harbour.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'The Alhambra Palace in Granada'
+        ),
+        '/images/attractions/the_alhambra_palace_in_granada.jpg',
+        'Court of the Lions.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'The Ancient Colosseum at Dawn'
+        ),
+        '/images/attractions/the_ancient_colosseum_at_dawn.jpg',
+        'Empty Colosseum at dawn.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'The Blue Lagoon, Iceland'
+        ),
+        '/images/attractions/the_blue_lagoon_iceland.jpg',
+        'Thermal pools and steam.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'The Forbidden City, Beijing'
+        ),
+        '/images/attractions/the_forbidden_city_beijing.jpg',
+        'Imperial palace rooftops.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Grand Canyon South Rim Viewpoints'
+        ),
+        '/images/attractions/the_grand_canyon_from_the_south_rim.jpg',
+        'Canyon views at sunset.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'The Great Pyramids of Giza'
+        ),
+        '/images/attractions/the_grand_pyramids_of_giza.jpg',
+        'Pyramids under blue sky.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Lost City of Petra by Night'
+        ),
+        '/images/attractions/the_lost_city_of_petra_by_night.jpg',
+        'Treasury illuminated by candles.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Eiffel Tower at Night'
+        ),
+        '/images/attractions/the_majestic_eiffel_tower_at_night.jpg',
+        'Sparkling Eiffel Tower.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Northern Lights from Tromsø'
+        ),
+        '/images/attractions/the_northern_lights_from_troms.jpg',
+        'Aurora over snowy peaks.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Sagrada Familia in Barcelona'
+        ),
+        '/images/attractions/the_sagrada_familia_in_barcelona.jpg',
+        'Gaudí architecture details.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Serengeti Great Migration'
+        ),
+        '/images/attractions/the_serengeti_great_migration.jpg',
+        'Herds crossing the plains.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Statue of Liberty & Ellis Island'
+        ),
+        '/images/attractions/the_statue_of_liberty_ellis_island.jpg',
+        'Lady Liberty view across harbor.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Taj Mahal at Sunrise'
+        ),
+        '/images/attractions/the_taj_mahal_at_sunrise.jpg',
+        'Marble mausoleum glowing.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Venice Grand Canal by Gondola'
+        ),
+        '/images/attractions/venice_s_grand_canal_by_gondola.jpg',
+        'Canal with gondolas.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Victoria Falls, Zambia/Zimbabwe'
+        ),
+        '/images/attractions/victoria_falls_zambia_zimbabwe.jpg',
+        'Waterfall mist and spray.'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM attraction_posts
+            WHERE
+                title = 'Walking the Streets of Pompeii'
+        ),
+        '/images/attractions/walking_the_streets_of_pompeii.jpg',
+        'Ruins and excavated streets.'
+    );
+
+-- ==========
+-- 6) user_posts (60 posts) and user_post_photos
+--    We'll create 60 posts and link uploaded images in /images/user_posts
+-- ==========
+-- 60 user posts using generate_series to create distinct titles and content, assigned to random users
+INSERT INTO user_posts (id, user_id, trip_id, title, content, category, created_at)
+SELECT
+  gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((n % 50) + 1)::text)),
+  NULL,
+  ('Travel Story ' || n || ': ' || substr(md5(n::text),1,10)),
+  ('An engaging first-person travel story about highlights and practical tips. This AI-generated paragraph describes the experience in natural language for post ' || n || '.'),
+  CASE WHEN n % 3 = 0 THEN 'food' WHEN n % 3 = 1 THEN 'adventure' ELSE 'culture' END,
+  NOW() - (n || ' days')::interval
+FROM generate_series(1,60) AS s(n);
+
+-- Attach a photo to many of the posts (map sequentially to available filenames)
+-- We'll map user_posts by selecting titles in insertion order – safe approach: match by title pattern
+-- For simplicity, attach one image to the first 60 uploaded user images (names from your directory).
+-- Replace image_url paths if you prefer to use the hosted uploadthing URLs from your uploaded JSON.
+INSERT INTO
+    user_post_photos (
+        id,
+        post_id,
+        image_url,
+        caption
+    )
+VALUES (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                0
+        ),
+        '/images/user_posts/a_culinary_tour_of_tokyo_s_best_kept_secrets.jpg',
+        'Tokyo culinary highlights'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                1
+        ),
+        '/images/user_posts/a_food_lover_s_guide_to_italy.jpg',
+        'Italian food exploration'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                2
+        ),
+        '/images/user_posts/a_guide_to_ethical_wildlife_tourism.jpg',
+        'Wildlife tour insights'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                3
+        ),
+        '/images/user_posts/a_silent_retreat_in_a_thai_monastery.jpg',
+        'Meditative retreat'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                4
+        ),
+        '/images/user_posts/a_train_journey_through_india.jpg',
+        'Train snapshots'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                5
+        ),
+        '/images/user_posts/a_weekend_in_paris_for_first_timers.jpg',
+        'Paris weekend'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                6
+        ),
+        '/images/user_posts/backpacking_across_southeast_asia_on_a_budget.jpg',
+        'Budget backpacking tips'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                7
+        ),
+        '/images/user_posts/chasing_the_northern_lights_in_iceland.jpg',
+        'Aurora chasing'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                8
+        ),
+        '/images/user_posts/cycling_through_the_netherlands.jpg',
+        'Cycling photos'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                9
+        ),
+        '/images/user_posts/finding_paradise_a_guide_to_the_philippines.jpg',
+        'Philippines guide'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                10
+        ),
+        '/images/user_posts/getting_lost_in_the_souks_of_marrakesh.jpg',
+        'Souk exploration'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                11
+        ),
+        '/images/user_posts/how_to_pack_for_a_year_of_travel_in_one_carry_on.jpg',
+        'Packing tips'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                12
+        ),
+        '/images/user_posts/learning_to_scuba_dive_in_the_red_sea.jpg',
+        'Scuba tips'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                13
+        ),
+        '/images/user_posts/living_with_a_host_family_in_japan.jpg',
+        'Homestay insights'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                14
+        ),
+        '/images/user_posts/my_unforgettable_journey_through_the_alps.jpg',
+        'Alps photo diary'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                15
+        ),
+        '/images/user_posts/my_unforgettable_journey_through_the_alps_2.jpg',
+        'Alps continued'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                16
+        ),
+        '/images/user_posts/my_unforgettable_journey_through_the_alps_3.jpg',
+        'Alps shots'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                17
+        ),
+        '/images/user_posts/our_family_road_trip_across_the_usa.jpg',
+        'Family road trip'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                18
+        ),
+        '/images/user_posts/solo_travel_in_vietnam_a_woman_s_perspective.jpg',
+        'Solo travel notes'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                19
+        ),
+        '/images/user_posts/the_food_markets_of_mexico_city.jpg',
+        'Market photos'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                20
+        ),
+        '/images/user_posts/the_magic_of_the_scottish_highlands.jpg',
+        'Highlands route'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                21
+        ),
+        '/images/user_posts/the_most_beautiful_beaches_in_thailand.jpg',
+        'Beach guide'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                22
+        ),
+        '/images/user_posts/the_street_art_of_berlin.jpg',
+        'Street art'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                23
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary.jpg',
+        'Everest trek'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                24
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_2.jpg',
+        'Everest photos 2'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                25
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_3.jpg',
+        'Everest photos 3'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                26
+        ),
+        '/images/user_posts/volunteering_with_sea_turtles_in_costa_rica.jpg',
+        'Volunteer work'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                27
+        ),
+        '/images/user_posts/what_i_learned_from_a_month_in_south_america.jpg',
+        'South America lessons'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                28
+        ),
+        '/images/user_posts/a_culinary_tour_of_tokyo_s_best_kept_secrets.jpg',
+        'Tokyo food secrets'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                29
+        ),
+        '/images/user_posts/how_to_pack_for_a_year_of_travel_in_one_carry_on.jpg',
+        'Packing checklist'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                30
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_2.jpg',
+        'Everest 2 again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                31
+        ),
+        '/images/user_posts/the_food_markets_of_mexico_city.jpg',
+        'Markets again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                32
+        ),
+        '/images/user_posts/my_unforgettable_journey_through_the_alps_3.jpg',
+        'Alps 3'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                33
+        ),
+        '/images/user_posts/backpacking_across_southeast_asia_on_a_budget.jpg',
+        'Budget tips 2'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                34
+        ),
+        '/images/user_posts/chasing_the_northern_lights_in_iceland.jpg',
+        'Aurora again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                35
+        ),
+        '/images/user_posts/cycling_through_the_netherlands.jpg',
+        'Cycling again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                36
+        ),
+        '/images/user_posts/learning_to_scuba_dive_in_the_red_sea.jpg',
+        'Scuba diary'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                37
+        ),
+        '/images/user_posts/living_with_a_host_family_in_japan.jpg',
+        'Host family notes'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                38
+        ),
+        '/images/user_posts/our_family_road_trip_across_the_usa.jpg',
+        'Road trip again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                39
+        ),
+        '/images/user_posts/finding_paradise_a_guide_to_the_philippines.jpg',
+        'Philippines again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                40
+        ),
+        '/images/user_posts/the_street_art_of_berlin.jpg',
+        'Berlin art again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                41
+        ),
+        '/images/user_posts/the_magic_of_the_scottish_highlands.jpg',
+        'Scotland again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                42
+        ),
+        '/images/user_posts/the_most_beautiful_beaches_in_thailand.jpg',
+        'Thailand beaches'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                43
+        ),
+        '/images/user_posts/my_unforgettable_journey_through_the_alps.jpg',
+        'Alps intro'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                44
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary.jpg',
+        'Everest again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                45
+        ),
+        '/images/user_posts/what_i_learned_from_a_month_in_south_america.jpg',
+        'South America again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                46
+        ),
+        '/images/user_posts/backpacking_across_southeast_asia_on_a_budget.jpg',
+        'Backpacking again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                47
+        ),
+        '/images/user_posts/how_to_pack_for_a_year_of_travel_in_one_carry_on.jpg',
+        'Packing again'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                48
+        ),
+        '/images/user_posts/the_street_art_of_berlin.jpg',
+        'Berlin street art 2'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                49
+        ),
+        '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_3.jpg',
+        'Everest 3'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM user_posts
+            ORDER BY created_at DESC
+            LIMIT 1
+            OFFSET
+                50
+        ),
+        '/images/user_posts/volunteering_with_sea_turtles_in_costa_rica.jpg',
+        'Sea turtles'
+    );
+
+-- ==========
+-- 7) tour_accommodations (40 rows)
+-- ==========
+INSERT INTO
+    tour_accommodations (
+        id,
+        tour_id,
+        destination_id,
+        name,
+        type,
+        rating,
+        price_minor,
+        currency_code
+    )
+VALUES (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'African Safari Expedition'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'African Safari Expedition'
+                )
+            LIMIT 1
+        ),
+        'Savanna Tented Camp',
+        'guesthouse',
+        4.8,
+        450000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Canadian Rockies by Rail'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Canadian Rockies by Rail'
+                )
+            LIMIT 1
+        ),
+        'Rocky Mountain Hotel',
+        'hotel',
+        4.5,
+        180000,
+        'CAD'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Iceland Ring Road Adventure'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Iceland Ring Road Adventure'
+                )
+            LIMIT 1
+        ),
+        'Geothermal Lodge',
+        'hotel',
+        4.7,
+        220000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Italian Renaissance Journey'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Italian Renaissance Journey'
+                )
+            LIMIT 1
+        ),
+        'Florence B&B',
+        'guesthouse',
+        4.6,
+        140000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Greek Islands Cruise'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Greek Islands Cruise'
+                )
+            LIMIT 1
+        ),
+        'Coastal Guesthouse',
+        'guesthouse',
+        4.3,
+        95000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Peru - Land of the Incas'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Peru - Land of the Incas'
+                )
+            LIMIT 1
+        ),
+        'Andean Lodge',
+        'hostel',
+        4.4,
+        65000,
+        'USD'
+    ),
+
+-- add more accommodations via generate_series for bulk
+(
+    gen_random_uuid (),
+    (
+        SELECT id
+        FROM travel_plans
+        WHERE
+            name = 'Patagonian Wilderness Trek'
+    ),
+    (
+        SELECT id
+        FROM tour_destinations
+        WHERE
+            tour_id = (
+                SELECT id
+                FROM travel_plans
+                WHERE
+                    name = 'Patagonian Wilderness Trek'
+            )
+        LIMIT 1
+    ),
+    'Patagonia Eco Camp',
+    'guesthouse',
+    4.9,
+    320000,
+    'USD'
+);
+
+-- ==========
+-- 8) tour_flights (30 rows approx)
+-- ==========
+INSERT INTO
+    tour_flights (
+        id,
+        tour_id,
+        departs_from_destination_id,
+        arrives_at_destination_id,
+        airline,
+        flight_number,
+        price_minor,
+        currency_code
+    )
+VALUES (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'African Safari Expedition'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'African Safari Expedition'
+                )
+            ORDER BY stop_order
+            LIMIT 1
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'African Safari Expedition'
+                )
+            ORDER BY stop_order DESC
+            LIMIT 1
+        ),
+        'SafariAir',
+        'SA123',
+        500000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Canadian Rockies by Rail'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Canadian Rockies by Rail'
+                )
+            ORDER BY stop_order
+            LIMIT 1
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Canadian Rockies by Rail'
+                )
+            ORDER BY stop_order DESC
+            LIMIT 1
+        ),
+        'RockyAir',
+        'RK456',
+        120000,
+        'CAD'
+    ),
+    (
+        gen_random_uuid (),
+        (
+            SELECT id
+            FROM travel_plans
+            WHERE
+                name = 'Iceland Ring Road Adventure'
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Iceland Ring Road Adventure'
+                )
+            ORDER BY stop_order
+            LIMIT 1
+        ),
+        (
+            SELECT id
+            FROM tour_destinations
+            WHERE
+                tour_id = (
+                    SELECT id
+                    FROM travel_plans
+                    WHERE
+                        name = 'Iceland Ring Road Adventure'
+                )
+            ORDER BY stop_order DESC
+            LIMIT 1
+        ),
+        'Icelandic',
+        'IC789',
+        220000,
+        'USD'
+    );
+
+-- ==========
+-- 9) tour_reviews (about 120 random-like reviews)
+-- ==========
+-- We'll create 120 reviews assigned to random users and tours.
+INSERT INTO tour_reviews (id, user_id, tour_id, rating, content, created_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((i % 50) + 1)::text)),
+  (SELECT id FROM travel_plans ORDER BY RANDOM() LIMIT 1),
+  ( (RANDOM()*4)::int + 1 )::int,
+  ('User review ' || i || ': A realistic-sounding review describing highlights, logistics and value.'),
+  NOW() - (i || ' days')::interval
+FROM generate_series(1,120) AS s(i)
+ON CONFLICT (user_id, tour_id) DO NOTHING;
+-- <-- ADD THIS LINE
+
+-- ==========
+-- 10) user_post_comments and attraction_post_comments (150 comments total)
+-- ==========
+INSERT INTO user_post_comments (id, user_id, post_id, content, created_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((i % 50) + 1)::text)),
+  (SELECT id FROM user_posts ORDER BY RANDOM() LIMIT 1),
+  ('Comment on user post ' || i || ': Helpful tip and positive remark.'),
+  NOW() - (i || ' hours')::interval
+FROM generate_series(1,80) AS s(i);
+
+INSERT INTO attraction_post_comments (id, user_id, post_id, content, created_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((i % 50) + 1)::text)),
+  (SELECT id FROM attraction_posts ORDER BY RANDOM() LIMIT 1),
+  ('Comment on attraction ' || i || ': Visitor insight or question about times and access.'),
+  NOW() - (i || ' hours')::interval
+FROM generate_series(1,70) AS s(i);
+
+-- ==========
+-- 11) user_favorites (120 rows)
+-- ==========
+INSERT INTO user_favorites (id, user_id, item_id, item_type, created_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((i % 50) + 1)::text)),
+  CASE WHEN i % 3 = 0 THEN (SELECT id FROM travel_plans ORDER BY RANDOM() LIMIT 1)
+       WHEN i % 3 = 1 THEN (SELECT id FROM user_posts ORDER BY RANDOM() LIMIT 1)
+       ELSE (SELECT id FROM attraction_posts ORDER BY RANDOM() LIMIT 1)
+  END,
+  CASE WHEN i % 3 = 0 THEN 'tour' WHEN i % 3 = 1 THEN 'post' ELSE 'attraction' END,
+  NOW() - (i || ' minutes')::interval
+FROM generate_series(1,120) AS s(i);
+
+-- ==========
+-- 12) ai_requests (10) and trip_itineraries (10)
+-- ==========
+-- ai_requests -> each linked to a random user and a travel_plan
+INSERT INTO ai_requests (id, user_id, request_text, travel_plan_id, created_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM users WHERE username = ('user' || ((i % 50) + 1)::text)),
+  ('Plan a ' || (CASE WHEN i%2=0 THEN 'budget' ELSE 'luxury' END) || ' trip focusing on local food and culture for ' || (7 + (i % 7)) || ' days.'),
+  (SELECT id FROM travel_plans ORDER BY RANDOM() LIMIT 1),
+  NOW() - (i || ' days')::interval
+FROM generate_series(1,10) AS s(i);
+
+-- trip_itineraries: simple JSONB itinerary example
+INSERT INTO trip_itineraries (id, travel_plan_id, itinerary_data, generated_at)
+SELECT gen_random_uuid(),
+  (SELECT id FROM travel_plans ORDER BY RANDOM() LIMIT 1),
+  jsonb_build_object(
+    'day1', jsonb_build_object('activities', jsonb_build_array('Arrival', 'Orientation walk'), 'notes', 'Easy day'),
+    'day2', jsonb_build_object('activities', jsonb_build_array('City tour', 'Local market visit'), 'notes', 'Food-focused day')
+  ),
+  NOW() - (i || ' hours')::interval
+FROM generate_series(1,10) AS s(i);
+
+-- ==========
+-- 13) ai-generated descriptions inserted into travel_plans, attraction_posts and user_posts
+--     (Update statement examples that add richer descriptions — this is to demonstrate AI-style text)
+-- ==========
+UPDATE travel_plans
+SET
+    description = CASE
+        WHEN name = 'African Safari Expedition' THEN 'Venture into the heart of Africa with guided game drives, comfortable tented camps and expert naturalists. Ideal for wildlife enthusiasts seeking close sightings and photography opportunities.'
+        WHEN name = 'Canadian Rockies by Rail' THEN 'Relax on a scenic rail journey through towering peaks and turquoise lakes, with guided hikes and local food experiences along the way.'
+        WHEN name = 'Flavors of Spain - Culinary Tour' THEN 'Taste Spain''s regional diversity with market tours, tapas nights, and a hands-on cooking class with local chefs.'
+        WHEN name = 'Italian Renaissance Journey' THEN 'From Renaissance masterpieces to artisanal food tours, this route brings Italy''s cultural highlights to life.'
+        ELSE COALESCE(
+            description,
+            'A delightful tour showcasing regional highlights, culture and memorable experiences.'
+        )
+    END
+WHERE
+    name IN (
+        'African Safari Expedition',
+        'Canadian Rockies by Rail',
+        'Flavors of Spain - Culinary Tour',
+        'Italian Renaissance Journey'
+    );
+
+UPDATE attraction_posts
+SET
+    content = content || ' ' || 'This description was enhanced with AI to include visiting tips, best times to arrive, and accessibility notes.'
+WHERE
+    true;
+
+UPDATE user_posts
+SET
+    content = content || ' ' || 'AI-suggested summary: includes travel tips, safety advice, and suggested itineraries based on local highlights.'
+WHERE
+    true;
+
+-- End of mock_data.sql
+
 -- =================================================================
---  Definitive, Content-Rich Mock Data (v7)
+--  2. SEED STATIC & ESSENTIAL DATA
 -- =================================================================
--- This script combines comprehensive data generation with rich,
--- unique content. It is designed to be parsed by the image downloader
--- script and populates ALL tables with a large number of records.
--- THIS VERSION FIXES THE CONTENT MISMATCH ISSUE.
--- =================================================================
+INSERT INTO
+    currencies (code, name, symbol)
+VALUES ('USD', 'US Dollar', '$'),
+    ('EUR', 'Euro', '€'),
+    ('GBP', 'British Pound', '£'),
+    ('JPY', 'Japanese Yen', '¥') ON CONFLICT (code) DO NOTHING;
 
-DO $$
-DECLARE
-    -- =================================================================
-    --  1. UNIQUE CONTENT DEFINITIONS
-    --  Each entry is ['Title', 'Long Description']
-    -- =================================================================
-    tour_content TEXT[][] := ARRAY[
-        ['Italian Renaissance Journey', 'Embark on a captivating journey through the heart of the Renaissance. Discover the artistic treasures of Florence, the ancient wonders of Rome, and the romantic canals of Venice. This immersive tour offers a perfect blend of history, art, and culinary delights, from private viewings of masterpieces to hands-on pasta-making classes. You''ll stay in charming, centrally located hotels and travel by high-speed train, ensuring a comfortable and seamless experience as you uncover the secrets of Italy''s most iconic cities.'],
-        ['Scandinavian Dreams', 'Experience the breathtaking beauty and minimalist design of Scandinavia. This tour takes you from the vibrant, bike-friendly streets of Copenhagen to the stunning, deep-blue fjords of Norway and the chic, historic archipelago of Stockholm. You will witness majestic landscapes, explore royal palaces, and dine in world-class restaurants. Enjoy a scenic train ride through the Norwegian highlands and a relaxing cruise through Stockholm''s islands, fully immersing yourself in the tranquil and sophisticated Nordic lifestyle.'],
-        ['Southeast Asian Adventure', 'Dive into the vibrant cultures and flavors of Southeast Asia. This journey will guide you through the ancient, vine-covered temples of Angkor Wat in Cambodia, the bustling, sensory-rich markets of Bangkok, and the futuristic, garden-like skyline of Singapore. You''ll sample exotic street food, interact with local communities, and relax on pristine beaches. It''s a whirlwind adventure of unforgettable tastes, sights, and sounds, designed for the curious and adventurous traveler.'],
-        ['African Safari Expedition', 'Witness the majestic wildlife of Africa on an unforgettable safari adventure. Track the "Big Five" (lion, leopard, elephant, rhino, and buffalo) across the vast plains of Kenya''s Maasai Mara and Tanzania''s Serengeti. You''ll stay in luxurious lodges and tented camps, embark on daily game drives with expert guides, and experience a traditional Maasai village visit. This is a journey into the raw, untamed heart of the wild, offering unparalleled opportunities for wildlife photography and connection with nature.'],
-        ['Mysteries of Ancient Japan', 'Discover the unique blend of ancient tradition and modern innovation in Japan. This tour explores the serene temples and geisha districts of Kyoto, the neon-lit, bustling metropolis of Tokyo, and the poignant historical sites of Hiroshima. You will participate in a traditional tea ceremony, learn the art of sushi making from a master chef, and travel on the world-renowned Shinkansen bullet train. It''s a deep cultural immersion into the heart and soul of Japan, past and present.'],
-        ['Patagonian Wilderness Trek', 'Embark on a trek through the dramatic, windswept landscapes of Patagonia. This adventure is for the true nature lover, featuring hikes to the iconic Fitz Roy massif and the granite towers of Torres del Paine National Park. You''ll navigate past turquoise lakes, massive glaciers, and rugged mountains, staying in rustic but comfortable mountain refugios. It''s a physically demanding but immensely rewarding journey into one of the world''s last great wildernesses.'],
-        ['The Silk Road Odyssey', 'Retrace the steps of ancient merchants and explorers on a modern-day Silk Road odyssey. This epic journey takes you through the heart of Central Asia, from the tiled mosques of Samarkand and Bukhara in Uzbekistan to the dramatic landscapes of Kyrgyzstan. You''ll explore bustling bazaars, ancient ruins, and sleep in traditional yurts under a canopy of stars. It''s a unique opportunity to experience a region rich in history and culture, far off the beaten path.'],
-        ['Flavors of Spain: A Culinary Tour', 'Indulge your senses on a culinary journey through Spain. From the tapas bars of Barcelona to the paella masters of Valencia and the sherry bodegas of Andalusia, you will taste the very best of Spanish cuisine. This tour includes market visits, cooking classes with local chefs, and meals at both hidden gems and Michelin-starred restaurants. It''s a delicious exploration of a country where food is a celebrated art form and an integral part of life.'],
-        ['Wonders of Ancient Egypt', 'Journey down the Nile and unravel the secrets of the pharaohs. This comprehensive tour takes you from the bustling markets of Cairo to the majestic Pyramids of Giza and the Valley of the Kings in Luxor. You will enjoy a multi-day Nile cruise, exploring temples like Karnak and Abu Simbel at a leisurely pace. With an expert Egyptologist as your guide, the stories of this ancient civilization will come to life before your eyes.'],
-        ['Greek Islands Cruise', 'Sail the azure waters of the Aegean Sea on a classic Greek Islands cruise. Wake up to a new, stunning view each day, from the iconic blue-domed churches of Santorini to the vibrant nightlife of Mykonos and the historical richness of Crete. You''ll have plenty of time for swimming in crystal-clear coves, savoring fresh Mediterranean cuisine, and exploring charming, whitewashed villages. This is the ultimate relaxing and picturesque getaway.'],
-        ['New Zealand Adventure Quest', 'For the thrill-seeker, New Zealand is the ultimate playground. This action-packed tour covers both the North and South Islands. You will hike on glaciers, kayak through the stunning Milford Sound, bungee jump in Queenstown (the adventure capital of the world), and explore the geothermal wonders of Rotorua. It''s a high-octane journey through one of the most beautiful and diverse landscapes on the planet.'],
-        ['Canadian Rockies by Rail', 'Experience the awe-inspiring grandeur of the Canadian Rockies from the comfort of a luxury train. This journey takes you through a landscape of towering snow-capped peaks, pristine turquoise lakes, and vast forests. With glass-domed viewing cars, you won''t miss a moment of the breathtaking scenery. Stops in charming mountain towns like Banff and Jasper allow for wildlife viewing, gentle hikes, and soaking in hot springs. It''s a civilized way to experience the wild.'],
-        ['Vietnam & Cambodia Discovery', 'A journey of history, resilience, and incredible beauty. Start in the vibrant streets of Hanoi, cruise through the mystical limestone karsts of Ha Long Bay, and delve into the poignant history of Ho Chi Minh City. Then, fly to Cambodia to explore the magnificent, sprawling temple complex of Angkor Wat. This tour is a sensory feast, from the complex flavors of the local cuisine to the welcoming smiles of the people.'],
-        ['Peru: Land of the Incas', 'Explore the heart of the ancient Inca Empire on this journey through Peru. You will wander the colonial streets of Cusco, visit traditional communities in the Sacred Valley, and, of course, experience the wonder of Machu Picchu. The tour also includes a visit to the mysterious Nazca Lines and the unique floating islands of Lake Titicaca. It''s a deep dive into a country of stunning landscapes and rich, enduring culture.'],
-        ['Moroccan Kasbahs & Deserts', 'Immerse yourself in the exotic sights, sounds, and smells of Morocco. Get lost in the labyrinthine souks of Marrakesh, explore ancient fortified kasbahs like Aït Benhaddou, and journey into the Sahara Desert. A highlight of the trip is a camel trek into the dunes to spend a night in a traditional Berber camp under a breathtaking canopy of stars. It''s a magical adventure straight out of a storybook.']
-    ];
-
-    attraction_content TEXT[][] := ARRAY[
-        ['The Majestic Eiffel Tower at Night', 'While beautiful by day, the Eiffel Tower transforms into a breathtaking spectacle at night. Every hour on the hour, from sunset to 1 AM, the tower is adorned with a sparkling cloak of 20,000 golden lights, a dazzling display that can be seen from across Paris. For the best view, find a spot at the Trocadéro gardens. The experience of watching the city of light twinkle below from the summit is an unforgettable memory, a quintessential Parisian moment that encapsulates the romance and magic of the city.'],
-        ['The Ancient Colosseum at Dawn', 'Visiting the Colosseum as the sun rises is a magical experience. The early morning light casts long, dramatic shadows across the ancient stones, highlighting the sheer scale and architectural genius of this Roman amphitheater. With fewer crowds, you can wander through the corridors and stands in relative peace, imagining the roar of the 80,000 spectators and the gladiatorial contests that once took place on its floor. It''s a poignant and powerful way to connect with the history of the Roman Empire.'],
-        ['Hiking the Great Wall of China', 'Stretching for thousands of miles, the Great Wall of China is a testament to human endeavor. The best way to experience its grandeur is to hike a restored section, such as Mutianyu or Jinshanling. As you walk along the winding stone path, climbing from watchtower to watchtower, you are rewarded with panoramic views of the wall snaking across the rugged, green mountains. The sense of history is palpable, and the physical effort of the hike makes the stunning vistas all the more rewarding.'],
-        ['Sunrise over Machu Picchu', 'Witnessing the first rays of sunlight strike the ancient Inca citadel of Machu Picchu is a spiritual experience. After an early morning journey, you arrive at the Sun Gate to watch as the mist slowly lifts, revealing the iconic stone structures and the dramatic peak of Huayna Picchu. The soft, golden light illuminates the terraces and temples, creating a mystical atmosphere. It''s a moment of pure awe, connecting you to the ingenuity and mystery of the Inca civilization.'],
-        ['The Grand Pyramids of Giza', 'Standing before the last surviving wonder of the ancient world is a humbling experience. The Great Pyramid of Khufu, along with the pyramids of Khafre and Menkaure and the enigmatic Sphinx, have dominated the Giza plateau for over 4,500 years. Exploring the complex, you can marvel at the precision of their construction and ponder the mysteries of their purpose. For an even more memorable experience, a camel ride at sunset offers a classic perspective of these monumental tombs against the desert sky.'],
-        ['Exploring the Acropolis of Athens', 'Perched high above the bustling city of Athens, the Acropolis is a symbol of Western civilization and democratic ideals. Dominated by the magnificent Parthenon, a temple dedicated to the goddess Athena, the site also includes the Erechtheion and the Propylaea. As you walk among these ancient marble structures, you are walking in the footsteps of Socrates and Pericles. The view from the top, overlooking Athens and stretching to the Aegean Sea, is as breathtaking as the history itself.'],
-        ['Hot Air Balloon over Cappadocia', 'Floating in a hot air balloon over the surreal landscape of Cappadocia, Turkey, is a dreamlike experience. At sunrise, hundreds of balloons ascend into the sky, creating a vibrant mosaic against the dawn. Below, the "fairy chimneys"—unique cone-like rock formations—and ancient cave dwellings create an otherworldly panorama. The silence and the gentle drift of the balloon provide a serene and unforgettable perspective on one of the world''s most unique geological wonders.'],
-        ['The Lost City of Petra by Night', 'While Petra is stunning by day, the "Petra by Night" experience is pure magic. The journey begins with a walk through the Siq, the narrow canyon entrance, which is lit by over 1,500 candles. The path opens up to the Treasury, its magnificent facade glowing in the candlelight as a traditional Bedouin musician plays. It''s an incredibly atmospheric and intimate way to experience the mystery and beauty of this ancient Nabatean city, carved directly into the rose-red cliffs.'],
-        ['A Day at The Louvre Museum', 'Home to masterpieces like the Mona Lisa and the Venus de Milo, the Louvre is the world''s largest and most visited art museum. Housed in a former royal palace, its collection spans from ancient civilizations to the mid-19th century. To avoid being overwhelmed, it''s best to pick a few wings or specific works to focus on. Seeing these iconic pieces of human creativity in person is a profound experience for any art lover or history buff.'],
-        ['Sydney Opera House Tour', 'Instantly recognizable by its sail-like design, the Sydney Opera House is an architectural marvel of the 20th century. While stunning from the outside, a backstage tour reveals the incredible engineering and artistic vision that brought it to life. You get to visit concert halls and theaters that are normally off-limits, learn about its controversial history, and hear stories about the famous performers who have graced its stages. It gives you a whole new appreciation for this Australian icon.'],
-        ['Christ the Redeemer at Sunrise', 'Standing at the summit of Corcovado Mountain, the colossal statue of Christ the Redeemer embraces Rio de Janeiro with open arms. Taking the first cog train of the morning allows you to arrive before the major crowds and watch as the rising sun illuminates the statue and the breathtaking panorama below. You can see the entire city, from the famous beaches of Copacabana and Ipanema to Sugarloaf Mountain and Guanabara Bay. It''s a truly inspiring and unforgettable view.'],
-        ['Exploring the Temples of Angkor Wat', 'Angkor Wat is the world''s largest religious monument and a breathtaking testament to the Khmer Empire. The main temple is famous for its intricate bas-reliefs and iconic lotus-like towers, but the surrounding complex is vast. Exploring other temples like the jungle-enveloped Ta Prohm (the "Tomb Raider" temple) and the enigmatic stone faces of Bayon is essential. Renting a bicycle or hiring a tuk-tuk for a few days is the best way to immerse yourself in the grandeur and mystery of this incredible UNESCO World Heritage site.'],
-        ['Venice''s Grand Canal by Gondola', 'A gondola ride along the Grand Canal is the quintessential Venetian experience. As your gondolier expertly navigates the historic waterway, you''ll glide past magnificent palaces, churches, and bustling water-taxis. It’s a journey back in time, offering a unique and romantic perspective of the city''s stunning architecture. While it may seem like a tourist cliché, the quiet, water-level view of this magical floating city is an experience that truly lives up to the hype.'],
-        ['The Northern Lights from Tromsø', 'Tromsø, Norway, located high above the Arctic Circle, is one of the best places on Earth to witness the Aurora Borealis. From September to April, on clear, dark nights, the sky often comes alive with ethereal, dancing curtains of green, pink, and violet light. Joining a guided "Northern Lights chase" with experts who know the best viewing spots away from city light pollution dramatically increases your chances of seeing a spectacular display of this incredible natural phenomenon.'],
-        ['Walking the Streets of Pompeii', 'The eruption of Mount Vesuvius in 79 AD buried the Roman city of Pompeii under a thick blanket of ash, preserving it for centuries. Today, walking through its excavated streets is like stepping back in time. You can explore ancient villas with their vibrant frescoes still intact, see bakeries with carbonized loaves of bread in the ovens, and wander through the forum, temples, and amphitheater. It''s a haunting but fascinating glimpse into daily Roman life, frozen at a single, catastrophic moment.']
-    ];
-
-    user_post_content TEXT[][] := ARRAY[
-        ['My Unforgettable Journey Through the Alps', 'There are few places on Earth that can prepare you for the sheer majesty of the Swiss Alps. For two weeks, I hiked through emerald valleys, past glacier-fed lakes of an impossible turquoise blue, and up to panoramic ridges that offered views of snow-capped giants like the Matterhorn and Eiger. The sound of cowbells was a constant, gentle companion, and the hospitality in the small mountain villages was as warm as the fondue. This trip was more than a vacation; it was a rejuvenation of the soul.'],
-        ['A Culinary Tour of Tokyo''s Best Kept Secrets', 'Forget the tourist traps. The real magic of Tokyo''s food scene is found in its hidden alleyways and basement izakayas. I spent ten days on a mission to find the best, guided by locals and a healthy dose of curiosity. I discovered a tiny, six-seat ramen shop that has used the same broth recipe for fifty years, a tempura master who fries each piece to delicate perfection, and a sake bar with over a hundred varieties to sample. This is a story of flavor, tradition, and the incredible dedication of Tokyo''s culinary artisans.'],
-        ['Backpacking Across Southeast Asia on a Budget', 'Many people dream of traveling through Southeast Asia, but worry about the cost. I''m here to tell you it''s not only possible, it''s an incredible adventure. For three months, with just a backpack and a strict budget, I navigated the chaos of Hanoi''s streets on a motorbike, slept in bungalows on Thai beaches for a few dollars a night, and ate some of the most delicious meals of my life from street vendors. This guide is packed with practical tips on how to manage your money without sacrificing the experience.'],
-        ['Trekking to Everest Base Camp: A Photo Diary', 'The trek to Everest Base Camp is as much a mental journey as a physical one. Each day brought new challenges and even more spectacular rewards. This photo diary captures the essence of the journey: the swinging suspension bridges draped in prayer flags, the warm smiles of the Sherpa people, the impossibly high peaks of the Himalayas, and the final, emotional arrival at the foot of the world''s tallest mountain. These images tell a story of perseverance, beauty, and the humbling power of nature.'],
-        ['Finding Paradise: A Guide to the Philippines', 'With over 7,000 islands, the Philippines is a paradise for beach lovers and adventure seekers. I spent a month island-hopping, and this is my guide to the best of the best. From swimming with whale sharks in Cebu and kayaking through the dramatic lagoons of El Nido to finding untouched, white-sand beaches in Siargao, I''ve compiled all the information you need to plan your own trip. Get ready for crystal-clear waters, vibrant coral reefs, and some of the friendliest people you will ever meet.'],
-        ['Chasing the Northern Lights in Iceland', 'Standing under a sky alive with the dancing green and purple hues of the Aurora Borealis is a moment that defies description. My week-long trip to Iceland in the dead of winter was a hunt for this celestial phenomenon. We drove through volcanic landscapes covered in snow, relaxed in the geothermal waters of the Blue Lagoon, and each night, we would head out into the darkness, hoping for a clear sky. This post shares the story of that chase, with tips on how to maximize your chances of seeing the incredible Northern Lights.'],
-        ['What I Learned from a Month in South America', 'South America is a continent of contrasts, from the arid Atacama Desert to the lush Amazon rainforest. A month-long journey through Peru and Bolivia was a profound learning experience. I learned about ancient civilizations at Machu Picchu, the resilience of the local people in the Andes, and the overwhelming beauty of the Uyuni Salt Flats. More than that, I learned about myself—about being adaptable, pushing my comfort zones, and finding beauty in simplicity. It was a trip that changed my perspective on the world.'],
-        ['A Food Lover''s Guide to Italy', 'To truly know Italy, you must eat your way through it. This guide is a celebration of regional Italian cuisine. We''ll explore the rich, meaty ragùs of Bologna, the simple yet perfect pizzas of Naples, the fresh seafood of Sicily, and the creamy risottos of Milan. This is more than just a list of restaurants; it''s a journey into the heart of Italian culture, where every meal is a passionate expression of history, family, and the joy of living. Prepare to be hungry!'],
-        ['Solo Travel in Vietnam: A Woman''s Perspective', 'Traveling solo as a woman can be intimidating, but Vietnam proved to be one of the most welcoming and safe destinations I''ve ever visited. This post is for any woman considering a solo trip. I''ll share my itinerary, tips on what to pack, how to navigate local transportation, and advice on staying safe while still immersing yourself in the culture. From the charming lantern-lit streets of Hoi An to the bustling energy of Ho Chi Minh City, Vietnam is an amazing place for a solo adventure.'],
-        ['The Food Markets of Mexico City', 'Mexico City is a food lover''s paradise, and its heart beats in its vibrant markets. This is a visual and culinary tour of my favorites, from the sprawling La Merced to the more curated Mercado Roma. I tasted tacos al pastor sliced fresh from the trompo, sampled exotic fruits I''d never seen before, and drank smoky mezcal with local vendors. Forget the fancy restaurants; the true taste of Mexico City is right here, in the organized chaos of its incredible markets.'],
-        ['Living with a Host Family in Japan', 'To truly understand a culture, you have to live it. For one month, I lived with a host family in a small town outside of Kyoto. I learned about the nuances of Japanese etiquette, helped cook traditional family meals, and participated in local festivals. It was a challenging, humbling, and incredibly rewarding experience that gave me a much deeper appreciation for Japanese culture than any hotel stay ever could. This is the story of my temporary Japanese family.'],
-        ['Getting Lost in the Souks of Marrakesh', 'The medina of Marrakesh is a dizzying, intoxicating labyrinth of narrow alleyways, and the best way to experience it is to simply get lost. Let your senses guide you. Follow the scent of spices to a hidden stall, the sound of hammering to the metalworkers'' quarter, and the vibrant colors to the dye pits. This blog post is a collection of photographs and moments from my time wandering without a map, discovering the magic and beauty hidden within the chaos of the souks.'],
-        ['Our Family Road Trip Across the USA', 'Packing two kids into a minivan for a cross-country road trip might sound crazy, but it was the adventure of a lifetime. We drove from New York to California, stopping at national parks, quirky roadside attractions, and small towns along the way. We saw the vastness of the Grand Canyon, listened to live jazz in New Orleans, and ate our weight in BBQ in Texas. This post is our family scrapbook, filled with tips for traveling with kids and proof that the journey is just as important as the destination.'],
-        ['The Most Beautiful Beaches in Thailand', 'Thailand is famous for its beaches, but with so many to choose from, where do you start? After extensive "research" (i.e., lounging on a lot of sand), I''ve compiled my list of the absolute best. From the dramatic limestone cliffs of Railay Beach to the tranquil, turquoise waters of Koh Lipe and the party atmosphere of Phi Phi, this guide covers it all. Whether you''re looking for a secluded cove or a lively beach bar, your perfect patch of sand is in here.'],
-        ['A Weekend in Paris for First-Timers', 'Paris can be overwhelming for a first-time visitor. This is my tried-and-tested itinerary for a perfect weekend that covers all the highlights without feeling rushed. We''ll visit the Louvre, see the Mona Lisa, climb the Eiffel Tower, and take a cruise on the Seine. But we''ll also make time for the simple Parisian pleasures: sipping coffee at a sidewalk café, eating a warm croissant from a local bakery, and simply strolling through the charming streets of Montmartre.']
-    ];
-
-    -- Helper data arrays
-    first_names TEXT[] := ARRAY['Liam', 'Olivia', 'Noah', 'Emma', 'Oliver', 'Charlotte', 'Elijah', 'Amelia', 'James', 'Ava', 'William', 'Sophia', 'Benjamin', 'Isabella', 'Lucas', 'Mia', 'Henry', 'Evelyn', 'Theodore', 'Harper'];
-    last_names TEXT[] := ARRAY['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson'];
-    destinations_by_theme JSONB := '{
-        "Italian Renaissance Journey": ["Rome,Italy", "Florence,Italy", "Venice,Italy"],
-        "Scandinavian Dreams": ["Copenhagen,Denmark", "Oslo,Norway", "Stockholm,Sweden"],
-        "Southeast Asian Adventure": ["Bangkok,Thailand", "Siem Reap,Cambodia", "Singapore,Singapore"],
-        "African Safari Expedition": ["Nairobi,Kenya", "Maasai Mara,Kenya", "Serengeti,Tanzania"],
-        "Mysteries of Ancient Japan": ["Tokyo,Japan", "Kyoto,Japan", "Hiroshima,Japan"],
-        "Patagonian Wilderness Trek": ["El Chaltén,Argentina", "Torres del Paine,Chile"],
-        "The Silk Road Odyssey": ["Samarkand,Uzbekistan", "Bukhara,Uzbekistan", "Bishkek,Kyrgyzstan"],
-        "Flavors of Spain: A Culinary Tour": ["Barcelona,Spain", "Valencia,Spain", "Seville,Spain"],
-        "Wonders of Ancient Egypt": ["Cairo,Egypt", "Luxor,Egypt", "Aswan,Egypt"],
-        "Greek Islands Cruise": ["Athens,Greece", "Santorini,Greece", "Mykonos,Greece"],
-        "New Zealand Adventure Quest": ["Queenstown,New Zealand", "Auckland,New Zealand", "Franz Josef,New Zealand"],
-        "Canadian Rockies by Rail": ["Vancouver,Canada", "Banff,Canada", "Jasper,Canada"],
-        "Vietnam & Cambodia Discovery": ["Hanoi,Vietnam", "Ha Long Bay,Vietnam", "Siem Reap,Cambodia"],
-        "Peru: Land of the Incas": ["Cusco,Peru", "Machu Picchu,Peru", "Lima,Peru"],
-        "Moroccan Kasbahs & Deserts": ["Marrakesh,Morocco", "Fes,Morocco", "Sahara Desert,Morocco"]
-    }';
-    review_contents TEXT[] := ARRAY['An absolutely unforgettable experience! The guide was fantastic, knowledgeable, and made the trip special.', 'A well-organized tour with a perfect itinerary. Everything ran like clockwork. Highly recommended!', 'A fantastic trip from start to finish. The accommodations were excellent and the sights were breathtaking.', 'I would recommend this tour to anyone looking for adventure. It exceeded all my expectations.', 'Good value for the price. We covered a lot of ground and saw so many incredible places.'];
-    comment_contents TEXT[] := ARRAY['Great post, this is so helpful for planning my own trip!', 'Your photos are absolutely stunning! Looks like you had an amazing time.', 'Thanks for sharing these tips. I''ll definitely keep them in mind.', 'This makes me want to book a flight right now! So inspiring.', 'I had a similar experience when I visited last year. Such a beautiful place.'];
-    hotel_names TEXT[] := ARRAY['Grand', 'Plaza', 'Royal', 'City Center', 'Park View', 'Riverside', 'Central', 'Imperial', 'Metropolitan'];
-    hotel_types TEXT[] := ARRAY['hotel', 'hostel', 'guesthouse'];
-    airlines TEXT[] := ARRAY['Global Airways', 'Horizon Jet', 'SkyLink Airlines', 'Continental Connect', 'Apex Air'];
-
-    -- Helper variables
-    fname TEXT; lname TEXT; tour_id_temp UUID; user_id_temp UUID; post_id_temp UUID; item_id_temp UUID; item_type_temp TEXT;
-    dest_text TEXT; dest_parts TEXT[]; dest_array TEXT[]; num_stops INTEGER; stop_counter INTEGER;
-    dep_dest_id UUID; arr_dest_id UUID;
-    content_slice TEXT[];
-    content_index INTEGER;
-    attraction_category_temp TEXT;
-BEGIN
-    -- Temp tables to hold generated IDs for efficient relationship creation
-    CREATE TEMP TABLE temp_user_ids (id UUID) ON COMMIT DROP;
-    CREATE TEMP TABLE temp_tour_ids (id UUID) ON COMMIT DROP;
-    CREATE TEMP TABLE temp_attraction_post_ids (id UUID) ON COMMIT DROP;
-    CREATE TEMP TABLE temp_user_post_ids (id UUID) ON COMMIT DROP;
-    CREATE TEMP TABLE temp_currency_codes (code CHAR(3)) ON COMMIT DROP;
-    CREATE TEMP TABLE temp_all_favoritable_items (id UUID, type TEXT) ON COMMIT DROP;
-
-
-    -- =================================================================
-    --  2. SEED STATIC & ESSENTIAL DATA
-    -- =================================================================
-    -- Seed Currencies
-    INSERT INTO currencies (code, name, symbol) VALUES ('USD', 'US Dollar', '$'), ('EUR', 'Euro', '€'), ('GBP', 'British Pound', '£'), ('JPY', 'Japanese Yen', '¥') ON CONFLICT (code) DO NOTHING;
-    INSERT INTO temp_currency_codes SELECT code FROM currencies;
-
-    -- Create dedicated Admin User
-    INSERT INTO users (first_name, last_name, email, username, password, mobile, role, is_active, email_verified_at)
-    VALUES ('Admin', 'User', 'admin@example.com', 'admin', '$2a$12$.mbqwDuqyUdJAtc1ixCsP.SPPKXnry2gojRzQck56wzbdvLxT8zjS', '555-0000-ADMIN', 'admin', true, NOW()) ON CONFLICT (username) DO NOTHING;
-
-
-    -- =================================================================
-    --  3. SEED USERS (200+)
-    -- =================================================================
-    FOR i IN 1..250 LOOP
-        fname := first_names[floor(random() * array_length(first_names, 1)) + 1];
-        lname := last_names[floor(random() * array_length(last_names, 1)) + 1];
-        INSERT INTO users (username, email, password, first_name, last_name, mobile, role, is_active, email_verified_at, last_login_at)
-        VALUES (LOWER(fname || lname || i), LOWER(fname || '.' || lname || i) || '@example.com', 'bcrypt_hashed_password', fname, lname, '555-' || LPAD(i::text, 7, '0'), CASE WHEN i % 50 = 0 THEN 'moderator' ELSE 'user' END, (random() > 0.1), CASE WHEN random() > 0.3 THEN NOW() - (random() * 300 || ' days')::interval ELSE NULL END, NOW() - (random() * 60 || ' days')::interval);
-    END LOOP;
-    INSERT INTO temp_user_ids SELECT id FROM users;
-
-
-    -- =================================================================
-    --  4. SEED THEMATIC TOURS AND RELATED DATA (200+)
-    -- =================================================================
-    FOR i IN 1..200 LOOP
-        content_index := floor(random() * array_length(tour_content, 1)) + 1;
-        content_slice := tour_content[content_index:content_index][1];
-        dest_array := ARRAY(SELECT jsonb_array_elements_text(destinations_by_theme -> content_slice[1]));
-
-        INSERT INTO travel_plans (name, description, start_date, duration_days, price_minor, currency_code, capacity, cover_image_url, plan_type)
-        VALUES (content_slice[1], content_slice[2], '2026-01-15'::date + (i * 10 || ' days')::interval, (array_length(dest_array, 1) * 3) + 2, (floor(random() * 5000) + 2000) * 100, (SELECT code FROM temp_currency_codes ORDER BY random() LIMIT 1), floor(random() * 20) + 10, '/images/tours/placeholder.jpg', 'tour')
-        RETURNING id INTO tour_id_temp;
-        INSERT INTO temp_tour_ids VALUES(tour_id_temp);
-
-        num_stops := array_length(dest_array, 1);
-        FOR stop_counter IN 1..num_stops LOOP
-            dest_text := dest_array[stop_counter];
-            dest_parts := string_to_array(dest_text, ',');
-            INSERT INTO tour_destinations (tour_id, city_name, country_name, stop_order, duration_days) VALUES (tour_id_temp, dest_parts[1], dest_parts[2], stop_counter, floor(random() * 2) + 2) RETURNING id INTO dep_dest_id;
-            INSERT INTO tour_accommodations (tour_id, destination_id, name, type, rating, price_minor, currency_code) VALUES (tour_id_temp, dep_dest_id, 'The ' || hotel_names[floor(random() * array_length(hotel_names, 1)) + 1] || ' ' || dest_parts[1], hotel_types[floor(random() * array_length(hotel_types, 1)) + 1], ROUND((random() * 2 + 3)::numeric, 1), (floor(random() * 200) + 80) * 100, (SELECT code FROM temp_currency_codes ORDER BY random() LIMIT 1));
-            IF stop_counter > 1 THEN
-                SELECT id INTO arr_dest_id FROM tour_destinations WHERE tour_id = tour_id_temp AND stop_order = stop_counter - 1;
-                INSERT INTO tour_flights (tour_id, departs_from_destination_id, arrives_at_destination_id, airline, flight_number, price_minor, currency_code) VALUES (tour_id_temp, arr_dest_id, dep_dest_id, airlines[floor(random() * array_length(airlines, 1)) + 1], 'FL' || (1000 + floor(random()*9000))::text, (floor(random()*300)+150)*100, (SELECT code FROM temp_currency_codes ORDER BY random() LIMIT 1));
-            END IF;
-        END LOOP;
-    END LOOP;
-
-
-    -- =================================================================
-    --  5. SEED ATTRACTION POSTS & PHOTOS (200+)
-    -- =================================================================
-    FOR i IN 1..200 LOOP
-        content_index := floor(random() * array_length(attraction_content, 1)) + 1;
-        content_slice := attraction_content[content_index:content_index][1];
-        attraction_category_temp := CASE WHEN content_slice[1] ILIKE ANY (ARRAY['%Museum%', '%Louvre%', '%Art%']) THEN 'Art & Culture' WHEN content_slice[1] ILIKE ANY (ARRAY['%Colosseum%', '%Wall%', '%Pyramids%', '%Acropolis%', '%Petra%', '%Angkor Wat%', '%Shrines%']) THEN 'History' WHEN content_slice[1] ILIKE ANY (ARRAY['%Canyon%', '%Falls%', '%Sunrise%', '%Balloon%']) THEN 'Nature' WHEN content_slice[1] ILIKE ANY (ARRAY['%Market%', '%Tasting%']) THEN 'Food' ELSE 'Landmark' END;
-        
-        WITH inserted AS (INSERT INTO attraction_posts(title, content, location, category) VALUES (content_slice[1], content_slice[2], 'Global', attraction_category_temp) RETURNING id)
-        INSERT INTO temp_attraction_post_ids(id) SELECT id FROM inserted;
-    END LOOP;
-    INSERT INTO attraction_post_photos(post_id, image_url, caption) SELECT id, '/images/attractions/placeholder.jpg', 'A placeholder image.' FROM temp_attraction_post_ids;
-
-
-    -- =================================================================
-    --  6. SEED USER POSTS & PHOTOS (200+)
-    -- =================================================================
-    FOR i IN 1..250 LOOP
-        content_index := floor(random() * array_length(user_post_content, 1)) + 1;
-        content_slice := user_post_content[content_index:content_index][1];
-
-        WITH inserted AS (INSERT INTO user_posts(user_id, title, content, category) VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), content_slice[1], content_slice[2], CASE WHEN random() > 0.5 THEN 'Adventure' ELSE 'Culinary' END) RETURNING id)
-        INSERT INTO temp_user_post_ids(id) SELECT id FROM inserted;
-    END LOOP;
-    INSERT INTO user_post_photos(post_id, image_url, caption) SELECT id, '/images/posts/placeholder.jpg', 'A placeholder image.' FROM temp_user_post_ids;
-
-
-    -- =================================================================
-    --  7. SEED TOUR REVIEWS (300+) & UPDATE TOUR RATINGS
-    -- =================================================================
-    FOR i IN 1..300 LOOP
-        user_id_temp := (SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1);
-        tour_id_temp := (SELECT id FROM temp_tour_ids ORDER BY random() LIMIT 1);
-        INSERT INTO tour_reviews(user_id, tour_id, rating, content) VALUES (user_id_temp, tour_id_temp, (floor(random() * 3) + 3)::int, review_contents[floor(random() * array_length(review_contents, 1)) + 1]) ON CONFLICT (user_id, tour_id) DO NOTHING;
-    END LOOP;
-
-    UPDATE travel_plans SET rating_count = sub.count, rating = sub.avg_rating FROM (SELECT tour_id, COUNT(*) as count, AVG(rating) as avg_rating FROM tour_reviews GROUP BY tour_id) AS sub WHERE id = sub.tour_id;
-
-
-    -- =================================================================
-    --  8. SEED USER POST & ATTRACTION COMMENTS (500+)
-    -- =================================================================
-    FOR i IN 1..300 LOOP
-        INSERT INTO user_post_comments(user_id, post_id, content) VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), (SELECT id FROM temp_user_post_ids ORDER BY random() LIMIT 1), comment_contents[floor(random() * array_length(comment_contents, 1)) + 1]);
-    END LOOP;
-    FOR i IN 1..200 LOOP
-        INSERT INTO attraction_post_comments(user_id, post_id, content) VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), (SELECT id FROM temp_attraction_post_ids ORDER BY random() LIMIT 1), comment_contents[floor(random() * array_length(comment_contents, 1)) + 1]);
-    END LOOP;
-
-
-    -- =================================================================
-    --  9. SEED USER FAVORITES (400+)
-    -- =================================================================
-    INSERT INTO temp_all_favoritable_items (id, type) SELECT id, 'tour' FROM temp_tour_ids;
-    INSERT INTO temp_all_favoritable_items (id, type) SELECT id, 'post' FROM temp_user_post_ids;
-    INSERT INTO temp_all_favoritable_items (id, type) SELECT id, 'attraction' FROM temp_attraction_post_ids;
-    FOR i IN 1..400 LOOP
-        SELECT id, type INTO item_id_temp, item_type_temp FROM temp_all_favoritable_items ORDER BY random() LIMIT 1;
-        INSERT INTO user_favorites (user_id, item_id, item_type) VALUES ((SELECT id FROM temp_user_ids ORDER BY random() LIMIT 1), item_id_temp, item_type_temp) ON CONFLICT (user_id, item_id, item_type) DO NOTHING;
-    END LOOP;
-
-    RAISE NOTICE 'Mock data seeding completed successfully!';
-
-END $$;
+INSERT INTO
+    users (
+        first_name,
+        last_name,
+        email,
+        username,
+        password,
+        mobile,
+        role,
+        is_active,
+        email_verified_at
+    )
+VALUES (
+        'Admin',
+        'User',
+        'admin@example.com',
+        'admin',
+        '$2a$12$.mbqwDuqyUdJAtc1ixCsP.SPPKXnry2gojRzQck56wzbdvLxT8zjS',
+        '555-0000-ADMIN',
+        'admin',
+        true,
+        NOW()
+    ) ON CONFLICT (username) DO NOTHING;

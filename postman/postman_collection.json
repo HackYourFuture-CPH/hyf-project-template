@@ -588,6 +588,25 @@
 					"response": []
 				},
 				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get My Blogposts",
 					"request": {
 						"method": "GET",
@@ -664,6 +683,34 @@
 							"path": [
 								"api",
 								"blogposts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Own Blogpost",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"My Updated Blogpost Title\",\n    \"content\": \"This is the new, updated content for my blogpost.\",\n    \"category\": \"Technology\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts/{{postId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts",
+								"{{postId}}"
 							]
 						}
 					},
@@ -836,14 +883,13 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "postImage",
-											"type": "file",
-											"src": []
+									"mode": "raw",
+									"raw": "{\n    \"image_url\": \"https://utfs.io/f/your-uploaded-image-id.jpg\",\n    \"caption\": \"A beautiful view from my trip!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
 								"url": {
 									"raw": "{{baseUrl}}/api/blogposts/{{postId}}/photos",
@@ -1017,6 +1063,31 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "File Uploads",
+			"item": [
+				{
+					"name": "Handle UploadThing Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/uploadthing",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"uploadthing"
+							]
+						},
+						"description": "This endpoint is called automatically by the UploadThing client library on the frontend to get permission to upload. You do not need to call this manually."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for handling secure file uploads via UploadThing."
 		},
 		{
 			"name": "Tours",
@@ -2075,7 +2146,7 @@
 		},
 		{
 			"key": "tourId",
-			"value": "713eb327-468a-4c9-babf-883bb27d4d6e"
+			"value": "713eb327-468a-48c9-babf-883bb27d4d6e"
 		},
 		{
 			"key": "postId",

@@ -48,9 +48,7 @@ export default function AttractionDetailsPage() {
           <div className={styles.imageWrapper}>
             <Image
               src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
-              alt={
-                blog.title
-              }
+              alt={blog.title}
               fill
               style={{ objectFit: "cover" }}
               className={styles.image}
