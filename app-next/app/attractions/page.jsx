@@ -3,6 +3,7 @@ import AttractionCard from "@/components/AttractionCard/AttractionCard";
 import styles from "./attractions.module.css";
 import { use, useEffect, useState } from "react";
 import api from "../../utils/api.js";
+import Link from "next/link";
 
 export default function AttractionsPage() {
   const [search, setSearch] = useState("");
@@ -10,6 +11,10 @@ export default function AttractionsPage() {
   const [locations, setLocations] = useState([]);
   const [sortKey, setSortKey] = useState("");
   const [filterDestination, setFilterDestination] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   // simulate API fetch while there is no DB data
 
@@ -22,12 +27,26 @@ export default function AttractionsPage() {
         searchText = `?location=${location}`;
       }
 
-      const response = await fetch(api("/attractions" + searchText));
+      // add pagination params
+      const params = new URLSearchParams();
+      params.append("page", String(page));
+      params.append("limit", String(limit));
+      if (searchText) params.append("search", searchText);
+      if (location && !searchText) params.append("location", location);
+
+      const response = await fetch(api(`/attractions?${params.toString()}`));
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const attractionData = await response.json();
-      setAttractionCardData(attractionData.data || []);
+      const list = attractionData.data || [];
+      setAttractionCardData(list);
+      const apiTotalPages =
+        attractionData.pagination?.totalPages ??
+        Math.ceil((attractionData.pagination?.totalItems ?? list.length) / limit);
+      const apiTotalItems = attractionData.pagination?.totalItems ?? list.length;
+      setTotalPages(Number.isFinite(Number(apiTotalPages)) ? Number(apiTotalPages) : 1);
+      setTotalItems(Number.isFinite(Number(apiTotalItems)) ? Number(apiTotalItems) : list.length);
     } catch (error) {
       console.error("Error fetching attraction cards:", error);
     }
@@ -53,11 +72,13 @@ export default function AttractionsPage() {
 
   useEffect(() => {
     // Filter and sort logic
+    setPage(1);
     fetchAttractionCards(search, "");
   }, [search]);
 
   useEffect(() => {
     if (sortKey) {
+      setPage(1);
       fetchAttractionCards("", sortKey);
     }
   }, [sortKey]);
@@ -66,9 +87,17 @@ export default function AttractionsPage() {
     fetchAttractionCards();
   }, [filterDestination]);
 
+  useEffect(() => {
+    // refetch when page or limit changes
+    fetchAttractionCards(search, filterDestination);
+  }, [page, limit]);
+
   return (
     <>
       <div className={styles.pageWrapper}>
+        <Link className={styles.backButton} href="/" aria-label="Back to home">
+          ← Back
+        </Link>
         <div className={styles.titleWrapper}>
           <h1 className={styles.title}>All Attractions</h1>
         </div>
@@ -89,7 +118,7 @@ export default function AttractionsPage() {
               fetchAttractionCards(); // reload default data
             }}
           >
-             Clear
+            Clear
           </button>
 
           <select
@@ -109,6 +138,28 @@ export default function AttractionsPage() {
           {attractionCardData.map((card) => (
             <AttractionCard key={card.id} card={card} />
           ))}
+        </div>
+        {/* Pagination controls */}
+        <div className={styles.paginationContainer}>
+          <button
+            className={styles.paginationBtn}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            aria-label="Previous page"
+          >
+            Prev
+          </button>
+          <div>
+            Page {page} of {totalPages} {totalItems ? `(${totalItems} items)` : ""}
+          </div>
+          <button
+            className={styles.paginationBtn}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            aria-label="Next page"
+          >
+            Next
+          </button>
         </div>
       </div>
     </>
