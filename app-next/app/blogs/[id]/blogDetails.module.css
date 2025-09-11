@@ -109,21 +109,45 @@
 }
 
 .backButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #444;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: color 0.2s ease;
+  display: inline-block;
+  font-family: "Archivo", sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2583f1;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+  transform-origin: left center;
+}
+
+/* override all link states */
+.backButton:link,
+.backButton:visited,
+.backButton:hover,
+.backButton:active,
+.backButton:focus {
+  color: #2583f1;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .backButton:hover {
-  color: #b0abab;
+  transform: scale(1.05);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.9);
+  outline-offset: 2px;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 900px) {

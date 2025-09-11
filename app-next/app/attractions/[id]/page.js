@@ -7,6 +7,7 @@ import PostMeta from "@/components/PostMeta/PostMeta";
 import Comment from "@/components/CommentSection/Comment";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function AttractionDetailsPage() {
   const router = useRouter();
@@ -16,9 +17,7 @@ export default function AttractionDetailsPage() {
   // Function to fetch data from the API
   async function fetchSingleAttraction() {
     try {
-      const response = await fetch(
-        ` http://localhost:3001/api/attractions/${id}`
-      );
+      const response = await fetch(` http://localhost:3001/api/attractions/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -38,10 +37,9 @@ export default function AttractionDetailsPage() {
   return (
     <>
       <div className={`container ${styles.contentBox}`}>
-        <button className={styles.backButton} onClick={() => router.back()}>
-          <ArrowLeft size={18} />
-          Back
-        </button>
+        <Link className={styles.backButton} href="/" aria-label="Back to home">
+          ← Back
+        </Link>
       </div>
       <div className={styles.pageWrapper}>
         <div className={styles.travelCard}>

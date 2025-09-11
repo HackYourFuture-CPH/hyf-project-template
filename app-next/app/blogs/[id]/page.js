@@ -7,6 +7,7 @@ import PostMeta from "@/components/PostMeta/PostMeta";
 import Comment from "@/components/CommentSection/Comment";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function AttractionDetailsPage() {
   const router = useRouter();
@@ -14,11 +15,9 @@ export default function AttractionDetailsPage() {
   const [blog, setBlog] = useState(null);
 
   // Function to fetch data from the API
-  async function fetchSingleblog() {
+  async function fetchSingleBlog() {
     try {
-      const response = await fetch(
-        ` http://localhost:3001/api/blogposts/${id}`
-      );
+      const response = await fetch(` http://localhost:3001/api/blogposts/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -30,7 +29,7 @@ export default function AttractionDetailsPage() {
   }
 
   useEffect(() => {
-    fetchSingleblog();
+    fetchSingleBlog();
   }, []);
 
   if (!blog) return <p>Loading...</p>;
@@ -38,19 +37,16 @@ export default function AttractionDetailsPage() {
   return (
     <>
       <div className={`container ${styles.contentBox}`}>
-        <button className={styles.backButton} onClick={() => router.back()}>
-          <ArrowLeft size={18} />
-          Back
-        </button>
+        <Link className={styles.backButton} href="/" aria-label="Back to home">
+          ← Back
+        </Link>
       </div>
       <div className={styles.pageWrapper}>
         <div className={styles.travelCard}>
           <div className={styles.imageWrapper}>
             <Image
               src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
-              alt={
-                blog.title
-              }
+              alt={blog.title}
               fill
               style={{ objectFit: "cover" }}
               className={styles.image}
