@@ -9,7 +9,7 @@ export default function AttractionCard({ card }) {
       <div className={styles.travelCard}>
         <div className={styles.imageWrapper}>
           <Image
-            src="https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
+            src={card.cover_image_url}
             alt={card.destination || "Blog image"}
             fill
             style={{ objectFit: "cover" }}

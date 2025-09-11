@@ -17,7 +17,12 @@ router.get("/", async (req, res) => {
       limit = 10,
     } = req.query;
 
-    const query = knex("attraction_posts as ap").select("*");
+    const query = knex("attraction_posts as ap").select(
+      "ap.*",
+      knex.raw(
+        `(SELECT app.image_url FROM attraction_post_photos as app WHERE app.post_id = ap.id ORDER BY app.uploaded_at ASC LIMIT 1) as cover_image_url`
+      )
+    );
     const countQuery = knex("attraction_posts as ap");
 
     // Apply search filter to title, content, and location
@@ -44,7 +49,6 @@ router.get("/", async (req, res) => {
       countQuery.where("ap.category", "ilike", `%${category}%`);
     }
 
-    // Get total count for pagination before sorting and limiting
     const totalResult = await countQuery.count("* as count").first();
     const total = parseInt(totalResult.count);
 

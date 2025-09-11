@@ -28,7 +28,10 @@ router.get("/", optionalAuth, async (req, res) => {
         "p.created_at",
         "u.username",
         "u.first_name",
-        "u.last_name"
+        "u.last_name",
+        knex.raw(
+          `(SELECT upp.image_url FROM user_post_photos as upp WHERE upp.post_id = p.id ORDER BY upp.uploaded_at ASC LIMIT 1) as cover_image_url`
+        )
       )
       .join("users as u", "p.user_id", "u.id");
 
@@ -87,11 +90,37 @@ router.get("/", optionalAuth, async (req, res) => {
     });
   }
 });
+
+// GET /api/blogposts/categories - Get all unique categories
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await knex("user_posts")
+      .distinct("category")
+      .orderBy("category");
+    res.json({
+      message: "Categories retrieved successfully.",
+      data: categories.map((cat) => cat.category).filter(Boolean), // Filter out null/empty categories
+    });
+  } catch (error) {
+    console.error("Error fetching blogpost categories:", error);
+    res.status(500).json({
+      error: "Category retrieval failed",
+      message: "We encountered an error while loading categories.",
+    });
+  }
+});
+
 // GET /api/blogposts/my-posts - Get all posts for the logged-in user
 router.get("/my-posts", authenticateToken, async (req, res) => {
   const userId = req.user.id || req.user.sub;
   try {
-    const myposts = await knex("user_posts")
+    const myposts = await knex("user_posts as p")
+      .select(
+        "p.*",
+        knex.raw(
+          `(SELECT upp.image_url FROM user_post_photos as upp WHERE upp.post_id = p.id ORDER BY upp.uploaded_at ASC LIMIT 1) as cover_image_url`
+        )
+      )
       .where({ user_id: userId })
       .orderBy("created_at", "desc");
     res.json({
@@ -104,7 +133,7 @@ router.get("/my-posts", authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/blogposts/:id - Get a single post by ID with photos and comments
+// GET /api/blogposts/:id - Get a single post by ID
 router.get("/:id", optionalAuth, async (req, res) => {
   try {
     const { id } = req.params;

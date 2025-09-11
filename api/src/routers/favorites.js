@@ -9,7 +9,7 @@ const favoritesRouter = express.Router();
 // Apply authentication to all routes in this file.
 favoritesRouter.use(authenticateToken);
 
-// Helper to check if the item being favorited actually exists in the database.
+// Helper to check if the item exists in the database.
 const itemExists = async (item_id, item_type) => {
   let tableName;
   switch (item_type) {
@@ -26,8 +26,61 @@ const itemExists = async (item_id, item_type) => {
       return false;
   }
   const item = await knex(tableName).where({ id: item_id }).first();
-  return !!item; // Returns true if item is found, false otherwise.
+  return !!item;
 };
+
+// GET /api/favorites - Get all favorites for the logged-in user
+favoritesRouter.get("/", async (req, res) => {
+  const userId = req.user.id || req.user.sub;
+  try {
+    const favorites = await knex("user_favorites as uf")
+      .select(
+        "uf.item_id",
+        "uf.item_type",
+        "uf.created_at",
+        knex.raw(`CASE
+              WHEN uf.item_type = 'tour' THEN tp.name
+              WHEN uf.item_type = 'post' THEN up.title
+              WHEN uf.item_type = 'attraction' THEN ap.title
+            END as title`),
+        knex.raw(`CASE
+              WHEN uf.item_type = 'tour' THEN tp.cover_image_url
+              ELSE null
+            END as image_url`)
+      )
+      .leftJoin("travel_plans as tp", function () {
+        this.on("tp.id", "=", "uf.item_id").andOn(
+          "uf.item_type",
+          "=",
+          knex.raw("'tour'")
+        );
+      })
+      .leftJoin("user_posts as up", function () {
+        this.on("up.id", "=", "uf.item_id").andOn(
+          "uf.item_type",
+          "=",
+          knex.raw("'post'")
+        );
+      })
+      .leftJoin("attraction_posts as ap", function () {
+        this.on("ap.id", "=", "uf.item_id").andOn(
+          "uf.item_type",
+          "=",
+          knex.raw("'attraction'")
+        );
+      })
+      .where("uf.user_id", userId)
+      .orderBy("uf.created_at", "desc");
+
+    res.json({
+      message: "Your favorites have been retrieved successfully.",
+      data: favorites,
+    });
+  } catch (error) {
+    console.error("Error fetching user favorites:", error);
+    res.status(500).json({ error: "Failed to retrieve your favorites." });
+  }
+});
 
 // POST /api/favorites - Add a new favorite
 favoritesRouter.post("/", validateRequest(favoriteSchema), async (req, res) => {
@@ -35,7 +88,7 @@ favoritesRouter.post("/", validateRequest(favoriteSchema), async (req, res) => {
     const userId = req.user.id || req.user.sub;
     const { item_id, item_type } = req.validatedData;
 
-    // Verify that the item the user is trying to favorite actually exists.
+    // Verify that the item  exists.
     if (!(await itemExists(item_id, item_type))) {
       return res.status(404).json({
         error: "Not Found",
@@ -74,7 +127,6 @@ favoritesRouter.delete("/:itemId", async (req, res) => {
     const userId = req.user.id || req.user.sub;
     const { itemId } = req.params;
 
-    // The .where clause ensures a user can only delete their own favorites.
     const count = await knex("user_favorites")
       .where({ user_id: userId, item_id: itemId })
       .del();

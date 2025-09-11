@@ -35,6 +35,7 @@
     "multer": "^2.0.2",
     "npm-run-all": "^4.1.5",
     "pg": "^8.11.5",
+    "uploadthing": "^7.7.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {
