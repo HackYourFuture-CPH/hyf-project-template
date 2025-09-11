@@ -17,7 +17,7 @@ export default function TripPage() {
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState("");
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(9);
+  const [limit, setLimit] = useState(12);
   const [error, setError] = useState(null);
 
   async function fetchTours() {

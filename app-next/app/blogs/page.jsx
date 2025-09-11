@@ -4,12 +4,13 @@ import styles from "./BlogPost.module.css";
 import { useEffect, useState } from "react";
 import api from "../../utils/api.js";
 import BlogCard from "@/components/BlogCard/BlogCard";
+import Link from "next/link";
 
 export default function BlogsPage() {
   const [search, setSearch] = useState("");
   const [allBlogsData, setAllBlogsData] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(9);
+  const [limit, setLimit] = useState(12);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -57,6 +58,9 @@ export default function BlogsPage() {
 
   return (
     <div className={styles.pageWrapper}>
+      <Link className={styles.backButton} href="/" aria-label="Back to home">
+        ← Back
+      </Link>
       <div className={styles.titleWrapper}>
         <h1 className={styles.title}>All Blogs</h1>
       </div>

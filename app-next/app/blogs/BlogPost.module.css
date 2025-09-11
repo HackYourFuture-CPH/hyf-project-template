@@ -1,12 +1,45 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
 
 .pageWrapper {
   flex-grow: 1;
   max-width: 1200px;
-  margin: 5em auto;
   padding: 2rem;
   font-family: "Archivo", sans-serif;
+  margin-top: 92px;
+}
+
+.backButton {
+  display: inline-block;
+  font-family: "Archivo", sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2583f1;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+  transform-origin: left center;
+}
+
+/* override all link states */
+.backButton:link,
+.backButton:visited,
+.backButton:hover,
+.backButton:active,
+.backButton:focus {
+  color: #2583f1;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.backButton:hover {
+  transform: scale(1.05);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.9);
+  outline-offset: 2px;
 }
 
 .titleWrapper {
