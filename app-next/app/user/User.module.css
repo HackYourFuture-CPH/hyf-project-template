@@ -50,6 +50,7 @@
   overflow: hidden;
   background: #f8fafc;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -78,6 +79,8 @@
 }
 
 .primary {
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
   display: inline-block;
   padding: 8px 14px;
   border-radius: 8px;
@@ -85,6 +88,7 @@
   color: #fff;
   text-decoration: none;
   font-weight: 700;
+  border: none;
 }
 
 /* dashboard and sidebar additions */
@@ -210,8 +214,123 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 12px;
+}
+
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.passwordContainer {
+  display: flex;
+}
+
+.secondary {
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  font-weight: 700;
+  background: #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #111827;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 6px;
+}
+
+/* Profile edit specific styles */
+.profileForm label {
+  display: block;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.profileForm input[type="text"],
+.profileForm input[type="tel"],
+.profileForm input[type="email"],
+.profileForm input[name="first_name"],
+.profileForm input[name="last_name"],
+.profileForm input[name="mobile"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee8f5;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.profileForm input[type="file"] {
+  margin-top: 8px;
+}
+
+.formActions .primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.formActions .primary[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avatarWrap .avatar {
+  border-radius: 12px;
+}
+
+.avatarActions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.avatarActions input[type="file"] {
+  background: #f8fafc;
+  border: 1px dashed #e6eef8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.uploadButton {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.hiddenFileInput {
+  display: none;
 }
 
 .card {
@@ -240,6 +359,138 @@
   display: flex;
   gap: 18px;
   align-items: center;
+}
+
+/* Modal styles for Create Post */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 24px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.3);
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modalTitle {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.modal .field {
+  margin-bottom: 12px;
+}
+
+.modal textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+  min-height: 140px;
+  resize: vertical;
+}
+
+.modal input[type="text"],
+.modal input[type="email"],
+.modal input[type="tel"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+}
+
+/* Make modal form look like the profile edit form */
+.modal label {
+  display: block;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.modal .field input[type="text"],
+.modal .field input[type="email"],
+.modal .field input[type="tel"],
+.modal .field input[type="search"],
+.modal .field select,
+.modal .field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee8f5;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal .field input:focus,
+.modal .field textarea:focus,
+.modal .field select:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
+}
+
+.modal .error {
+  color: #b91c1c;
+  background: #fff1f2;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+.modal .formActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.modal .primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal .secondary {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal .primary[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media (max-width: 700px) {

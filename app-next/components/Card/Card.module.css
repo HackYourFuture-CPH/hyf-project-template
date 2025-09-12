@@ -124,7 +124,9 @@
   padding-top: 1rem;
   border-top: 1px solid #f3f4f6;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .heart {
@@ -139,6 +141,17 @@
 
 .fav {
   color: #ef4444;
+}
+
+.primary {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 900px) {

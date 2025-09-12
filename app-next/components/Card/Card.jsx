@@ -2,10 +2,11 @@
 import styles from "./Card.module.css";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export default function Card({ card, onFavoriteChange }) {
+export default function Card({ card, onFavoriteChange, viewLink }) {
   const [favourite, setFavourite] = useState(!!card.favourite);
 
   useEffect(() => {
@@ -99,7 +100,8 @@ export default function Card({ card, onFavoriteChange }) {
           method: "DELETE",
           headers,
         });
-        if (!res.ok) throw new Error("Failed to remove favorite");
+        // If the backend returns 404 it means the favorite is already gone — treat as success.
+        if (!res.ok && res.status !== 404) throw new Error("Failed to remove favorite");
       }
     } catch (err) {
       // revert optimistic update on error
@@ -160,6 +162,12 @@ export default function Card({ card, onFavoriteChange }) {
         <p className={styles.description}>{card?.destination ?? card?.description ?? ""}</p>
 
         <div className={styles.cardFooter}>
+          {viewLink ? (
+            <Link href={viewLink} className={styles.primary}>
+              View
+            </Link>
+          ) : null}
+
           <button
             className={`${styles.heart} ${favourite ? styles.fav : ""}`}
             onClick={toggleFavorite}
