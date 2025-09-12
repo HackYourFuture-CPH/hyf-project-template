@@ -50,6 +50,7 @@
   overflow: hidden;
   background: #f8fafc;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -223,6 +224,109 @@
 .cardActions {
   display: flex;
   justify-content: flex-end;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.passwordContainer {
+  display: flex;
+}
+
+.secondary {
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  font-weight: 700;
+  background: #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #111827;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 6px;
+}
+
+/* Profile edit specific styles */
+.profileForm label {
+  display: block;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.profileForm input[type="text"],
+.profileForm input[type="tel"],
+.profileForm input[type="email"],
+.profileForm input[name="first_name"],
+.profileForm input[name="last_name"],
+.profileForm input[name="mobile"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee8f5;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.profileForm input[type="file"] {
+  margin-top: 8px;
+}
+
+.formActions .primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.formActions .primary[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avatarWrap .avatar {
+  border-radius: 12px;
+}
+
+.avatarActions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.avatarActions input[type="file"] {
+  background: #f8fafc;
+  border: 1px dashed #e6eef8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.uploadButton {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.hiddenFileInput {
+  display: none;
 }
 
 .card {

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./User.module.css";
 import Card from "../../components/Card/Card";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 export default function UserPage() {
   // local UI state
   const [currentSection, setCurrentSection] = useState("summary");
@@ -193,9 +194,6 @@ export default function UserPage() {
           const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
           if (mounted) setFavorites(saved);
         }
-
-        // 5) Reviews - backend exposes tour reviews under /api/tours/:id/reviews; no user-wide endpoint
-        // We'll skip fetching reviews globally and show counts derived from posts/tours if needed.
       } catch (err) {
         if (mounted) setError(err.message || "Failed to load dashboard data");
       } finally {
@@ -358,35 +356,348 @@ export default function UserPage() {
 
     return (
       <div className={styles.profileCard}>
-        <div className={styles.profileRow}>
-          <div className={styles.avatarWrap}>
-            {user.profile_image ? (
-              <Image
-                src={user.profile_image}
-                alt="avatar"
-                width={120}
-                height={120}
-                className={styles.avatar}
+        <ProfileView />
+      </div>
+    );
+  }
+
+  // ProfileView component: shows view or edit mode
+  function ProfileView() {
+    const [editing, setEditing] = useState(false);
+    const [form, setForm] = useState({
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      mobile: user.mobile || "",
+      profile_image: user.profile_image || "",
+    });
+    const [imagePreview, setImagePreview] = useState(user.profile_image || "");
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState("");
+    const [changingPassword, setChangingPassword] = useState(false);
+    const [pwForm, setPwForm] = useState({
+      current_password: "",
+      new_password: "",
+      new_password_confirmation: "",
+    });
+    const [pwSubmitting, setPwSubmitting] = useState(false);
+    const [pwMessage, setPwMessage] = useState("");
+
+    useEffect(() => {
+      // keep form in sync if user changes (outer updates)
+      setForm({
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        mobile: user.mobile || "",
+        profile_image: user.profile_image || "",
+      });
+      setImagePreview(user.profile_image || "");
+    }, [user]);
+
+    function onChange(e) {
+      const { name, value } = e.target;
+      setForm((f) => ({ ...f, [name]: value }));
+    }
+
+    function onPwChange(e) {
+      const { name, value } = e.target;
+      setPwForm((p) => ({ ...p, [name]: value }));
+      setPwMessage("");
+    }
+
+    const fileInputRef = useRef(null);
+
+    function openFilePicker() {
+      if (fileInputRef.current) fileInputRef.current.click();
+    }
+
+    function onFileChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      // show local preview; actual upload endpoint will be available later
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result);
+        // store preview as profile_image for now; backend expects a URL later
+        setForm((f) => ({ ...f, profile_image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function onSubmit(e) {
+      e.preventDefault();
+      setFormError("");
+      // minimal validation
+      // client-side validation to avoid server-side 400s
+      const fname = (form.first_name || "").trim();
+      const lname = (form.last_name || "").trim();
+      const mobileVal = (form.mobile || "").trim();
+      if (!fname) return setFormError("First name is required");
+      if (fname.length < 2 || !/^[a-zA-Z\s]+$/.test(fname))
+        return setFormError("First name must be at least 2 letters and contain only letters/spaces");
+      if (!lname) return setFormError("Last name is required");
+      if (lname.length < 2 || !/^[a-zA-Z\s]+$/.test(lname))
+        return setFormError("Last name must be at least 2 letters and contain only letters/spaces");
+      const mobilePattern = /^\+?[\d\s\-\(\)]{10,15}$/;
+      if (!mobileVal) return setFormError("Mobile number is required");
+      if (!mobilePattern.test(mobileVal))
+        return setFormError("Please enter a valid mobile number (10-15 digits, may include +, spaces, dashes or parentheses)");
+      setSubmitting(true);
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        // Build payload: only include profile_image if it's a http(s) URL.
+        const payload = {
+          first_name: fname,
+          last_name: lname,
+          mobile: mobileVal,
+        };
+        if (form.profile_image && typeof form.profile_image === "string") {
+          const v = form.profile_image;
+          if (v.startsWith("http://") || v.startsWith("https://")) {
+            payload.profile_image = v;
+          }
+          // if it's a data: URL (preview), omit it until upload API is available
+        }
+
+        const res = await fetch(`${API_URL}/api/users/profile`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload),
+        });
+
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = { message: text };
+        }
+
+        if (res.ok) {
+          // update outer user state with returned data
+          setUser(parsed.data || parsed);
+          setEditing(false);
+        } else {
+          console.debug("Profile update failed:", parsed);
+          // Prefer Zod-style details array if present
+          const details = parsed.details || parsed.errors || null;
+          if (Array.isArray(details) && details.length > 0) {
+            const msg = details.map((d) => (d.field ? `${d.field}: ${d.message}` : d.message)).join("; ");
+            setFormError(msg);
+          } else {
+            setFormError(parsed.message || parsed.error || parsed || "Failed to update profile");
+          }
+        }
+      } catch (err) {
+        setFormError(err.message || "Failed to update profile");
+      } finally {
+        setSubmitting(false);
+      }
+    }
+
+    async function onPasswordSubmit(e) {
+      e.preventDefault();
+      setPwMessage("");
+
+      const { current_password, new_password, new_password_confirmation } = pwForm;
+      if (!current_password || !current_password.trim()) return setPwMessage("Current password is required");
+      if (!new_password || new_password.length < 8) return setPwMessage("New password must be at least 8 characters");
+      // enforce same rules as backend: lowercase, uppercase, digit, allowed chars
+      if (!/[a-z]/.test(new_password)) return setPwMessage("New password must contain at least one lowercase letter");
+      if (!/[A-Z]/.test(new_password)) return setPwMessage("New password must contain at least one uppercase letter");
+      if (!/\d/.test(new_password)) return setPwMessage("New password must contain at least one number");
+      if (!/^[a-zA-Z\d@$!%*?&]+$/.test(new_password)) return setPwMessage("New password contains invalid characters");
+      if (new_password !== new_password_confirmation) return setPwMessage("New passwords do not match");
+
+      setPwSubmitting(true);
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+
+        const res = await fetch(`${API_URL}/api/users/change-password`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ current_password, new_password, new_password_confirmation }),
+        });
+
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = { message: text };
+        }
+
+        if (res.ok) {
+          setPwMessage(parsed.message || "Password changed successfully");
+          setPwForm({ current_password: "", new_password: "", new_password_confirmation: "" });
+          setChangingPassword(false);
+        } else {
+          const details = parsed.details || parsed.errors || null;
+          if (Array.isArray(details) && details.length > 0) {
+            const msg = details.map((d) => (d.field ? `${d.field}: ${d.message}` : d.message)).join("; ");
+            setPwMessage(msg);
+          } else {
+            setPwMessage(parsed.message || parsed.error || "Failed to change password");
+          }
+          console.debug("Change password failed:", parsed);
+        }
+      } catch (err) {
+        setPwMessage(err.message || "Failed to change password");
+      } finally {
+        setPwSubmitting(false);
+      }
+    }
+
+    return (
+      <div className={styles.profileRow}>
+        <div className={styles.avatarWrap}>
+          {imagePreview ? (
+            <img
+              src={imagePreview}
+              alt="avatar"
+              className={styles.avatar}
+              width={120}
+              height={120}
+            />
+          ) : (
+            <div className={styles.avatar}>
+              {(user.full_name || user.first_name || user.username || "")[0]}
+            </div>
+          )}
+          {editing ? (
+            <div className={styles.avatarActions}>
+              <button type="button" className={styles.uploadButton} onClick={openFilePicker}>
+                Upload photo
+              </button>
+              <input
+                ref={fileInputRef}
+                className={styles.hiddenFileInput}
+                type="file"
+                accept="image/*"
+                onChange={onFileChange}
               />
-            ) : (
-              <div className={styles.avatar}>
-                {(user.full_name || user.first_name || user.username || "")[0]}
+            </div>
+          ) : null}
+        </div>
+
+        {/* upload button is inside avatarWrap so we don't duplicate it here */}
+
+        <div className={styles.info}>
+          {editing ? (
+            <>
+            <form onSubmit={onSubmit} className={styles.profileForm}>
+              <div className={styles.field}>
+                <label>First name</label>
+                <input name="first_name" value={form.first_name} onChange={onChange} />
               </div>
-            )}
-          </div>
-          <div className={styles.info}>
-            <h3 className={styles.name}>
-              {user.full_name ||
-                `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-                user.username}
-            </h3>
-            <div className={styles.field}>
-              <strong>Username:</strong> {user.username || "—"}
+              <div className={styles.field}>
+                <label>Last name</label>
+                <input name="last_name" value={form.last_name} onChange={onChange} />
+              </div>
+              <div className={styles.field}>
+                <label>Mobile</label>
+                <input name="mobile" value={form.mobile} onChange={onChange} />
+              </div>
+
+              {formError && <div className={styles.error}>{formError}</div>}
+
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className={styles.secondary}
+                >
+                  Cancel
+                </button>
+                <button type="submit" disabled={submitting} className={styles.primary}>
+                  {submitting ? "Saving…" : "Save profile"}
+                </button>
+              </div>
+            </form>
+            {/* Toggle to show change-password form while editing */}
+            <div className={styles.passwordContainer} style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                className={styles.secondary}
+                onClick={() => {
+                  setChangingPassword((c) => !c);
+                  setPwMessage("");
+                }}
+              >
+                {changingPassword ? "Hide password form" : "Change password"}
+              </button>
             </div>
-            <div className={styles.field}>
-              <strong>Email:</strong> {user.email || "—"}
+            </>
+          ) : (
+            <div>
+              <h3 className={styles.name}>
+                {user.full_name ||
+                  `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                  user.username}
+              </h3>
+              <div className={styles.field}>
+                <strong>Username:</strong> {user.username || "—"}
+              </div>
+              <div className={styles.field}>
+                <strong>Email:</strong> {user.email || "—"}
+              </div>
+              <div className={styles.field}>
+                <strong>Mobile:</strong> {user.mobile || "—"}
+              </div>
+
+              <div className={styles.formActions}>
+                <button onClick={() => setEditing(true)} className={styles.primary}>
+                  Edit profile
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+          {/* Change password inline form - only visible while editing */}
+          {editing && changingPassword && (
+            <div style={{ marginTop: 12 }}>
+              <form onSubmit={onPasswordSubmit} className={styles.profileForm}>
+                <div className={styles.field}>
+                  <label>Current password</label>
+                  <input
+                    name="current_password"
+                    type="password"
+                    value={pwForm.current_password}
+                    onChange={onPwChange}
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>New password</label>
+                  <input
+                    name="new_password"
+                    type="password"
+                    value={pwForm.new_password}
+                    onChange={onPwChange}
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Confirm new password</label>
+                  <input
+                    name="new_password_confirmation"
+                    type="password"
+                    value={pwForm.new_password_confirmation}
+                    onChange={onPwChange}
+                  />
+                </div>
+                {pwMessage && <div className={styles.error}>{pwMessage}</div>}
+                <div className={styles.formActions}>
+                  <button type="button" onClick={() => setChangingPassword(false)} className={styles.secondary}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={pwSubmitting} className={styles.primary}>
+                    {pwSubmitting ? "Changing…" : "Change password"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -489,20 +800,6 @@ export default function UserPage() {
                 <span>Favorites</span>
               </div>
               <div
-                onClick={() => setCurrentSection("reviews")}
-                className={`${styles.navItem} ${currentSection === "reviews" ? styles.active : ""}`}
-              >
-                <i className={`fas fa-star ${styles.navIcon}`} aria-hidden />
-                <span>Reviews</span>
-              </div>
-              <div
-                onClick={() => setCurrentSection("ai-history")}
-                className={`${styles.navItem} ${currentSection === "ai-history" ? styles.active : ""}`}
-              >
-                <i className={`fas fa-magic ${styles.navIcon}`} aria-hidden />
-                <span>AI Trip History</span>
-              </div>
-              <div
                 onClick={() => setCurrentSection("profile")}
                 className={`${styles.navItem} ${currentSection === "profile" ? styles.active : ""}`}
               >
@@ -520,18 +817,6 @@ export default function UserPage() {
             {currentSection === "profile" && renderProfile()}
             {currentSection === "posts" && renderPosts()}
             {currentSection === "favorites" && renderFavorites()}
-            {currentSection === "reviews" && (
-              <div className={styles.profileCard}>
-                <h3>My Reviews</h3>
-                <p className={styles.empty}>No reviews yet.</p>
-              </div>
-            )}
-            {currentSection === "ai-history" && (
-              <div className={styles.profileCard}>
-                <h3>AI Trip History</h3>
-                <p className={styles.empty}>No AI requests yet.</p>
-              </div>
-            )}
           </div>
         </main>
       </div>
