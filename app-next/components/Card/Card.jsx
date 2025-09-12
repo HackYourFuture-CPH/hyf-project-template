@@ -100,7 +100,8 @@ export default function Card({ card, onFavoriteChange, viewLink }) {
           method: "DELETE",
           headers,
         });
-        if (!res.ok) throw new Error("Failed to remove favorite");
+        // If the backend returns 404 it means the favorite is already gone — treat as success.
+        if (!res.ok && res.status !== 404) throw new Error("Failed to remove favorite");
       }
     } catch (err) {
       // revert optimistic update on error
