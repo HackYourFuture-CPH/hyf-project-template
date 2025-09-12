@@ -1,10 +1,17 @@
 .container {
   flex-grow: 1;
-  max-width: 1200px;
+  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   margin-top: 90px;
   padding: 2rem;
   font-family: "Archivo", sans-serif;
+}
+
+/* Use border-box so padding doesn't increase the effective width and cause overflow
+   on small viewports. This prevents the right-side content from being clipped. */
+.container {
+  box-sizing: border-box;
 }
 
 .backLink {
@@ -30,7 +37,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   align-items: start;
 }
 
@@ -40,11 +47,19 @@
   overflow: hidden;
   background: #f8fafc;
 }
+
 .mediaInner {
   position: relative;
   width: 100%;
-  height: 0;
-  padding-bottom: 56.25%; /* 16:9 */
+  height: 25rem;
+  overflow: hidden;
+}
+
+/* ensure next/image uses object-fit correctly when using fill */
+.mediaInner :global(.next-image, img) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
 }
 
 .aside {
@@ -70,23 +85,27 @@
   gap: 12px;
   margin-bottom: 16px;
 }
+
 .stat {
   background: #f1f5f9;
   padding: 12px;
   border-radius: 8px;
   text-align: center;
 }
+
 .statAlt {
   background: #f8fafc;
   padding: 12px;
   border-radius: 8px;
   text-align: center;
 }
+
 .statValue {
   font-size: 1.5rem;
   font-weight: 700;
   color: #0ea5e9;
 }
+
 .statSmall {
   font-size: 12px;
   color: #64748b;
@@ -96,11 +115,14 @@
   color: #334155;
   line-height: 1.6;
 }
+
 .ctaWrap {
   margin-top: 18px;
 }
+
 .bookBtn {
-  width: 100%;
+  display: block;
+  margin: 0 auto;
   background: #2563eb;
   color: #fff;
   padding: 12px 16px;
@@ -110,6 +132,7 @@
   font-weight: 700;
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.2);
 }
+
 .bookBtn:active {
   transform: translateY(1px);
 }

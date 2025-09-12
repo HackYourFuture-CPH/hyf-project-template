@@ -7,6 +7,11 @@
   width: 100%;
 }
 
+/* ensure padding doesn't add extra width and cause horizontal overflow on narrow screens */
+.pageWrapper {
+  box-sizing: border-box;
+}
+
 .titleWrapper {
   display: flex;
   align-items: center;
@@ -92,14 +97,14 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-bottom: 1px solid #ced0d6; /* fallback grey */
+  border-bottom: 1px solid #ced0d6;
   padding: 1.5em 0em;
 }
 
 .cardFooter {
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid re;
   display: flex;
   justify-content: flex-end;
 }
@@ -123,6 +128,7 @@
     transform 160ms ease,
     color 160ms ease;
   transform-origin: left center;
+  padding-left: 32px;
 }
 
 /* override all link states */

@@ -1,27 +1,89 @@
 "use client";
 import styles from "./BlogCard.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 export default function BlogCard({ card }) {
   const [favourite, setFavourite] = useState(card.favourite);
+
+  const raw = card?.cover_image_url;
+  const placeholder = card?.id ? `https://picsum.photos/seed/blog-${card.id}/600/400` : "https://picsum.photos/600/400";
+
+  const normalize = (src) => {
+    if (typeof src !== "string" || src.trim() === "") return null;
+    const s = src.trim();
+    if (s.includes("placehold.co")) {
+      const seed = card?.id ? `blog-${card.id}` : encodeURIComponent(s);
+      return `https://picsum.photos/seed/${seed}/600/400`;
+    }
+    if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    return s;
+  };
+
+  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
+  const initial = isBackendPath ? placeholder : (normalize(raw) || placeholder);
+  const [imageSrc, setImageSrc] = useState(initial);
+
+  // HEAD-check backend file existence for backend-relative paths, then switch
+  // to the real URL if it exists. This reduces initial Next.js proxy 404s.
+  useEffect(() => {
+    if (!isBackendPath) return;
+    let cancelled = false;
+    const url = `${API_URL}${raw}`;
+    (async () => {
+      try {
+        const res = await fetch(url, { method: "HEAD" });
+        if (!cancelled && res.ok) setImageSrc(url);
+      } catch (e) {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [raw]);
+  // Prepare display values
+  const rawTitle = card.title ?? card.name ?? "Untitled";
+  // If the title ends with a colon + hex/hash suffix (e.g. ": c4ca4238a0"), strip it
+  const title = rawTitle.replace(/:\s*[0-9a-f]{6,32}$/i, "").trim();
+
+  const author = card.author_name ?? card.author ?? card.user ?? card.created_by ?? null;
+  const createdAt = card.created_at ? new Date(card.created_at) : null;
+  const formattedDate = createdAt && !Number.isNaN(createdAt.getTime())
+    ? createdAt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    : null;
+
+  const rawCategory = card.category ?? card.type ?? null;
+  const category = rawCategory
+    ? String(rawCategory).toLowerCase().replace(/(^|\s)\S/g, (t) => t.toUpperCase())
+    : null;
 
   return (
     <Link href={`/blogs/${card.id}`} style={{ textDecoration: "none" }}>
       <div className={styles.travelCard}>
         <div className={styles.imageWrapper}>
           <Image
-            src={card.cover_image_url}
-            alt={card.title || "Blog image"}
+            src={imageSrc}
+            alt={title || "Blog image"}
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
+            onError={() => setImageSrc(placeholder)}
           />
         </div>
         <div className={styles.cardContent}>
-          <h4 className={styles.cardTitle}>{card.title}</h4>
+          <h4 className={styles.cardTitle}>{title}</h4>
           <div className={styles.meta}>
-            by <span>{card.created_at}</span> • <span>{card.category}</span>
+            {author ? <span>by {author}</span> : null}
+            {formattedDate ? (
+              <span style={{ marginLeft: author ? 8 : 0 }}>{formattedDate}</span>
+            ) : null}
+            {category ? (
+              <span style={{ marginLeft: 8 }}>&bull; {category}</span>
+            ) : null}
           </div>
           <p className={styles.description}>{card.content}</p>
         </div>

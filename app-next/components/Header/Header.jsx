@@ -34,7 +34,14 @@ export default function Header() {
       <div className={`container ${styles.headerContainer}`}>
         <div>
           <Link href="/" className={styles.logoDiv}>
-            <Image className={styles.logo} src={logo} alt="logo" width={120} height={60} />
+            <Image
+              className={styles.logo}
+              src={logo}
+              alt="logo"
+              width={120}
+              height={60}
+              priority
+            />
           </Link>
         </div>
         <div className={styles.desktopNav}>

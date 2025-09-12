@@ -10,7 +10,7 @@
 }
 
 .backButton {
-  display: inline-block; /* enable transform */
+  display: inline-block;
   font-family: "Archivo", sans-serif;
   font-size: 1.2rem;
   font-weight: bold;

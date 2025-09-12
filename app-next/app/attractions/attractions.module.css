@@ -4,6 +4,7 @@
   flex-grow: 1;
   max-width: 1200px;
   padding: 2rem;
+  margin: 0 auto;
   font-family: "Archivo", sans-serif;
   margin-top: 92px;
 }

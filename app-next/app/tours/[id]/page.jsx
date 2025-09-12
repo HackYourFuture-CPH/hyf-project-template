@@ -45,7 +45,25 @@ export default async function TourDetails({ params }) {
     );
   }
 
-  const imageSrc = tour.cover_image_url || tour.image_url || "/card-images/default.webp";
+  // Normalize image source similar to Card components:
+  // - replace placehold.co placeholders with deterministic picsum seeds
+  // - if backend-relative path ("/images/.."), prefer a deterministic picsum placeholder
+  const raw = tour.cover_image_url || tour.image_url || "";
+  const normalize = (s) => {
+    if (!s || typeof s !== "string" || s.trim() === "") return null;
+    const t = s.trim();
+    if (t.includes("placehold.co")) {
+      const seed = tour?.id ? `tour-${tour.id}` : encodeURIComponent(t);
+      return `https://picsum.photos/seed/${seed}/1200/800`;
+    }
+    if (t.startsWith("/images/")) {
+      // Avoid depending on backend asset availability during SSR; use placeholder.
+      return `https://picsum.photos/seed/tour-${tour.id || "default"}/1200/800`;
+    }
+    return t;
+  };
+
+  const imageSrc = normalize(raw) || "/card-images/default.webp";
   // price_usd comes as minor units string like "455000" -> convert to decimal
   const rawPrice = Number(tour.price_usd ?? tour.price_minor ?? 0);
   const priceNumber = Number.isFinite(rawPrice) ? rawPrice / 100 : 0;
@@ -59,7 +77,7 @@ export default async function TourDetails({ params }) {
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.backLink}>
-        ← Back to Home
+        ← Back
       </Link>
 
       <div className={styles.gridWrapper}>
