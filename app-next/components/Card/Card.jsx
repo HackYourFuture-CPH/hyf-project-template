@@ -2,12 +2,13 @@
 import styles from "./Card.module.css";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export default function Card({ card, onFavoriteChange, viewLink }) {
+export default function Card({ card, onFavoriteChange, viewLink, size = "regular" }) {
   const [favourite, setFavourite] = useState(!!card.favourite);
+  const router = useRouter();
 
   useEffect(() => {
     setFavourite(!!card.favourite);
@@ -129,14 +130,76 @@ export default function Card({ card, onFavoriteChange, viewLink }) {
     }
   }
 
+  const raw = card?.cover_image_url;
+  const placeholder = card?.id ? `https://picsum.photos/seed/tour-${card.id}/600/400` : "https://picsum.photos/600/400";
+
+  // Normalize incoming image URLs:
+  // - DB-relative paths ("/images/...") -> prefix with API_URL
+  // - known problematic external placeholders (placehold.co) -> replace with picsum seed
+  // - otherwise use the raw URL
+  const normalize = (src) => {
+    if (typeof src !== "string" || src.trim() === "") return null;
+    const s = src.trim();
+    if (s.includes("placehold.co")) {
+      // replace placehold.co images with a deterministic picsum seed (reduces proxy 400s)
+      const seed = card?.id ? `tour-${card.id}` : encodeURIComponent(s);
+      return `https://picsum.photos/seed/${seed}/600/400`;
+    }
+    if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    return s;
+  };
+
+  // If the DB value is a backend-relative path ("/images/.."), avoid immediately
+  // assigning `${API_URL}${path}` to `next/image` because the backend in dev may
+  // not have the file and Next's image optimizer will proxy & 404. Instead use the
+  // placeholder initially and perform a lightweight HEAD check client-side; if the
+  // file exists, switch to the backend URL.
+  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
+  const initial = isBackendPath ? placeholder : (normalize(raw) || "/images/tours/default.jpg");
+  const [imageSrc, setImageSrc] = useState(initial);
+
+  // client-side: check whether backend file exists (only for backend-relative paths)
+  useEffect(() => {
+    if (!isBackendPath) return;
+    let cancelled = false;
+    const url = `${API_URL}${raw}`;
+    (async () => {
+      try {
+        const res = await fetch(url, { method: "HEAD" });
+        if (!cancelled && res.ok) setImageSrc(url);
+      } catch (e) {
+        // ignore network errors — keep placeholder
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [raw]);
+
+  const handleKeyDown = (e) => {
+    if (!viewLink) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      router.push(viewLink);
+    }
+  };
+
   return (
-    <div className={styles.travelCard}>
-      <div className={styles.imageWrapper}>
+    <div
+      className={styles.travelCard}
+      role={viewLink ? "link" : undefined}
+      tabIndex={viewLink ? 0 : undefined}
+      onClick={() => viewLink && router.push(viewLink)}
+      onKeyDown={handleKeyDown}
+    >
+      <div className={size === "large" ? styles.imageWrapperLarge : styles.imageWrapper}>
         <Image
-          src={card?.cover_image_url || "/images/tours/default.jpg"}
+          src={imageSrc}
           alt={card?.name || "tour image"}
           fill
+          sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
+          onError={() => setImageSrc(placeholder)}
         />
       </div>
 
@@ -162,11 +225,7 @@ export default function Card({ card, onFavoriteChange, viewLink }) {
         <p className={styles.description}>{card?.destination ?? card?.description ?? ""}</p>
 
         <div className={styles.cardFooter}>
-          {viewLink ? (
-            <Link href={viewLink} className={styles.primary}>
-              View
-            </Link>
-          ) : null}
+          {/* View button removed — the whole card is clickable and navigates to the detail page */}
 
           <button
             className={`${styles.heart} ${favourite ? styles.fav : ""}`}

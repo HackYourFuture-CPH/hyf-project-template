@@ -3,6 +3,7 @@
 .pageWrapper {
   flex-grow: 1;
   max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
   font-family: "Archivo", sans-serif;
   margin-top: 92px;

@@ -30,6 +30,14 @@
   overflow: hidden;
 }
 
+/* large variant for detail pages */
+.imageWrapperLarge {
+  position: relative;
+  width: 100%;
+  height: 25rem;
+  overflow: hidden;
+}
+
 .cardDetails {
   display: flex;
   align-items: center;
@@ -158,6 +166,9 @@
   .imageWrapper {
     height: 10rem;
   }
+  .imageWrapperLarge {
+    height: 10rem;
+  }
   .cardContent {
     padding: 1rem;
   }
@@ -165,6 +176,9 @@
 
 @media (max-width: 600px) {
   .imageWrapper {
+    height: 9rem;
+  }
+  .imageWrapperLarge {
     height: 9rem;
   }
   .cardContent {
