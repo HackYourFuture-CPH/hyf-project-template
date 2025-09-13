@@ -1,10 +1,35 @@
 {
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-4a3b-8c7d-9f0e1d2c3b4a",
-		"name": "Travel Planner API",
+		"name": "Travel Planner API (Final Complete)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Ping API and Check DB",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health",
+								"health"
+							]
+						},
+						"description": "Checks the API and database connectivity. Note: The URL has a double '/health' segment due to the router setup."
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Authentication",
 			"item": [
@@ -68,8 +93,7 @@
 								"auth",
 								"register"
 							]
-						},
-						"description": "Creates a new user account with dynamic credentials and saves them for the Login request."
+						}
 					},
 					"response": []
 				},
@@ -117,8 +141,7 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": "Logs in as the most recently registered user and saves the JWT."
+						}
 					},
 					"response": []
 				},
@@ -166,13 +189,11 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": "Logs in as the dedicated admin user to get a token for testing admin routes."
+						}
 					},
 					"response": []
 				}
-			],
-			"description": "Endpoints for user registration and login."
+			]
 		},
 		{
 			"name": "User",
@@ -219,6 +240,26 @@
 								"api",
 								"users",
 								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Profile Photo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile/photo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile",
+								"photo"
 							]
 						}
 					},
@@ -327,7 +368,7 @@
 			"name": "Attractions",
 			"item": [
 				{
-					"name": "Get All Attractions",
+					"name": "Get All Attractions (with Filters)",
 					"event": [
 						{
 							"listen": "test",
@@ -349,13 +390,51 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/attractions",
+							"raw": "{{baseUrl}}/api/attractions?search=&location=&category=&sort=created_at-desc&page=1&limit=10",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"attractions"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "",
+									"description": "Searches title, content, and location.",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "",
+									"description": "Filters by a specific location.",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "",
+									"description": "Filters by a specific category.",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "created_at-desc",
+									"description": "Sorts results. Options: `title-asc`, `created_at-desc`, etc.",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number for pagination.",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "The number of items per page.",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -546,30 +625,12 @@
 			"name": "Blogposts",
 			"item": [
 				{
-					"name": "Get All Blogposts (Unfiltered)",
+					"name": "Get All Blogposts (with Filters)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/blogposts",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"blogposts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Blogposts (Filtered by Category)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/blogposts?category=Adventure",
+							"raw": "{{baseUrl}}/api/blogposts?search=&category=&sort=created_at-desc&page=1&limit=10",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -579,28 +640,35 @@
 							],
 							"query": [
 								{
+									"key": "search",
+									"value": "",
+									"description": "Searches the title and content of blog posts.",
+									"disabled": true
+								},
+								{
 									"key": "category",
-									"value": "Adventure"
+									"value": "",
+									"description": "Filters by a specific post category.",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "created_at-desc",
+									"description": "Sorts the results. Options: `created_at-desc`, `title-asc`, etc.",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number for pagination.",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "The number of items per page.",
+									"disabled": true
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Categories",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/blogposts/categories",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"blogposts",
-								"categories"
 							]
 						}
 					},
@@ -620,6 +688,25 @@
 								"api",
 								"blogposts",
 								"my-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blogposts/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blogposts",
+								"categories"
 							]
 						}
 					},
@@ -932,173 +1019,15 @@
 			]
 		},
 		{
-			"name": "User Trips",
-			"item": [
-				{
-					"name": "Get My Trips",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/trips",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"trips"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create New Trip",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 201) {",
-									"    const response = pm.response.json();",
-									"    if (response.data && response.data.id) {",
-									"        pm.collectionVariables.set(\"tripId\", response.data.id);",
-									"        console.log(`Trip ID ${response.data.id} saved successfully!`);",
-									"    }",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"My Summer Vacation\",\n    \"description\": \"A plan for my trip to the coast.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/trips",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"trips"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Single Trip",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"trips",
-								"{{tripId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Trip",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"My Awesome Summer Vacation\",\n    \"description\": \"An updated plan for my amazing trip to the coast.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"trips",
-								"{{tripId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Trip",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"trips",
-								"{{tripId}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "File Uploads",
-			"item": [
-				{
-					"name": "Handle UploadThing Request",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/uploadthing",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"uploadthing"
-							]
-						},
-						"description": "This endpoint is called automatically by the UploadThing client library on the frontend to get permission to upload. You do not need to call this manually."
-					},
-					"response": []
-				}
-			],
-			"description": "Endpoints for handling secure file uploads via UploadThing."
-		},
-		{
 			"name": "Tours",
 			"item": [
 				{
-					"name": "Get All Tours",
+					"name": "Get All Tours (with Advanced Filters)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/tours?search=Safari",
+							"raw": "{{baseUrl}}/api/tours?search=&sort=price_minor-desc&minPrice=&maxPrice=&minDuration=&maxDuration=&currency=&page=1&limit=9",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1109,7 +1038,57 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "Safari"
+									"value": "",
+									"description": "Searches tour name, description, and destinations.",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "price_minor-desc",
+									"description": "Sorts by name, price, duration, or rating.",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "",
+									"description": "Filters for tours with a price (in minor units) >= value.",
+									"disabled": true
+								},
+								{
+									"key": "maxPrice",
+									"value": "",
+									"description": "Filters for tours with a price (in minor units) <= value.",
+									"disabled": true
+								},
+								{
+									"key": "minDuration",
+									"value": "",
+									"description": "Filters by minimum duration in days.",
+									"disabled": true
+								},
+								{
+									"key": "maxDuration",
+									"value": "",
+									"description": "Filters by maximum duration in days.",
+									"disabled": true
+								},
+								{
+									"key": "currency",
+									"value": "",
+									"description": "Filters by a specific currency code.",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number for pagination.",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "9",
+									"description": "The number of items per page.",
+									"disabled": true
 								}
 							]
 						}
@@ -1120,98 +1099,6 @@
 					"name": "Get Single Tour",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"tours",
-								"{{tourId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create New Tour",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 201) {",
-									"    const response = pm.response.json();",
-									"    const tourData = response.data || response.tour;",
-									"    if (tourData && tourData.id) {",
-									"        pm.collectionVariables.set(\"tourId\", tourData.id);",
-									"        console.log(`Tour ID ${tourData.id} saved successfully!`);",
-									"    }",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Asian Capitals Explorer\",\n    \"description\": \"A whirlwind tour of Asia's most vibrant capital cities.\",\n    \"start_date\": \"2026-07-15\",\n    \"duration_days\": 12,\n    \"price_minor\": 350000,\n    \"currency_code\": \"USD\",\n    \"capacity\": 18,\n    \"cover_image_url\": \"https://placehold.co/600x400/1a1a1a/ffffff?text=Asia+Explorer\",\n    \"destinations\": []\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/tours",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"tours"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Existing Tour",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Updated Tour Name\",\n    \"price_minor\": 400000\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"tours",
-								"{{tourId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete a Tour",
-					"request": {
-						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/tours/{{tourId}}",
@@ -1352,6 +1239,454 @@
 			]
 		},
 		{
+			"name": "Trips",
+			"item": [
+				{
+					"name": "Get My Trips",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Empty Trip",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set(\"tripId\", response.data.id);",
+									"        console.log(`Trip ID ${response.data.id} saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Summer Vacation\",\n    \"description\": \"A plan for my trip to the coast.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Build Complete Custom Trip",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Custom European Adventure\",\n    \"description\": \"A 10-day trip through Paris and Rome.\",\n    \"destinations\": [\n        {\n            \"city_name\": \"Paris\",\n            \"country_name\": \"France\",\n            \"stop_order\": 1,\n            \"duration_days\": 5,\n            \"accommodation_ids\": [],\n            \"flight_ids\": []\n        },\n        {\n            \"city_name\": \"Rome\",\n            \"country_name\": \"Italy\",\n            \"stop_order\": 2,\n            \"duration_days\": 5,\n            \"accommodation_ids\": [],\n            \"flight_ids\": []\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/build",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"build"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Trip",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"{{tripId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Trip",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My Awesome Summer Vacation\",\n    \"description\": \"An updated plan for my amazing trip to the coast.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"{{tripId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Trip",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trips/{{tripId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trips",
+								"{{tripId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destinations",
+					"item": [
+						{
+							"name": "Add Destination to Trip",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"city_name\": \"Berlin\",\n    \"country_name\": \"Germany\",\n    \"duration_days\": 3,\n    \"stop_order\": 3\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/destinations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"destinations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Destination from Trip",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/destinations/{{destinationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"destinations",
+										"{{destinationId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Accommodations",
+					"item": [
+						{
+							"name": "Add Accommodation to Trip",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"destination_id\": \"{{destinationId}}\",\n    \"name\": \"Example Hotel\",\n    \"type\": \"hotel\",\n    \"rating\": 4.5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/accommodations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"accommodations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Accommodation from Trip",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/accommodations/{{accommodationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"accommodations",
+										"{{accommodationId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Flights",
+					"item": [
+						{
+							"name": "Add Flight to Trip",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"departs_from_destination_id\": \"{{destinationId}}\",\n    \"arrives_at_destination_id\": \"{{anotherDestinationId}}\",\n    \"airline\": \"Gemini Air\",\n    \"flight_number\": \"GA123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/flights",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"flights"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Flight from Trip",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/flights/{{flightId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"flights",
+										"{{flightId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Trip Planner",
+			"item": [
+				{
+					"name": "Get Trip Options",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trip-options?city=Paris&startDate=2026-06-01T00:00:00Z&endDate=2026-06-15T23:59:59Z&numPeople=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trip-options"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Paris"
+								},
+								{
+									"key": "startDate",
+									"value": "2026-06-01T00:00:00Z"
+								},
+								{
+									"key": "endDate",
+									"value": "2026-06-15T23:59:59Z"
+								},
+								{
+									"key": "numPeople",
+									"value": "2"
+								}
+							]
+						},
+						"description": "Fetches available flights and accommodations for planning a custom trip."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Book a Pre-defined Tour",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tour_id\": \"{{tourId}}\",\n    \"num_travelers\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/tour",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"tour"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book a Custom Trip",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trip_id\": \"{{tripId}}\",\n    \"num_travelers\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/custom-trip",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"custom-trip"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/my-bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"my-bookings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Admin",
 			"item": [
 				{
@@ -1377,7 +1712,7 @@
 					"name": "Users",
 					"item": [
 						{
-							"name": "Get All Users",
+							"name": "Get All Users (with Filters)",
 							"event": [
 								{
 									"listen": "test",
@@ -1385,9 +1720,14 @@
 										"exec": [
 											"if (pm.response.code === 200) {",
 											"    const response = pm.response.json();",
-											"    if (response.data && response.data.length > 0) {",
+											"    // Find a user that isn't the admin to target for other requests",
+											"    const nonAdminUser = response.data.find(user => user.role !== 'admin');",
+											"    if (nonAdminUser) {",
+											"        pm.collectionVariables.set(\"adminTargetUserId\", nonAdminUser.id);",
+											"        console.log(`Admin target user ID ${nonAdminUser.id} saved successfully!`);",
+											"    } else if (response.data && response.data.length > 0) {",
+											"        // Fallback to the first user if no non-admin is found",
 											"        pm.collectionVariables.set(\"adminTargetUserId\", response.data[0].id);",
-											"        console.log(`Admin target user ID ${response.data[0].id} saved successfully!`);",
 											"    }",
 											"}"
 										],
@@ -1399,7 +1739,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/admin/users",
+									"raw": "{{baseUrl}}/api/admin/users?search=&sort=created_at-desc&page=1&limit=10",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -1407,13 +1747,35 @@
 										"api",
 										"admin",
 										"users"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at-desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Update User Role or Status",
+							"name": "Update User",
 							"request": {
 								"method": "PUT",
 								"header": [],
@@ -1442,28 +1804,7 @@
 							"response": []
 						},
 						{
-							"name": "Remove a User's Profile Picture",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/api/admin/users/{{adminTargetUserId}}/profile-picture",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"admin",
-										"users",
-										"{{adminTargetUserId}}",
-										"profile-picture"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete a User",
+							"name": "Delete User",
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -1488,12 +1829,12 @@
 					"name": "Tours",
 					"item": [
 						{
-							"name": "Get All Tours",
+							"name": "Get All Tours (with Filters)",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/admin/tours",
+									"raw": "{{baseUrl}}/api/admin/tours?search=&sort=created_at-desc&page=1&limit=10",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -1501,33 +1842,35 @@
 										"api",
 										"admin",
 										"tours"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get a Single Tour",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}",
-									"host": [
-										"{{baseUrl}}"
 									],
-									"path": [
-										"api",
-										"admin",
-										"tours",
-										"{{adminCreatedTourId}}"
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at-desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Step 1: Create a Tour",
+							"name": "Create New Tour",
 							"event": [
 								{
 									"listen": "test",
@@ -1550,7 +1893,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Admin Created Tour\",\n    \"description\": \"This is a tour created by an admin.\",\n    \"duration_days\": 10,\n    \"price_minor\": 250000,\n    \"currency_code\": \"EUR\",\n    \"capacity\": 20\n}",
+									"raw": "{\n    \"name\": \"Admin: Grand Alpine Expedition\",\n    \"description\": \"A 10-day tour through the mountains, created by an admin.\",\n    \"duration_days\": 10,\n    \"price_minor\": 450000,\n    \"currency_code\": \"EUR\",\n    \"capacity\": 15,\n    \"destinations\": [\n        {\n            \"city_name\": \"Geneva\",\n            \"country_name\": \"Switzerland\",\n            \"duration_days\": 4\n        },\n        {\n            \"city_name\": \"Chamonix\",\n            \"country_name\": \"France\",\n            \"duration_days\": 6\n        }\n    ]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1572,38 +1915,12 @@
 							"response": []
 						},
 						{
-							"name": "Step 2: Add a Destination",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if (pm.response.code === 201) {",
-											"    const response = pm.response.json();",
-											"    if (response.data && response.data.id) {",
-											"        pm.collectionVariables.set(\"destinationId\", response.data.id);",
-											"        console.log(`Destination ID ${response.data.id} saved successfully!`);",
-											"    }",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
+							"name": "Get Single Tour",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"city_name\": \"Paris\",\n    \"country_name\": \"France\",\n    \"duration_days\": 5\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/destinations",
+									"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -1611,62 +1928,14 @@
 										"api",
 										"admin",
 										"tours",
-										"{{adminCreatedTourId}}",
-										"destinations"
+										"{{adminCreatedTourId}}"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Step 3: Add an Accommodation",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if (pm.response.code === 201) {",
-											"    const response = pm.response.json();",
-											"    if (response.data && response.data.id) {",
-											"        pm.collectionVariables.set(\"accommodationId\", response.data.id);",
-											"        console.log(`Accommodation ID ${response.data.id} saved successfully!`);",
-											"    }",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"destination_id\": \"{{destinationId}}\",\n    \"name\": \"Grand Hotel Paris\",\n    \"type\": \"hotel\",\n    \"rating\": 4.5\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/accommodations",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"admin",
-										"tours",
-										"{{adminCreatedTourId}}",
-										"accommodations"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Step 4: Update a Tour",
+							"name": "Update Existing Tour",
 							"request": {
 								"method": "PUT",
 								"header": [],
@@ -1693,6 +1962,341 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Delete a Tour",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"tours",
+										"{{adminCreatedTourId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Destinations",
+							"item": [
+								{
+									"name": "Add Destination to Tour",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if (pm.response.code === 201) {",
+													"    const response = pm.response.json();",
+													"    if (response.data && response.data.id) {",
+													"        pm.collectionVariables.set(\"destinationId\", response.data.id);",
+													"        console.log(`Destination ID ${response.data.id} saved successfully!`);",
+													"    }",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"city_name\": \"Paris\",\n    \"country_name\": \"France\",\n    \"duration_days\": 5\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/destinations",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"destinations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Destination",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"duration_days\": 6\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/destinations/{{destinationId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"destinations",
+												"{{destinationId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Destination",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/destinations/{{destinationId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"destinations",
+												"{{destinationId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Accommodations",
+							"item": [
+								{
+									"name": "Add Accommodation to Tour",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if (pm.response.code === 201) {",
+													"    const response = pm.response.json();",
+													"    if (response.data && response.data.id) {",
+													"        pm.collectionVariables.set(\"accommodationId\", response.data.id);",
+													"        console.log(`Accommodation ID ${response.data.id} saved successfully!`);",
+													"    }",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"destination_id\": \"{{destinationId}}\",\n    \"name\": \"Grand Hotel Paris\",\n    \"type\": \"hotel\",\n    \"rating\": 4.5\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/accommodations",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"accommodations"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Accommodation",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"rating\": 5.0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/accommodations/{{accommodationId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"accommodations",
+												"{{accommodationId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Accommodation",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/accommodations/{{accommodationId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"accommodations",
+												"{{accommodationId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Flights",
+							"item": [
+								{
+									"name": "Add Flight to Tour",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if (pm.response.code === 201) {",
+													"    const response = pm.response.json();",
+													"    if (response.data && response.data.id) {",
+													"        pm.collectionVariables.set(\"flightId\", response.data.id);",
+													"        console.log(`Flight ID ${response.data.id} saved successfully!`);",
+													"    }",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"departs_from_destination_id\": \"{{destinationId}}\",\n    \"arrives_at_destination_id\": \"{{anotherDestinationId}}\",\n    \"airline\": \"Gemini Air\",\n    \"flight_number\": \"GA456\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/flights",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"flights"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Flight",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"flight_number\": \"GA789\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/flights/{{flightId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"flights",
+												"{{flightId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove Flight",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/admin/tours/{{adminCreatedTourId}}/flights/{{flightId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"tours",
+												"{{adminCreatedTourId}}",
+												"flights",
+												"{{flightId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						}
 					]
 				},
@@ -1700,12 +2304,12 @@
 					"name": "Posts",
 					"item": [
 						{
-							"name": "Get All Posts",
+							"name": "Get All Posts (with Filters)",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/api/admin/posts",
+									"raw": "{{baseUrl}}/api/admin/posts?search=&sort=created_at-desc&page=1&limit=10",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -1713,26 +2317,28 @@
 										"api",
 										"admin",
 										"posts"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get a Single Post",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/api/admin/posts/{{adminTargetPostId}}",
-									"host": [
-										"{{baseUrl}}"
 									],
-									"path": [
-										"api",
-										"admin",
-										"posts",
-										"{{adminTargetPostId}}"
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at-desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										}
 									]
 								}
 							},
@@ -1784,13 +2390,33 @@
 							"response": []
 						},
 						{
+							"name": "Get a Single Post",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/posts/{{adminTargetPostId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"posts",
+										"{{adminTargetPostId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Update a Post",
 							"request": {
 								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"title\": \"Admin Updated Post Title\",\n    \"content\": \"This post has been updated by an administrator.\"\n}",
+									"raw": "{\n    \"title\": \"Admin Updated Post Title\",\n    \"content\": \"This post has been updated by an administrator.\",\n    \"category\": \"Admin Updates\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1836,7 +2462,7 @@
 							"name": "Manage Photos",
 							"item": [
 								{
-									"name": "Add a Photo to Post",
+									"name": "Add a Photo to Post (File Upload)",
 									"event": [
 										{
 											"listen": "test",
@@ -1913,10 +2539,77 @@
 					"name": "Attractions",
 					"item": [
 						{
-							"name": "Get All Attractions",
+							"name": "Get All Attractions (with Filters)",
 							"request": {
 								"method": "GET",
 								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/attractions?search=&sort=created_at-desc&page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"attractions"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at-desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create an Attraction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.id) {",
+											"        pm.collectionVariables.set(\"adminTargetAttractionId\", response.data.id);",
+											"        console.log(`Admin target attraction ID ${response.data.id} saved successfully!`);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Admin Created Attraction\",\n    \"content\": \"This is a new attraction created by an admin.\",\n    \"location\": \"Admin City\",\n    \"category\": \"Official\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/api/admin/attractions",
 									"host": [
@@ -1952,58 +2645,13 @@
 							"response": []
 						},
 						{
-							"name": "Create an Attraction",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if (pm.response.code === 201) {",
-											"    const response = pm.response.json();",
-											"    if (response.data && response.data.id) {",
-											"        pm.collectionVariables.set(\"adminTargetAttractionId\", response.data.id);",
-											"        console.log(`Admin target attraction ID ${response.data.id} saved successfully!`);",
-											"    }",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"title\": \"Admin Created Attraction\",\n    \"content\": \"This is a new attraction created by an admin.\",\n    \"location\": \"Admin City\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/admin/attractions",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"admin",
-										"attractions"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Update an Attraction",
 							"request": {
 								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"title\": \"Admin Updated Attraction Title\",\n    \"content\": \"This attraction has been updated by an administrator.\"\n}",
+									"raw": "{\n    \"title\": \"Admin Updated Attraction Title\",\n    \"content\": \"This attraction has been updated by an administrator.\",\n    \"location\": \"Admin City\",\n    \"category\": \"Updated\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2049,7 +2697,7 @@
 							"name": "Manage Photos",
 							"item": [
 								{
-									"name": "Add a Photo to Attraction",
+									"name": "Add a Photo to Attraction (URL)",
 									"event": [
 										{
 											"listen": "test",
@@ -2071,14 +2719,13 @@
 										"method": "POST",
 										"header": [],
 										"body": {
-											"mode": "formdata",
-											"formdata": [
-												{
-													"key": "attractionImage",
-													"type": "file",
-													"src": []
+											"mode": "raw",
+											"raw": "{\n    \"image_url\": \"https://placehold.co/600x400/1a1a1a/ffffff?text=Attraction\",\n    \"caption\": \"A placeholder image for the attraction.\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
 												}
-											]
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/api/admin/attractions/{{adminTargetAttractionId}}/photos",
@@ -2121,6 +2768,154 @@
 							]
 						}
 					]
+				},
+				{
+					"name": "Bookings",
+					"item": [
+						{
+							"name": "Get All Bookings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/bookings?status=&type=&sort=booked_at-desc&page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"bookings"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "",
+											"description": "Filter by 'confirmed', 'pending', or 'cancelled'",
+											"disabled": true
+										},
+										{
+											"key": "type",
+											"value": "",
+											"description": "Filter by 'tour' or 'custom'",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "booked_at-desc",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Booking Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"booking_status\": \"cancelled\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/bookings/tour/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"bookings",
+										"tour",
+										"{{bookingId}}"
+									],
+									"description": "Update the type in the URL to 'tour' or 'custom'"
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Trips",
+					"item": [
+						{
+							"name": "Get All User Trips",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/trips",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"trips"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Single User Trip",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/trips/{{tripId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"trips",
+										"{{tripId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User Trip",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/trips/{{tripId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"trips",
+										"{{tripId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -2150,7 +2945,11 @@
 		},
 		{
 			"key": "postId",
-			"value": "ea28750f-e4b3-46df-8d9c-9fc3f15bec6b"
+			"value": ""
+		},
+		{
+			"key": "tripId",
+			"value": ""
 		},
 		{
 			"key": "reviewId",
@@ -2178,6 +2977,10 @@
 		},
 		{
 			"key": "attractionId",
+			"value": ""
+		},
+		{
+			"key": "photoId",
 			"value": ""
 		},
 		{
@@ -2209,9 +3012,8 @@
 			"value": ""
 		},
 		{
-			"key": "photoId",
+			"key": "bookingId",
 			"value": ""
 		}
 	]
 }
-

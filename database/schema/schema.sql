@@ -29,7 +29,15 @@ DROP TABLE IF EXISTS attraction_posts CASCADE;
 
 DROP TABLE IF EXISTS tour_destinations CASCADE;
 
+DROP TABLE IF EXISTS tour_bookings CASCADE;
+
+DROP TABLE IF EXISTS custom_trip_bookings CASCADE;
+
 DROP TABLE IF EXISTS travel_plans CASCADE;
+
+DROP TABLE IF EXISTS flights CASCADE;
+
+DROP TABLE IF EXISTS accommodations CASCADE;
 
 DROP TABLE IF EXISTS currencies CASCADE;
 
@@ -93,7 +101,27 @@ CREATE TABLE travel_plans (
         TIME ZONE DEFAULT NOW()
 );
 
--- Stores the individual stops/destinations for a multi-destination tour.
+-- This table is for booking PRE-DEFINED tours.
+CREATE TABLE tour_bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    tour_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    num_travelers INTEGER NOT NULL CHECK (num_travelers > 0),
+    total_price_minor BIGINT NOT NULL,
+    booking_status VARCHAR(20) NOT NULL DEFAULT 'confirmed' CHECK (
+        booking_status IN (
+            'confirmed',
+            'pending',
+            'cancelled'
+        )
+    ),
+    booked_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (user_id, tour_id)
+);
+
+-- Stores the individual stops/destinations for a multi-destination trip.
 CREATE TABLE tour_destinations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     tour_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
@@ -110,7 +138,7 @@ CREATE TABLE attraction_posts (
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     location VARCHAR(100),
-    category VARCHAR(50), -- << ADDED THIS LINE
+    category VARCHAR(50),
     created_at TIMESTAMP
     WITH
         TIME ZONE DEFAULT NOW()
@@ -151,7 +179,6 @@ CREATE TABLE user_post_photos (
         TIME ZONE DEFAULT NOW()
 );
 
--- Stores flight details associated with a tour.
 CREATE TABLE tour_flights (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     tour_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
@@ -163,7 +190,6 @@ CREATE TABLE tour_flights (
     currency_code CHAR(3) REFERENCES currencies (code)
 );
 
--- Stores accommodation details associated with a tour destination.
 CREATE TABLE tour_accommodations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     tour_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
@@ -252,4 +278,55 @@ CREATE TABLE user_favorites (
     WITH
         TIME ZONE DEFAULT NOW(),
         UNIQUE (user_id, item_id, item_type)
+);
+
+-- Stores all available flights for users to choose from.
+CREATE TABLE flights (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    airline VARCHAR(100) NOT NULL,
+    flight_number VARCHAR(50) NOT NULL,
+    departure_city VARCHAR(100) NOT NULL,
+    arrival_city VARCHAR(100) NOT NULL,
+    departure_timestamp TIMESTAMP
+    WITH
+        TIME ZONE, -- New
+        arrival_timestamp TIMESTAMP
+    WITH
+        TIME ZONE, -- New
+        available_seats INTEGER, -- New
+        price_minor BIGINT,
+        currency_code CHAR(3) REFERENCES currencies (code),
+        UNIQUE (airline, flight_number)
+);
+
+-- Stores all available accommodations for users to choose from.
+CREATE TABLE accommodations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    type VARCHAR(50) CHECK (
+        type IN (
+            'hotel',
+            'hostel',
+            'guesthouse'
+        )
+    ),
+    capacity_per_room INTEGER, -- New
+    rating NUMERIC(2, 1),
+    price_per_night_minor BIGINT,
+    currency_code CHAR(3) REFERENCES currencies (code)
+);
+
+-- Stores bookings for user-created custom trips.
+CREATE TABLE custom_trip_bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    num_travelers INTEGER NOT NULL,
+    total_price_minor BIGINT NOT NULL,
+    booking_status VARCHAR(20) NOT NULL DEFAULT 'confirmed',
+    booked_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (user_id, trip_id)
 );
