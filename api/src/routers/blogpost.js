@@ -29,6 +29,7 @@ router.get("/", optionalAuth, async (req, res) => {
         "u.username",
         "u.first_name",
         "u.last_name",
+        "u.profile_image",
         knex.raw(
           `(SELECT upp.image_url FROM user_post_photos as upp WHERE upp.post_id = p.id ORDER BY upp.uploaded_at ASC LIMIT 1) as cover_image_url`
         )
@@ -146,7 +147,8 @@ router.get("/:id", optionalAuth, async (req, res) => {
         "p.created_at",
         "u.username",
         "u.first_name",
-        "u.last_name"
+        "u.last_name",
+        "u.profile_image"
       )
       .join("users as u", "p.user_id", "u.id")
       .where("p.id", id)

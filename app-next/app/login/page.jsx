@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Login.module.css";
 
@@ -24,6 +24,8 @@ export default function Login() {
   const [loginSuccess, setLoginSuccess] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
+  const loginFormRef = useRef(null);
+  const registerFormRef = useRef(null);
 
   useEffect(() => {
     if (currentImage >= images.length) {
@@ -37,6 +39,22 @@ export default function Login() {
     }, 4000);
     return () => clearInterval(interval);
   }, [images.length]);
+
+  // Clear form fields and messages when the page mounts to avoid showing
+  // previously-entered credentials (browser back navigation or autofill).
+  useEffect(() => {
+    try {
+      if (loginFormRef?.current) loginFormRef.current.reset();
+    } catch (e) {}
+    try {
+      if (registerFormRef?.current) registerFormRef.current.reset();
+    } catch (e) {}
+    // clear any success/error banners so forms appear empty/fresh
+    setLoginSuccess("");
+    setRegisterSuccess("");
+    setLoginError("");
+    setRegisterError("");
+  }, []);
 
   // helper to safely parse JSON or return text
   async function safeParseResponse(res) {
@@ -81,7 +99,13 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
-      event.target.reset();
+      // try to reset the submitted form (both direct event target and form ref)
+      try {
+        event?.target?.reset?.();
+      } catch (e) {}
+      try {
+        if (loginFormRef?.current) loginFormRef.current.reset();
+      } catch (e) {}
       // navigate to dashboard so the user sees their profile
       try {
         router.push("/user");
@@ -134,7 +158,13 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
-      event.target.reset();
+      // reset the registration form reliably
+      try {
+        event?.target?.reset?.();
+      } catch (e) {}
+      try {
+        if (registerFormRef?.current) registerFormRef.current.reset();
+      } catch (e) {}
       try {
         router.push("/user");
       } catch (e) {
@@ -178,9 +208,14 @@ export default function Login() {
         </div>
         {/* Login Form */}
         <form
+          ref={loginFormRef}
+          autoComplete="off"
           className={`${styles.form} ${!isLogin ? styles.hidden : ""}`}
           onSubmit={handleLoginSubmit}
         >
+          {/* Hidden dummy fields to catch browser autofill and keep visible fields empty */}
+          <input type="text" name="fake-username" autoComplete="username" style={{ display: "none" }} aria-hidden="true" />
+          <input type="password" name="fake-password" autoComplete="current-password" style={{ display: "none" }} aria-hidden="true" />
           <h2 className={styles.title}>Login</h2>
           {loginSuccess && (
             <div className={styles.success} aria-live="polite">
@@ -192,12 +227,14 @@ export default function Login() {
               {loginError}
             </div>
           )}
-          <input name="login_identifier" type="text" placeholder="Username or email" required />
-          <input name="password" type="password" placeholder="Password" required />
+          <input name="login_identifier" type="text" placeholder="Username or email" required autoComplete="off" />
+          <input name="password" type="password" placeholder="Password" required autoComplete="off" />
           <button type="submit">Login</button>
         </form>
         {/* Register Form */}
         <form
+          ref={registerFormRef}
+          autoComplete="off"
           className={`${styles.form} ${isLogin ? styles.hidden : ""}`}
           onSubmit={handleRegisterSubmit}
         >
@@ -212,18 +249,19 @@ export default function Login() {
               {registerError}
             </div>
           )}
-          <input name="first_name" type="text" placeholder="First name" required />
-          <input name="last_name" type="text" placeholder="Last name" required />
-          <input name="email" type="email" placeholder="Email" required />
-          <input name="username" type="text" placeholder="Username" required />
-          <input name="password" type="password" placeholder="Password" required />
+          <input name="first_name" type="text" placeholder="First name" required autoComplete="given-name" />
+          <input name="last_name" type="text" placeholder="Last name" required autoComplete="family-name" />
+          <input name="email" type="email" placeholder="Email" required autoComplete="email" />
+          <input name="username" type="text" placeholder="Username" required autoComplete="username" />
+          <input name="password" type="password" placeholder="Password" required autoComplete="new-password" />
           <input
             name="password_confirmation"
             type="password"
             placeholder="Confirm password"
             required
+            autoComplete="new-password"
           />
-          <input name="mobile" type="text" placeholder="Mobile" required />
+          <input name="mobile" type="text" placeholder="Mobile" required autoComplete="tel" />
           <button type="submit">Register</button>
         </form>
       </div>

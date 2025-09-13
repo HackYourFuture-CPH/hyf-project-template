@@ -61,6 +61,25 @@ export default function BlogCard({ card }) {
     ? String(rawCategory).toLowerCase().replace(/(^|\s)\S/g, (t) => t.toUpperCase())
     : null;
 
+  // Normalize author and avatar: backend may return author as string or user object
+  let avatar = card.author_profile_image || card.profile_image || card.author_image || null;
+  let authorName = card.author_name ?? card.author ?? null;
+  if (!authorName && card.user) {
+    if (typeof card.user === "string") authorName = card.user;
+    else if (typeof card.user === "object") {
+      const full = card.user.full_name || `${card.user.first_name || ""} ${card.user.last_name || ""}`.trim();
+      // Detect placeholder names like First1 Last1 from seeded data and prefer username
+      const isPlaceholder = (n) => typeof n === "string" && /^\s*(first\d*|last\d*)\s*$/i.test(n);
+      const isFullPlaceholder = (() => {
+        const parts = full.split(/\s+/).filter(Boolean);
+        if (parts.length === 0) return false;
+        return parts.every((p) => isPlaceholder(p));
+      })();
+      authorName = !isFullPlaceholder && full ? full : card.user.username || null;
+      avatar = avatar || card.user.profile_image || card.user.avatar || null;
+    }
+  }
+
   return (
     <Link href={`/blogs/${card.id}`} style={{ textDecoration: "none" }}>
       <div className={styles.travelCard}>
@@ -74,10 +93,18 @@ export default function BlogCard({ card }) {
             onError={() => setImageSrc(placeholder)}
           />
         </div>
-        <div className={styles.cardContent}>
+          <div className={styles.cardContent}>
           <h4 className={styles.cardTitle}>{title}</h4>
           <div className={styles.meta}>
-            {author ? <span>by {author}</span> : null}
+            {/* Use PostMeta-style layout inline: show avatar and name */}
+            {authorName ? (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                {avatar ? (
+                  <img src={avatar} alt={authorName} style={{ width: 28, height: 28, borderRadius: 999 }} />
+                ) : null}
+                <span>by {authorName}</span>
+              </span>
+            ) : null}
             {formattedDate ? (
               <span style={{ marginLeft: author ? 8 : 0 }}>{formattedDate}</span>
             ) : null}

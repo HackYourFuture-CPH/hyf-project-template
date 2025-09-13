@@ -75,7 +75,7 @@ export default function BlogsPage() {
         <select className={styles.filterSelect}>
           <option value="">All Blogs</option>
         </select>
-        <select className={styles.filterSelect} value="">
+        <select className={styles.filterSelect} defaultValue="">
           <option value="">Sort by City</option>
           <option value="price_asc">Cairo</option>
           <option value="price_desc">Toronto</option>
