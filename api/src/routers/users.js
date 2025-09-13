@@ -136,6 +136,18 @@ router.put(
   }
 );
 
+// Delete user's current profile photo
+router.delete("/profile/photo", async (req, res) => {
+  const userId = req.user.id || req.user.sub;
+  try {
+    await knex("users").where({ id: userId }).update({ profile_image: null });
+    res.status(200).json({ message: "Profile photo removed successfully." });
+  } catch (error) {
+    console.error("Error removing profile photo:", error);
+    res.status(500).json({ error: "Failed to remove profile photo." });
+  }
+});
+
 // Change password
 router.put(
   "/change-password",

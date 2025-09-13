@@ -14,6 +14,9 @@ import authRouter from "./routers/auth.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import tripsRouter from "./routers/trips.js";
+import tripPlannerRouter from "./routers/tripPlanner.js";
+import BookingsRouter from "./routers/bookings.js";
+
 import attractionsRouter from "./routers/attractions.js";
 import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
@@ -26,7 +29,8 @@ import adminToursRouter from "./routers/admin/tours.js";
 import adminPostsRouter from "./routers/admin/posts.js";
 import adminAttractionsRouter from "./routers/admin/attractions.js";
 import adminDashboardRouter from "./routers/admin/dashboard.js";
-
+import adminBookingsRouter from "./routers/admin/bookings.js";
+import adminTripsRouter from "./routers/admin/trips.js";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -67,6 +71,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/tours", toursRouter);
 app.use("/api/trips", tripsRouter);
+app.use("/api/trip-options", tripPlannerRouter);
+app.use("/api/bookings", BookingsRouter);
 app.use("/api/attractions", attractionsRouter);
 app.use("/api/favorites", favoritesRouter);
 
@@ -80,7 +86,8 @@ app.use("/api/admin/tours", adminToursRouter);
 app.use("/api/admin/posts", adminPostsRouter);
 app.use("/api/admin/attractions", adminAttractionsRouter);
 app.use("/api/admin", adminDashboardRouter);
-
+app.use("/api/admin/bookings", adminBookingsRouter);
+app.use("/api/admin/trips", adminTripsRouter);
 // --- Global Error Handler ---
 app.use(errorHandler);
 
