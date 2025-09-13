@@ -319,7 +319,13 @@
   cursor: pointer;
 }
 
-.uploadButton {
+.hiddenFileInput {
+  display: none;
+}
+
+/* Ensure UploadThing button wrapper is positioned so we can overlay the native file input
+   and hide the browser "No file chosen" text while keeping the input clickable. */
+.uploadThingButton {
   background: #2563eb;
   color: #fff;
   padding: 8px 12px;
@@ -327,10 +333,21 @@
   border: none;
   cursor: pointer;
   font-weight: 700;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0 auto;
 }
 
-.hiddenFileInput {
-  display: none;
+.uploadThingButton input[type="file"] {
+  /* Put the native file input on top but invisible so the browser text isn't shown */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .card {

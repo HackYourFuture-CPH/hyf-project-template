@@ -21,25 +21,20 @@ export default function AttractionsPage() {
   // Function to fetch data from the API
   async function fetchAttractionCards(searchText = "", location = "") {
     try {
-      if (searchText) {
-        searchText = `?search=${searchText}`;
-      } else if (location) {
-        searchText = `?location=${location}`;
-      }
-
-      // add pagination params
+      // build query params using URLSearchParams
       const params = new URLSearchParams();
       params.append("page", String(page));
       params.append("limit", String(limit));
       if (searchText) params.append("search", searchText);
-      if (location && !searchText) params.append("location", location);
+      if (location) params.append("location", location);
 
       const response = await fetch(api(`/attractions?${params.toString()}`));
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const attractionData = await response.json();
-      const list = attractionData.data || [];
+      // normalize response shape: API may return { data: [...] } or directly an array
+      const list = Array.isArray(attractionData) ? attractionData : attractionData.data || [];
       setAttractionCardData(list);
       const apiTotalPages =
         attractionData.pagination?.totalPages ??
@@ -71,12 +66,13 @@ export default function AttractionsPage() {
   }, []);
 
   useEffect(() => {
-    // Filter and sort logic
+    // When search changes, reset to first page and fetch using the search term
     setPage(1);
     fetchAttractionCards(search, "");
   }, [search]);
 
   useEffect(() => {
+    // sortKey acts as a location filter in current UI; if it changes fetch with it
     if (sortKey) {
       setPage(1);
       fetchAttractionCards("", sortKey);
@@ -84,7 +80,9 @@ export default function AttractionsPage() {
   }, [sortKey]);
 
   useEffect(() => {
-    fetchAttractionCards();
+    // when the destination filter changes, reset to first page and fetch
+    setPage(1);
+    fetchAttractionCards("", filterDestination);
   }, [filterDestination]);
 
   useEffect(() => {
@@ -123,8 +121,8 @@ export default function AttractionsPage() {
 
           <select
             className={styles.filterSelect}
-            value=""
-            onChange={(e) => setSortKey(e.target.value)}
+            value={filterDestination}
+            onChange={(e) => setFilterDestination(e.target.value)}
           >
             <option value="">Filter by City</option>
             {locations.map((loc) => (

@@ -40,7 +40,8 @@ export default function Header() {
               alt="logo"
               width={120}
               height={60}
-              priority
+          // removed `priority` to avoid Next.js preloading this SVG
+          // which can cause a browser warning if it's not used immediately
             />
           </Link>
         </div>
