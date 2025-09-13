@@ -1,0 +1,218 @@
+.resultsContainer {
+  margin-top: 16px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #dc2626;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.noResults {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.resultsHeader {
+  margin-bottom: 12px;
+}
+
+.resultsCount {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.usersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.userCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.userCard:hover {
+  border-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.userEmail,
+.userUsername,
+.userMobile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.userEmail i,
+.userUsername i,
+.userMobile i {
+  width: 12px;
+  color: #9ca3af;
+}
+
+.userMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.userRole {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.userRole.adminRole {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.userRole.userRole {
+  background: #f0f9ff;
+  color: #2563eb;
+}
+
+.userStatus {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.userStatus.active {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.userStatus.inactive {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.userActions {
+  display: flex;
+  gap: 4px;
+  margin-left: 12px;
+}
+
+.editButton,
+.deleteButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.editButton {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.editButton:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.deleteButton {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.deleteButton:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .usersGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .userCard {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .userActions {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}

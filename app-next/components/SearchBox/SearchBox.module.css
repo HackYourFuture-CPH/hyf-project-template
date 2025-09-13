@@ -1,0 +1,125 @@
+.searchContainer {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.searchInputWrapper:focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.searchIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #111827;
+  font-family: "Archivo", sans-serif;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.clearButton:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #dc2626;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* RTL Support */
+[dir="rtl"] .searchIcon {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+[dir="rtl"] .clearButton {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .searchInputWrapper {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .searchInputWrapper:focus-within {
+    border-color: #dc2626;
+  }
+  
+  .searchInput {
+    color: #f9fafb;
+  }
+  
+  .searchInput::placeholder {
+    color: #6b7280;
+  }
+  
+  .searchIcon {
+    color: #9ca3af;
+  }
+  
+  .clearButton {
+    background: #374151;
+    color: #9ca3af;
+  }
+  
+  .clearButton:hover {
+    background: #4b5563;
+    color: #d1d5db;
+  }
+}
