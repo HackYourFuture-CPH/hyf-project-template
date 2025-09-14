@@ -91,7 +91,8 @@ export default function Login() {
       // success: parsed.body expected
       setLoginError("");
       setLoginSuccess(parsed.body?.message || "Welcome! You are now logged in.");
-      // persist token so other pages (dashboard) can use it
+      
+      // persist token and user data so other pages can use it
       if (parsed.body?.token) {
         try {
           localStorage.setItem("token", parsed.body.token);
@@ -99,6 +100,7 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
+
       // try to reset the submitted form (both direct event target and form ref)
       try {
         event?.target?.reset?.();
@@ -107,8 +109,15 @@ export default function Login() {
         if (loginFormRef?.current) loginFormRef.current.reset();
       } catch (e) {}
       // navigate to dashboard so the user sees their profile
+
+      
       try {
-        router.push("/user");
+        const userRole = parsed.body?.user?.role || "user";
+        if (userRole === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/user");
+        }
       } catch (e) {
         /* ignore navigation errors in non-browser tests */
       }
@@ -150,7 +159,8 @@ export default function Login() {
 
       setRegisterError("");
       setRegisterSuccess(parsed.body?.message || "Registration successful! You can now log in.");
-      // persist token if returned and redirect to dashboard
+      
+      // persist token and user data if returned
       if (parsed.body?.token) {
         try {
           localStorage.setItem("token", parsed.body.token);
@@ -158,6 +168,20 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
+      
+      // Store user data including role for redirect logic
+      if (parsed.body?.user) {
+        try {
+          localStorage.setItem("user", JSON.stringify(parsed.body.user));
+        } catch (e) {
+          console.warn("Failed to persist user data to localStorage", e);
+        }
+      }
+      
+      event.target.reset();
+      
+      // Redirect based on user role (new users are typically "user" role)
+
       // reset the registration form reliably
       try {
         event?.target?.reset?.();
@@ -165,8 +189,15 @@ export default function Login() {
       try {
         if (registerFormRef?.current) registerFormRef.current.reset();
       } catch (e) {}
+
+      
       try {
-        router.push("/user");
+        const userRole = parsed.body?.user?.role || "user";
+        if (userRole === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/user");
+        }
       } catch (e) {
         /* ignore navigation errors in non-browser tests */
       }

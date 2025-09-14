@@ -47,9 +47,28 @@ adminAttractionsRouter.get("/", async (req, res) => {
     const totalResult = await countQuery.count("* as count").first();
     const total = parseInt(totalResult.count);
 
+    // Fetch photos for each attraction
+    const attractionsWithPhotos = await Promise.all(
+      attractions.map(async (attraction) => {
+        const photos = await knex("attraction_post_photos")
+          .where({ post_id: attraction.id })
+          .limit(1); // Get only the first photo for the card
+        
+        const photosWithUrls = photos.map((p) => ({
+          ...p,
+          image_url: `${req.protocol}://${req.get("host")}${p.image_url}`,
+        }));
+
+        return {
+          ...attraction,
+          photos: photosWithUrls,
+        };
+      })
+    );
+
     res.json({
       message: "Attractions retrieved successfully for admin.",
-      data: attractions,
+      data: attractionsWithPhotos,
       pagination: {
         totalItems: total,
         totalPages: Math.ceil(total / limit),

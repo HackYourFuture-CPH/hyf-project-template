@@ -1538,7 +1538,7 @@ SELECT
   gen_random_uuid(),
   (SELECT id FROM users WHERE username = ('user' || ((n % 50) + 1)::text)),
   NULL,
-  ('Travel Story ' || n || ': ' || substr(md5(n::text),1,10)),
+  ('Travel Story ' || n),
   ('An engaging first-person travel story about highlights and practical tips. This AI-generated paragraph describes the experience in natural language for post ' || n || '.'),
   CASE WHEN n % 3 = 0 THEN 'food' WHEN n % 3 = 1 THEN 'adventure' ELSE 'culture' END,
   NOW() - (n || ' days')::interval
