@@ -8,6 +8,8 @@ const nextConfig = {
       "placehold.co",
       "localhost",
       "127.0.0.1",
+      "ufs.sh",
+      "3ob6vy266n.ufs.sh",
     ],
   },
 };
