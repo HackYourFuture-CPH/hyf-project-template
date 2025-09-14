@@ -13,21 +13,25 @@ export default function BlogsPage() {
   const [limit, setLimit] = useState(12);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [category, setCategory] = useState("");
+  const [sort, setSort] = useState("");
+  const [categoriesList, setCategoriesList] = useState([]);
 
   // Function to fetch data from the API
   async function fetchBlogCards(searchText = "") {
     try {
-      if (searchText) {
-        searchText = `?search=${searchText}`;
-      }
-
       // include pagination params
       const params = new URLSearchParams();
       params.append("page", String(page));
       params.append("limit", String(limit));
       if (searchText) params.append("search", searchText);
+      if (category) params.append("category", category);
+      if (sort) params.append("sort", sort);
 
-      const response = await fetch(api(`/blogposts?${params.toString()}`));
+      const url = api(`/blogposts?${params.toString()}`);
+      // log the final URL so it's easy to debug what's being requested
+      console.log("Fetching blogposts:", url);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -42,19 +46,38 @@ export default function BlogsPage() {
       setTotalPages(Number.isFinite(Number(apiTotalPages)) ? Number(apiTotalPages) : 1);
       setTotalItems(Number.isFinite(Number(apiTotalItems)) ? Number(apiTotalItems) : list.length);
     } catch (error) {
-      console.error("Error fetching attraction cards:", error);
+      console.error("Error fetching blog cards:", error);
     }
   }
 
+  // Load categories from backend so the select options match server-side categories
   useEffect(() => {
-    fetchBlogCards(search);
-  }, [page, limit]);
+    let mounted = true;
+    async function loadCategories() {
+      try {
+        const res = await fetch(api("/blogposts/categories"));
+        if (!res.ok) return;
+        const data = await res.json();
+        if (mounted) setCategoriesList(Array.isArray(data.data) ? data.data : []);
+      } catch (err) {
+        // ignore silently; categories are optional
+        console.warn("Failed to load categories", err);
+      }
+    }
+    loadCategories();
+    return () => (mounted = false);
+  }, []);
 
+  // When the search term or filters change, reset pagination to the first page.
   useEffect(() => {
-    // Filter and sort logic
     setPage(1);
+  }, [search, category, sort]);
+
+  // Fetch whenever page, limit, search or filters change.
+  useEffect(() => {
     fetchBlogCards(search);
-  }, [search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, search, category, sort]);
 
   return (
     <div className={styles.pageWrapper}>
@@ -72,14 +95,28 @@ export default function BlogsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select className={styles.filterSelect}>
-          <option value="">All Blogs</option>
+        <select
+          className={styles.filterSelect}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          {categoriesList.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
-        <select className={styles.filterSelect} value="">
-          <option value="">Sort by City</option>
-          <option value="price_asc">Cairo</option>
-          <option value="price_desc">Toronto</option>
-          <option value="rating_asc">New York</option>
+        <select
+          className={styles.filterSelect}
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
+          <option value="">Sort</option>
+          <option value="created_at-desc">Newest</option>
+          <option value="created_at-asc">Oldest</option>
+          <option value="title-asc">Title A→Z</option>
+          <option value="title-desc">Title Z→A</option>
         </select>
       </div>
       <div className={styles.gridContainer}>

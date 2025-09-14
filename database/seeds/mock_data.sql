@@ -2657,6 +2657,258 @@ SET
 WHERE
     true;
 
+-- ==========
+-- 14. NEW: MASTER LISTS FOR FLIGHTS AND ACCOMMODATIONS
+-- ==========
+
+-- Seed a master list of available accommodations
+INSERT INTO
+    accommodations (
+        id,
+        name,
+        city,
+        type,
+        capacity_per_room,
+        rating,
+        price_per_night_minor,
+        currency_code
+    )
+VALUES (
+        gen_random_uuid (),
+        'Grand Hotel Paris',
+        'Paris',
+        'hotel',
+        2,
+        4.5,
+        25000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Rome City Center B&B',
+        'Rome',
+        'guesthouse',
+        2,
+        4.2,
+        12000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Tokyo Central Hostel',
+        'Tokyo',
+        'hostel',
+        4,
+        4.0,
+        4500,
+        'JPY'
+    ),
+    (
+        gen_random_uuid (),
+        'The Londoner',
+        'London',
+        'hotel',
+        3,
+        4.8,
+        35000,
+        'GBP'
+    ),
+    (
+        gen_random_uuid (),
+        'Sydney Harbour View',
+        'Sydney',
+        'hotel',
+        2,
+        4.6,
+        28000,
+        'AUD'
+    ),
+    (
+        gen_random_uuid (),
+        'Cairo Pyramids Hotel',
+        'Cairo',
+        'hotel',
+        4,
+        4.1,
+        15000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        'Rio Beachside Hostel',
+        'Rio de Janeiro',
+        'hostel',
+        6,
+        3.9,
+        3000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        'Kyoto Garden Ryokan',
+        'Kyoto',
+        'guesthouse',
+        2,
+        4.9,
+        22000,
+        'JPY'
+    ),
+    (
+        gen_random_uuid (),
+        'The Dubliner Inn',
+        'Dublin',
+        'guesthouse',
+        3,
+        4.3,
+        11000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Vancouver Downtown Suites',
+        'Vancouver',
+        'hotel',
+        4,
+        4.4,
+        21000,
+        'CAD'
+    );
+
+-- Seed a master list of available flights
+INSERT INTO
+    flights (
+        id,
+        airline,
+        flight_number,
+        departure_city,
+        arrival_city,
+        departure_timestamp,
+        arrival_timestamp,
+        available_seats,
+        price_minor,
+        currency_code
+    )
+VALUES (
+        gen_random_uuid (),
+        'Global Airways',
+        'GA201',
+        'London',
+        'Paris',
+        NOW() + interval '30 days',
+        NOW() + interval '30 days 2 hours',
+        50,
+        12000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Horizon Jet',
+        'HJ550',
+        'New York',
+        'London',
+        NOW() + interval '45 days',
+        NOW() + interval '45 days 8 hours',
+        120,
+        45000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        'SkyLink Airlines',
+        'SL891',
+        'Tokyo',
+        'Sydney',
+        NOW() + interval '60 days',
+        NOW() + interval '60 days 9 hours',
+        80,
+        65000,
+        'AUD'
+    ),
+    (
+        gen_random_uuid (),
+        'Continental Connect',
+        'CC303',
+        'Paris',
+        'Rome',
+        NOW() + interval '32 days',
+        NOW() + interval '32 days 2 hours',
+        30,
+        9000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Transoceanic Flights',
+        'TF112',
+        'Sydney',
+        'Los Angeles',
+        NOW() + interval '50 days',
+        NOW() + interval '50 days 14 hours',
+        150,
+        75000,
+        'USD'
+    ),
+    (
+        gen_random_uuid (),
+        'Apex Air',
+        'AX404',
+        'Los Angeles',
+        'Tokyo',
+        NOW() + interval '55 days',
+        NOW() + interval '55 days 11 hours',
+        100,
+        82000,
+        'JPY'
+    ),
+    (
+        gen_random_uuid (),
+        'Global Airways',
+        'GA310',
+        'Rome',
+        'Athens',
+        NOW() + interval '35 days',
+        NOW() + interval '35 days 1.5 hours',
+        40,
+        11000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Horizon Jet',
+        'HJ721',
+        'Cairo',
+        'Rome',
+        NOW() + interval '65 days',
+        NOW() + interval '65 days 4 hours',
+        60,
+        18000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'SkyLink Airlines',
+        'SL902',
+        'Rio de Janeiro',
+        'Lisbon',
+        NOW() + interval '70 days',
+        NOW() + interval '70 days 10 hours',
+        90,
+        55000,
+        'EUR'
+    ),
+    (
+        gen_random_uuid (),
+        'Continental Connect',
+        'CC601',
+        'Lisbon',
+        'Madrid',
+        NOW() + interval '40 days',
+        NOW() + interval '40 days 1 hour',
+        25,
+        7000,
+        'EUR'
+    );
+
 -- End of mock_data.sql
 
 -- =================================================================
@@ -2694,3 +2946,518 @@ VALUES (
         true,
         NOW()
     ) ON CONFLICT (username) DO NOTHING;
+
+-- ==========
+-- PATCH: Replace local image paths with hosted UploadThing URLs
+-- ==========
+-- PATCH: Replace local image paths with hosted UploadThing URLs
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0XrkY1048czo0FnJgbLQ4u7TIiB2MsPNkAx5K'
+WHERE
+    cover_image_url = '/images/tours/journey_through_the_holy_land.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0LZLBrhq43jEt8qsiycWUKSabYIPoBkrnFdx2'
+WHERE
+    cover_image_url = '/images/tours/the_silk_road_odyssey.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0XJmAMZY48czo0FnJgbLQ4u7TIiB2MsPNkAx5'
+WHERE
+    cover_image_url = '/images/tours/canadian_rockies_by_rail.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0rYqLIpWspB8Ti3SIXkzMvPKcmgG9EwRujOLY'
+WHERE
+    cover_image_url = '/images/tours/coastal_croatia_slovenia.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0swElwaLRiPREdWQemAxpCHnMrkalFu39t2Zc'
+WHERE
+    cover_image_url = '/images/tours/rainforests_ruins_of_central_america.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0l1qrbYtoyrEG0cOjZ4sLVYR3ztldFAe75qHC'
+WHERE
+    cover_image_url = '/images/tours/italian_renaissance_journey.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0wbI6k7L6TGQynxq0jLsk21FBzhvI9SRfM8at'
+WHERE
+    cover_image_url = '/images/tours/trans_siberian_railway_adventure.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0FrVLLpVAr1eIs9uElLyK7nqoCzGXPVHU46fF'
+WHERE
+    cover_image_url = '/images/tours/patagonian_wilderness_trek.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0SHFC1ZobY4WEZ5s1IknvpUBoSQuTjNf28gwK'
+WHERE
+    cover_image_url = '/images/tours/wonders_of_ancient_egypt.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0WnyGmyeVEcbGpMlTg43ioAS9XC2Z6PLBNtnx'
+WHERE
+    cover_image_url = '/images/tours/india_s_golden_triangle.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0cUbIEbVcA6s7aPVF5zieXKBH4Qwx1yCJZmYr'
+WHERE
+    cover_image_url = '/images/tours/southeast_asian_adventure.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0gDy5C1G2dKY945Am8lSuVoyqnJjfLxObRkXH'
+WHERE
+    cover_image_url = '/images/tours/vietnam_cambodia_discovery.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0VkPKJjQ4e0LUG6WZy93PdIiAFbvfNaQsrKRp'
+WHERE
+    cover_image_url = '/images/tours/african_safari_expedition.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Q7jyMvSP7oTIXmufLOFqr1VRHS2YWsQaDjZB'
+WHERE
+    cover_image_url = '/images/tours/the_baltics_lithuania_latvia_estonia.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0yDFu91hkfYdmDLIvAWg3b9VRlFn2q0uJ1rPi'
+WHERE
+    cover_image_url = '/images/tours/moroccan_kasbahs_deserts.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0y9LbKbhkfYdmDLIvAWg3b9VRlFn2q0uJ1rPi'
+WHERE
+    cover_image_url = '/images/tours/the_best_of_portugal_lisbon_porto_algarve.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0dqHhdNTYxVdEPOHJ8sb9p21g3CBmQU6L4ZGq'
+WHERE
+    cover_image_url = '/images/tours/new_zealand_adventure_quest.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0EPdJkawMX7fJdCPGmizO6Dr1ZWhpSAgYoLab'
+WHERE
+    cover_image_url = '/images/tours/scandinavian_dreams.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0i3hjk8rHntQMbqG9vIxSZXBz3jKVPr17RDhd'
+WHERE
+    cover_image_url = '/images/tours/peru_land_of_the_incas.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0ySNYk4hkfYdmDLIvAWg3b9VRlFn2q0uJ1rPi'
+WHERE
+    cover_image_url = '/images/tours/highlights_of_ireland.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0XxaxZI48czo0FnJgbLQ4u7TIiB2MsPNkAx5K'
+WHERE
+    cover_image_url = '/images/tours/wild_alaska_expedition_cruise.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0RJldf7EeNkojxWcdsn1F6VT82U50LR7B4brZ'
+WHERE
+    cover_image_url = '/images/tours/greek_islands_cruise.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0NvgWwhlxHTAjerMmZ8XFxRfO2t61vip7CIn0'
+WHERE
+    cover_image_url = '/images/tours/mysteries_of_ancient_japan.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj06lTsrEzQiACnzreZafc7qOV0XxblLW5tNhyd'
+WHERE
+    cover_image_url = '/images/tours/flavors_of_spain_a_culinary_tour.jpg';
+
+UPDATE travel_plans
+SET
+    cover_image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0DIazEkFB4UVJTSYWvGr5Is6yaAeQgq8bKztw'
+WHERE
+    cover_image_url = '/images/tours/iceland_s_ring_road_adventure.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0ds66Nu0TYxVdEPOHJ8sb9p21g3CBmQU6L4ZG'
+WHERE
+    image_url = '/images/attractions/venice_s_grand_canal_by_gondola.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj09mYAkupe2Iju8KpdLsDhGA3lQb0XEcJqarPw'
+WHERE
+    image_url = '/images/attractions/exploring_the_acropolis_of_athens.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0TR6XlJkHHOLqJZQAKxYSiDwTPCnFs517vRXN'
+WHERE
+    image_url = '/images/attractions/the_lost_city_of_petra_by_night.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0TRLv4wwHHOLqJZQAKxYSiDwTPCnFs517vRXN'
+WHERE
+    image_url = '/images/attractions/the_ancient_colosseum_at_dawn_2.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Lxnrscq43jEt8qsiycWUKSabYIPoBkrnFdx2'
+WHERE
+    image_url = '/images/attractions/the_majestic_eiffel_tower_at_night.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0RDIpkXEeNkojxWcdsn1F6VT82U50LR7B4brZ'
+WHERE
+    image_url = '/images/attractions/hot_air_balloon_over_cappadocia.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0iecqnNGrHntQMbqG9vIxSZXBz3jKVPr17RDh'
+WHERE
+    image_url = '/images/attractions/the_grand_pyramids_of_giza.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0jLgC6kI3wS0HKTeOFA4qrugX65UbRliCaohy'
+WHERE
+    image_url = '/images/attractions/the_sagrada_familia_in_barcelona.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0oOh1iBF4LVE3vGryDqTpZUNASYzePbimhQCg'
+WHERE
+    image_url = '/images/attractions/the_ancient_colosseum_at_dawn_3.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0q087EuJbkZGI1UEiSTLAoq2rCnBQswthdYXm'
+WHERE
+    image_url = '/images/attractions/sydney_opera_house_tour.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj01VGFE8O3K7pC6ZFjNnLfwBXHumAtbQoGsJq4'
+WHERE
+    image_url = '/images/attractions/the_majestic_eiffel_tower_at_night_2.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0SunHEGobY4WEZ5s1IknvpUBoSQuTjNf28gwK'
+WHERE
+    image_url = '/images/attractions/the_northern_lights_from_troms.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0YXLT8qdsR7MbXpOk5Uq4WG9DviwmdfrS0VzJ'
+WHERE
+    image_url = '/images/attractions/hot_air_balloon_over_cappadocia_3.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0TacC4qHHOLqJZQAKxYSiDwTPCnFs517vRXN9'
+WHERE
+    image_url = '/images/attractions/the_grand_canyon_from_the_south_rim.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0cCgSBhVcA6s7aPVF5zieXKBH4Qwx1yCJZmYr'
+WHERE
+    image_url = '/images/attractions/walking_the_streets_of_pompeii.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0j5ZbNhI3wS0HKTeOFA4qrugX65UbRliCaohy'
+WHERE
+    image_url = '/images/attractions/sunrise_over_machu_picchu.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj04r7qVwuseIzdlcAtuZmGf9RWhyb7oK6xCSvq'
+WHERE
+    image_url = '/images/attractions/hot_air_balloon_over_cappadocia_2.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj00D3fjS8vrjHILszJxUWbk0h9BE57yM6OfC4X'
+WHERE
+    image_url = '/images/attractions/a_day_at_the_louvre_museum.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0E3Iv1pwMX7fJdCPGmizO6Dr1ZWhpSAgYoLab'
+WHERE
+    image_url = '/images/attractions/victoria_falls_zambia_zimbabwe.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0wW4AXrL6TGQynxq0jLsk21FBzhvI9SRfM8at'
+WHERE
+    image_url = '/images/attractions/the_blue_lagoon_iceland.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0swET5T5RiPREdWQemAxpCHnMrkalFu39t2Zc'
+WHERE
+    image_url = '/images/attractions/the_ancient_colosseum_at_dawn.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0mcMs5kbl34QGUd9voJtbNVn71iHsPuBFgO8X'
+WHERE
+    image_url = '/images/attractions/the_forbidden_city_beijing.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0RRtCNhEeNkojxWcdsn1F6VT82U50LR7B4brZ'
+WHERE
+    image_url = '/images/attractions/the_majestic_eiffel_tower_at_night_3.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj09in6U6pe2Iju8KpdLsDhGA3lQb0XEcJqarPw'
+WHERE
+    image_url = '/images/attractions/christ_the_redeemer_at_sunrise.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0MAHgQayIdZrR8PbYsKTL7Jg1cGQweWAXEa2j'
+WHERE
+    image_url = '/images/attractions/the_statue_of_liberty_ellis_island.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0WlygB7seVEcbGpMlTg43ioAS9XC2Z6PLBNtn'
+WHERE
+    image_url = '/images/attractions/exploring_the_temples_of_angkor_wat.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0VRxYhNQ4e0LUG6WZy93PdIiAFbvfNaQsrKRp'
+WHERE
+    image_url = '/images/attractions/hiking_the_great_wall_of_china.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0KZj0fL6JikpMAjuIHZ5zmRL4yTSCeU2lo1dG'
+WHERE
+    image_url = '/images/attractions/the_taj_mahal_at_sunrise.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0HERQ6n4sThGwz3K1ux2VkREeLI5o4MOfAs0l'
+WHERE
+    image_url = '/images/attractions/the_serengeti_great_migration.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0hSMVi0Cet6lvpAFYdoW3DIXjUaEurigBxm4w'
+WHERE
+    image_url = '/images/attractions/snorkeling_the_great_barrier_reef.jpg';
+
+UPDATE attraction_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Rhd2RYEeNkojxWcdsn1F6VT82U50LR7B4brZ'
+WHERE
+    image_url = '/images/attractions/the_alhambra_palace_in_granada.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0EBTz3ywMX7fJdCPGmizO6Dr1ZWhpSAgYoLab'
+WHERE
+    image_url = '/images/user_posts/a_guide_to_ethical_wildlife_tourism.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0y8wNjChkfYdmDLIvAWg3b9VRlFn2q0uJ1rPi'
+WHERE
+    image_url = '/images/user_posts/learning_to_scuba_dive_in_the_red_sea.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0WytDWBeVEcbGpMlTg43ioAS9XC2Z6PLBNtnx'
+WHERE
+    image_url = '/images/user_posts/cycling_through_the_netherlands.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0dsLpMh5TYxVdEPOHJ8sb9p21g3CBmQU6L4ZG'
+WHERE
+    image_url = '/images/user_posts/a_food_lover_s_guide_to_italy.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0q8nChobkZGI1UEiSTLAoq2rCnBQswthdYXmp'
+WHERE
+    image_url = '/images/user_posts/the_street_art_of_berlin.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj09T6eL9pe2Iju8KpdLsDhGA3lQb0XEcJqarPw'
+WHERE
+    image_url = '/images/user_posts/backpacking_across_southeast_asia_on_a_budget.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0AJPc45imEvhM1FVngjwa0oWPUJZ4Tc2eKkIq'
+WHERE
+    image_url = '/images/user_posts/my_unforgettable_journey_through_the_alps.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj02M8RrH0CSw8Yi9u0ADH6VWXf3UbhQFZergLM'
+WHERE
+    image_url = '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_2.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0M6aeHhyIdZrR8PbYsKTL7Jg1cGQweWAXEa2j'
+WHERE
+    image_url = '/images/user_posts/what_i_learned_from_a_month_in_south_america.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0TbzimEHHOLqJZQAKxYSiDwTPCnFs517vRXN9'
+WHERE
+    image_url = '/images/user_posts/the_most_beautiful_beaches_in_thailand.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0A3jPEuimEvhM1FVngjwa0oWPUJZ4Tc2eKkIq'
+WHERE
+    image_url = '/images/user_posts/my_unforgettable_journey_through_the_alps_3.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0geWLsiG2dKY945Am8lSuVoyqnJjfLxObRkXH'
+WHERE
+    image_url = '/images/user_posts/the_food_markets_of_mexico_city.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj06O3q3mzQiACnzreZafc7qOV0XxblLW5tNhyd'
+WHERE
+    image_url = '/images/user_posts/getting_lost_in_the_souks_of_marrakesh.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0V4rY3JQ4e0LUG6WZy93PdIiAFbvfNaQsrKRp'
+WHERE
+    image_url = '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary_3.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0A4bqjhimEvhM1FVngjwa0oWPUJZ4Tc2eKkIq'
+WHERE
+    image_url = '/images/user_posts/finding_paradise_a_guide_to_the_philippines.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Cv3INF7hlFE0vRXQqM1tunOcerYbofySxH9D'
+WHERE
+    image_url = '/images/user_posts/our_family_road_trip_across_the_usa.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0wb8orglL6TGQynxq0jLsk21FBzhvI9SRfM8a'
+WHERE
+    image_url = '/images/user_posts/a_silent_retreat_in_a_thai_monastery.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0cKhmwSVcA6s7aPVF5zieXKBH4Qwx1yCJZmYr'
+WHERE
+    image_url = '/images/user_posts/volunteering_with_sea_turtles_in_costa_rica.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj04lqOAbuseIzdlcAtuZmGf9RWhyb7oK6xCSvq'
+WHERE
+    image_url = '/images/user_posts/a_culinary_tour_of_tokyo_s_best_kept_secrets.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj00rg6i68vrjHILszJxUWbk0h9BE57yM6OfC4X'
+WHERE
+    image_url = '/images/user_posts/how_to_pack_for_a_year_of_travel_in_one_carry_on.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0swq6DWJRiPREdWQemAxpCHnMrkalFu39t2Zc'
+WHERE
+    image_url = '/images/user_posts/trekking_to_everest_base_camp_a_photo_diary.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0jWSby9I3wS0HKTeOFA4qrugX65UbRliCaohy'
+WHERE
+    image_url = '/images/user_posts/my_unforgettable_journey_through_the_alps_2.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0rmcw8tMWspB8Ti3SIXkzMvPKcmgG9EwRujOL'
+WHERE
+    image_url = '/images/user_posts/solo_travel_in_vietnam_a_woman_s_perspective.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0CpxjJST7hlFE0vRXQqM1tunOcerYbofySxH9'
+WHERE
+    image_url = '/images/user_posts/why_i_left_my_job_to_travel_the_world.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Z6ThcKM5dg2aAw3heLT6m4vSjKQXxJkyozG7'
+WHERE
+    image_url = '/images/user_posts/a_train_journey_through_india.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0CHcziJ7hlFE0vRXQqM1tunOcerYbofySxH9D'
+WHERE
+    image_url = '/images/user_posts/chasing_the_northern_lights_in_iceland.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0UP05TLZfIJZATmi5b7v1BWsVK6HPLrylznNj'
+WHERE
+    image_url = '/images/user_posts/living_with_a_host_family_in_japan.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0Tvg1EFHHOLqJZQAKxYSiDwTPCnFs517vRXN9'
+WHERE
+    image_url = '/images/user_posts/the_magic_of_the_scottish_highlands.jpg';
+
+UPDATE user_post_photos
+SET
+    image_url = 'https://3ob6vy266n.ufs.sh/f/Gabd92PWznj0ybg4yghkfYdmDLIvAWg3b9VRlFn2q0uJ1rPi'
+WHERE
+    image_url = '/images/user_posts/a_weekend_in_paris_for_first_timers.jpg';
