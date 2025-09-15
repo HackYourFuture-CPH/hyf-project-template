@@ -20,6 +20,7 @@
 }
 
 .priceTotal {
+  display: flex;
   font-weight: 700;
   color: #111827;
 }
