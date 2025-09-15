@@ -70,9 +70,35 @@
 .cardFooter {
   margin-top: auto;
   padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-right: 1rem;
   border-top: 1px solid #f3f4f6;
   display: flex;
   justify-content: flex-end;
+}
+
+.heart {
+  color: #9ca3af; /* neutral outline color */
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.18s, background-color 0.18s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fav {
+  color: #ef4444;
+}
+
+.heart:hover {
+  color: #ef4444;
+}
+
+.heart.fav {
+  color: #ef4444;
 }
 
 

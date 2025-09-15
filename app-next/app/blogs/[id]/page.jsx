@@ -5,12 +5,9 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import PostMeta from "@/components/PostMeta/PostMeta";
 import Comment from "@/components/CommentSection/Comment";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function AttractionDetailsPage() {
-  const router = useRouter();
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [derivedAuthor, setDerivedAuthor] = useState(null);
@@ -19,7 +16,7 @@ export default function AttractionDetailsPage() {
 
   const [imageSrc, setImageSrc] = useState(null);
 
-  // Function to fetch data from the API
+  // Fetch a single blog post from the API and set local state
   async function fetchSingleBlog() {
     try {
       const response = await fetch(`${API_URL}/api/blogposts/${id}`);
@@ -27,9 +24,9 @@ export default function AttractionDetailsPage() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
   const blogData = await response.json();
-  // API may return { data: {...} } or the blog object directly — prefer the object
+
   const resolved = blogData.data || blogData || null;
-  // Helpful debug: show the fetched blog shape in browser console when developing
+ 
   setBlog(resolved);
     } catch (error) {
       console.error("Error fetching blog cards:", error);
@@ -40,30 +37,24 @@ export default function AttractionDetailsPage() {
     fetchSingleBlog();
   }, []);
 
-  // If the blog doesn't include author info, try to derive it from the
-  // currently-authenticated user's profile (useful when posts just created client-side)
   useEffect(() => {
     if (!blog) return;
-    // Reset derived values
+    // Clear derived values and, when appropriate, attempt to derive author info
+    // from the authenticated user's profile (used when API doesn't include
+    // a readable author name/avatar).
     setDerivedAuthor(null);
     setDerivedAvatar(null);
 
-    // Only skip deriving the author if the API provides meaningful author info.
-    // Sometimes `blog.user` exists but only contains a numeric id (truthy) which
-    // shouldn't prevent us from deriving the author from the authenticated profile.
-    const userHasIdentifyingInfo = blog.user && (
-      (typeof blog.user === "string" && blog.user.trim() !== "") ||
-      (typeof blog.user === "object" && (
-        blog.user.full_name || blog.user.first_name || blog.user.last_name || blog.user.username || blog.user.id || blog.user.user_id
-      ))
-    );
+    const userHasIdentifyingInfo =
+      blog.user && (
+        (typeof blog.user === "string" && blog.user.trim() !== "") ||
+        (typeof blog.user === "object" && (
+          blog.user.full_name || blog.user.first_name || blog.user.last_name || blog.user.username || blog.user.id || blog.user.user_id
+        ))
+      );
 
-  // Do NOT treat `created_by` (which is often a numeric id) as sufficient to
-  // skip derivation — created_by will be used for matching but is not an
-  // identifying display name. Only skip if an actual author name/avatar is
-  // present (author_name/author) or if `blog.user` contains identifying info.
-  const hasAuthor = Boolean(blog.author_name || blog.author || userHasIdentifyingInfo);
-    if (hasAuthor) return; // nothing to derive
+    const hasAuthor = Boolean(blog.author_name || blog.author || userHasIdentifyingInfo);
+    if (hasAuthor) return;
 
     (async () => {
       try {
@@ -75,7 +66,7 @@ export default function AttractionDetailsPage() {
         const profile = json?.data || json || null;
         if (!profile) return;
 
-        // Match profile to blog author by id or username where possible
+  // Match profile to blog author by id or username when possible
         const blogUserId = blog.created_by || blog.user?.id || blog.user?.user_id || blog.user;
         const profileId = profile.id || profile.user_id || profile.userId || null;
         const profileUsername = profile.username || null;
@@ -90,7 +81,7 @@ export default function AttractionDetailsPage() {
     })();
   }, [blog]);
 
-  // Resolve image source similarly to Card/BlogCard: handle placehold.co, backend-relative paths
+  // Resolve image source similarly to Card/BlogCard: handle placehold.co and backend-relative paths
   useEffect(() => {
     if (!blog) return;
 
@@ -106,7 +97,7 @@ export default function AttractionDetailsPage() {
         const seed = blog?.id ? `blog-${blog.id}` : encodeURIComponent(t);
         return `https://picsum.photos/seed/${seed}/1200/800`;
       }
-      if (t.startsWith("/images/")) return null; // backend path — handle via HEAD
+  if (t.startsWith("/images/")) return null; // backend-relative path — we'll HEAD-check it below
       return t;
     };
 
@@ -116,7 +107,7 @@ export default function AttractionDetailsPage() {
       return;
     }
 
-    // Backend-relative: start with placeholder then attempt HEAD
+  // Backend-relative: start with placeholder then attempt HEAD request to check
     setImageSrc(placeholder);
     if (raw && raw.startsWith("/images/")) {
       let cancelled = false;
@@ -162,8 +153,7 @@ export default function AttractionDetailsPage() {
       else if (blog.username) author = blog.username;
     }
 
-    // Debugging helpers to make it easier to see what values were used
-    // debug logs removed
+  // If author is still empty, try deriving from `blog.user` object/string
   if (!author && blog.user) {
     if (typeof blog.user === "string") author = blog.user;
     else if (typeof blog.user === "object") {
@@ -203,7 +193,7 @@ export default function AttractionDetailsPage() {
           <div className={styles.cardContent}>
             <h4 className={styles.cardTitle}>{title}</h4>
             <div className={styles.postMeta}>
-              <PostMeta authorName={author} avatar={avatar} date={formattedDate} category={category} />
+              <PostMeta authorName={author} avatar={avatar} date={formattedDate} category={category} itemId={blog.id} itemType="post" />
             </div>
             <div className={styles.meta}>
               <span>{blog.location}</span>
