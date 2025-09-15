@@ -6,6 +6,7 @@ import { UploadButton } from "@uploadthing/react";
 import styles from "./User.module.css";
 import Card from "../../components/Card/Card";
 import BlogCard from "../../components/BlogCard/BlogCard";
+import AttractionCard from "../../components/AttractionCard/AttractionCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -14,8 +15,12 @@ export default function UserPage() {
   const [user, setUser] = useState(null);
   const [tours, setTours] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+  const [attractions, setAttractions] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [favoriteTours, setFavoriteTours] = useState([]);
+  const [favoritePosts, setFavoritePosts] = useState([]);
+  const [favoriteAttractions, setFavoriteAttractions] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -69,6 +74,15 @@ export default function UserPage() {
         } catch {}
 
         try {
+          const resAttractions = await fetch(`${API_URL}/api/attractions?limit=100`, { headers });
+          const parsed = await safeParseResponse(resAttractions);
+          if (resAttractions.ok && parsed.body) {
+            if (mounted)
+              setAttractions(parsed.body.attractions || parsed.body.data || parsed.body || []);
+          }
+        } catch {}
+
+        try {
           const resFav = await fetch(`${API_URL}/api/favorites`, { headers });
           if (resFav.ok) {
             const parsed = await safeParseResponse(resFav);
@@ -79,6 +93,15 @@ export default function UserPage() {
                 localStorage.setItem("favorites", JSON.stringify(favs));
               } catch {}
             }
+          }
+        } catch {}
+
+        try {
+          // fetch public blogposts to resolve favorite posts to cards
+          const resAllPosts = await fetch(`${API_URL}/api/blogposts?limit=100`, { headers });
+          const parsed = await safeParseResponse(resAllPosts);
+          if (resAllPosts.ok && parsed.body) {
+            if (mounted) setAllPosts(parsed.body.data || parsed.body || []);
           }
         } catch {}
       } catch (err) {
@@ -95,22 +118,137 @@ export default function UserPage() {
   }, []);
 
   // recompute favoriteTours when favorites or tours change
+  // Use stable string keys as dependencies (avoid passing arrays directly)
+  const favKey = Array.isArray(favorites)
+    ? favorites
+        .map((f) => String(f.item_id || f.itemId || f.item || ""))
+        .sort()
+        .join(",")
+    : "";
+  const toursKey = Array.isArray(tours)
+    ? tours
+        .map((t) => String(t.id))
+        .sort()
+        .join(",")
+    : "";
+  const postsKey = Array.isArray(allPosts)
+    ? allPosts
+        .map((p) => String(p.id))
+        .sort()
+        .join(",")
+    : "";
+  const attractionsKey = Array.isArray(attractions)
+    ? attractions
+        .map((a) => String(a.id))
+        .sort()
+        .join(",")
+    : "";
+
   useEffect(() => {
     try {
       const favs = Array.isArray(favorites) ? favorites : [];
       const sourceTours = Array.isArray(tours) ? tours : [];
-      const resolved = favs
+      // Favorite tours
+      const resolvedTours = favs
         .filter((f) => (f.item_type || f.itemType || f.type) === "tour")
         .map((f) => {
           const id = String(f.item_id || f.itemId || f.item || "");
           return sourceTours.find((t) => String(t.id) === id) || null;
         })
         .filter(Boolean);
-      setFavoriteTours(resolved);
+      setFavoriteTours(resolvedTours);
+
+      // Favorite posts
+      const sourcePosts = Array.isArray(allPosts) ? allPosts : [];
+      const resolvedPosts = favs
+        .filter((f) => (f.item_type || f.itemType || f.type) === "post")
+        .map((f) => {
+          const id = String(f.item_id || f.itemId || f.item || "");
+          return sourcePosts.find((p) => String(p.id) === id) || null;
+        })
+        .filter(Boolean);
+      setFavoritePosts(resolvedPosts);
+
+      // Favorite attractions
+      const sourceAttractions = Array.isArray(attractions) ? attractions : [];
+      const resolvedAttractions = favs
+        .filter((f) => (f.item_type || f.itemType || f.type) === "attraction")
+        .map((f) => {
+          const id = String(f.item_id || f.itemId || f.item || "");
+          return sourceAttractions.find((a) => String(a.id) === id) || null;
+        })
+        .filter(Boolean);
+      setFavoriteAttractions(resolvedAttractions);
     } catch {
       setFavoriteTours([]);
+      setFavoritePosts([]);
+      setFavoriteAttractions([]);
     }
-  }, [favorites, tours]);
+  }, [favKey, toursKey, postsKey, attractionsKey]);
+
+  // fetch latest favorites from server and update local state + storage
+  async function refreshFavorites() {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(`${API_URL}/api/favorites`, { headers });
+      if (res.ok) {
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = { data: null };
+        }
+        const favs = parsed?.data || parsed || [];
+        setFavorites(favs);
+        try {
+          localStorage.setItem("favorites", JSON.stringify(favs));
+        } catch {}
+      }
+    } catch (err) {
+      // ignore - don't block UI
+    }
+  }
+
+  // Handler passed to Card components so unfavoriting a tour removes it from the UI immediately
+  async function handleFavoriteChange({ added, itemId, error }) {
+    try {
+      if (added === false) {
+        setFavorites((all) => {
+          try {
+            const arr = Array.isArray(all) ? all : [];
+            return arr.filter(
+              (f) => String(f.item_id || f.itemId || f.item || f.item_id) !== String(itemId)
+            );
+          } catch {
+            return all;
+          }
+        });
+      }
+      refreshFavorites();
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  useEffect(() => {
+    function onFavEvent(e) {
+      try {
+        refreshFavorites();
+      } catch {}
+    }
+    if (typeof window !== "undefined") {
+      window.addEventListener("favoritesChanged", onFavEvent);
+    }
+    return () => {
+      try {
+        if (typeof window !== "undefined")
+          window.removeEventListener("favoritesChanged", onFavEvent);
+      } catch {}
+    };
+  }, []);
 
   // Profile view component
   function ProfileView() {
@@ -649,29 +787,64 @@ export default function UserPage() {
           <p className={styles.empty}>Sign in to see favorites.</p>
         </div>
       );
-    if (!Array.isArray(favoriteTours) || favoriteTours.length === 0)
-      return (
-        <div className={styles.profileCard}>
-          <h3>Favorites</h3>
-          <p className={styles.empty}>No favorites yet.</p>
-        </div>
-      );
     return (
       <div className={styles.profileCard}>
         <h3>Favorites</h3>
-        <div className={styles.cardGrid}>
-          {favoriteTours.map((t) => (
-            <div key={t.id} className={styles.cardWrapper}>
-              <Card
-                card={t}
-                viewLink={`/tours/${t.id}`}
-                onFavoriteChange={({ added, itemId }) => {
-                  /* update handled elsewhere */
-                }}
-              />
+
+        <section style={{ marginBottom: 20 }}>
+          <h4>Favorite Tours</h4>
+          {!Array.isArray(favoriteTours) || favoriteTours.length === 0 ? (
+            <p className={styles.empty}>No favorite tours yet.</p>
+          ) : (
+            <div className={styles.cardGrid}>
+              {favoriteTours.map((t) => (
+                <div key={t.id} className={styles.cardWrapper}>
+                  <Card
+                    card={t}
+                    viewLink={`/tours/${t.id}`}
+                    onFavoriteChange={(payload) => handleFavoriteChange(payload)}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </section>
+
+        <section style={{ marginBottom: 20 }}>
+          <h4>Favorite Posts</h4>
+          {!Array.isArray(favoritePosts) || favoritePosts.length === 0 ? (
+            <p className={styles.empty}>No favorite posts yet.</p>
+          ) : (
+            <div className={styles.cardGrid}>
+              {favoritePosts.map((p) => (
+                <div key={p.id} className={styles.cardWrapper}>
+                  <BlogCard
+                    card={p}
+                    onFavoriteChange={(payload) => handleFavoriteChange(payload)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section style={{ marginBottom: 20 }}>
+          <h4>Favorite Attractions</h4>
+          {!Array.isArray(favoriteAttractions) || favoriteAttractions.length === 0 ? (
+            <p className={styles.empty}>No favorite attractions yet.</p>
+          ) : (
+            <div className={styles.cardGrid}>
+              {favoriteAttractions.map((a) => (
+                <div key={a.id} className={styles.cardWrapper}>
+                  <AttractionCard
+                    card={a}
+                    onFavoriteChange={(payload) => handleFavoriteChange(payload)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     );
   }

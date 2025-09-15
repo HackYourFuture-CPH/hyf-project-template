@@ -94,12 +94,13 @@
 /* dashboard and sidebar additions */
 .dashboard {
   display: flex;
-  align-items: flex-start;
+  justify-content: center;
   gap: 24px;
 }
 
 .aside {
-  width: 260px;
+  width: 100%;
+  max-width: 260px;
 }
 
 .sidebarCard {
@@ -517,21 +518,33 @@
     align-items: center;
   }
 
+  .dashboard > * {
+    flex: 1;
+    width: 100%;
+  }
+
+  .formActions {
+    justify-content: center;
+  }
+
   .statsGrid {
     grid-template-columns: repeat(1, 1fr);
   }
 
   .profileCard {
+    max-width: 350px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-items: stretch;
+    /* align-items: stretch; */
   }
 
   .profileRow {
+    max-width: 350px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    justify-content: center;
     align-items: center;
     text-align: center;
   }
@@ -548,5 +561,15 @@
     height: 120px;
     border-radius: 12px;
     object-fit: cover;
+  }
+}
+
+@media (max-width: 500px) {
+  .aside {
+    max-width: 100%;
+  }
+
+  .passwordContainer {
+    justify-content: center;
   }
 }

@@ -1,29 +1,19 @@
 "use client";
 import styles from "./Card.module.css";
 import { useState, useEffect } from "react";
+import { Heart } from "lucide-react";
+import useFavorite from "@/hooks/useFavorite";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function Card({ card, onFavoriteChange, viewLink, size = "regular" }) {
-  const [favourite, setFavourite] = useState(!!card.favourite);
+  // Only provide `initial` when the backend explicitly marks it truthy.
+  // If backend doesn't provide a positive favourite flag, allow hook to fall back to localStorage.
+  const initialFav = card.favourite ? true : undefined;
+  const { favourite, toggle, loading } = useFavorite({ itemId: card.id, itemType: "tour", initial: initialFav });
   const router = useRouter();
-
-  useEffect(() => {
-    setFavourite(!!card.favourite);
-    // fallback: if not favorited in card, check localStorage saved favorites
-    if (!card.favourite && typeof window !== "undefined") {
-      try {
-        const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
-        if (Array.isArray(saved) && saved.find((f) => (f.itemId || f.item_id) === card.id)) {
-          setFavourite(true);
-        }
-      } catch (e) {
-        // ignore parse errors
-      }
-    }
-  }, [card.favourite, card.id]);
 
   // Price: backend provides price_usd as minor units (e.g. "455000")
   const priceMinor = Number(card?.price_usd ?? card?.price_minor ?? 0);
@@ -37,111 +27,24 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
 
   const rating = card?.average_rating !== undefined ? Number(card.average_rating) : card?.rating;
 
-  async function toggleFavorite(e) {
-    // stop the click from bubbling to a parent Link and prevent the default anchor navigation
-    try {
-      e?.stopPropagation?.();
-      e?.preventDefault?.();
-    } catch (err) {
-      // ignore if event absent
-    }
+  function toggleFavorite(e) {
+    // Hook handles optimistic update and server call; call it and notify parent
     const next = !favourite;
-
-    // optimistic UI
-    setFavourite(next);
-
-    // update localStorage fallback immediately
-    try {
-      const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
-      if (next) {
-        localStorage.setItem(
-          "favorites",
-          JSON.stringify([...saved, { itemId: card.id, type: "tour" }])
-        );
-      } else {
-        localStorage.setItem(
-          "favorites",
-          JSON.stringify(saved.filter((f) => (f.itemId || f.item_id) !== card.id))
-        );
-      }
-    } catch (err) {
-      // ignore
-    }
-
-    // notify parent
+    toggle(e);
     onFavoriteChange?.({ added: next, itemId: card.id });
-
-    // dispatch global event so other parts of the app (dashboard) can react
-    try {
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new CustomEvent("favoritesChanged", { detail: { added: next, itemId: card.id } })
-        );
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    // attempt server call; if it fails revert optimistic update and storage
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    const headers = { "Content-Type": "application/json" };
-    if (token) headers.Authorization = `Bearer ${token}`;
-
-    try {
-      if (next) {
-        const res = await fetch(`${API_URL}/api/favorites`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ item_id: card.id, item_type: "tour" }),
-        });
-        if (!res.ok) throw new Error("Failed to add favorite");
-      } else {
-        // try DELETE /api/favorites/:itemId
-        const res = await fetch(`${API_URL}/api/favorites/${card.id}`, {
-          method: "DELETE",
-          headers,
-        });
-        // If the backend returns 404 it means the favorite is already gone — treat as success.
-        if (!res.ok && res.status !== 404) throw new Error("Failed to remove favorite");
-      }
-    } catch (err) {
-      // revert optimistic update on error
-      setFavourite(!next);
-      try {
-        const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
-        if (!next) {
-          // removal failed -> keep it
-          localStorage.setItem(
-            "favorites",
-            JSON.stringify([...saved, { itemId: card.id, type: "tour" }])
-          );
-        } else {
-          // add failed -> remove from storage
-          localStorage.setItem(
-            "favorites",
-            JSON.stringify(saved.filter((f) => (f.itemId || f.item_id) !== card.id))
-          );
-        }
-      } catch (e) {
-        // ignore
-      }
-      onFavoriteChange?.({ added: !next, itemId: card.id, error: err.message });
-      console.error("Favorite toggle failed", err);
-    }
   }
 
   const raw = card?.cover_image_url;
-  const placeholder = card?.id ? `https://picsum.photos/seed/tour-${card.id}/600/400` : "https://picsum.photos/600/400";
+  const placeholder = card?.id
+    ? `https://picsum.photos/seed/tour-${card.id}/600/400`
+    : "https://picsum.photos/600/400";
 
-  // Normalize incoming image URLs:
-  // - DB-relative paths ("/images/...") -> prefix with API_URL
-  // - known problematic external placeholders (placehold.co) -> replace with picsum seed
-  // - otherwise use the raw URL
+  // Normalize incoming image URLs: handle placehold.co, backend-relative paths, or use raw URL
   const normalize = (src) => {
     if (typeof src !== "string" || src.trim() === "") return null;
     const s = src.trim();
     if (s.includes("placehold.co")) {
-      // replace placehold.co images with a deterministic picsum seed (reduces proxy 400s)
+      // replace placehold.co images with a deterministic picsum seed
       const seed = card?.id ? `tour-${card.id}` : encodeURIComponent(s);
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
@@ -149,16 +52,12 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
     return s;
   };
 
-  // If the DB value is a backend-relative path ("/images/.."), avoid immediately
-  // assigning `${API_URL}${path}` to `next/image` because the backend in dev may
-  // not have the file and Next's image optimizer will proxy & 404. Instead use the
-  // placeholder initially and perform a lightweight HEAD check client-side; if the
-  // file exists, switch to the backend URL.
+  // For backend-relative paths, start with a placeholder and HEAD-check the file
   const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
-  const initial = isBackendPath ? placeholder : (normalize(raw) || "/images/tours/default.jpg");
+  const initial = isBackendPath ? placeholder : normalize(raw) || "/images/tours/default.jpg";
   const [imageSrc, setImageSrc] = useState(initial);
 
-  // client-side: check whether backend file exists (only for backend-relative paths)
+  // Client-side: HEAD-check backend-relative file and switch to it if present
   useEffect(() => {
     if (!isBackendPath) return;
     let cancelled = false;
@@ -225,8 +124,6 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
         <p className={styles.description}>{card?.destination ?? card?.description ?? ""}</p>
 
         <div className={styles.cardFooter}>
-          {/* View button removed — the whole card is clickable and navigates to the detail page */}
-
           <button
             className={`${styles.heart} ${favourite ? styles.fav : ""}`}
             onClick={toggleFavorite}
@@ -234,7 +131,7 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
             aria-pressed={favourite}
             type="button"
           >
-            ♥
+            <Heart size={18} fill={favourite ? "currentColor" : "none"} stroke="currentColor" />
           </button>
         </div>
       </div>

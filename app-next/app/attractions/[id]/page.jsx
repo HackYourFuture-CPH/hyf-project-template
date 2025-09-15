@@ -115,7 +115,7 @@ export default function AttractionDetailsPage() {
           <div className={styles.cardContent}>
             <h4 className={styles.cardTitle}>{title}</h4>
             <div className={styles.postMeta}>
-              <PostMeta authorName={author} date={formattedDate} category={category} />
+              <PostMeta authorName={author} date={formattedDate} category={category} itemId={attraction.id} itemType="attraction" />
             </div>
             <div className={styles.meta}>
               <span>{attraction.location}</span>

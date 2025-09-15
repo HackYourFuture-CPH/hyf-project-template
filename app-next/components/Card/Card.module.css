@@ -46,7 +46,7 @@
   font-weight: 600;
   color: #2563eb;
   margin-bottom: 0.5rem;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 .startDate {
@@ -132,22 +132,35 @@
   padding-top: 1rem;
   border-top: 1px solid #f3f4f6;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 8px;
 }
 
 .heart {
-  color: #e5e7eb;
+  color: #9ca3af;
   font-size: 1.5rem;
   cursor: pointer;
   background: none;
   border: none;
-  transition: color 0.2s;
+  transition:
+    color 0.18s,
+    background-color 0.18s;
   padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fav {
+  color: #ef4444;
+}
+
+.heart:hover {
+  color: #ef4444;
+}
+
+.heart.fav {
   color: #ef4444;
 }
 
@@ -166,9 +179,11 @@
   .imageWrapper {
     height: 10rem;
   }
+
   .imageWrapperLarge {
     height: 10rem;
   }
+
   .cardContent {
     padding: 1rem;
   }
@@ -178,9 +193,11 @@
   .imageWrapper {
     height: 9rem;
   }
+
   .imageWrapperLarge {
     height: 9rem;
   }
+
   .cardContent {
     padding: 0.75rem;
   }
