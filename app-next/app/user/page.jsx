@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UploadButton } from "@uploadthing/react";
 import styles from "./User.module.css";
 import Card from "../../components/Card/Card";
+import cardStyles from "../../components/Card/Card.module.css";
 import BlogCard from "../../components/BlogCard/BlogCard";
 import AttractionCard from "../../components/AttractionCard/AttractionCard";
 
@@ -21,6 +22,9 @@ export default function UserPage() {
   const [favoriteTours, setFavoriteTours] = useState([]);
   const [favoritePosts, setFavoritePosts] = useState([]);
   const [favoriteAttractions, setFavoriteAttractions] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [cancelling, setCancelling] = useState({});
+  const [removedBookings, setRemovedBookings] = useState({});
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -54,6 +58,39 @@ export default function UserPage() {
           const parsed = await safeParseResponse(resProfile);
           if (resProfile.ok && parsed.body) {
             if (mounted) setUser(parsed.body.data || parsed.body);
+          }
+        } catch {}
+
+        try {
+          // fetch user's bookings (booked tours / custom trips)
+          const resBookings = await fetch(`${API_URL}/api/bookings/my-bookings`, { headers });
+          const parsed = await safeParseResponse(resBookings);
+          if (resBookings.ok && parsed.body) {
+            if (mounted) {
+              const raw = parsed.body.data || parsed.body || [];
+              const filtered = Array.isArray(raw)
+                ? raw.filter((b) => {
+                    const id = String(b.booking_id || b.id || "");
+                    const status = String(b.booking_status || b.status || "").toLowerCase();
+                    // filter out known-removed ids and any booking that looks cancelled
+                    if (removedBookings[id]) return false;
+                    if (status.includes("cancel")) return false;
+                    return true;
+                  })
+                : raw;
+              console.debug(
+                "bookings.fetchData: fetched",
+                raw.map((r) => ({
+                  id: r.booking_id || r.id,
+                  status: r.booking_status || r.status,
+                })),
+                "filtered ->",
+                filtered.map((r) => r.booking_id || r.id),
+                "removedBookings:",
+                removedBookings
+              );
+              setBookings(filtered);
+            }
           }
         } catch {}
 
@@ -185,6 +222,115 @@ export default function UserPage() {
       setFavoriteAttractions([]);
     }
   }, [favKey, toursKey, postsKey, attractionsKey]);
+
+  // refresh bookings when bookingsChanged event fires
+  useEffect(() => {
+    function onBookingsChanged() {
+      (async () => {
+        try {
+          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+          const headers = {};
+          if (token) headers.Authorization = `Bearer ${token}`;
+          const res = await fetch(`${API_URL}/api/bookings/my-bookings`, { headers });
+          if (res.ok) {
+            const data = await res.json().catch(() => null);
+            const raw = data?.data || data || [];
+            const filtered = Array.isArray(raw)
+              ? raw.filter((b) => {
+                  const id = String(b.booking_id || b.id || "");
+                  const status = String(b.booking_status || b.status || "").toLowerCase();
+                  if (removedBookings[id]) return false;
+                  if (status.includes("cancel")) return false;
+                  return true;
+                })
+              : raw;
+            console.debug(
+              "bookings.onBookingsChanged: fetched",
+              raw.map((r) => ({ id: r.booking_id || r.id, status: r.booking_status || r.status })),
+              "filtered ->",
+              filtered.map((r) => r.booking_id || r.id),
+              "removedBookings:",
+              removedBookings
+            );
+            setBookings(filtered);
+          }
+        } catch {}
+      })();
+    }
+    if (typeof window !== "undefined")
+      window.addEventListener("bookingsChanged", onBookingsChanged);
+    return () => {
+      try {
+        if (typeof window !== "undefined")
+          window.removeEventListener("bookingsChanged", onBookingsChanged);
+      } catch {}
+    };
+  }, [removedBookings]);
+
+  async function cancelBooking(booking) {
+    const id = booking.booking_id || booking.id || null;
+    const type = booking.tour_id ? "tour" : booking.trip_id ? "custom" : null;
+    if (!type || !id) {
+      console.warn("cancelBooking: missing type or id", { booking });
+      return;
+    }
+
+    // prevent duplicate cancels for same booking
+    if (cancelling[String(id)]) {
+      console.debug("cancelBooking: already cancelling", id);
+      return;
+    }
+
+    try {
+      // optimistically mark as removed so any refresh won't re-add it while
+      // cancellation is in-flight
+      setRemovedBookings((s) => ({ ...s, [String(id)]: true }));
+      setCancelling((s) => ({ ...s, [String(id)]: true }));
+      console.debug("cancelBooking: sending request", { id, type });
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const res = await fetch(`${API_URL}/api/bookings/${type}/${encodeURIComponent(id)}/cancel`, {
+        method: "PATCH",
+        headers,
+      });
+      const data = await res.json().catch(() => null);
+      console.debug("cancelBooking: response", { status: res.status, body: data });
+      if (res.ok) {
+        // remove the cancelled booking from local UI so it no longer appears
+        setBookings((all) =>
+          Array.isArray(all) ? all.filter((b) => String(b.booking_id || b.id) !== String(id)) : all
+        );
+        // don't trigger a global refresh here — we removed the booking locally to
+        // avoid a race where an immediate refetch returns stale data and re-adds it.
+      } else {
+        console.error("Failed to cancel booking:", data || res.statusText);
+        alert((data && (data.error || data.message)) || "Failed to cancel booking");
+        // rollback removed mark so future refreshes include it
+        setRemovedBookings((s) => {
+          const copy = { ...s };
+          delete copy[String(id)];
+          return copy;
+        });
+      }
+    } catch (err) {
+      console.error("cancelBooking: exception", err);
+      alert(err.message || "Failed to cancel booking");
+      // rollback removed mark on exception
+      setRemovedBookings((s) => {
+        const copy = { ...s };
+        delete copy[String(id)];
+        return copy;
+      });
+    } finally {
+      setCancelling((s) => {
+        const copy = { ...s };
+        delete copy[String(id)];
+        return copy;
+      });
+    }
+  }
 
   // fetch latest favorites from server and update local state + storage
   async function refreshFavorites() {
@@ -638,6 +784,154 @@ export default function UserPage() {
     const past = myTrips.filter((t) => t.start_date && new Date(t.start_date) < new Date());
     return (
       <div>
+        <div className={styles.sectionHeader} style={{ marginBottom: 12 }}>
+          <h3>My Bookings</h3>
+        </div>
+        <div className={styles.subSection} style={{ marginBottom: 20 }}>
+          <div className={styles.cardGrid}>
+            {(() => {
+              const visibleBookings = Array.isArray(bookings)
+                ? bookings.filter(
+                    (bb) => (bb.booking_status || bb.status || "booked") !== "cancelled"
+                  )
+                : [];
+              if (visibleBookings.length === 0)
+                return <p className={styles.empty}>No bookings yet.</p>;
+              return visibleBookings.map((b) => {
+                const tourId = b.tour_id || null;
+                const matchingTour = tourId
+                  ? tours.find((t) => String(t.id) === String(tourId))
+                  : null;
+                if (matchingTour) {
+                  // Use existing Card component for tours so the design matches exactly
+                  return (
+                    <div key={`booking-tour-${b.id || tourId}`} className={styles.cardWrapper}>
+                      <Card
+                        card={matchingTour}
+                        viewLink={`/tours/${tourId}`}
+                        onFavoriteChange={() => {}}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          marginTop: 8,
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <a
+                          href={`/tours/${tourId}`}
+                          className={styles.secondary}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View
+                        </a>
+                        <button
+                          className={styles.secondary}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            cancelBooking(b);
+                          }}
+                          disabled={
+                            !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                          }
+                        >
+                          {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                            ? "Cancelling..."
+                            : "Cancel"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Fallback visual for custom trips or missing tour rows - reuse Card styles
+                const link = b.tour_id
+                  ? `/tours/${b.tour_id}`
+                  : b.trip_id
+                    ? `/trips/${b.trip_id}`
+                    : `#`;
+                const title = b.trip_name || b.plan_name || b.name || "Booked item";
+                const img = b.cover_image_url || b.cover_image || null;
+                const bookedAt = b.booked_at ? new Date(b.booked_at).toLocaleString() : null;
+                const total =
+                  typeof b.total_price_minor === "number"
+                    ? b.total_price_minor
+                    : b.total_price_minor || null;
+                const currency = b.currency_code || (b.price_minor ? "USD" : null);
+                const status = b.booking_status || b.status || "booked";
+
+                return (
+                  <div
+                    key={b.id || `${b.tour_id || b.trip_id}-${b.booked_at || ""}`}
+                    className={styles.cardWrapper}
+                  >
+                    <div>
+                      <div className={cardStyles.travelCard} style={{ background: "transparent" }}>
+                        <div className={cardStyles.imageWrapper}>
+                          {img ? (
+                            // plain img for fallback cards
+                            <img
+                              src={img}
+                              alt={title}
+                              style={{ width: "100%", height: "12rem", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <div
+                              style={{ width: "100%", height: "12rem", background: "#f1f5f9" }}
+                            />
+                          )}
+                        </div>
+                        <div className={cardStyles.cardContent}>
+                          <h4 className={cardStyles.cardTitle}>{title}</h4>
+                          <div className={cardStyles.cardMeta}>{bookedAt || "—"}</div>
+                          <div className={cardStyles.cardMeta}>
+                            Status: {status}
+                            {total !== null ? (
+                              <span>
+                                {" "}
+                                • {currency ? `${currency} ` : ""}
+                                {(total / 100).toFixed(2)}
+                              </span>
+                            ) : null}
+                          </div>
+                          <div
+                            style={{
+                              marginTop: 8,
+                              display: "flex",
+                              gap: 8,
+                              justifyContent: "flex-end",
+                            }}
+                          >
+                            <Link href={link} className={styles.primary}>
+                              View
+                            </Link>
+                            <button
+                              className={styles.secondary}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                cancelBooking(b);
+                              }}
+                              disabled={
+                                !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                              }
+                            >
+                              {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                                ? "Cancelling..."
+                                : "Cancel"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        </div>
         <div className={styles.sectionHeader}>
           <h3>My Trips</h3>
           <button className={styles.addButton}>+ Add New Trip</button>

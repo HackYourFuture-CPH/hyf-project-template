@@ -1,6 +1,5 @@
 .container {
   width: 100%;
-  max-width: 1200px;
   flex-grow: 1;
   padding: 24px;
   max-width: 900px;
@@ -89,6 +88,12 @@
   text-decoration: none;
   font-weight: 700;
   border: none;
+  transition: transform 180ms;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+}
+
+.primary:hover {
+  transform: scale(1.05);
 }
 
 /* dashboard and sidebar additions */
@@ -160,7 +165,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
+  /* box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2); */
 }
 
 .statsGrid {
@@ -250,16 +255,19 @@
 .secondary {
   cursor: pointer;
   font-family: "Archivo", sans-serif;
+  text-decoration: none;
   font-weight: 700;
   background: #e5e7eb;
+  padding: 8px 14px;
   border-radius: 8px;
-  padding: 8px 12px;
   color: #111827;
+  border: none;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+  transition: transform 180ms;
 }
 
-.error {
-  color: #b91c1c;
-  margin-top: 6px;
+.secondary:hover {
+  transform: scale(1.05);
 }
 
 /* Profile edit specific styles */
@@ -273,6 +281,7 @@
 .profileForm input[type="text"],
 .profileForm input[type="tel"],
 .profileForm input[type="email"],
+.profileForm input[type="password"],
 .profileForm input[name="first_name"],
 .profileForm input[name="last_name"],
 .profileForm input[name="mobile"] {
@@ -282,6 +291,12 @@
   background: #fff;
   outline: none;
   font-size: 14px;
+}
+
+/* Make profile form inputs show a visible focus state like the modal forms */
+.profileForm input:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
 }
 
 .profileForm input[type="file"] {
