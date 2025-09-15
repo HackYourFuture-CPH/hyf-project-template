@@ -32,15 +32,23 @@ import adminDashboardRouter from "./routers/admin/dashboard.js";
 import adminBookingsRouter from "./routers/admin/bookings.js";
 import adminTripsRouter from "./routers/admin/trips.js";
 const app = express();
+
+// CORS configuration for frontend at localhost:3000
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 const PORT = process.env.PORT || 3001;
 
 const apiRouter = express.Router();
 
 // --- Core Middleware Setup ---
-app.use(cors());
+//app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.static("public"));
+ 
+
 
 // --- Optional: Response Body Logger for Debugging ---
 const logResponseBody = (req, res, next) => {

@@ -200,7 +200,7 @@ export default function AttractionDetailsPage() {
             </div>
             <div className={styles.description}>{blog.content}</div>
           </div>
-          <Comment />
+          <Comment commentsData = {blog.comments} postId = {id}/>
         </div>
       </div>
     </>
