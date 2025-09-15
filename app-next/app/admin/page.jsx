@@ -1197,6 +1197,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>First Name</label>
                 <input
+                  type="text"
                   value={newUser.first_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, first_name: e.target.value }))}
                   required
@@ -1205,6 +1206,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Last Name</label>
                 <input
+                  type="text"
                   value={newUser.last_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, last_name: e.target.value }))}
                   required
@@ -1222,6 +1224,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Username</label>
                 <input
+                  type="text"
                   value={newUser.username}
                   onChange={(e) => setNewUser((n) => ({ ...n, username: e.target.value }))}
                   required
@@ -1230,6 +1233,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Mobile</label>
                 <input
+                  type="tel"
                   value={newUser.mobile}
                   onChange={(e) => setNewUser((n) => ({ ...n, mobile: e.target.value }))}
                 />
@@ -1242,6 +1246,7 @@ export default function AdminPage() {
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
+                  <option value="moderator">Moderator</option>
                 </select>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
@@ -1269,7 +1274,7 @@ export default function AdminPage() {
             <button className={styles.modalClose} onClick={() => setShowEditUserModal(false)}>
               ×
             </button>
-            <h3 className={styles.modalTitle}>Edit User</h3>
+            <h3 className={styles.modalTitle}>Edit User Profile</h3>
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -1319,6 +1324,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>First Name</label>
                 <input
+                  type="text"
                   value={newUser.first_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, first_name: e.target.value }))}
                   required
@@ -1327,6 +1333,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Last Name</label>
                 <input
+                  type="text"
                   value={newUser.last_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, last_name: e.target.value }))}
                   required
@@ -1344,6 +1351,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Username</label>
                 <input
+                  type="text"
                   value={newUser.username}
                   onChange={(e) => setNewUser((n) => ({ ...n, username: e.target.value }))}
                   required
@@ -1352,6 +1360,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Mobile</label>
                 <input
+                  type="tel"
                   value={newUser.mobile}
                   onChange={(e) => setNewUser((n) => ({ ...n, mobile: e.target.value }))}
                 />
@@ -1364,6 +1373,7 @@ export default function AdminPage() {
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
+                  <option value="moderator">Moderator</option>
                 </select>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
