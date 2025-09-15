@@ -74,10 +74,14 @@ router.post("/tour", validateRequest(tourBookingSchema), async (req, res) => {
     }
   } catch (error) {
     console.error("Error booking tour:", error);
-    if (!res.headersSent)
-      res
-        .status(500)
-        .json({ error: "An error occurred while booking the tour." });
+    if (!res.headersSent) {
+      // Handle unique constraint (user already booked this tour)
+      // Postgres unique_violation error code is '23505'
+      if (error && (error.code === "23505" || error.code === 23505)) {
+        return res.status(409).json({ error: "You have already booked this tour." });
+      }
+      res.status(500).json({ error: "An error occurred while booking the tour." });
+    }
   }
 });
 
