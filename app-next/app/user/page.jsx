@@ -1052,185 +1052,146 @@ export default function UserPage() {
         </div>
       );
     
+    const visibleBookings = Array.isArray(bookings)
+      ? bookings.filter(
+          (bb) => (bb.booking_status || bb.status || "booked") !== "cancelled"
+        )
+      : [];
+
     return (
       <div className={styles.profileCard}>
         <div className={styles.sectionHeader}>
           <h3>My Bookings</h3>
+          <p>Manage your travel bookings and reservations</p>
         </div>
-        <div className={styles.cardGrid}>
-          {(() => {
-            const visibleBookings = Array.isArray(bookings)
-              ? bookings.filter(
-                  (bb) => (bb.booking_status || bb.status || "booked") !== "cancelled"
-                )
-              : [];
-            if (visibleBookings.length === 0)
-              return <p className={styles.empty}>No bookings yet.</p>;
-            return visibleBookings.map((b) => {
-              const tourId = b.tour_id || null;
+        
+        {visibleBookings.length === 0 ? (
+          <div className={styles.bookingsEmpty}>
+            <div className={styles.bookingsEmptyIcon}>📋</div>
+            <h3>No bookings yet</h3>
+            <p>Your travel bookings will appear here once you make a reservation</p>
+          </div>
+        ) : (
+          <div className={styles.cardGrid}>
+            {visibleBookings.map((booking) => {
+              const tourId = booking.tour_id || null;
               const matchingTour = tourId
                 ? tours.find((t) => String(t.id) === String(tourId))
                 : null;
-              if (matchingTour) {
-                // Use existing Card component for tours so the design matches exactly
-                return (
-                  <div key={`booking-tour-${b.id || tourId}`} className={styles.cardWrapper}>
-                    <Card
-                      card={matchingTour}
-                      viewLink={`/tours/${tourId}`}
-                      onFavoriteChange={() => {}}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 8,
-                        marginTop: 8,
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <a
-                        href={`/tours/${tourId}`}
-                        className={styles.secondary}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        View
-                      </a>
-                      <button
-                        className={styles.secondary}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          cancelBooking(b);
-                        }}
-                        disabled={
-                          !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
-                        }
-                      >
-                        {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
-                          ? "Cancelling..."
-                          : "Cancel"}
-                      </button>
+              
+              const title = booking.trip_name || booking.plan_name || booking.name || "Booked Trip";
+              const img = booking.cover_image_url || booking.cover_image || null;
+              const bookedAt = booking.booked_at ? new Date(booking.booked_at) : null;
+              const total = typeof booking.total_price_minor === "number" ? booking.total_price_minor : null;
+              const currency = booking.currency_code || "USD";
+              const status = booking.booking_status || booking.status || "pending";
+              const bookingType = booking.plan_type || (booking.tour_id ? "tour" : "custom");
+              
+              const link = booking.tour_id
+                ? `/tours/${booking.tour_id}`
+                : booking.trip_id
+                  ? `/trips/${booking.trip_id}`
+                  : "#";
+
+              return (
+                <div key={booking.booking_id || booking.id} className={styles.cardWrapper}>
+                  <div className={styles.bookingCard}>
+                    <div className={styles.bookingHeader}>
+                      <h4 className={styles.bookingTitle}>{title}</h4>
+                      <span className={`${styles.bookingStatus} ${styles[status]}`}>
+                        {status}
+                      </span>
                     </div>
-                  </div>
-                );
-              }
-
-              // Fallback visual for custom trips or missing tour rows - reuse Card styles
-              const link = b.tour_id
-                ? `/tours/${b.tour_id}`
-                : b.trip_id
-                  ? `/trips/${b.trip_id}`
-                  : `#`;
-              const title = b.trip_name || b.plan_name || b.name || "Booked item";
-              const img = b.cover_image_url || b.cover_image || null;
-              const bookedAt = b.booked_at ? new Date(b.booked_at).toLocaleString() : null;
-              const total =
-                typeof b.total_price_minor === "number"
-                  ? b.total_price_minor
-                  : b.total_price_minor || null;
-              const currency = b.currency_code || (b.price_minor ? "USD" : null);
-              const status = b.booking_status || b.status || "booked";
-
-    return (
-                <div
-                  key={b.id || `${b.tour_id || b.trip_id}-${b.booked_at || ""}`}
-                  className={styles.cardWrapper}
-                >
-      <div>
-                    <div className={cardStyles.travelCard} style={{ background: "transparent" }}>
-                      <div className={cardStyles.imageWrapper}>
-                        {img ? (
-                          // plain img for fallback cards
-                          <img
-                            src={img}
-                            alt={title}
-                            className={cardStyles.travelImage}
-                            style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                          />
-                        ) : (
-                          <div
-                            className={cardStyles.travelImage}
-                            style={{
-                              width: "100%",
-                              height: "200px",
-                              background: "linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "#666",
-                              fontSize: "14px",
-                            }}
-                          >
-                            No Image
+                    
+                    <div className={styles.bookingContent}>
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={title}
+                          className={styles.bookingImage}
+                        />
+                      ) : (
+                        <div className={styles.bookingImagePlaceholder}>
+                          📸 No Image Available
+                        </div>
+                      )}
+                      
+                      <div className={styles.bookingInfo}>
+                        <div className={styles.bookingInfoItem}>
+                          <span className={styles.bookingInfoLabel}>Booking Type</span>
+                          <span className={styles.bookingInfoValue}>
+                            {bookingType === "tour" ? "🏛️ Tour" : "✈️ Custom Trip"}
+                          </span>
+                        </div>
+                        
+                        {bookedAt && (
+                          <div className={styles.bookingInfoItem}>
+                            <span className={styles.bookingInfoLabel}>Booked Date</span>
+                            <span className={styles.bookingInfoValue}>
+                              {bookedAt.toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric"
+                              })}
+                            </span>
                           </div>
                         )}
-                      </div>
-                      <div className={cardStyles.travelContent}>
-                        <h3 className={cardStyles.travelTitle}>{title}</h3>
-                        <div className={cardStyles.travelMeta}>
-                          {bookedAt && (
-                            <span className={cardStyles.travelDate}>Booked: {bookedAt}</span>
-                          )}
-                          {total && currency && (
-                            <span className={cardStyles.travelPrice}>
-                              Total: {currency} {(total / 100).toFixed(2)}
+                        
+                        {total && (
+                          <div className={styles.bookingInfoItem}>
+                            <span className={styles.bookingInfoLabel}>Total Price</span>
+                            <span className={styles.bookingInfoValue}>
+                              {currency} {(total / 100).toFixed(2)}
                             </span>
-                          )}
-                          <span
-                            className={cardStyles.travelStatus}
-                            style={{
-                              color: status === "confirmed" ? "#10b981" : status === "cancelled" ? "#ef4444" : "#f59e0b",
-                            }}
-                          >
-                            {status}
+                          </div>
+                        )}
+                        
+                        <div className={styles.bookingInfoItem}>
+                          <span className={styles.bookingInfoLabel}>Booking ID</span>
+                          <span className={styles.bookingInfoValue}>
+                            #{booking.booking_id || booking.id}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 8,
-                        marginTop: 8,
-                        justifyContent: "flex-end",
-                      }}
-                    >
+                    
+                    <div className={styles.bookingActions}>
                       <a
                         href={link}
                         className={styles.secondary}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        View
+                        View Details
                       </a>
                       <button
-                        className={styles.secondary}
+                        className={styles.primary}
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
-                          cancelBooking(b);
+                          cancelBooking(booking);
                         }}
                         disabled={
-                          !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                          !!cancelling[String(booking.booking_id || booking.id || booking.tour_id || booking.trip_id)]
                         }
                       >
-                        {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                        {cancelling[String(booking.booking_id || booking.id || booking.tour_id || booking.trip_id)]
                           ? "Cancelling..."
-                          : "Cancel"}
+                          : "Cancel Booking"}
                       </button>
                     </div>
                   </div>
                 </div>
               );
-            });
-          })()}
-        </div>
+            })}
+          </div>
+        )}
       </div>
     );
   }
 
   function renderTrips() {
     if (!user)
-      return (
+    return (
         <div className={styles.profileCard}>
           <p className={styles.empty}>Please log in to view your bookings.</p>
         </div>
