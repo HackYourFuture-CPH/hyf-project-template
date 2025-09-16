@@ -4,12 +4,12 @@ import { authenticateToken } from "../middleware/auth.js";
 import tripDestinationsRouter from "./tripDestinations.js";
 import tripAccommodationsRouter from "./tripAccommodations.js";
 import tripFlightsRouter from "./tripFlights.js";
+import { randomBytes } from "crypto";
 
 const router = express.Router();
 
 router.use(authenticateToken);
 
-// GET all trips for the current user
 router.get("/", async (req, res) => {
   const userId = req.user.id || req.user.sub;
   try {
@@ -23,7 +23,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET a single trip by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id || req.user.sub;
@@ -31,24 +30,21 @@ router.get("/:id", async (req, res) => {
     const trip = await knex("travel_plans")
       .where({ id, owner_id: userId, plan_type: "user" })
       .first();
+
     if (!trip) {
       return res
         .status(404)
         .json({ error: "Trip not found or you do not have permission." });
     }
+
     const [destinations, accommodations, flights] = await Promise.all([
       knex("tour_destinations")
         .where("tour_id", id)
         .orderBy("stop_order", "asc"),
-      knex("tour_accommodations as ta")
-        .join("accommodations as a", "ta.accommodation_id", "a.id")
-        .where("ta.trip_id", id)
-        .select("a.*"),
-      knex("tour_flights as tf")
-        .join("flights as f", "tf.flight_id", "f.id")
-        .where("tf.trip_id", id)
-        .select("f.*"),
+      knex("tour_accommodations").where("tour_id", id),
+      knex("tour_flights").where("tour_id", id),
     ]);
+
     res.json({
       message: "Trip retrieved successfully.",
       data: { ...trip, destinations, accommodations, flights },
@@ -59,7 +55,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST a new, empty trip plan
 router.post("/", async (req, res) => {
   const { name, description, cover_image_url } = req.body;
   const userId = req.user.id || req.user.sub;
@@ -86,7 +81,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// NEW: This is the route for creating a complete custom trip with all its parts.
 router.post("/build", async (req, res) => {
   const userId = req.user.id || req.user.sub;
   const { name, description, destinations } = req.body;
@@ -121,21 +115,41 @@ router.post("/build", async (req, res) => {
           .returning("id");
 
         if (dest.accommodation_ids && dest.accommodation_ids.length > 0) {
-          const accommodationLinks = dest.accommodation_ids.map((accId) => ({
-            trip_id: tripRecord.id,
-            accommodation_id: accId,
+          const accommodationsToLink = await trx("accommodations").whereIn(
+            "id",
+            dest.accommodation_ids
+          );
+          const accommodationData = accommodationsToLink.map((acc) => ({
+            tour_id: tripRecord.id,
             destination_id: newDestination.id,
+            name: acc.name,
+            type: acc.type,
+            rating: acc.rating,
+            price_minor: acc.price_per_night_minor,
+            currency_code: acc.currency_code,
           }));
-          await trx("tour_accommodations").insert(accommodationLinks);
+          if (accommodationData.length > 0) {
+            await trx("tour_accommodations").insert(accommodationData);
+          }
         }
 
         if (dest.flight_ids && dest.flight_ids.length > 0) {
-          const flightLinks = dest.flight_ids.map((flightId) => ({
-            trip_id: tripRecord.id,
-            flight_id: flightId,
-            destination_id: newDestination.id,
+          const flightsToLink = await trx("flights").whereIn(
+            "id",
+            dest.flight_ids
+          );
+          const flightData = flightsToLink.map((flight) => ({
+            tour_id: tripRecord.id,
+            departs_from_destination_id: newDestination.id,
+            arrives_at_destination_id: newDestination.id,
+            airline: flight.airline,
+            flight_number: flight.flight_number,
+            price_minor: flight.price_minor,
+            currency_code: flight.currency_code,
           }));
-          await trx("tour_flights").insert(flightLinks);
+          if (flightData.length > 0) {
+            await trx("tour_flights").insert(flightData);
+          }
         }
       }
       newTrip = tripRecord;
@@ -152,7 +166,6 @@ router.post("/build", async (req, res) => {
   }
 });
 
-// PUT (update) a trip
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id || req.user.sub;
@@ -176,7 +189,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE a trip
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id || req.user.sub;
@@ -188,10 +200,9 @@ router.delete("/:id", async (req, res) => {
       if (!trip) {
         throw new Error("TripNotFound");
       }
-      // Delete from all related tables
       await trx("tour_destinations").where("tour_id", id).del();
-      await trx("tour_accommodations").where("trip_id", id).del();
-      await trx("tour_flights").where("trip_id", id).del();
+      await trx("tour_accommodations").where("tour_id", id).del();
+      await trx("tour_flights").where("tour_id", id).del();
       await trx("travel_plans").where({ id }).del();
     });
     res.status(200).json({ message: "Trip deleted successfully." });
@@ -206,7 +217,39 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Nested Routers for trip details
+router.post("/:tripId/invitations", async (req, res) => {
+  const { tripId } = req.params;
+  const userId = req.user.id || req.user.sub;
+
+  try {
+    const trip = await knex("travel_plans")
+      .where({ id: tripId, owner_id: userId })
+      .first();
+    if (!trip) {
+      return res.status(403).json({
+        error:
+          "Permission denied. Only the trip owner can create invitation links.",
+      });
+    }
+
+    const token = randomBytes(20).toString("hex");
+    const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    await knex("trip_invitations").insert({
+      trip_id: tripId,
+      created_by_user_id: userId,
+      token,
+      expires_at,
+    });
+
+    const shareableLink = `https://your-frontend-app.com/join-trip?token=${token}`;
+    res.status(201).json({ shareableLink });
+  } catch (error) {
+    console.error("Error creating invitation link:", error);
+    res.status(500).json({ error: "Failed to create invitation link." });
+  }
+});
+
 router.use("/:tripId/destinations", tripDestinationsRouter);
 router.use("/:tripId/accommodations", tripAccommodationsRouter);
 router.use("/:tripId/flights", tripFlightsRouter);

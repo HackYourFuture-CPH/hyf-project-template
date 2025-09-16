@@ -32,6 +32,7 @@ reviewsRouter.get("/", async (req, res) => {
     const { id: tourId } = req.params;
     const reviews = await knex("tour_reviews")
       .where({ tour_id: tourId })
+      .andWhere("p.status", "published")
       .orderBy("created_at", "desc");
     res.json({
       message: "Reviews retrieved successfully.",
