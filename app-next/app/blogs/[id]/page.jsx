@@ -19,11 +19,15 @@ export default function AttractionDetailsPage() {
   // Fetch a single blog post from the API and set local state
   async function fetchSingleBlog() {
     try {
-      const response = await fetch(`${API_URL}/api/blogposts/${id}`);
+      const encodedId = encodeURIComponent(String(id));
+      const response = await fetch(`${API_URL}/api/blogposts/${encodedId}`);
       if (!response.ok) {
+        // log response body to help debugging server errors
+        const text = await response.text().catch(() => "");
+        console.error(`Blog fetch failed: ${response.status}`, text);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  const blogData = await response.json();
+      const blogData = await response.json();
 
   const resolved = blogData.data || blogData || null;
  
@@ -34,8 +38,9 @@ export default function AttractionDetailsPage() {
   }
 
   useEffect(() => {
+    if (!id) return;
     fetchSingleBlog();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (!blog) return;

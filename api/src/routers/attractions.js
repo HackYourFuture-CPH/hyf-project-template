@@ -1,7 +1,7 @@
 import express from "express";
 import knex from "../db.mjs";
 import { optionalAuth } from "../middleware/auth.js";
-import commentsRouter from "./Comments.js";
+import commentsRouter from "./comments.js";
 
 const router = express.Router();
 
@@ -142,11 +142,12 @@ router.get("/:id", optionalAuth, async (req, res) => {
 
     const [photos, comments] = await Promise.all([
       knex("attraction_post_photos").where("post_id", id),
-      knex("attraction_post_comments as ac")
-        .select("ac.*", "u.username", "u.first_name", "u.last_name")
-        .join("users as u", "ac.user_id", "u.id")
-        .where("ac.post_id", id)
-        .orderBy("ac.created_at", "asc"),
+      // Use the generic `comments` table for attraction comments
+      knex("comments as c")
+        .select("c.*", "u.username", "u.first_name", "u.last_name")
+        .join("users as u", "c.user_id", "u.id")
+        .where({ commentable_id: id, commentable_type: "attraction", status: "approved" })
+        .orderBy("c.created_at", "asc"),
     ]);
 
     res.json({

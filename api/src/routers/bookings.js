@@ -22,13 +22,34 @@ const customTripBookingSchema = z.object({
 // --- Booking Routes ---
 
 // This endpoint is for booking a pre-defined tour
+// Helper to resolve the authoritative user id from the DB using token fields
+async function resolveDbUserId(dbOrTrx, user) {
+  if (!user) return null;
+  const candidateId = user.id || user.sub;
+  const username = user.username;
+  const email = user.email;
+  const q = dbOrTrx("users").where(function () {
+    if (candidateId) this.where("id", candidateId);
+    if (username) this.orWhere("username", username);
+    if (email) this.orWhere("email", email);
+  });
+  const row = await q.first();
+  return row ? row.id : null;
+}
+
 router.post("/tour", validateRequest(tourBookingSchema), async (req, res) => {
-  const userId = req.user.id || req.user.sub;
+  const tokenUserId = req.user && (req.user.id || req.user.sub);
   const { tour_id, num_travelers } = req.validatedData;
 
   try {
     let newBooking;
     await knex.transaction(async (trx) => {
+      // Resolve DB user id inside the transaction to ensure consistency
+      const dbUserId = await resolveDbUserId(trx, req.user);
+      if (!dbUserId) {
+        return res.status(401).json({ error: "Authenticated user not found." });
+      }
+      const userId = dbUserId;
       const tour = await trx("travel_plans")
         .where({ id: tour_id, plan_type: "tour" })
         .forUpdate()
@@ -54,7 +75,7 @@ router.post("/tour", validateRequest(tourBookingSchema), async (req, res) => {
       const totalPrice = tour.price_minor * num_travelers;
 
       // Check for any existing booking for this user+tour (lock row to avoid races)
-      const existing = await trx("tour_bookings").where({ tour_id, user_id: userId }).first();
+  const existing = await trx("tour_bookings").where({ tour_id, user_id: userId }).first();
       console.debug(
         `Booking: existing booking for user=${userId} tour=${tour_id} -> ${existing ? "found" : "none"}`
       );
@@ -121,12 +142,17 @@ router.post("/tour", validateRequest(tourBookingSchema), async (req, res) => {
 
 // This endpoint is for booking a user-created custom trip
 router.post("/custom-trip", validateRequest(customTripBookingSchema), async (req, res) => {
-  const userId = req.user.id || req.user.sub;
+  const tokenUserId = req.user && (req.user.id || req.user.sub);
   const { trip_id, num_travelers } = req.validatedData;
 
   try {
     let newBooking;
     await knex.transaction(async (trx) => {
+      const dbUserId = await resolveDbUserId(trx, req.user);
+      if (!dbUserId) {
+        return res.status(401).json({ error: "Authenticated user not found." });
+      }
+      const userId = dbUserId;
       const trip = await trx("travel_plans")
         .where({ id: trip_id, owner_id: userId, plan_type: "user" })
         .first();
@@ -172,7 +198,9 @@ router.post("/custom-trip", validateRequest(customTripBookingSchema), async (req
 
 // New code to all of a user's bookings bookings
 router.get("/my-bookings", async (req, res) => {
-  const userId = req.user.id || req.user.sub;
+  const tokenUserId = req.user && (req.user.id || req.user.sub);
+  const dbUserId = await resolveDbUserId(knex, req.user);
+  const userId = dbUserId || tokenUserId;
   try {
     const tourBookings = await knex("tour_bookings as tb")
       .leftJoin("travel_plans as tp", "tb.tour_id", "tp.id")
@@ -188,7 +216,7 @@ router.get("/my-bookings", async (req, res) => {
         "tb.total_price_minor",
         "tb.booking_status"
       )
-      .where("tb.user_id", userId);
+  .where("tb.user_id", userId);
 
     const customTripBookings = await knex("custom_trip_bookings as ctb")
       .leftJoin("travel_plans as tp", "ctb.trip_id", "tp.id")
@@ -204,7 +232,7 @@ router.get("/my-bookings", async (req, res) => {
         "ctb.total_price_minor",
         "ctb.booking_status"
       )
-      .where("ctb.user_id", userId);
+  .where("ctb.user_id", userId);
     const allBookings = [...tourBookings, ...customTripBookings].sort(
       (a, b) => new Date(b.booked_at) - new Date(a.booked_at)
     );
@@ -220,7 +248,9 @@ router.get("/my-bookings", async (req, res) => {
 
 // PATCH /api/bookings/:type/:id/cancel - allow user to cancel their own booking
 router.patch("/:type/:id/cancel", async (req, res) => {
-  const userId = req.user.id || req.user.sub;
+  const tokenUserId = req.user && (req.user.id || req.user.sub);
+  const dbUserId = await resolveDbUserId(knex, req.user);
+  const userId = dbUserId || tokenUserId;
   try {
     const { type, id } = req.params;
     const table =

@@ -189,10 +189,13 @@ router.get("/:id", optionalAuth, async (req, res) => {
 
     const [photos, comments] = await Promise.all([
       knex("user_post_photos").where({ post_id: id }),
-      knex("user_post_comments as c")
+      // Use the generic `comments` table which stores comments for posts and attractions
+      knex("comments as c")
         .select("c.*", "u.username", "u.first_name", "u.last_name")
         .join("users as u", "c.user_id", "u.id")
-        .where({ post_id: id }),
+        .where({ commentable_id: id, commentable_type: "post" })
+        .andWhere({ status: "approved" })
+        .orderBy("c.created_at", "asc"),
     ]);
 
     res.json({
