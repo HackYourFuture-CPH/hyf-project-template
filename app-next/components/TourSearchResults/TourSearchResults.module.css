@@ -1,5 +1,18 @@
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .resultsContainer {
-  margin-top: 16px;
+  margin-top: 24px;
+  animation: slideInUp 0.6s ease-out;
 }
 
 .loading {
@@ -53,247 +66,205 @@
 }
 
 .resultsHeader {
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(23, 26, 31, 0.1);
 }
 
 .resultsCount {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 16px;
+  color: #171a1f;
+  font-weight: 600;
 }
 
 .toursGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
 .tourCard {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border-radius: 16px;
-  overflow: hidden;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(23, 26, 31, 0.1);
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.tourCard:hover {
-  border-color: #dc2626;
-  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
-  transform: translateY(-2px);
+.tourCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #171a1f 0%, #2d3748 100%);
 }
 
-.cardHeader {
-  padding: 20px 20px 0 20px;
+.tourCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15);
+  border-color: rgba(23, 26, 31, 0.2);
+}
+
+.tourImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.tourImageFile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tourCard:hover .tourImageFile {
+  transform: scale(1.05);
+}
+
+.tourImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.tourImagePlaceholder svg {
+  width: 48px;
+  height: 48px;
+}
+
+.tourInfo {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .tourName {
+  margin: 0 0 12px 0;
   font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: #171a1f;
   line-height: 1.3;
-  flex: 1;
-}
-
-.cardContent {
-  padding: 16px 20px;
-  flex: 1;
 }
 
 .tourDescription {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 16px;
+  margin: 0 0 16px 0;
+  color: #64748b;
   font-size: 14px;
-  color: #4b5563;
   line-height: 1.5;
-}
-
-.tourDescription i {
-  color: #6b7280;
-  margin-top: 2px;
-  flex-shrink: 0;
+  flex: 1;
 }
 
 .tourDetails {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
-.tourDestination,
-.tourDuration,
-.tourPrice {
+.tourDetail {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #475569;
   font-size: 14px;
-  color: #6b7280;
-  padding: 6px 0;
+  font-weight: 500;
 }
 
-.tourDestination i,
-.tourDuration i,
-.tourPrice i {
+.tourDetail svg {
   width: 16px;
-  color: #9ca3af;
+  height: 16px;
+  color: #171a1f;
   flex-shrink: 0;
-  text-align: center;
-}
-
-.tourPrice {
-  font-weight: 600;
-  color: #059669;
-}
-
-.cardFooter {
-  padding: 16px 20px 20px 20px;
-  border-top: 1px solid #f3f4f6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fafafa;
-}
-
-.tourMeta {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.tourType {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: #ffffff;
-}
-
-.tourType i {
-  font-size: 10px;
-}
-
-.tourRating {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #ffffff;
-}
-
-.tourRating i {
-  font-size: 10px;
-}
-
-.tourDate {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.tourDate i {
-  font-size: 10px;
 }
 
 .tourActions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  justify-content: center;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(23, 26, 31, 0.1);
 }
 
 .editButton,
 .deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 13px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .editButton {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: #ffffff;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
 .editButton:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.1);
 }
 
 .deleteButton {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: #ffffff;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .deleteButton:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.1);
+}
+
+.editButton svg,
+.deleteButton svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .toursGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .toursGrid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
   
-  .cardHeader {
-    padding: 16px 16px 0 16px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+  .tourCard {
+    padding: 0;
   }
-  
+
   .tourName {
     font-size: 16px;
   }
-  
-  .cardContent {
-    padding: 12px 16px;
-  }
-  
-  .cardFooter {
-    padding: 12px 16px 16px 16px;
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-  
-  .tourMeta {
-    justify-content: center;
-  }
-  
-  .tourDate {
-    justify-content: center;
-  }
-  
-  .tourActions {
-    align-self: center;
+
+  .tourDescription {
+    font-size: 13px;
   }
 }
 
@@ -303,29 +274,15 @@
     gap: 12px;
   }
   
-  .cardHeader {
-    padding: 12px 12px 0 12px;
+  .tourInfo {
+    padding: 16px;
   }
-  
-  .cardContent {
-    padding: 10px 12px;
-  }
-  
-  .cardFooter {
-    padding: 10px 12px 12px 12px;
-  }
-  
+
   .tourName {
     font-size: 15px;
   }
-  
+
   .tourDescription {
-    font-size: 13px;
-  }
-  
-  .tourDestination,
-  .tourDuration,
-  .tourPrice {
-    font-size: 13px;
+    font-size: 12px;
   }
 }

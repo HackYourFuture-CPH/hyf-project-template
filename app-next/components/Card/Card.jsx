@@ -48,7 +48,12 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
       const seed = card?.id ? `tour-${card.id}` : encodeURIComponent(s);
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
-    if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    if (s.startsWith("/images/")) {
+      // Use local images from app-next/images instead of API_URL
+      return s;
+    }
+    // If it's already a complete URL (starts with http/https), return as is
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
     return s;
   };
 
@@ -61,7 +66,7 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
   useEffect(() => {
     if (!isBackendPath) return;
     let cancelled = false;
-    const url = `${API_URL}${raw}`;
+    const url = raw; // Use the local path directly
     (async () => {
       try {
         const res = await fetch(url, { method: "HEAD" });

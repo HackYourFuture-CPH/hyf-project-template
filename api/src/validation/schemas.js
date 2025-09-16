@@ -280,6 +280,7 @@ export const adminPostSchema = z.object({
     .string()
     .min(10, "The post content must be at least 10 characters long."),
   category: z.string().optional().nullable(),
+  cover_image_url: z.string().optional().nullable(),
 });
 
 // Schema for an admin creating or updating an attraction
@@ -292,4 +293,6 @@ export const adminAttractionSchema = z.object({
     .string()
     .min(10, "The content must be at least 10 characters long."),
   location: z.string().optional().nullable(),
+  type: z.string().optional().nullable(),
+  cover_image_url: z.string().optional().nullable(),
 });

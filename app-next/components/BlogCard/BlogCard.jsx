@@ -30,6 +30,8 @@ export default function BlogCard({ card, onFavoriteChange }) {
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
     if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    // If it's already a complete URL (starts with http/https), return as is
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
     return s;
   };
 
@@ -54,7 +56,7 @@ export default function BlogCard({ card, onFavoriteChange }) {
     return () => {
       cancelled = true;
     };
-  }, [raw]);
+  }, [raw, isBackendPath]);
   // Prepare display values
   const rawTitle = card.title ?? card.name ?? "Untitled";
   // If the title ends with a colon + hex/hash suffix (e.g. ": c4ca4238a0"), strip it

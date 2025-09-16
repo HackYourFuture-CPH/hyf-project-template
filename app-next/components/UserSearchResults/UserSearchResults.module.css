@@ -1,5 +1,18 @@
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .resultsContainer {
-  margin-top: 16px;
+  margin-top: 24px;
+  animation: slideInUp 0.6s ease-out;
 }
 
 .loading {
@@ -53,166 +66,197 @@
 }
 
 .resultsHeader {
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(23, 26, 31, 0.1);
 }
 
 .resultsCount {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 16px;
+  color: #171a1f;
+  font-weight: 600;
 }
 
 .usersGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 .userCard {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(23, 26, 31, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.userCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #171a1f 0%, #2d3748 100%);
 }
 
 .userCard:hover {
-  border-color: #dc2626;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15);
+  border-color: rgba(23, 26, 31, 0.2);
+}
+
+.userAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.avatarImage {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(23, 26, 31, 0.1);
+}
+
+.avatarPlaceholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  border: 3px solid rgba(23, 26, 31, 0.1);
 }
 
 .userInfo {
-  flex: 1;
+  margin-bottom: 20px;
 }
 
 .userName {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 8px;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #171a1f;
 }
 
-.userDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.userEmail,
-.userUsername,
-.userMobile {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.userEmail i,
-.userUsername i,
-.userMobile i {
-  width: 12px;
-  color: #9ca3af;
-}
-
-.userMeta {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.userEmail {
+  margin: 0 0 12px 0;
+  color: #64748b;
+  font-size: 14px;
 }
 
 .userRole {
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
+  display: flex;
+  justify-content: center;
+}
+
+.roleBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.userRole.adminRole {
-  background: #fef2f2;
-  color: #dc2626;
+.roleBadge.user {
+  background: #e0f2fe;
+  color: #0277bd;
 }
 
-.userRole.userRole {
-  background: #f0f9ff;
-  color: #2563eb;
+.roleBadge.admin {
+  background: #fce4ec;
+  color: #c2185b;
 }
 
-.userStatus {
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.userStatus.active {
-  background: #f0fdf4;
-  color: #16a34a;
-}
-
-.userStatus.inactive {
-  background: #fef2f2;
-  color: #dc2626;
+.roleBadge.moderator {
+  background: #f3e5f5;
+  color: #7b1fa2;
 }
 
 .userActions {
   display: flex;
-  gap: 4px;
-  margin-left: 12px;
+  gap: 8px;
+  justify-content: center;
 }
 
 .editButton,
 .deleteButton {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .editButton {
-  background: #f3f4f6;
-  color: #374151;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
 .editButton:hover {
-  background: #e5e7eb;
-  color: #111827;
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.1);
 }
 
 .deleteButton {
-  background: #fef2f2;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .deleteButton:hover {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.1);
+}
+
+.editButton svg,
+.deleteButton svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .usersGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .usersGrid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .userCard {
-    flex-direction: column;
-    gap: 12px;
+    padding: 20px;
   }
-  
-  .userActions {
-    margin-left: 0;
-    align-self: flex-end;
+
+  .userName {
+    font-size: 16px;
+  }
+
+  .userEmail {
+    font-size: 13px;
   }
 }

@@ -11,16 +11,24 @@ import UserSearchResults from "../../components/UserSearchResults/UserSearchResu
 import TourSearchResults from "../../components/TourSearchResults/TourSearchResults";
 import PostSearchResults from "../../components/PostSearchResults/PostSearchResults";
 import AttractionSearchResults from "../../components/AttractionSearchResults/AttractionSearchResults";
+import CommentSearchResults from "../../components/CommentSearchResults/CommentSearchResults";
+import FieldError from "../../components/FieldError/FieldError";
+import SuccessPopup from "../../components/SuccessPopup/SuccessPopup";
+import ErrorPopup from "../../components/ErrorPopup/ErrorPopup";
 import { useUserSearch } from "../../hooks/useUserSearch";
 import { useTourSearch } from "../../hooks/useTourSearch";
 import { usePostSearch } from "../../hooks/usePostSearch";
 import { useAttractionSearch } from "../../hooks/useAttractionSearch";
+import { useCommentSearch } from "../../hooks/useCommentSearch";
+import { parseValidationErrors, getFieldError, hasValidationErrors } from "../../utils/validationUtils";
+import { UploadButton } from "@uploadthing/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 export default function AdminPage() {
   // local UI state
   const [currentSection, setCurrentSection] = useState("dashboard");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // fetched data
   const [user, setUser] = useState(null);
@@ -29,6 +37,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState([]);
   const [attractions, setAttractions] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [postComments, setPostComments] = useState([]);
 
   // Modal states for CRUD operations
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
@@ -41,10 +50,10 @@ export default function AdminPage() {
   const [showEditAttractionModal, setShowEditAttractionModal] = useState(false);
   
   // Form states
-  const [newPost, setNewPost] = useState({ title: "", category: "", content: "" });
-  const [newTour, setNewTour] = useState({ name: "", description: "", price_minor: "", duration_days: "", destination: "" });
+  const [newPost, setNewPost] = useState({ title: "", category: "", content: "", cover_image_url: "" });
+  const [newTour, setNewTour] = useState({ name: "", description: "", price_minor: "", duration_days: "", cover_image_url: "" });
   const [newUser, setNewUser] = useState({ first_name: "", last_name: "", email: "", username: "", mobile: "", role: "user" });
-  const [newAttraction, setNewAttraction] = useState({ title: "", content: "", location: "", type: "" });
+  const [newAttraction, setNewAttraction] = useState({ title: "", content: "", location: "", type: "", cover_image_url: "" });
   const [editingUser, setEditingUser] = useState(null);
   const [editingTour, setEditingTour] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
@@ -67,6 +76,27 @@ export default function AdminPage() {
   // Error states
   const [createError, setCreateError] = useState("");
   const [deleteError, setDeleteError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
+  
+  // Success popup state
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  
+  // Error popup state
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  
+  // Helper function to show success popup
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setShowSuccessPopup(true);
+  };
+  
+  // Helper function to show error popup
+  const showError = (message) => {
+    setErrorMessage(message);
+    setShowErrorPopup(true);
+  };
 
   // User search hook
   const {
@@ -112,6 +142,17 @@ export default function AdminPage() {
     clearSearch: clearAttractionSearch
   } = useAttractionSearch();
 
+  // Comment search hook
+  const {
+    searchTerm: commentSearchTerm,
+    setSearchTerm: setCommentSearchTerm,
+    searchResults: commentSearchResults,
+    isSearching: isCommentSearching,
+    searchError: commentSearchError,
+    hasSearched: hasCommentSearched,
+    clearSearch: clearCommentSearch
+  } = useCommentSearch();
+
   // Post handlers
   const handleEditPost = (post) => {
     setEditingPost(post);
@@ -120,6 +161,7 @@ export default function AdminPage() {
       title: post.title || "",
       category: post.category || "",
       content: post.content || "",
+      cover_image_url: post.photos && post.photos.length > 0 ? post.photos[0].image_url : "",
     });
     setShowEditPostModal(true);
   };
@@ -145,6 +187,7 @@ export default function AdminPage() {
             // Trigger a new search to refresh results
             setPostSearchTerm(postSearchTerm);
           }
+          showError("Post deleted successfully!");
         } else {
           const errorData = await res.json();
           alert(`Failed to delete post: ${errorData.error || 'Unknown error'}`);
@@ -166,6 +209,7 @@ export default function AdminPage() {
       content: attraction.content || "",
       location: attraction.location || "",
       type: attraction.type || "",
+      cover_image_url: attraction.photos && attraction.photos.length > 0 ? attraction.photos[0].image_url : "",
     });
     setShowEditAttractionModal(true);
   };
@@ -191,6 +235,7 @@ export default function AdminPage() {
             // Trigger a new search to refresh results
             setAttractionSearchTerm(attractionSearchTerm);
           }
+          showError("Attraction deleted successfully!");
         } else {
           const errorData = await res.json();
           alert(`Failed to delete attraction: ${errorData.error || 'Unknown error'}`);
@@ -203,9 +248,67 @@ export default function AdminPage() {
     }
   };
 
+  // Comment handlers
+  const handleToggleCommentApproval = async (comment) => {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const res = await fetch(`${API_URL}/api/admin/comments/${comment.id}/toggle-approval`, {
+        method: "PUT",
+        headers,
+      });
+
+      if (res.ok) {
+        setPostComments((prev) => 
+          prev.map((c) => 
+            c.id === comment.id 
+              ? { ...c, is_approved: !c.is_approved }
+              : c
+          )
+        );
+      } else {
+        const errorData = await res.json();
+        alert(`Failed to update comment: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      alert(`Error updating comment: ${err.message}`);
+    }
+  };
+
+  const handleDeleteComment = async (comment) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete this comment?\n\n"${comment.content.substring(0, 50)}${comment.content.length > 50 ? '...' : ''}"\n\nThis action cannot be undone.`
+    );
+    
+    if (confirmed) {
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = {};
+        if (token) headers.Authorization = `Bearer ${token}`;
+
+        const res = await fetch(`${API_URL}/api/admin/comments/${comment.id}`, {
+          method: "DELETE",
+          headers,
+        });
+
+        if (res.ok) {
+          setPostComments((prev) => prev.filter((c) => c.id !== comment.id));
+          showError("Comment deleted successfully!");
+        } else {
+          const errorData = await res.json();
+          alert(`Failed to delete comment: ${errorData.error || 'Unknown error'}`);
+        }
+      } catch (err) {
+        alert(`Error deleting comment: ${err.message}`);
+      }
+    }
+  };
+
   function closeCreateModal() {
     setShowCreatePostModal(false);
-    setNewPost({ title: "", category: "", content: "" });
+    setNewPost({ title: "", category: "", content: "", cover_image_url: "" });
     setCreateError("");
   }
 
@@ -297,7 +400,20 @@ export default function AdminPage() {
           console.debug("Attractions request error:", err.message);
         }
 
-        // 6) All Reviews (using tour_reviews table)
+        // 6) All Comments (admin endpoint)
+        try {
+          const resComments = await fetch(`${API_URL}/api/admin/comments`, { headers });
+          const parsed = await safeParseResponse(resComments);
+          if (resComments.ok && parsed.body) {
+            if (mounted) setPostComments(parsed.body.data || parsed.body || []);
+          } else {
+            console.debug("Comments fetch failed:", parsed.raw || parsed.body?.message);
+          }
+        } catch (err) {
+          console.debug("Comments request error:", err.message);
+        }
+
+        // 7) All Reviews (using tour_reviews table)
         try {
           const resReviews = await fetch(`${API_URL}/api/admin/dashboard/stats`, { headers });
           const parsed = await safeParseResponse(resReviews);
@@ -345,10 +461,21 @@ export default function AdminPage() {
         <h2 className={styles.dashboardTitle}>
           Welcome, Admin {user.full_name || user.first_name || user.username}!
         </h2>
+        
+        <div className={styles.dashboardSubtitle}>
+          Here's an overview of your platform statistics
+        </div>
 
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>👥</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{totalUsers}</div>
               <div className={styles.statLabel}>Total Users</div>
@@ -356,7 +483,12 @@ export default function AdminPage() {
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>✈️</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{totalTours}</div>
               <div className={styles.statLabel}>Total Tours</div>
@@ -364,7 +496,15 @@ export default function AdminPage() {
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>📰</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14,2 14,8 20,8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10,9 9,9 8,9"></polyline>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{totalPosts}</div>
               <div className={styles.statLabel}>Total Posts</div>
@@ -372,7 +512,12 @@ export default function AdminPage() {
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>🏛️</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9,22 9,12 15,12 15,22"></polyline>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{totalAttractions}</div>
               <div className={styles.statLabel}>Attractions</div>
@@ -380,10 +525,41 @@ export default function AdminPage() {
           </div>
 
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>⭐</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{totalReviews}</div>
               <div className={styles.statLabel}>Reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.dashboardActions}>
+          <div className={styles.actionCard}>
+            <h3>Quick Actions</h3>
+            <p>Manage your platform efficiently</p>
+            <div className={styles.actionButtons}>
+              <button 
+                onClick={() => setCurrentSection("users")}
+                className={styles.actionButton}
+              >
+                Manage Users
+              </button>
+              <button 
+                onClick={() => setCurrentSection("tours")}
+                className={styles.actionButton}
+              >
+                Manage Tours
+              </button>
+              <button 
+                onClick={() => setCurrentSection("posts")}
+                className={styles.actionButton}
+              >
+                Manage Posts
+              </button>
             </div>
           </div>
         </div>
@@ -433,6 +609,7 @@ export default function AdminPage() {
               // Trigger a new search to refresh results
               setSearchTerm(searchTerm);
             }
+            showError("User deleted successfully!");
           } else {
             const errorData = await res.json();
             alert(`Failed to delete user: ${errorData.error || 'Unknown error'}`);
@@ -446,18 +623,25 @@ export default function AdminPage() {
     };
 
     return (
-      <div>
-        <div className={styles.sectionHeader}>
-          <h3>User Management</h3>
+      <div className={styles.usersContainer}>
+        <div className={styles.usersHeader}>
+          <div className={styles.usersTitleSection}>
+            <h2 className={styles.usersTitle}>User Management</h2>
+            <p className={styles.usersSubtitle}>Manage and monitor all platform users</p>
+          </div>
           <button 
-            className={styles.addButton}
+            className={styles.addUserButton}
             onClick={() => {
               setCreateError("");
               setNewUser({ first_name: "", last_name: "", email: "", username: "", mobile: "", role: "user" });
               setShowCreateUserModal(true);
             }}
           >
-            + Add New User
+            <svg className={styles.addIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New User
           </button>
         </div>
 
@@ -467,6 +651,7 @@ export default function AdminPage() {
           onSearch={setSearchTerm}
           onClear={clearSearch}
           isLoading={isSearching}
+          forceLightTheme={true}
         />
 
         {/* Search Results */}
@@ -481,30 +666,62 @@ export default function AdminPage() {
 
         {/* All Users List (when not searching) */}
         {!hasSearched && (
-          <div className={styles.cardGrid}>
+          <div className={styles.usersGrid}>
             {users.length === 0 ? (
-              <p className={styles.empty}>No users found.</p>
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>👥</div>
+                <h3>No users found</h3>
+                <p>Start by adding your first user to the platform</p>
+              </div>
             ) : (
               users.map((u) => (
-                <div key={u.id} className={styles.card}>
-                  <div className={styles.cardTitle}>{u.full_name || u.username}</div>
-                  <div className={styles.cardMeta}>
-                    {u.email} • {u.role || 'user'}
+                <div key={u.id} className={styles.userCard}>
+                  <div className={styles.userAvatar}>
+                    {u.profile_image ? (
+                      <Image
+                        src={u.profile_image}
+                        alt={`${u.full_name || u.username} profile`}
+                        width={48}
+                        height={48}
+                        className={styles.avatarImage}
+                      />
+                    ) : (
+                      <div className={styles.avatarPlaceholder}>
+                        {(u.first_name || u.username || "U")[0].toUpperCase()}
+                      </div>
+                    )}
                   </div>
-                  <div className={styles.cardActions}>
+                  <div className={styles.userInfo}>
+                    <h3 className={styles.userName}>{u.full_name || u.username}</h3>
+                    <p className={styles.userEmail}>{u.email}</p>
+                    <div className={styles.userRole}>
+                      <span className={`${styles.roleBadge} ${styles[u.role || 'user']}`}>
+                        {u.role || 'user'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.userActions}>
                     <button 
-                      className={styles.secondary}
+                      className={styles.editButton}
                       onClick={() => handleEditUser(u)}
                       disabled={deletingUser}
+                      title="Edit user"
                     >
-                      Edit
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
                     </button>
                     <button 
-                      className={styles.secondary}
+                      className={styles.deleteButton}
                       onClick={() => handleDeleteUser(u)}
                       disabled={deletingUser}
+                      title="Delete user"
                     >
-                      {deletingUser ? "Deleting..." : "Delete"}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -531,7 +748,7 @@ export default function AdminPage() {
         description: tour.description || "",
         price_minor: tour.price_minor || "",
         duration_days: tour.duration_days || "",
-        destination: tour.destination || ""
+        cover_image_url: tour.cover_image_url || ""
       });
       setShowEditTourModal(true);
     };
@@ -557,6 +774,7 @@ export default function AdminPage() {
               // Trigger a new search to refresh results
               setTourSearchTerm(tourSearchTerm);
             }
+            showError("Tour deleted successfully!");
           } else {
             const errorData = await res.json();
             alert(`Failed to delete tour: ${errorData.error || 'Unknown error'}`);
@@ -570,18 +788,25 @@ export default function AdminPage() {
     };
 
     return (
-      <div>
-        <div className={styles.sectionHeader}>
-          <h3>Tour Management</h3>
+      <div className={styles.toursContainer}>
+        <div className={styles.toursHeader}>
+          <div className={styles.toursTitleSection}>
+            <h2 className={styles.toursTitle}>Tour Management</h2>
+            <p className={styles.toursSubtitle}>Manage and monitor all platform tours</p>
+          </div>
           <button 
-            className={styles.addButton}
+            className={styles.addTourButton}
             onClick={() => {
               setCreateError("");
-              setNewTour({ name: "", description: "", price_minor: "", duration_days: "", destination: "" });
+              setNewTour({ name: "", description: "", price_minor: "", duration_days: "", cover_image_url: "" });
               setShowCreateTourModal(true);
             }}
           >
-            + Add New Tour
+            <svg className={styles.addIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Tour
           </button>
         </div>
 
@@ -591,6 +816,7 @@ export default function AdminPage() {
           onSearch={setTourSearchTerm}
           onClear={clearTourSearch}
           isLoading={isTourSearching}
+          forceLightTheme={true}
         />
 
         {/* Search Results */}
@@ -605,30 +831,77 @@ export default function AdminPage() {
 
         {/* All Tours List (when not searching) */}
         {!hasTourSearched && (
-          <div className={styles.cardGrid}>
+          <div className={styles.toursGrid}>
             {tours.length === 0 ? (
-              <p className={styles.empty}>No tours found.</p>
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>🗺️</div>
+                <h3>No tours found</h3>
+                <p>Start by adding your first tour to the platform</p>
+              </div>
             ) : (
               tours.map((t) => (
-                <div key={t.id} className={styles.card}>
-                  <div className={styles.cardTitle}>{t.name}</div>
-                  <div className={styles.cardMeta}>
-                    {t.duration_days} days • {t.destination}
+                <div key={t.id} className={styles.tourCard}>
+                  <div className={styles.tourImage}>
+                    {t.cover_image_url ? (
+                      <Image
+                        src={t.cover_image_url}
+                        alt={`${t.name} tour`}
+                        width={300}
+                        height={200}
+                        className={styles.tourImageFile}
+                      />
+                    ) : (
+                      <div className={styles.tourImagePlaceholder}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21,15 16,10 5,21"></polyline>
+                        </svg>
+                      </div>
+                    )}
                   </div>
-                  <div className={styles.cardActions}>
+                  <div className={styles.tourInfo}>
+                    <h3 className={styles.tourName}>{t.name}</h3>
+                    <p className={styles.tourDescription}>{t.description ? (t.description.length > 80 ? `${t.description.substring(0, 80)}...` : t.description) : 'No description available'}</p>
+                    <div className={styles.tourDetails}>
+                      <div className={styles.tourDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <span>{t.duration_days || 0} days</span>
+                      </div>
+                      <div className={styles.tourDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="12" y1="1" x2="12" y2="23"></line>
+                          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span>${t.price_minor ? (t.price_minor / 100).toFixed(2) : '0.00'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.tourActions}>
                     <button 
-                      className={styles.secondary}
+                      className={styles.editButton}
                       onClick={() => handleEditTour(t)}
                       disabled={deletingTour}
+                      title="Edit tour"
                     >
-                      Edit
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
                     </button>
                     <button 
-                      className={styles.secondary}
+                      className={styles.deleteButton}
                       onClick={() => handleDeleteTour(t)}
                       disabled={deletingTour}
+                      title="Delete tour"
                     >
-                      {deletingTour ? "Deleting..." : "Delete"}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -649,21 +922,26 @@ export default function AdminPage() {
       );
 
     return (
-      <div className={styles.profileCard}>
-        <div className={styles.sectionHeader}>
-          <h3>Post Management</h3>
-          <div>
-            <button
-              className={styles.primary}
-              onClick={() => {
-                setCreateError("");
-                setNewPost({ title: "", category: "", content: "" });
-                setShowCreatePostModal(true);
-              }}
-            >
-              + Create Post
-            </button>
+      <div className={styles.postsContainer}>
+        <div className={styles.postsHeader}>
+          <div className={styles.postsTitleSection}>
+            <h2 className={styles.postsTitle}>Post Management</h2>
+            <p className={styles.postsSubtitle}>Manage and monitor all platform posts</p>
           </div>
+          <button 
+            className={styles.addPostButton}
+            onClick={() => {
+              setCreateError("");
+              setNewPost({ title: "", category: "", content: "", cover_image_url: "" });
+              setShowCreatePostModal(true);
+            }}
+          >
+            <svg className={styles.addIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Post
+          </button>
         </div>
 
         {/* Search Section */}
@@ -673,6 +951,7 @@ export default function AdminPage() {
             onSearch={setPostSearchTerm}
             onClear={clearPostSearch}
             isLoading={isPostSearching}
+            forceLightTheme={true}
           />
           
           <PostSearchResults
@@ -685,40 +964,87 @@ export default function AdminPage() {
           />
         </div>
 
-        {/* Regular Posts List */}
+        {/* All Posts List (when not searching) */}
         {!hasPostSearched && (
-          <>
-            {posts.length === 0 && <p className={styles.empty}>No posts yet.</p>}
-            <div className={styles.cardGrid}>
-              {posts.map((p) => (
-                <div key={p.id} className={styles.cardWrapper}>
-                  <div style={{ position: "relative" }}>
-                    <BlogCard card={p} />
-                    <div className={styles.cardActions} style={{ marginTop: 8 }}>
-                      <button
-                        className={styles.secondary}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditPost(p);
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className={styles.secondary}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeletePost(p);
-                        }}
-                      >
-                        Delete
-                      </button>
+          <div className={styles.postsGrid}>
+            {posts.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>📰</div>
+                <h3>No posts found</h3>
+                <p>Start by adding your first post to the platform</p>
+              </div>
+            ) : (
+              posts.map((p) => (
+                <div key={p.id} className={styles.postCard}>
+                  <div className={styles.postImage}>
+                    {p.cover_image_url || (p.photos && p.photos.length > 0) ? (
+                      <Image
+                        src={p.cover_image_url || p.photos[0].image_url}
+                        alt={`${p.title} post`}
+                        width={300}
+                        height={200}
+                        className={styles.postImageFile}
+                      />
+                    ) : (
+                      <div className={styles.postImagePlaceholder}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21,15 16,10 5,21"></polyline>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.postInfo}>
+                    <h3 className={styles.postName}>{p.title}</h3>
+                    <p className={styles.postDescription}>{p.content ? (p.content.length > 80 ? `${p.content.substring(0, 80)}...` : p.content) : 'No description available'}</p>
+                    <div className={styles.postDetails}>
+                      <div className={styles.postDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                        </svg>
+                        <span>{p.category || 'Uncategorized'}</span>
+                      </div>
+                      <div className={styles.postDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                        <span>{p.created_at ? new Date(p.created_at).toLocaleDateString() : 'Unknown date'}</span>
+                      </div>
                     </div>
                   </div>
+                  <div className={styles.postActions}>
+                    <button 
+                      className={styles.editButton}
+                      onClick={() => handleEditPost(p)}
+                      disabled={deletingPost}
+                      title="Edit post"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </button>
+                    <button 
+                      className={styles.deleteButton}
+                      onClick={() => handleDeletePost(p)}
+                      disabled={deletingPost}
+                      title="Delete post"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </>
+              ))
+            )}
+          </div>
         )}
       </div>
     );
@@ -733,32 +1059,38 @@ export default function AdminPage() {
       );
 
     return (
-      <div className={styles.profileCard}>
-        <div className={styles.sectionHeader}>
-          <h3>Attraction Management</h3>
-          <div>
+      <div className={styles.attractionsContainer}>
+        <div className={styles.attractionsHeader}>
+          <div className={styles.attractionsTitleSection}>
+            <h2 className={styles.attractionsTitle}>Attraction Management</h2>
+            <p className={styles.attractionsSubtitle}>Manage and monitor all platform attractions</p>
+          </div>
             <button
-              className={styles.primary}
+            className={styles.addAttractionButton}
               onClick={() => {
                 setCreateError("");
-                setNewAttraction({ title: "", content: "", location: "", type: "" });
+              setNewAttraction({ title: "", content: "", location: "", type: "", cover_image_url: "" });
                 setShowCreateAttractionModal(true);
               }}
             >
-              + Create Attraction
+            <svg className={styles.addIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Attraction
             </button>
-          </div>
         </div>
 
-        {/* Search Section */}
-        <div className={styles.searchSection}>
+        {/* Search Box */}
           <SearchBox
-            placeholder="Search attractions by title or content..."
+          placeholder="Search attractions (title, content, location)..."
             onSearch={setAttractionSearchTerm}
             onClear={clearAttractionSearch}
             isLoading={isAttractionSearching}
+            forceLightTheme={true}
           />
           
+        {/* Search Results */}
           <AttractionSearchResults
             attractions={attractionSearchResults}
             isLoading={isAttractionSearching}
@@ -767,47 +1099,87 @@ export default function AdminPage() {
             onEdit={handleEditAttraction}
             onDelete={handleDeleteAttraction}
           />
-        </div>
 
-        {/* Regular Attractions List */}
+        {/* All Attractions List (when not searching) */}
         {!hasAttractionSearched && (
-          <>
-            {attractions.length === 0 && <p className={styles.empty}>No attractions yet.</p>}
-            <div className={styles.cardGrid}>
-              {attractions.map((a) => (
-                <div key={a.id} className={styles.cardWrapper}>
-                  <div style={{ position: "relative" }}>
-                    <div className={styles.card}>
-                      <div className={styles.cardTitle}>{a.title}</div>
-                      <div className={styles.cardMeta}>
-                        {a.location} • {a.type}
+          <div className={styles.attractionsGrid}>
+            {attractions.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>🏛️</div>
+                <h3>No attractions found</h3>
+                <p>Start by adding your first attraction to the platform</p>
+                      </div>
+            ) : (
+              attractions.map((a) => (
+                <div key={a.id} className={styles.attractionCard}>
+                  <div className={styles.attractionImage}>
+                    {a.photos && a.photos.length > 0 ? (
+                      <Image
+                        src={a.photos[0].image_url}
+                        alt={`${a.title} attraction`}
+                        width={300}
+                        height={200}
+                        className={styles.attractionImageFile}
+                      />
+                    ) : (
+                      <div className={styles.attractionImagePlaceholder}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                          <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                        </svg>
+                    </div>
+                    )}
+                  </div>
+                  <div className={styles.attractionInfo}>
+                    <h3 className={styles.attractionName}>{a.title}</h3>
+                    <p className={styles.attractionDescription}>{a.content ? (a.content.length > 80 ? `${a.content.substring(0, 80)}...` : a.content) : 'No description available'}</p>
+                    <div className={styles.attractionDetails}>
+                      <div className={styles.attractionDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                          <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>{a.location || 'Unknown location'}</span>
+                      </div>
+                      <div className={styles.attractionDetail}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                        </svg>
+                        <span>{a.type || 'Uncategorized'}</span>
                       </div>
                     </div>
-                    <div className={styles.cardActions} style={{ marginTop: 8 }}>
+                  </div>
+                  <div className={styles.attractionActions}>
                       <button
-                        className={styles.secondary}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditAttraction(a);
-                        }}
-                      >
-                        Edit
+                      className={styles.editButton}
+                      onClick={() => handleEditAttraction(a)}
+                      disabled={deletingAttraction}
+                      title="Edit attraction"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
                       </button>
                       <button
-                        className={styles.secondary}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteAttraction(a);
-                        }}
-                      >
-                        Delete
+                      className={styles.deleteButton}
+                      onClick={() => handleDeleteAttraction(a)}
+                      disabled={deletingAttraction}
+                      title="Delete attraction"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
                       </button>
                     </div>
                   </div>
+              ))
+            )}
                 </div>
-              ))}
-            </div>
-          </>
         )}
       </div>
     );
@@ -822,28 +1194,106 @@ export default function AdminPage() {
       );
 
     return (
-      <div>
-        <div className={styles.sectionHeader}>
-          <h3>Review Management</h3>
-        </div>
-        <div className={styles.cardGrid}>
-          {reviews.length === 0 ? (
-            <p className={styles.empty}>No reviews found.</p>
-          ) : (
-            reviews.map((r) => (
-              <div key={r.id} className={styles.card}>
-                <div className={styles.cardTitle}>Rating: {r.rating}/5</div>
-                <div className={styles.cardMeta}>
-                  {r.comment} • {r.created_at}
-                </div>
-                <div className={styles.cardActions}>
-                  <button className={styles.secondary}>Edit</button>
-                  <button className={styles.secondary}>Delete</button>
-                </div>
+      <div className={styles.reviewsContainer}>
+        {/* Blog Post Comments Section */}
+        <div className={styles.reviewSection}>
+          <div className={styles.reviewSectionHeader}>
+            <h2 className={styles.reviewSectionTitle}>Blog Post Comments</h2>
+            <p className={styles.reviewSectionSubtitle}>Manage and moderate blog post comments</p>
+          </div>
+          
+          {/* Search Box */}
+          <SearchBox
+            placeholder="Search comments by content, author, or post..."
+            onSearch={setCommentSearchTerm}
+            onClear={clearCommentSearch}
+            isLoading={isCommentSearching}
+            forceLightTheme={true}
+          />
+
+          {/* Search Results */}
+          <CommentSearchResults
+            comments={commentSearchResults}
+            isLoading={isCommentSearching}
+            error={commentSearchError}
+            hasSearched={hasCommentSearched}
+            onToggleApproval={handleToggleCommentApproval}
+            onDelete={handleDeleteComment}
+          />
+          
+          {/* All Comments List (when not searching) */}
+          {!hasCommentSearched && (
+          <div className={styles.commentsGrid}>
+            {postComments.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>💬</div>
+                <h3>No comments found</h3>
+                <p>Blog post comments will appear here</p>
               </div>
-            ))
+            ) : (
+              postComments.map((comment) => (
+                <div key={comment.id} className={styles.commentCard}>
+                  <div className={styles.commentHeader}>
+                    <div className={styles.commentAuthor}>
+                      <span className={styles.authorName}>{comment.user?.first_name} {comment.user?.last_name}</span>
+                      <span className={styles.commentDate}>{new Date(comment.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className={styles.commentStatus}>
+                      <span className={`${styles.statusBadge} ${comment.is_approved ? styles.approved : styles.pending}`}>
+                        {comment.is_approved ? 'Approved' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.commentContent}>
+                    <p>{comment.content}</p>
+                  </div>
+                  <div className={styles.commentPost}>
+                    <span className={styles.postReference}>On: {comment.post?.title || 'Unknown Post'}</span>
+                  </div>
+                  <div className={styles.commentActions}>
+                    <button 
+                      className={`${styles.actionButton} ${comment.is_approved ? styles.unapproveButton : styles.approveButton}`}
+                      onClick={() => handleToggleCommentApproval(comment)}
+                      title={comment.is_approved ? 'Unapprove comment' : 'Approve comment'}
+                    >
+                      {comment.is_approved ? (
+                        <>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
+                            <path d="M18 6L6 18"></path>
+                            <path d="M6 6l12 12"></path>
+                          </svg>
+                          Unapprove
+                        </>
+                      ) : (
+                        <>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                          </svg>
+                          Approve
+                        </>
+                      )}
+                    </button>
+                    <button 
+                      className={`${styles.actionButton} ${styles.deleteButton}`}
+                      onClick={() => handleDeleteComment(comment)}
+                      title="Delete comment permanently"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
+                        <polyline points="3,6 5,6 21,6"></polyline>
+                        <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
           )}
         </div>
+
       </div>
     );
   }
@@ -855,50 +1305,132 @@ export default function AdminPage() {
       </Link>
 
       <div className={styles.dashboard}>
-        <aside className={styles.aside}>
+        {/* Mobile Menu Toggle */}
+        <button 
+          className={styles.mobileMenuToggle}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+        >
+          <span className={styles.hamburger}></span>
+          <span className={styles.hamburger}></span>
+          <span className={styles.hamburger}></span>
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className={styles.mobileMenuOverlay}
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        <aside className={`${styles.aside} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           <div className={styles.sidebarCard}>
-            <h2 className={styles.dashboardTitle}>Admin Panel</h2>
+            <div className={styles.mobileMenuHeader}>
+              <h2 className={styles.dashboardTitle}>Admin Panel</h2>
+              <button 
+                className={styles.mobileMenuClose}
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                ×
+              </button>
+            </div>
             <nav className={styles.dashboardNav}>
               <div
-                onClick={() => setCurrentSection("dashboard")}
+                onClick={() => {
+                  setCurrentSection("dashboard");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "dashboard" ? styles.active : ""}`}
               >
-                <i className={`fas fa-tachometer-alt ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </div>
                 <span>Dashboard</span>
               </div>
               <div
-                onClick={() => setCurrentSection("users")}
+                onClick={() => {
+                  setCurrentSection("users");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "users" ? styles.active : ""}`}
               >
-                <i className={`fas fa-users ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
                 <span>Users</span>
               </div>
               <div
-                onClick={() => setCurrentSection("tours")}
+                onClick={() => {
+                  setCurrentSection("tours");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "tours" ? styles.active : ""}`}
               >
-                <i className={`fas fa-plane-departure ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                </div>
                 <span>Tours</span>
               </div>
               <div
-                onClick={() => setCurrentSection("posts")}
+                onClick={() => {
+                  setCurrentSection("posts");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "posts" ? styles.active : ""}`}
               >
-                <i className={`fas fa-newspaper ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14,2 14,8 20,8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10,9 9,9 8,9"></polyline>
+                  </svg>
+                </div>
                 <span>Posts</span>
               </div>
               <div
-                onClick={() => setCurrentSection("attractions")}
+                onClick={() => {
+                  setCurrentSection("attractions");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "attractions" ? styles.active : ""}`}
               >
-                <i className={`fas fa-landmark ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                  </svg>
+                </div>
                 <span>Attractions</span>
               </div>
               <div
-                onClick={() => setCurrentSection("reviews")}
+                onClick={() => {
+                  setCurrentSection("reviews");
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`${styles.navItem} ${currentSection === "reviews" ? styles.active : ""}`}
               >
-                <i className={`fas fa-star ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                  </svg>
+                </div>
                 <span>Reviews</span>
               </div>
             </nav>
@@ -928,11 +1460,12 @@ export default function AdminPage() {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setCreateError("");
+                setValidationErrors({});
                 const title = (newPost.title || "").trim();
                 const category = (newPost.category || "").trim();
                 const content = (newPost.content || "").trim();
-                if (!title) return setCreateError("Title is required");
-                if (!content) return setCreateError("Content is required");
+                
+                
                 setCreatingPost(true);
                 try {
                   const token =
@@ -946,7 +1479,7 @@ export default function AdminPage() {
                       {
                         method: "PUT",
                         headers,
-                        body: JSON.stringify({ title, category, content }),
+                        body: JSON.stringify({ title, category, content, cover_image_url: newPost.cover_image_url }),
                       }
                     );
 
@@ -967,13 +1500,14 @@ export default function AdminPage() {
                       );
                       setShowCreatePostModal(false);
                       setCreateError("");
+                      // Delay success popup to ensure modal is closed
+                      setTimeout(() => {
+                        showSuccess("Post updated successfully!");
+                      }, 100);
                     } else {
-                      const details = parsed.details || parsed.errors || null;
-                      if (Array.isArray(details) && details.length > 0) {
-                        const msg = details
-                          .map((d) => (d.field ? `${d.field}: ${d.message}` : d.message))
-                          .join("; ");
-                        setCreateError(msg);
+                      const parsedErrors = parseValidationErrors(parsed);
+                      if (hasValidationErrors(parsedErrors)) {
+                        setValidationErrors(parsedErrors);
                       } else {
                         setCreateError(parsed.message || parsed.error || "Failed to update post");
                       }
@@ -982,7 +1516,7 @@ export default function AdminPage() {
                     const res = await fetch(`${API_URL}/api/admin/posts`, {
                       method: "POST",
                       headers,
-                      body: JSON.stringify({ title, category, content }),
+                      body: JSON.stringify({ title, category, content, cover_image_url: newPost.cover_image_url }),
                     });
 
                     const text = await res.text();
@@ -997,13 +1531,15 @@ export default function AdminPage() {
                       const created = parsed.data || parsed;
                       setPosts((p) => [created, ...(Array.isArray(p) ? p : [])]);
                       setShowCreatePostModal(false);
+                      setCreateError("");
+                      // Delay success popup to ensure modal is closed
+                      setTimeout(() => {
+                        showSuccess("Post created successfully!");
+                      }, 100);
                     } else {
-                      const details = parsed.details || parsed.errors || null;
-                      if (Array.isArray(details) && details.length > 0) {
-                        const msg = details
-                          .map((d) => (d.field ? `${d.field}: ${d.message}` : d.message))
-                          .join("; ");
-                        setCreateError(msg);
+                      const parsedErrors = parseValidationErrors(parsed);
+                      if (hasValidationErrors(parsedErrors)) {
+                        setValidationErrors(parsedErrors);
                       } else {
                         setCreateError(parsed.message || parsed.error || "Failed to create post");
                       }
@@ -1019,16 +1555,20 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Title</label>
                 <input
+                  type="text"
                   value={newPost.title}
                   onChange={(e) => setNewPost((n) => ({ ...n, title: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'title')} fieldName="Title" />
               </div>
               <div className={styles.field}>
                 <label>Category</label>
                 <input
+                  type="text"
                   value={newPost.category}
                   onChange={(e) => setNewPost((n) => ({ ...n, category: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'category')} fieldName="Category" />
               </div>
               <div className={styles.field}>
                 <label>Content</label>
@@ -1037,6 +1577,42 @@ export default function AdminPage() {
                   onChange={(e) => setNewPost((n) => ({ ...n, content: e.target.value }))}
                   rows={6}
                 />
+                <FieldError error={getFieldError(validationErrors, 'content')} fieldName="Content" />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newPost.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newPost.cover_image_url}
+                        alt="Post cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewPost((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewPost((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1074,6 +1650,15 @@ export default function AdminPage() {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setCreateError("");
+                setValidationErrors({});
+                
+                // Validate that cover image is provided
+                if (!newTour.cover_image_url) {
+                  setCreateError("Cover image is required to create a tour");
+                  return;
+                }
+                
+                
                 setCreatingTour(true);
                 try {
                   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -1098,8 +1683,14 @@ export default function AdminPage() {
                     setTours((prev) => [parsed.data, ...prev]);
                     setShowCreateTourModal(false);
                     setCreateError("");
+                    showSuccess("Tour created successfully!");
+                  } else {
+                    const parsedErrors = parseValidationErrors(parsed);
+                    if (hasValidationErrors(parsedErrors)) {
+                      setValidationErrors(parsedErrors);
                   } else {
                     setCreateError(parsed.message || parsed.error || "Failed to create tour");
+                    }
                   }
                 } catch (err) {
                   setCreateError(err.message || "Failed to create tour");
@@ -1111,10 +1702,13 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Tour Name</label>
                 <input
+                  type="text"
                   value={newTour.name}
                   onChange={(e) => setNewTour((n) => ({ ...n, name: e.target.value }))}
+                  placeholder="Enter tour name..."
                   required
                 />
+                <FieldError error={getFieldError(validationErrors, 'name')} fieldName="Tour Name" />
               </div>
               <div className={styles.field}>
                 <label>Description</label>
@@ -1123,29 +1717,80 @@ export default function AdminPage() {
                   onChange={(e) => setNewTour((n) => ({ ...n, description: e.target.value }))}
                   rows={4}
                 />
+                <FieldError error={getFieldError(validationErrors, 'description')} fieldName="Description" />
               </div>
               <div className={styles.field}>
                 <label>Price (Minor Units)</label>
                 <input
                   type="number"
                   value={newTour.price_minor}
-                  onChange={(e) => setNewTour((n) => ({ ...n, price_minor: e.target.value }))}
+                  onChange={(e) => setNewTour((n) => ({ ...n, price_minor: e.target.value ? parseInt(e.target.value) || 0 : 0 }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'price_minor')} fieldName="Price" />
               </div>
               <div className={styles.field}>
                 <label>Duration (Days)</label>
                 <input
                   type="number"
                   value={newTour.duration_days}
-                  onChange={(e) => setNewTour((n) => ({ ...n, duration_days: e.target.value }))}
+                  onChange={(e) => setNewTour((n) => ({ ...n, duration_days: e.target.value ? parseInt(e.target.value) || 0 : 0 }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'duration_days')} fieldName="Duration" />
               </div>
               <div className={styles.field}>
-                <label>Destination</label>
+                <label>Currency Code</label>
                 <input
-                  value={newTour.destination}
-                  onChange={(e) => setNewTour((n) => ({ ...n, destination: e.target.value }))}
+                  type="text"
+                  value={newTour.currency_code || ''}
+                  onChange={(e) => setNewTour((n) => ({ ...n, currency_code: e.target.value }))}
+                  placeholder="e.g., USD, EUR"
                 />
+                <FieldError error={getFieldError(validationErrors, 'currency_code')} fieldName="Currency Code" />
+              </div>
+              <div className={styles.field}>
+                <label>Capacity</label>
+                <input
+                  type="number"
+                  value={newTour.capacity || ''}
+                  onChange={(e) => setNewTour((n) => ({ ...n, capacity: e.target.value ? parseInt(e.target.value) || 0 : 0 }))}
+                  placeholder="Maximum participants"
+                />
+                <FieldError error={getFieldError(validationErrors, 'capacity')} fieldName="Capacity" />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image (Required)</label>
+                <div className={styles.uploadSection}>
+                  {newTour.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newTour.cover_image_url}
+                        alt="Tour cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewTour((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewTour((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1156,7 +1801,7 @@ export default function AdminPage() {
                 >
                   Cancel
                 </button>
-                <button type="submit" disabled={creatingTour} className={styles.primary}>
+                <button type="submit" disabled={creatingTour || !newTour.cover_image_url} className={styles.primary}>
                   {creatingTour ? "Creating..." : "Create Tour"}
                 </button>
               </div>
@@ -1197,6 +1842,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>First Name</label>
                 <input
+                  type="text"
                   value={newUser.first_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, first_name: e.target.value }))}
                   required
@@ -1205,6 +1851,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Last Name</label>
                 <input
+                  type="text"
                   value={newUser.last_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, last_name: e.target.value }))}
                   required
@@ -1222,6 +1869,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Username</label>
                 <input
+                  type="text"
                   value={newUser.username}
                   onChange={(e) => setNewUser((n) => ({ ...n, username: e.target.value }))}
                   required
@@ -1230,6 +1878,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Mobile</label>
                 <input
+                  type="tel"
                   value={newUser.mobile}
                   onChange={(e) => setNewUser((n) => ({ ...n, mobile: e.target.value }))}
                 />
@@ -1242,6 +1891,7 @@ export default function AdminPage() {
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
+                  <option value="moderator">Moderator</option>
                 </select>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
@@ -1269,7 +1919,7 @@ export default function AdminPage() {
             <button className={styles.modalClose} onClick={() => setShowEditUserModal(false)}>
               ×
             </button>
-            <h3 className={styles.modalTitle}>Edit User</h3>
+            <h3 className={styles.modalTitle}>Edit User Profile</h3>
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -1306,8 +1956,14 @@ export default function AdminPage() {
                     setShowEditUserModal(false);
                     setEditingUser(null);
                     setCreateError("");
+                    showSuccess("User updated successfully!");
+                  } else {
+                    const parsedErrors = parseValidationErrors(parsed);
+                    if (hasValidationErrors(parsedErrors)) {
+                      setValidationErrors(parsedErrors);
                   } else {
                     setCreateError(parsed.message || parsed.error || "Failed to update user");
+                    }
                   }
                 } catch (err) {
                   setCreateError(err.message || "Failed to update user");
@@ -1319,6 +1975,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>First Name</label>
                 <input
+                  type="text"
                   value={newUser.first_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, first_name: e.target.value }))}
                   required
@@ -1327,6 +1984,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Last Name</label>
                 <input
+                  type="text"
                   value={newUser.last_name}
                   onChange={(e) => setNewUser((n) => ({ ...n, last_name: e.target.value }))}
                   required
@@ -1344,6 +2002,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Username</label>
                 <input
+                  type="text"
                   value={newUser.username}
                   onChange={(e) => setNewUser((n) => ({ ...n, username: e.target.value }))}
                   required
@@ -1352,6 +2011,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Mobile</label>
                 <input
+                  type="tel"
                   value={newUser.mobile}
                   onChange={(e) => setNewUser((n) => ({ ...n, mobile: e.target.value }))}
                 />
@@ -1364,6 +2024,7 @@ export default function AdminPage() {
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
+                  <option value="moderator">Moderator</option>
                 </select>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
@@ -1444,8 +2105,10 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Tour Name</label>
                 <input
+                  type="text"
                   value={newTour.name}
                   onChange={(e) => setNewTour((n) => ({ ...n, name: e.target.value }))}
+                  placeholder="Enter tour name..."
                   required
                 />
               </div>
@@ -1462,7 +2125,7 @@ export default function AdminPage() {
                 <input
                   type="number"
                   value={newTour.price_minor}
-                  onChange={(e) => setNewTour((n) => ({ ...n, price_minor: e.target.value }))}
+                  onChange={(e) => setNewTour((n) => ({ ...n, price_minor: e.target.value ? parseInt(e.target.value) || 0 : 0 }))}
                 />
               </div>
               <div className={styles.field}>
@@ -1470,15 +2133,43 @@ export default function AdminPage() {
                 <input
                   type="number"
                   value={newTour.duration_days}
-                  onChange={(e) => setNewTour((n) => ({ ...n, duration_days: e.target.value }))}
+                  onChange={(e) => setNewTour((n) => ({ ...n, duration_days: e.target.value ? parseInt(e.target.value) || 0 : 0 }))}
                 />
               </div>
               <div className={styles.field}>
-                <label>Destination</label>
-                <input
-                  value={newTour.destination}
-                  onChange={(e) => setNewTour((n) => ({ ...n, destination: e.target.value }))}
-                />
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newTour.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newTour.cover_image_url}
+                        alt="Tour cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewTour((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewTour((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1526,6 +2217,7 @@ export default function AdminPage() {
                       title: newPost.title,
                       category: newPost.category,
                       content: newPost.content,
+                      cover_image_url: newPost.cover_image_url,
                     }),
                   });
 
@@ -1562,6 +2254,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Post Title</label>
                 <input
+                  type="text"
                   value={newPost.title}
                   onChange={(e) => setNewPost((n) => ({ ...n, title: e.target.value }))}
                   required
@@ -1570,6 +2263,7 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Category</label>
                 <input
+                  type="text"
                   value={newPost.category}
                   onChange={(e) => setNewPost((n) => ({ ...n, category: e.target.value }))}
                 />
@@ -1582,6 +2276,41 @@ export default function AdminPage() {
                   rows={6}
                   required
                 />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newPost.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newPost.cover_image_url}
+                        alt="Post cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewPost((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewPost((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1630,6 +2359,7 @@ export default function AdminPage() {
                       content: newAttraction.content,
                       location: newAttraction.location,
                       type: newAttraction.type,
+                      cover_image_url: newAttraction.cover_image_url,
                     }),
                   });
 
@@ -1653,8 +2383,16 @@ export default function AdminPage() {
                     setShowEditAttractionModal(false);
                     setEditingAttraction(null);
                     setCreateError("");
+                    setTimeout(() => {
+                      showSuccess("Attraction updated successfully!");
+                    }, 100);
                   } else {
-                    setCreateError(parsed.message || parsed.error || "Failed to update attraction");
+                    const parsedErrors = parseValidationErrors(parsed);
+                    if (hasValidationErrors(parsedErrors)) {
+                      setValidationErrors(parsedErrors);
+                    } else {
+                      setCreateError(parsed.message || parsed.error || "Failed to update attraction");
+                    }
                   }
                 } catch (err) {
                   setCreateError(err.message || "Failed to update attraction");
@@ -1666,10 +2404,12 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Attraction Title</label>
                 <input
+                  type="text"
                   value={newAttraction.title}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, title: e.target.value }))}
                   required
                 />
+                <FieldError error={getFieldError(validationErrors, 'title')} fieldName="Title" />
               </div>
               <div className={styles.field}>
                 <label>Content</label>
@@ -1679,20 +2419,60 @@ export default function AdminPage() {
                   rows={4}
                   required
                 />
+                <FieldError error={getFieldError(validationErrors, 'content')} fieldName="Content" />
               </div>
               <div className={styles.field}>
                 <label>Location</label>
                 <input
+                  type="text"
                   value={newAttraction.location}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, location: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'location')} fieldName="Location" />
               </div>
               <div className={styles.field}>
                 <label>Type</label>
                 <input
+                  type="text"
                   value={newAttraction.type}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, type: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'type')} fieldName="Type" />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newAttraction.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newAttraction.cover_image_url}
+                        alt="Attraction cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewAttraction((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewAttraction((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1751,8 +2531,16 @@ export default function AdminPage() {
                     setAttractions((prev) => [parsed.data, ...prev]);
                     setShowCreateAttractionModal(false);
                     setCreateError("");
+                    setTimeout(() => {
+                      showSuccess("Attraction created successfully!");
+                    }, 100);
                   } else {
-                    setCreateError(parsed.message || parsed.error || "Failed to create attraction");
+                    const parsedErrors = parseValidationErrors(parsed);
+                    if (hasValidationErrors(parsedErrors)) {
+                      setValidationErrors(parsedErrors);
+                    } else {
+                      setCreateError(parsed.message || parsed.error || "Failed to create attraction");
+                    }
                   }
                 } catch (err) {
                   setCreateError(err.message || "Failed to create attraction");
@@ -1764,10 +2552,12 @@ export default function AdminPage() {
               <div className={styles.field}>
                 <label>Title</label>
                 <input
+                  type="text"
                   value={newAttraction.title}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, title: e.target.value }))}
                   required
                 />
+                <FieldError error={getFieldError(validationErrors, 'title')} fieldName="Title" />
               </div>
               <div className={styles.field}>
                 <label>Content</label>
@@ -1776,20 +2566,60 @@ export default function AdminPage() {
                   onChange={(e) => setNewAttraction((n) => ({ ...n, content: e.target.value }))}
                   rows={4}
                 />
+                <FieldError error={getFieldError(validationErrors, 'content')} fieldName="Content" />
               </div>
               <div className={styles.field}>
                 <label>Location</label>
                 <input
+                  type="text"
                   value={newAttraction.location}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, location: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'location')} fieldName="Location" />
               </div>
               <div className={styles.field}>
                 <label>Type</label>
                 <input
+                  type="text"
                   value={newAttraction.type}
                   onChange={(e) => setNewAttraction((n) => ({ ...n, type: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'type')} fieldName="Type" />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newAttraction.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <Image
+                        src={newAttraction.cover_image_url}
+                        alt="Attraction cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewAttraction((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewAttraction((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
@@ -1808,6 +2638,22 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+      
+      {/* Success Popup */}
+      <SuccessPopup
+        message={successMessage}
+        isVisible={showSuccessPopup}
+        onClose={() => setShowSuccessPopup(false)}
+        duration={3000}
+      />
+      
+      {/* Error Popup */}
+      <ErrorPopup
+        message={errorMessage}
+        isVisible={showErrorPopup}
+        onClose={() => setShowErrorPopup(false)}
+        duration={4000}
+      />
     </main>
   );
 }

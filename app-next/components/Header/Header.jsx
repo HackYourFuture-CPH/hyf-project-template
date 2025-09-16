@@ -95,21 +95,34 @@ export default function Header() {
             </Link>
           ) : (
             <div className={styles.userMenu}>
-              <span className={styles.welcomeText}>
-                Welcome, {user?.first_name || "User"}!
-              </span>
-              <div className={styles.userActions}>
-                {user?.role === "admin" ? (
-                  <Link href="/admin" className={styles.dashboardLink} aria-label="Admin Dashboard">
-                    <span>Admin Panel</span>
-                  </Link>
+              <div className={styles.userAvatar}>
+                {user?.profile_image ? (
+                  <Image
+                    src={user.profile_image}
+                    alt={`${user?.first_name || "User"} profile`}
+                    width={32}
+                    height={32}
+                    className={styles.avatarImage}
+                  />
                 ) : (
-                  <Link href="/user" className={styles.dashboardLink} aria-label="User Dashboard">
-                    <span>My Dashboard</span>
-                  </Link>
+                  <div className={styles.avatarPlaceholder}>
+                    {(user?.first_name || user?.username || "U")[0].toUpperCase()}
+                  </div>
                 )}
+              </div>
+              <div className={styles.userActions}>
+                <Link href={user?.role === "admin" ? "/admin" : "/user"} className={styles.dashboardLink} aria-label={user?.role === "admin" ? "Admin Dashboard" : "User Dashboard"}>
+                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </Link>
                 <button onClick={handleLogout} className={styles.logoutBtn} aria-label="Logout">
-                  <span>Logout</span>
+                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -135,20 +148,33 @@ export default function Header() {
               </Link>
             ) : (
               <div className={styles.mobileUserMenu}>
-                <div className={styles.mobileWelcome}>
-                  <span>Welcome, {user?.first_name || "User"}!</span>
+                <div className={styles.mobileUserAvatar}>
+                  {user?.profile_image ? (
+                    <Image
+                      src={user.profile_image}
+                      alt={`${user?.first_name || "User"} profile`}
+                      width={40}
+                      height={40}
+                      className={styles.mobileAvatarImage}
+                    />
+                  ) : (
+                    <div className={styles.mobileAvatarPlaceholder}>
+                      {(user?.first_name || user?.username || "U")[0].toUpperCase()}
+                    </div>
+                  )}
                 </div>
-                {user?.role === "admin" ? (
-                  <Link href="/admin" className={styles.mobileDashboardLink}>
-                    <span>Admin Panel</span>
-                  </Link>
-                ) : (
-                  <Link href="/user" className={styles.mobileDashboardLink}>
-                    <span>My Dashboard</span>
-                  </Link>
-                )}
+                <Link href={user?.role === "admin" ? "/admin" : "/user"} className={styles.mobileDashboardLink}>
+                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </Link>
                 <button onClick={handleLogout} className={styles.mobileLogoutBtn}>
-                  <span>Logout</span>
+                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
                 </button>
               </div>
             )}

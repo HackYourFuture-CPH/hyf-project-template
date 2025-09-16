@@ -2,14 +2,35 @@
 const nextConfig = {
   images: {
     // allow Unsplash, Picsum and common placeholder hosts plus local backend
-    domains: [
-      "images.unsplash.com",
-      "picsum.photos",
-      "placehold.co",
-      "localhost",
-      "127.0.0.1",
-      "ufs.sh",
-      "3ob6vy266n.ufs.sh",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+      },
+      {
+        protocol: 'https',
+        hostname: '3ob6vy266n.ufs.sh',
+      },
+      {
+        protocol: 'https',
+        hostname: 'utfs.io',
+      },
     ],
   },
 };

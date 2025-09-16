@@ -6,7 +6,8 @@ const SearchBox = ({
   onSearch, 
   onClear,
   isLoading = false,
-  className = ""
+  className = "",
+  forceLightTheme = false
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -22,8 +23,8 @@ const SearchBox = ({
   };
 
   return (
-    <div className={`${styles.searchContainer} ${className}`}>
-      <div className={styles.searchInputWrapper}>
+    <div className={`${styles.searchContainer} ${className} ${forceLightTheme ? styles.forceLight : ''}`}>
+      <div className={`${styles.searchInputWrapper} ${forceLightTheme ? styles.forceLightWrapper : ''}`}>
         <div className={styles.searchIcon}>
           {isLoading ? (
             <div className={styles.spinner}></div>

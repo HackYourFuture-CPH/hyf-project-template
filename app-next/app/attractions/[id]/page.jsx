@@ -55,6 +55,8 @@ export default function AttractionDetailsPage() {
         return `https://picsum.photos/seed/${seed}/1200/800`;
       }
       if (t.startsWith("/images/")) return null; // backend-relative path — HEAD-check below
+      // If it's already a complete URL (starts with http/https), return as is
+      if (t.startsWith("http://") || t.startsWith("https://")) return t;
       return t;
     };
 
@@ -66,7 +68,7 @@ export default function AttractionDetailsPage() {
 
     // Backend-relative or empty: use placeholder then attempt HEAD request for backend assets
     setImageSrc(placeholder);
-    if (raw && raw.startsWith("/images/")) {
+    if (raw && raw.startsWith("/images/") && !raw.startsWith("http://") && !raw.startsWith("https://")) {
       let cancelled = false;
       (async () => {
         try {
