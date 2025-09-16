@@ -86,6 +86,39 @@ export default function AdminPage() {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   
+  // Profile editing states
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    mobile: "",
+    profile_image: "",
+  });
+  const [imagePreview, setImagePreview] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [pwForm, setPwForm] = useState({
+    current_password: "",
+    new_password: "",
+    new_password_confirmation: "",
+  });
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [pwMessage, setPwMessage] = useState("");
+  
+  // Update form when user changes
+  useEffect(() => {
+    if (user) {
+      setForm({
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        mobile: user?.mobile || "",
+        profile_image: user?.profile_image || "",
+      });
+      setImagePreview(user?.profile_image || "");
+    }
+  }, [user]);
+  
   // Helper function to show success popup
   const showSuccess = (message) => {
     setSuccessMessage(message);
@@ -1305,35 +1338,6 @@ export default function AdminPage() {
           <p className={styles.empty}>Please log in to view profile.</p>
         </div>
       );
-
-    const [editing, setEditing] = useState(false);
-    const [form, setForm] = useState({
-      first_name: user?.first_name || "",
-      last_name: user?.last_name || "",
-      mobile: user?.mobile || "",
-      profile_image: user?.profile_image || "",
-    });
-    const [imagePreview, setImagePreview] = useState(user?.profile_image || "");
-    const [submitting, setSubmitting] = useState(false);
-    const [formError, setFormError] = useState("");
-    const [changingPassword, setChangingPassword] = useState(false);
-    const [pwForm, setPwForm] = useState({
-      current_password: "",
-      new_password: "",
-      new_password_confirmation: "",
-    });
-    const [pwSubmitting, setPwSubmitting] = useState(false);
-    const [pwMessage, setPwMessage] = useState("");
-
-    useEffect(() => {
-      setForm({
-        first_name: user?.first_name || "",
-        last_name: user?.last_name || "",
-        mobile: user?.mobile || "",
-        profile_image: user?.profile_image || "",
-      });
-      setImagePreview(user?.profile_image || "");
-    }, [user]);
 
     function onChange(e) {
       const { name, value } = e.target;

@@ -115,37 +115,17 @@ export default function Header() {
             <div className={styles.userMenu}>
               <div className={styles.userAvatar}>
                 {user?.profile_image ? (
-                  <>
-                    <img
-                      src={user.profile_image}
-                      alt={`${user?.first_name || "User"} profile`}
-                      width={32}
-                      height={32}
-                      className={styles.avatarImage}
-                      onLoad={() => {
-                        console.log("✅ Image loaded successfully:", user.profile_image);
-                      }}
-                      onError={(e) => {
-                        console.log("❌ Image failed to load:", user.profile_image);
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    {/* Fallback test image */}
-                    <img
-                      src="https://via.placeholder.com/32x32/2563eb/ffffff?text=A"
-                      alt="Test"
-                      width={32}
-                      height={32}
-                      className={styles.avatarImage}
-                      style={{ display: 'none' }}
-                      onLoad={(e) => {
-                        console.log("✅ Test image loaded");
-                        e.target.style.display = 'block';
-                        e.target.previousSibling.style.display = 'none';
-                      }}
-                    />
-                  </>
+                  <img
+                    src={user.profile_image}
+                    alt={`${user?.first_name || "User"} profile`}
+                    width={32}
+                    height={32}
+                    className={styles.avatarImage}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
                 ) : null}
                 <div 
                   className={styles.avatarPlaceholder}
