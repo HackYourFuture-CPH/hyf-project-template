@@ -48,7 +48,10 @@ export default function ToursSection() {
   return (
     <div className={styles.toursWrapper}>
       <div className={styles.titleWrapper}>
-        <h1 className={styles.title}>Popular Tours</h1>
+        <div className={styles.toursTitleContainer}>
+          <h1 className={styles.title}>Curated Tours</h1>
+          <p>(Discover tours crafted by our travel experts)</p>
+        </div>
         <Link href="/tours" style={{ textDecoration: "none" }}>
           <button className={styles.exploreBtn}>Show all</button>
         </Link>
@@ -64,7 +67,9 @@ export default function ToursSection() {
             <Card
               key={card.id}
               card={card}
-              onFavoriteChange={() => { /* forwarded by Card and global event */ }}
+              onFavoriteChange={() => {
+                /* forwarded by Card and global event */
+              }}
               viewLink={`/tours/${card.id}`}
             />
           ))}

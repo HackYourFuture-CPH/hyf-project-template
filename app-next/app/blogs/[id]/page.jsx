@@ -14,7 +14,7 @@ export default function AttractionDetailsPage() {
   const [derivedAvatar, setDerivedAvatar] = useState(null);
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-  const [imageSrc, setImageSrc] = useState(null); 
+  const [imageSrc, setImageSrc] = useState(null);
 
   // Fetch a single blog post from the API and set local state
   async function fetchSingleBlog() {
@@ -29,9 +29,9 @@ export default function AttractionDetailsPage() {
       }
       const blogData = await response.json();
 
-  const resolved = blogData.data || blogData || null;
- 
-  setBlog(resolved);
+      const resolved = blogData.data || blogData || null;
+
+      setBlog(resolved);
     } catch (error) {
       console.error("Error fetching blog cards:", error);
     }
@@ -51,12 +51,15 @@ export default function AttractionDetailsPage() {
     setDerivedAvatar(null);
 
     const userHasIdentifyingInfo =
-      blog.user && (
-        (typeof blog.user === "string" && blog.user.trim() !== "") ||
-        (typeof blog.user === "object" && (
-          blog.user.full_name || blog.user.first_name || blog.user.last_name || blog.user.username || blog.user.id || blog.user.user_id
-        ))
-      );
+      blog.user &&
+      ((typeof blog.user === "string" && blog.user.trim() !== "") ||
+        (typeof blog.user === "object" &&
+          (blog.user.full_name ||
+            blog.user.first_name ||
+            blog.user.last_name ||
+            blog.user.username ||
+            blog.user.id ||
+            blog.user.user_id)));
 
     const hasAuthor = Boolean(blog.author_name || blog.author || userHasIdentifyingInfo);
     if (hasAuthor) return;
@@ -65,19 +68,29 @@ export default function AttractionDetailsPage() {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         if (!token) return;
-        const res = await fetch(`${API_URL}/api/users/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(`${API_URL}/api/users/profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) return;
         const json = await res.json().catch(() => null);
         const profile = json?.data || json || null;
         if (!profile) return;
 
-  // Match profile to blog author by id or username when possible
+        // Match profile to blog author by id or username when possible
         const blogUserId = blog.created_by || blog.user?.id || blog.user?.user_id || blog.user;
         const profileId = profile.id || profile.user_id || profile.userId || null;
         const profileUsername = profile.username || null;
 
-        if (String(blogUserId) === String(profileId) || String(blogUserId) === String(profileUsername)) {
-          setDerivedAuthor(profile.full_name || `${profile.first_name || ""} ${profile.last_name || ""}`.trim() || profile.username || null);
+        if (
+          String(blogUserId) === String(profileId) ||
+          String(blogUserId) === String(profileUsername)
+        ) {
+          setDerivedAuthor(
+            profile.full_name ||
+              `${profile.first_name || ""} ${profile.last_name || ""}`.trim() ||
+              profile.username ||
+              null
+          );
           setDerivedAvatar(profile.profile_image || profile.avatar || null);
         }
       } catch (err) {
@@ -86,11 +99,15 @@ export default function AttractionDetailsPage() {
     })();
   }, [blog]);
 
-  // Resolve image source similarly to Card/BlogCard: handle placehold.co and backend-relative paths
+  // Resolve image source similarly to Card/BlogCard: prefer first photo, handle placehold.co and backend-relative paths
   useEffect(() => {
     if (!blog) return;
 
-    const raw = blog.cover_image_url || blog.image_url || "";
+    const photoUrl =
+      blog.photos && blog.photos.length > 0 && blog.photos[0].image_url
+        ? blog.photos[0].image_url
+        : null;
+    const raw = photoUrl || blog.cover_image_url || blog.image_url || "";
     const placeholder = blog?.id
       ? `https://picsum.photos/seed/blog-${blog.id}/1200/800`
       : "/images/blogs/default.jpg";
@@ -102,7 +119,7 @@ export default function AttractionDetailsPage() {
         const seed = blog?.id ? `blog-${blog.id}` : encodeURIComponent(t);
         return `https://picsum.photos/seed/${seed}/1200/800`;
       }
-  if (t.startsWith("/images/")) return null; // backend-relative path — we'll HEAD-check it below
+      if (t.startsWith("/images/")) return null; // backend-relative path — we'll HEAD-check it below
       return t;
     };
 
@@ -112,7 +129,7 @@ export default function AttractionDetailsPage() {
       return;
     }
 
-  // Backend-relative: start with placeholder then attempt HEAD request to check
+    // Backend-relative: start with placeholder then attempt HEAD request to check
     setImageSrc(placeholder);
     if (raw && raw.startsWith("/images/")) {
       let cancelled = false;
@@ -145,35 +162,42 @@ export default function AttractionDetailsPage() {
     avatar = abs;
     // Optionally we could HEAD-check but Image component or <img> will failover to placeholder
   }
-    if (!author && derivedAuthor) author = derivedAuthor;
-      if (!avatar && derivedAvatar) avatar = derivedAvatar;
-    // If backend returns username/first_name/last_name fields (common in posts list),
-    // use them as a display name when explicit author fields are missing.
-    if (!author) {
-      const fullname = `${blog.first_name || ""} ${blog.last_name || ""}`.trim();
-      const isPlaceholder = (n) => typeof n === "string" && /^\s*(first\d*|last\d*)\s*$/i.test(n);
-      const parts = fullname.split(/\s+/).filter(Boolean);
-      const isFullPlaceholder = parts.length > 0 && parts.every((p) => isPlaceholder(p));
-      if (fullname && !isFullPlaceholder) author = fullname;
-      else if (blog.username) author = blog.username;
-    }
+  if (!author && derivedAuthor) author = derivedAuthor;
+  if (!avatar && derivedAvatar) avatar = derivedAvatar;
+  // If backend returns username/first_name/last_name fields (common in posts list),
+  // use them as a display name when explicit author fields are missing.
+  if (!author) {
+    const fullname = `${blog.first_name || ""} ${blog.last_name || ""}`.trim();
+    const isPlaceholder = (n) => typeof n === "string" && /^\s*(first\d*|last\d*)\s*$/i.test(n);
+    const parts = fullname.split(/\s+/).filter(Boolean);
+    const isFullPlaceholder = parts.length > 0 && parts.every((p) => isPlaceholder(p));
+    if (fullname && !isFullPlaceholder) author = fullname;
+    else if (blog.username) author = blog.username;
+  }
 
   // If author is still empty, try deriving from `blog.user` object/string
   if (!author && blog.user) {
     if (typeof blog.user === "string") author = blog.user;
     else if (typeof blog.user === "object") {
-      author = blog.user.full_name || `${blog.user.first_name || ""} ${blog.user.last_name || ""}`.trim() || blog.user.username || null;
+      author =
+        blog.user.full_name ||
+        `${blog.user.first_name || ""} ${blog.user.last_name || ""}`.trim() ||
+        blog.user.username ||
+        null;
       avatar = avatar || blog.user.profile_image || blog.user.avatar || null;
     }
   }
   const createdAt = blog.created_at ? new Date(blog.created_at) : null;
-  const formattedDate = createdAt && !Number.isNaN(createdAt.getTime())
-    ? createdAt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-    : null;
+  const formattedDate =
+    createdAt && !Number.isNaN(createdAt.getTime())
+      ? createdAt.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+      : null;
 
   const rawCategory = blog.category ?? blog.type ?? null;
   const category = rawCategory
-    ? String(rawCategory).toLowerCase().replace(/(^|\s)\S/g, (t) => t.toUpperCase())
+    ? String(rawCategory)
+        .toLowerCase()
+        .replace(/(^|\s)\S/g, (t) => t.toUpperCase())
     : null;
 
   return (
@@ -187,7 +211,11 @@ export default function AttractionDetailsPage() {
         <div className={styles.travelCard}>
           <div className={styles.imageWrapper}>
             <Image
-              src={imageSrc || blog.cover_image_url || "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"}
+              src={
+                imageSrc ||
+                blog.cover_image_url ||
+                "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?w=500"
+              }
               alt={title}
               fill
               style={{ objectFit: "cover" }}
@@ -198,14 +226,21 @@ export default function AttractionDetailsPage() {
           <div className={styles.cardContent}>
             <h4 className={styles.cardTitle}>{title}</h4>
             <div className={styles.postMeta}>
-              <PostMeta authorName={author} avatar={avatar} date={formattedDate} category={category} itemId={blog.id} itemType="post" />
+              <PostMeta
+                authorName={author}
+                avatar={avatar}
+                date={formattedDate}
+                category={category}
+                itemId={blog.id}
+                itemType="post"
+              />
             </div>
             <div className={styles.meta}>
               <span>{blog.location}</span>
             </div>
             <div className={styles.description}>{blog.content}</div>
           </div>
-          <Comment commentsData = {blog.comments} postId = {id}/>
+          <Comment commentsData={blog.comments} postId={id} />
         </div>
       </div>
     </>

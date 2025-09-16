@@ -16,6 +16,17 @@
   margin-bottom: 1rem;
 }
 
+.attractionsTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attractionsTitleContainer p {
+  color: gray;
+  font-style: italic;
+}
+
 .title {
   font-size: 2rem;
 }
@@ -48,6 +59,18 @@
   .gridContainer {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .attractionsTitleContainer {
+    flex-direction: column;
+  }
+
+  .attractionsTitleContainer p {
+    margin: 0 auto;
+  }
+
+  .title {
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 600px) {
@@ -58,5 +81,13 @@
 
   .gridContainer {
     grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .attractionsTitleContainer p {
+    font-size: 12px;
   }
 }
