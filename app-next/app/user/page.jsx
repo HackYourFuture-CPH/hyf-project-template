@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { UploadButton } from "@uploadthing/react";
 import styles from "./User.module.css";
+import { parseValidationErrors, getFieldError, hasValidationErrors } from "../../utils/validationUtils";
+import FieldError from "../../components/FieldError/FieldError";
 import Card from "../../components/Card/Card";
 import cardStyles from "../../components/Card/Card.module.css";
 import BlogCard from "../../components/BlogCard/BlogCard";
@@ -41,9 +43,10 @@ export default function UserPage() {
   const imageRef = useRef(null);
 
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
-  const [newPost, setNewPost] = useState({ title: "", category: "", content: "" });
+  const [newPost, setNewPost] = useState({ title: "", category: "", content: "", cover_image_url: "" });
   const [creatingPost, setCreatingPost] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
   // Add global mouse event listeners for smooth cropping
   useEffect(() => {
@@ -1456,11 +1459,11 @@ export default function UserPage() {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setCreateError("");
+                setValidationErrors({});
                 const title = (newPost.title || "").trim();
                 const category = (newPost.category || "").trim();
                 const content = (newPost.content || "").trim();
-                if (!title) return setCreateError("Title is required");
-                if (!content) return setCreateError("Content is required");
+                
                 setCreatingPost(true);
                 try {
                   const token =
@@ -1472,19 +1475,33 @@ export default function UserPage() {
                     // edit
                     const res = await fetch(
                       `${API_URL}/api/blogposts/${encodeURIComponent(newPost.id)}`,
-                      { method: "PUT", headers, body: JSON.stringify({ title, category, content }) }
+                      { method: "PUT", headers, body: JSON.stringify({ title, category, content, cover_image_url: newPost.cover_image_url }) }
                     );
+                    
+                    const text = await res.text();
+                    let parsed;
+                    try {
+                      parsed = JSON.parse(text);
+                    } catch {
+                      parsed = { message: text };
+                    }
+                    
                     if (res.ok) {
-                      const parsed = await res.json().catch(() => null);
-                      const updated = parsed?.data ||
-                        parsed || { id: newPost.id, title, category, content };
+                      const updated = parsed?.data || parsed || { id: newPost.id, title, category, content };
                       setPosts((p) =>
                         Array.isArray(p)
                           ? p.map((x) => (String(x.id) === String(updated.id) ? updated : x))
                           : [updated]
                       );
                       setShowCreatePostModal(false);
+                      setCreateError("");
                     } else {
+                      const parsedErrors = parseValidationErrors(parsed);
+                      if (hasValidationErrors(parsedErrors)) {
+                        setValidationErrors(parsedErrors);
+                      } else {
+                        setCreateError(parsed.message || parsed.error || "Failed to update post");
+                      }
                       // fallback local update
                       const updatedLocal = {
                         ...newPost,
@@ -1505,12 +1522,19 @@ export default function UserPage() {
                     const res = await fetch(`${API_URL}/api/blogposts`, {
                       method: "POST",
                       headers,
-                      body: JSON.stringify({ title, category, content }),
+                      body: JSON.stringify({ title, category, content, cover_image_url: newPost.cover_image_url }),
                     });
+                    
+                    const text = await res.text();
+                    let parsed;
+                    try {
+                      parsed = JSON.parse(text);
+                    } catch {
+                      parsed = { message: text };
+                    }
+                    
                     if (res.ok) {
-                      const parsed = await res.json().catch(() => null);
-                      const created = parsed?.data ||
-                        parsed || { id: `local-${Date.now()}`, title, category, content };
+                      const created = parsed?.data || parsed || { id: `local-${Date.now()}`, title, category, content };
                       const withAuthor = {
                         ...(created || {}),
                         author_name:
@@ -1526,7 +1550,14 @@ export default function UserPage() {
                       };
                       setPosts((p) => [withAuthor, ...(Array.isArray(p) ? p : [])]);
                       setShowCreatePostModal(false);
+                      setCreateError("");
                     } else {
+                      const parsedErrors = parseValidationErrors(parsed);
+                      if (hasValidationErrors(parsedErrors)) {
+                        setValidationErrors(parsedErrors);
+                      } else {
+                        setCreateError(parsed.message || parsed.error || "Failed to create post");
+                      }
                       // create local fallback
                       const localId = `local-${Date.now()}`;
                       const created = {
@@ -1569,16 +1600,20 @@ export default function UserPage() {
               <div className={styles.field}>
                 <label>Title</label>
                 <input
+                  type="text"
                   value={newPost.title}
                   onChange={(e) => setNewPost((n) => ({ ...n, title: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'title')} fieldName="Title" />
               </div>
               <div className={styles.field}>
                 <label>Category</label>
                 <input
+                  type="text"
                   value={newPost.category}
                   onChange={(e) => setNewPost((n) => ({ ...n, category: e.target.value }))}
                 />
+                <FieldError error={getFieldError(validationErrors, 'category')} fieldName="Category" />
               </div>
               <div className={styles.field}>
                 <label>Content</label>
@@ -1587,6 +1622,42 @@ export default function UserPage() {
                   onChange={(e) => setNewPost((n) => ({ ...n, content: e.target.value }))}
                   rows={6}
                 />
+                <FieldError error={getFieldError(validationErrors, 'content')} fieldName="Content" />
+              </div>
+              <div className={styles.field}>
+                <label>Cover Image</label>
+                <div className={styles.uploadSection}>
+                  {newPost.cover_image_url ? (
+                    <div className={styles.imagePreview}>
+                      <img
+                        src={newPost.cover_image_url}
+                        alt="Post cover preview"
+                        width={200}
+                        height={120}
+                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNewPost((n) => ({ ...n, cover_image_url: "" }))}
+                        className={styles.removeImageButton}
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  ) : (
+                    <UploadButton
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          setNewPost((n) => ({ ...n, cover_image_url: res[0].url }));
+                        }
+                      }}
+                      onUploadError={(error) => {
+                        setCreateError(`Upload failed: ${error.message}`);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
               {createError && <div className={styles.error}>{createError}</div>}
               <div className={styles.formActions}>
