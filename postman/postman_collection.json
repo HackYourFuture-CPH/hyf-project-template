@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-4a3b-8c7d-9f0e1d2c3b4a",
-		"name": "Travel Planner API (Final Complete)",
+		"name": "Travel Planner API (Final Manual Collection)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -378,7 +378,7 @@
 									"    const response = pm.response.json();",
 									"    if (response.data && response.data.length > 0) {",
 									"        pm.collectionVariables.set(\"attractionId\", response.data[0].id);",
-									"        console.log(`Attraction ID ${response.data[0].id} saved successfully!`);",
+									"        console.log(`Attraction ID ${response.data[0].id} from GET All saved successfully!`);",
 									"    }",
 									"}"
 								],
@@ -626,6 +626,23 @@
 			"item": [
 				{
 					"name": "Get All Blogposts (with Filters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.collectionVariables.set(\"postId\", response.data[0].id);",
+									"        console.log(`Blogpost ID ${response.data[0].id} from GET All saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1023,6 +1040,24 @@
 			"item": [
 				{
 					"name": "Get All Tours (with Advanced Filters)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    const toursList = response.data || response.tours;",
+									"    if (toursList && toursList.length > 0) {",
+									"        pm.collectionVariables.set(\"tourId\", toursList[0].id);",
+									"        console.log(`Tour ID ${toursList[0].id} from GET All saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1243,6 +1278,23 @@
 			"item": [
 				{
 					"name": "Get My Trips",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.length > 0) {",
+									"        pm.collectionVariables.set(\"tripId\", response.data[0].id);",
+									"        console.log(`Trip ID ${response.data[0].id} from Get My Trips saved successfully!`);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1561,6 +1613,84 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Sharing & Collaboration",
+					"item": [
+						{
+							"name": "Generate Trip Invitation Link",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201 || pm.response.code === 200) {",
+											"    const response = pm.response.json();",
+											"    if (response.shareableLink) {",
+											"        try {",
+											"            const url = new URL(response.shareableLink);",
+											"            const token = url.searchParams.get(\"token\");",
+											"            if (token) {",
+											"                pm.collectionVariables.set(\"invitationToken\", token);",
+											"                console.log(`Invitation token ${token} saved successfully!`);",
+											"            }",
+											"        } catch (e) {",
+											"            console.error(\"Could not parse shareableLink URL\", e);",
+											"        }",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/trips/{{tripId}}/invitations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"trips",
+										"{{tripId}}",
+										"invitations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Accept Trip Invitation",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"{{invitationToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/invitations/accept",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"invitations",
+										"accept"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -1680,7 +1810,8 @@
 								"bookings",
 								"my-bookings"
 							]
-						}
+						},
+						"description": "Fetches all bookings for the authenticated user. The response for each booking will include a `tour_id` for tour bookings or a `trip_id` for custom trip bookings."
 					},
 					"response": []
 				}
@@ -1880,7 +2011,7 @@
 											"    const response = pm.response.json();",
 											"    if (response.data && response.data.id) {",
 											"        pm.collectionVariables.set(\"adminCreatedTourId\", response.data.id);",
-											"        console.log(`Admin created tour ID ${response.data.id} saved successfully!`);",
+											"        console.log(`Admin created tourId: ${response.data.id} saved successfully!`);",
 											"    }",
 											"}"
 										],
@@ -2916,6 +3047,104 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Moderation",
+					"item": [
+						{
+							"name": "Moderate Post Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"inactive\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/moderate/posts/{{adminTargetPostId}}/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"moderate",
+										"posts",
+										"{{adminTargetPostId}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Moderate Review Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"rejected\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/moderate/reviews/{{reviewId}}/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"moderate",
+										"reviews",
+										"{{reviewId}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Moderate Comment Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"rejected\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/moderate/comments/{{commentId}}/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"moderate",
+										"comments",
+										"{{commentId}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -2941,7 +3170,7 @@
 		},
 		{
 			"key": "tourId",
-			"value": "713eb327-468a-48c9-babf-883bb27d4d6e"
+			"value": ""
 		},
 		{
 			"key": "postId",
@@ -3013,6 +3242,10 @@
 		},
 		{
 			"key": "bookingId",
+			"value": ""
+		},
+		{
+			"key": "invitationToken",
 			"value": ""
 		}
 	]

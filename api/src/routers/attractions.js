@@ -1,7 +1,7 @@
 import express from "express";
 import knex from "../db.mjs";
 import { optionalAuth } from "../middleware/auth.js";
-import commentsRouter from "./attractionComments.js";
+import commentsRouter from "./Comments.js";
 
 const router = express.Router();
 
