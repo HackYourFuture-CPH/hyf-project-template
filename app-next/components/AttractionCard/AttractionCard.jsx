@@ -3,10 +3,14 @@ import styles from "./AttractionCard.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { Heart } from "lucide-react";
+import useFavorite from "@/hooks/useFavorite";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export default function AttractionCard({ card }) {
+export default function AttractionCard({ card, onFavoriteChange }) {
+  const initialFav = card.favourite ? true : undefined;
+  const { favourite, toggle, loading } = useFavorite({ itemId: card.id, itemType: "attraction", initial: initialFav });
   const raw = card?.cover_image_url;
   const placeholder = card?.id ? `https://picsum.photos/seed/attraction-${card.id}/600/400` : "https://picsum.photos/600/400";
 
@@ -68,6 +72,25 @@ export default function AttractionCard({ card }) {
             <span>{title} - {card.location}</span>
           </div>
           <p className={styles.description}>{card.content}</p>
+        </div>
+        <div className={styles.cardFooter}>
+          <button
+            className={`${styles.heart} ${favourite ? styles.fav : ""}`}
+            onClick={(e) => {
+              try {
+                e.stopPropagation?.();
+                e.preventDefault?.();
+              } catch {}
+              const next = !favourite;
+              toggle(e);
+              onFavoriteChange?.({ added: next, itemId: card.id });
+            }}
+            aria-label={favourite ? "Remove favorite" : "Add to favorites"}
+            aria-pressed={favourite}
+            type="button"
+          >
+            <Heart size={18} fill={favourite ? "currentColor" : "none"} stroke="currentColor" />
+          </button>
         </div>
       </div>
     </Link>

@@ -1,17 +1,17 @@
 -- =================================================================
 --  Better travel Database Schema
 -- =================================================================
+DROP TABLE IF EXISTS trip_invitations CASCADE;
 
--- Drop existing tables in reverse order of dependency to avoid errors
+DROP TABLE IF EXISTS trip_collaborators CASCADE;
+
 DROP TABLE IF EXISTS user_favorites CASCADE;
 
 DROP TABLE IF EXISTS trip_itineraries CASCADE;
 
 DROP TABLE IF EXISTS ai_requests CASCADE;
 
-DROP TABLE IF EXISTS attraction_post_comments CASCADE;
-
-DROP TABLE IF EXISTS user_post_comments CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
 
 DROP TABLE IF EXISTS tour_reviews CASCADE;
 
@@ -152,6 +152,9 @@ CREATE TABLE user_posts (
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     category VARCHAR(50),
+    status VARCHAR(20) NOT NULL DEFAULT 'published' CHECK (
+        status IN ('published', 'inactive')
+    ),
     created_at TIMESTAMP
     WITH
         TIME ZONE DEFAULT NOW()
@@ -217,32 +220,60 @@ CREATE TABLE tour_reviews (
         AND rating <= 5
     ),
     content TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'approved' CHECK (
+        status IN (
+            'pending',
+            'approved',
+            'rejected'
+        )
+    ),
     created_at TIMESTAMP
     WITH
         TIME ZONE DEFAULT NOW(),
         UNIQUE (user_id, tour_id)
 );
 
--- Stores comments on user blog posts.
-CREATE TABLE user_post_comments (
+-- Stores comments.
+CREATE TABLE comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    post_id UUID NOT NULL REFERENCES user_posts (id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    commentable_id UUID NOT NULL,
+    commentable_type VARCHAR(50) NOT NULL, -- e.g., 'post', 'attraction'
     created_at TIMESTAMP
     WITH
-        TIME ZONE DEFAULT NOW()
+        TIME ZONE DEFAULT NOW(),
+        status VARCHAR(20) NOT NULL DEFAULT 'approved' CHECK (
+            status IN (
+                'pending',
+                'approved',
+                'rejected'
+            )
+        )
+);
+-- This table links users to the trips they are collaborating on.
+CREATE TABLE trip_collaborators (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    permission_level VARCHAR(20) NOT NULL DEFAULT 'editor' CHECK (
+        permission_level IN ('viewer', 'editor')
+    ),
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (trip_id, user_id)
 );
 
--- Stores comments on attraction posts.
-CREATE TABLE attraction_post_comments (
+-- stores the secure, one-time-use tokens for shareable links.
+CREATE TABLE trip_invitations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    post_id UUID NOT NULL REFERENCES attraction_posts (id) ON DELETE CASCADE,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    created_by_user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP
     WITH
-        TIME ZONE DEFAULT NOW()
+        TIME ZONE NOT NULL
 );
 
 -- Stores AI-generated trip requests.

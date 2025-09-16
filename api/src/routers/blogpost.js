@@ -3,7 +3,7 @@ import knex from "../db.mjs";
 import { authenticateToken, optionalAuth } from "../middleware/auth.js";
 import { validateRequest } from "../middleware/validation.js";
 import { userPostSchema } from "../validation/schemas.js";
-import commentsRouter from "./blogpostComments.js";
+import commentsRouter from "./comments.js";
 import photosRouter from "./blogpostPhotos.js";
 
 const router = express.Router();
@@ -29,11 +29,13 @@ router.get("/", optionalAuth, async (req, res) => {
         "u.username",
         "u.first_name",
         "u.last_name",
+        "u.profile_image",
         knex.raw(
           `(SELECT upp.image_url FROM user_post_photos as upp WHERE upp.post_id = p.id ORDER BY upp.uploaded_at ASC LIMIT 1) as cover_image_url`
         )
       )
-      .join("users as u", "p.user_id", "u.id");
+      .join("users as u", "p.user_id", "u.id")
+      .where("p.status", "published");
 
     const countQuery = knex("user_posts as p").join(
       "users as u",
@@ -91,6 +93,29 @@ router.get("/", optionalAuth, async (req, res) => {
   }
 });
 
+// POST /api/blogposts - Create a new post
+router.post(
+  "/",
+  authenticateToken,
+  validateRequest(userPostSchema),
+  async (req, res) => {
+    try {
+      const userId = req.user.id || req.user.sub;
+      const [newPost] = await knex("user_posts")
+        .insert({ ...req.validatedData, user_id: userId })
+        .returning("*");
+
+      res.status(201).json({
+        message: "Blogpost created successfully.",
+        data: newPost,
+      });
+    } catch (error) {
+      console.error("Error creating blogpost:", error);
+      res.status(500).json({ error: "Failed to create blogpost." });
+    }
+  }
+);
+
 // GET /api/blogposts/categories - Get all unique categories
 router.get("/categories", async (req, res) => {
   try {
@@ -133,6 +158,11 @@ router.get("/my-posts", authenticateToken, async (req, res) => {
   }
 });
 
+//  NESTED ROUTERS
+
+router.use("/:id/comments", commentsRouter);
+router.use("/:id/photos", photosRouter);
+
 // GET /api/blogposts/:id - Get a single post by ID
 router.get("/:id", optionalAuth, async (req, res) => {
   try {
@@ -146,7 +176,8 @@ router.get("/:id", optionalAuth, async (req, res) => {
         "p.created_at",
         "u.username",
         "u.first_name",
-        "u.last_name"
+        "u.last_name",
+        "u.profile_image"
       )
       .join("users as u", "p.user_id", "u.id")
       .where("p.id", id)
@@ -158,10 +189,13 @@ router.get("/:id", optionalAuth, async (req, res) => {
 
     const [photos, comments] = await Promise.all([
       knex("user_post_photos").where({ post_id: id }),
-      knex("user_post_comments as c")
+      // Use the generic `comments` table which stores comments for posts and attractions
+      knex("comments as c")
         .select("c.*", "u.username", "u.first_name", "u.last_name")
         .join("users as u", "c.user_id", "u.id")
-        .where({ post_id: id }),
+        .where({ commentable_id: id, commentable_type: "post" })
+        .andWhere({ status: "approved" })
+        .orderBy("c.created_at", "asc"),
     ]);
 
     res.json({
@@ -173,29 +207,6 @@ router.get("/:id", optionalAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve blogpost details." });
   }
 });
-
-// POST /api/blogposts - Create a new post
-router.post(
-  "/",
-  authenticateToken,
-  validateRequest(userPostSchema),
-  async (req, res) => {
-    try {
-      const userId = req.user.id || req.user.sub;
-      const [newPost] = await knex("user_posts")
-        .insert({ ...req.validatedData, user_id: userId })
-        .returning("*");
-
-      res.status(201).json({
-        message: "Blogpost created successfully.",
-        data: newPost,
-      });
-    } catch (error) {
-      console.error("Error creating blogpost:", error);
-      res.status(500).json({ error: "Failed to create blogpost." });
-    }
-  }
-);
 
 // PUT /api/blogposts/:id - Update a post
 router.put(
@@ -263,9 +274,5 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Failed to delete blogpost." });
   }
 });
-
-// Nested routers
-router.use("/:id/comments", commentsRouter);
-router.use("/:id/photos", photosRouter);
 
 export default router;

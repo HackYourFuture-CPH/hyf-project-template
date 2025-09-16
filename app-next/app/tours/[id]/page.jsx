@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./TourDetails.module.css";
+import TourBooking from "@/components/TourBooking/TourBooking";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -128,9 +129,7 @@ export default async function TourDetails({ params }) {
             <p className={styles.description}>{tour.long_description ?? tour.description ?? ""}</p>
 
             <div className={styles.ctaWrap}>
-              <button className={styles.bookBtn} type="button">
-                Book Now
-              </button>
+              <TourBooking tourId={tour.id} capacity={tour.capacity} priceMinor={tour.price_minor ?? tour.price_usd} />
             </div>
           </aside>
         </div>

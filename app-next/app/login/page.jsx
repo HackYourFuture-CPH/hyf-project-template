@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Login.module.css";
 
@@ -24,6 +24,8 @@ export default function Login() {
   const [loginSuccess, setLoginSuccess] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
+  const loginFormRef = useRef(null);
+  const registerFormRef = useRef(null);
 
   useEffect(() => {
     if (currentImage >= images.length) {
@@ -37,6 +39,22 @@ export default function Login() {
     }, 4000);
     return () => clearInterval(interval);
   }, [images.length]);
+
+  // Clear form fields and messages when the page mounts to avoid showing
+  // previously-entered credentials (browser back navigation or autofill).
+  useEffect(() => {
+    try {
+      if (loginFormRef?.current) loginFormRef.current.reset();
+    } catch (e) {}
+    try {
+      if (registerFormRef?.current) registerFormRef.current.reset();
+    } catch (e) {}
+    // clear any success/error banners so forms appear empty/fresh
+    setLoginSuccess("");
+    setRegisterSuccess("");
+    setLoginError("");
+    setRegisterError("");
+  }, []);
 
   // helper to safely parse JSON or return text
   async function safeParseResponse(res) {
@@ -82,19 +100,17 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
+
+      // try to reset the submitted form (both direct event target and form ref)
+      try {
+        event?.target?.reset?.();
+      } catch (e) {}
+      try {
+        if (loginFormRef?.current) loginFormRef.current.reset();
+      } catch (e) {}
+      // navigate to dashboard so the user sees their profile
+
       
-      // Store user data including role for redirect logic
-      if (parsed.body?.user) {
-        try {
-          localStorage.setItem("user", JSON.stringify(parsed.body.user));
-        } catch (e) {
-          console.warn("Failed to persist user data to localStorage", e);
-        }
-      }
-      
-      event.target.reset();
-      
-      // Redirect based on user role
       try {
         const userRole = parsed.body?.user?.role || "user";
         if (userRole === "admin") {
@@ -165,6 +181,16 @@ export default function Login() {
       event.target.reset();
       
       // Redirect based on user role (new users are typically "user" role)
+
+      // reset the registration form reliably
+      try {
+        event?.target?.reset?.();
+      } catch (e) {}
+      try {
+        if (registerFormRef?.current) registerFormRef.current.reset();
+      } catch (e) {}
+
+      
       try {
         const userRole = parsed.body?.user?.role || "user";
         if (userRole === "admin") {
@@ -223,6 +249,8 @@ export default function Login() {
         </div>
         {/* Login Form */}
         <form
+          ref={loginFormRef}
+          autoComplete="off"
           className={`${styles.form} ${!isLogin ? styles.hidden : ""}`}
           onSubmit={handleLoginSubmit}
         >
@@ -233,6 +261,9 @@ export default function Login() {
             </svg>
             <h2 className={styles.title}>Login</h2>
           </div>
+          {/* Hidden dummy fields to catch browser autofill and keep visible fields empty */}
+          <input type="text" name="fake-username" autoComplete="username" style={{ display: "none" }} aria-hidden="true" />
+          <input type="password" name="fake-password" autoComplete="current-password" style={{ display: "none" }} aria-hidden="true" />
           {loginSuccess && (
             <div className={styles.success} aria-live="polite">
               <svg className={styles.successIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -257,7 +288,7 @@ export default function Login() {
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input name="login_identifier" type="text" placeholder="Username or email" required />
+            <input name="login_identifier" type="text" placeholder="Username or email" required autoComplete="off" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -265,7 +296,7 @@ export default function Login() {
               <circle cx="12" cy="16" r="1"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <input name="password" type="password" placeholder="Password" required />
+            <input name="password" type="password" placeholder="Password" required autoComplete="off" />
           </div>
           <button type="submit" className={styles.submitButton}>
             <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -278,6 +309,8 @@ export default function Login() {
         </form>
         {/* Register Form */}
         <form
+          ref={registerFormRef}
+          autoComplete="off"
           className={`${styles.form} ${isLogin ? styles.hidden : ""}`}
           onSubmit={handleRegisterSubmit}
         >
@@ -314,28 +347,28 @@ export default function Login() {
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input name="first_name" type="text" placeholder="First name" required />
+            <input name="first_name" type="text" placeholder="First name" required autoComplete="given-name" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input name="last_name" type="text" placeholder="Last name" required />
+            <input name="last_name" type="text" placeholder="Last name" required autoComplete="family-name" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
               <polyline points="22,6 12,13 2,6"/>
             </svg>
-            <input name="email" type="email" placeholder="Email" required />
+            <input name="email" type="email" placeholder="Email" required autoComplete="email" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            <input name="username" type="text" placeholder="Username" required />
+            <input name="username" type="text" placeholder="Username" required autoComplete="username" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -343,7 +376,7 @@ export default function Login() {
               <circle cx="12" cy="16" r="1"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <input name="password" type="password" placeholder="Password" required />
+            <input name="password" type="password" placeholder="Password" required autoComplete="new-password" />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -356,13 +389,14 @@ export default function Login() {
               type="password"
               placeholder="Confirm password"
               required
+              autoComplete="new-password"
             />
           </div>
           <div className={styles.inputGroup}>
             <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
             </svg>
-            <input name="mobile" type="text" placeholder="Mobile" required />
+            <input name="mobile" type="text" placeholder="Mobile" required autoComplete="tel" />
           </div>
           <button type="submit" className={styles.submitButton}>
             <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

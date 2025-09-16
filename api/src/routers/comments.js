@@ -1,62 +1,79 @@
 import express from "express";
 import knex from "../db.mjs";
-import { commentSchema } from "../validation/schemas.js";
-import { validateRequest } from "../middleware/validation.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { validateRequest } from "../middleware/validation.js";
+import { commentSchema } from "../validation/schemas.js";
 
 const commentsRouter = express.Router({ mergeParams: true });
 
-// Apply authentication to all routes
-//commentsRouter.use(authenticateToken);
+// Middleware to determine the parent type ('post' or 'attraction')
+const determineCommentableType = (req, res, next) => {
+  // CORRECTED LOGIC: Use req.baseUrl instead of req.originalUrl
+  if (req.baseUrl.includes("/blogposts")) {
+    req.commentableType = "post";
+  } else if (req.baseUrl.includes("/attractions")) {
+    req.commentableType = "attraction";
+  } else {
+    return res.status(400).json({ error: "Invalid comment route." });
+  }
+  next();
+};
 
-// get all comments for a specific post
-commentsRouter.get("/", async (req, res) => {
+// GET all approved comments for a resource (blogpost or attraction)
+commentsRouter.get("/", determineCommentableType, async (req, res) => {
   try {
-    const { id: postId } = req.params;
-    const comments = await knex("user_post_comments")
-      .where({ post_id: postId })
-      .orderBy("created_at", "asc");
-
-    res.json({
-      message: "Comments retrieved successfully.",
-      data: comments,
-    });
+    const { id: commentableId } = req.params;
+    const comments = await knex("comments as c")
+      .join("users as u", "c.user_id", "u.id")
+      .select("c.*", "u.username", "u.first_name", "u.last_name")
+      .where({
+        commentable_id: commentableId,
+        commentable_type: req.commentableType,
+        status: "approved",
+      })
+      .orderBy("c.created_at", "asc");
+    res.json({ message: "Comments retrieved successfully.", data: comments });
   } catch (error) {
     console.error("Error fetching comments:", error);
-    res.status(500).json({
-      error: "Comment retrieval failed",
-      message: "We encountered an error while loading comments for this post.",
-    });
+    res.status(500).json({ error: "Failed to retrieve comments." });
   }
 });
 
-// post a new comment
-commentsRouter.post("/", validateRequest(commentSchema), async (req, res) => {
-  try {
-    const { id: postId } = req.params;
-    const userId = req.user.id || req.user.sub;
-    const { content } = req.validatedData;
+// POST a new comment (protected)
+commentsRouter.post(
+  "/",
+  authenticateToken,
+  determineCommentableType,
+  validateRequest(commentSchema),
+  async (req, res) => {
+    try {
+      const { id: commentableId } = req.params;
+      const userId = req.user.id || req.user.sub;
+      const { content } = req.validatedData;
 
-    const [newComment] = await knex("user_post_comments")
-      .insert({ user_id: userId, post_id: postId, content })
-      .returning("*");
+      const [newComment] = await knex("comments")
+        .insert({
+          user_id: userId,
+          content,
+          commentable_id: commentableId,
+          commentable_type: req.commentableType,
+        })
+        .returning("*");
 
-    res.status(201).json({
-      message: "Your comment has been posted successfully.",
-      data: newComment,
-    });
-  } catch (error) {
-    console.error("Error posting comment:", error);
-    res.status(500).json({
-      error: "Comment submission failed",
-      message: "We encountered an error while posting your comment.",
-    });
+      res
+        .status(201)
+        .json({ message: "Comment posted successfully.", data: newComment });
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      res.status(500).json({ error: "Failed to post comment." });
+    }
   }
-});
+);
 
-// update an existing comment
+// PUT to update a comment (protected, user must own comment)
 commentsRouter.put(
   "/:commentId",
+  authenticateToken,
   validateRequest(commentSchema),
   async (req, res) => {
     try {
@@ -64,64 +81,48 @@ commentsRouter.put(
       const userId = req.user.id || req.user.sub;
       const { content } = req.validatedData;
 
-      // Make sure a user can only update their own comment.
-      const [updatedComment] = await knex("user_post_comments")
-        .where({ id: commentId, user_id: userId })
+      const [updatedComment] = await knex("comments")
+        .where({ id: commentId, user_id: userId }) // User can only edit their own
         .update({ content })
         .returning("*");
 
       if (!updatedComment) {
-        return res.status(404).json({
-          error: "Update failed",
-          message:
-            "Comment not found, or you do not have permission to update it.",
-        });
+        return res
+          .status(404)
+          .json({ error: "Comment not found or permission denied." });
       }
 
       res.json({
-        message: "Your comment has been updated successfully.",
+        message: "Comment updated successfully.",
         data: updatedComment,
       });
     } catch (error) {
       console.error("Error updating comment:", error);
-      res.status(500).json({
-        error: "Comment update failed",
-        message: "We encountered an error while updating your comment.",
-      });
+      res.status(500).json({ error: "Failed to update comment." });
     }
   }
 );
 
-// DELETE a comment
-commentsRouter.delete("/:commentId", async (req, res) => {
+// DELETE a comment (protected, user must own comment)
+commentsRouter.delete("/:commentId", authenticateToken, async (req, res) => {
   try {
     const { commentId } = req.params;
     const userId = req.user.id || req.user.sub;
 
-    // Find the comment to ensure it exists and is owned by the user.
-    const commentToDelete = await knex("user_post_comments")
-      .where({ id: commentId, user_id: userId })
-      .first();
+    const deletedCount = await knex("comments")
+      .where({ id: commentId, user_id: userId }) // User can only delete their own
+      .del();
 
-    if (!commentToDelete) {
-      return res.status(404).json({
-        error: "Deletion failed",
-        message:
-          "Comment not found, or you do not have permission to delete it.",
-      });
+    if (deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "Comment not found or permission denied." });
     }
 
-    await knex("user_post_comments").where({ id: commentId }).del();
-
-    res
-      .status(200)
-      .json({ message: "Your comment has been deleted successfully." });
+    res.status(200).json({ message: "Comment deleted successfully." });
   } catch (error) {
     console.error("Error deleting comment:", error);
-    res.status(500).json({
-      error: "Comment deletion failed",
-      message: "We encountered an error while deleting your comment.",
-    });
+    res.status(500).json({ error: "Failed to delete comment." });
   }
 });
 

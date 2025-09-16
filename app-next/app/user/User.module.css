@@ -1,6 +1,5 @@
 .container {
   width: 100%;
-  max-width: 1200px;
   flex-grow: 1;
   padding: 24px;
   max-width: 900px;
@@ -89,17 +88,24 @@
   text-decoration: none;
   font-weight: 700;
   border: none;
+  transition: transform 180ms;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+}
+
+.primary:hover {
+  transform: scale(1.05);
 }
 
 /* dashboard and sidebar additions */
 .dashboard {
   display: flex;
-  align-items: flex-start;
+  justify-content: center;
   gap: 24px;
 }
 
 .aside {
-  width: 260px;
+  width: 100%;
+  max-width: 260px;
 }
 
 .sidebarCard {
@@ -159,7 +165,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
+  /* box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2); */
 }
 
 .statsGrid {
@@ -249,16 +255,19 @@
 .secondary {
   cursor: pointer;
   font-family: "Archivo", sans-serif;
+  text-decoration: none;
   font-weight: 700;
   background: #e5e7eb;
+  padding: 8px 14px;
   border-radius: 8px;
-  padding: 8px 12px;
   color: #111827;
+  border: none;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+  transition: transform 180ms;
 }
 
-.error {
-  color: #b91c1c;
-  margin-top: 6px;
+.secondary:hover {
+  transform: scale(1.05);
 }
 
 /* Profile edit specific styles */
@@ -272,6 +281,7 @@
 .profileForm input[type="text"],
 .profileForm input[type="tel"],
 .profileForm input[type="email"],
+.profileForm input[type="password"],
 .profileForm input[name="first_name"],
 .profileForm input[name="last_name"],
 .profileForm input[name="mobile"] {
@@ -281,6 +291,12 @@
   background: #fff;
   outline: none;
   font-size: 14px;
+}
+
+/* Make profile form inputs show a visible focus state like the modal forms */
+.profileForm input:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
 }
 
 .profileForm input[type="file"] {
@@ -319,7 +335,13 @@
   cursor: pointer;
 }
 
-.uploadButton {
+.hiddenFileInput {
+  display: none;
+}
+
+/* Ensure UploadThing button wrapper is positioned so we can overlay the native file input
+   and hide the browser "No file chosen" text while keeping the input clickable. */
+.uploadThingButton {
   background: #2563eb;
   color: #fff;
   padding: 8px 12px;
@@ -327,10 +349,21 @@
   border: none;
   cursor: pointer;
   font-weight: 700;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0 auto;
 }
 
-.hiddenFileInput {
-  display: none;
+.uploadThingButton input[type="file"] {
+  /* Put the native file input on top but invisible so the browser text isn't shown */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .card {
@@ -500,21 +533,33 @@
     align-items: center;
   }
 
+  .dashboard > * {
+    flex: 1;
+    width: 100%;
+  }
+
+  .formActions {
+    justify-content: center;
+  }
+
   .statsGrid {
     grid-template-columns: repeat(1, 1fr);
   }
 
   .profileCard {
+    max-width: 350px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-items: stretch;
+    /* align-items: stretch; */
   }
 
   .profileRow {
+    max-width: 350px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    justify-content: center;
     align-items: center;
     text-align: center;
   }
@@ -531,5 +576,15 @@
     height: 120px;
     border-radius: 12px;
     object-fit: cover;
+  }
+}
+
+@media (max-width: 500px) {
+  .aside {
+    max-width: 100%;
+  }
+
+  .passwordContainer {
+    justify-content: center;
   }
 }

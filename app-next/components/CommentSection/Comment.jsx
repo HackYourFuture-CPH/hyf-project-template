@@ -1,22 +1,102 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Comment.module.css";
 
-export default function Comment() {
-  const [comments, setComments] = useState([]);
+export default function Comment({ postId, commentsData = [], resource = "blogposts" }) {
+  const [comments, setComments] = useState(Array.isArray(commentsData) ? commentsData : []);
   const [input, setInput] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editInput, setEditInput] = useState("");
 
-  const handleDelete = (index) => {
-    setComments((prev) => prev.filter((_, i) => i !== index));
-  };
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const [redirecting, setRedirecting] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    // if token is missing, start auto-redirect countdown when user attempts actions
+    if (!token) return;
+    setRedirecting(false);
+  }, [token]);
+
+  const handleDelete = async (commentId) => {
+  try {
+    const res = await fetch(
+      `${API_URL}/api/${resource}/${postId}/comments/${commentId}`,
+      {
+        method: "DELETE",
+           headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add your token here
+        },
+        credentials: "include", // include cookies / auth token if needed
+      }
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to delete comment");
+    }
+
+    // Remove the comment from local state after successful deletion
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+  }
+};
+
+
+  // 🔹 Add new comment
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!token) {
+      // Not logged in: start redirect
+      setRedirecting(true);
+      setTimeout(() => (window.location.href = "/login"), 3000);
+      return;
+    }
     if (input.trim() === "") return;
 
-    setComments((prev) => [...prev, input]);
-    setInput("");
+    try {
+      
+
+      const res = await fetch(`${API_URL}/api/${resource}/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add your token here
+        },
+        body: JSON.stringify({ content: input }),
+        credentials: "include", // if using auth
+      });
+
+      if (!res.ok) throw new Error("Failed to post comment");
+
+      const data = await res.json();
+      setComments((prev) => [...prev, data.data]); // add new comment
+      setInput("");
+    } catch (err) {
+      console.error("Error posting comment:", err);
+    }
+  };
+
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setEditInput(comments[index]?.content || "");
+  };
+
+  const handleSave = (index) => {
+    if (editInput.trim() === "") return;
+
+    setComments((prev) =>
+      prev.map((comment, i) => (i === index ? { ...comment, content: editInput } : comment))
+    );
+    setEditingIndex(null);
+    setEditInput("");
+  };
+
+  const handleCancel = () => {
+    setEditingIndex(null);
+    setEditInput("");
   };
 
   return (
@@ -25,25 +105,78 @@ export default function Comment() {
         <h3>Comments</h3>
         <h4>Leave a Reply</h4>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <textarea
-            placeholder="Write your comment..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button type="submit">Post Comment</button>
-        </form>
+        {!token ? (
+          <div className={styles.loginNotice}>
+            <p>You must be logged in to comment.</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <a href="/login" className={styles.primary}>Go to login</a>
+              <button
+                className={styles.secondary}
+                onClick={() => {
+                  setRedirecting(true);
+                  setTimeout(() => (window.location.href = "/login"), 3000);
+                }}
+              >
+                Redirect me
+              </button>
+            </div>
+            {redirecting ? <div className={styles.small}>Redirecting to login...</div> : null}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <textarea
+              placeholder="Write your comment..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button type="submit" className={styles.postBtn}>Post Comment</button>
+          </form>
+        )}
 
         <ul className={styles.commentList}>
           {comments.map((comment, index) => (
             <li key={index} className={styles.comment}>
-              <span className={styles.commentText}>{comment}</span>
-              <button
-                className={styles.deleteButton}
-                onClick={() => handleDelete(index)}
-              >
-                ✕
-              </button>
+              {editingIndex === index ? (
+                <>
+                  <textarea
+                    className={styles.editTextarea}
+                    value={editInput}
+                    onChange={(e) => setEditInput(e.target.value)}
+                  />
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.saveButton}
+                      onClick={() => handleSave(index)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className={styles.cancelButton}
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className={styles.commentText}>{comment.content}</span>
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.editButton}
+                      onClick={() => handleEdit(index)}
+                    >
+                      ✎ Edit
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => handleDelete(comment.id)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </>
+              )}
             </li>
           ))}
         </ul>

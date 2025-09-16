@@ -14,10 +14,13 @@ import authRouter from "./routers/auth.js";
 import usersRouter from "./routers/users.js";
 import toursRouter from "./routers/tours.js";
 import tripsRouter from "./routers/trips.js";
+import tripPlannerRouter from "./routers/tripPlanner.js";
+import BookingsRouter from "./routers/bookings.js";
+
 import attractionsRouter from "./routers/attractions.js";
 import favoritesRouter from "./routers/favorites.js";
 import healthCheckRoute from "./routers/healthCheck.mjs";
-
+import invitationsRouter from "./routers/invitations.js";
 import blogpostsRouter from "./routers/blogpost.js";
 
 // --- Admin Route Imports ---
@@ -27,17 +30,28 @@ import adminPostsRouter from "./routers/admin/posts.js";
 import adminAttractionsRouter from "./routers/admin/attractions.js";
 import adminCommentsRouter from "./routers/admin/comments.js";
 import adminDashboardRouter from "./routers/admin/dashboard.js";
+import adminBookingsRouter from "./routers/admin/bookings.js";
+import adminTripsRouter from "./routers/admin/trips.js";
+import adminModerationRouter from "./routers/admin/moderation.js";
 
 const app = express();
+
+// CORS configuration for frontend at localhost:3000
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 const PORT = process.env.PORT || 3001;
 
 const apiRouter = express.Router();
 
 // --- Core Middleware Setup ---
-app.use(cors());
+//app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.static("public"));
+ 
+
 
 // --- Optional: Response Body Logger for Debugging ---
 const logResponseBody = (req, res, next) => {
@@ -68,8 +82,11 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/tours", toursRouter);
 app.use("/api/trips", tripsRouter);
+app.use("/api/trip-options", tripPlannerRouter);
+app.use("/api/bookings", BookingsRouter);
 app.use("/api/attractions", attractionsRouter);
 app.use("/api/favorites", favoritesRouter);
+app.use("/api/invitations", invitationsRouter);
 
 // Authentication routes (no authentication required)
 apiRouter.use("/blogposts", blogpostsRouter);
@@ -82,6 +99,9 @@ app.use("/api/admin/posts", adminPostsRouter);
 app.use("/api/admin/attractions", adminAttractionsRouter);
 app.use("/api/admin/comments", adminCommentsRouter);
 app.use("/api/admin", adminDashboardRouter);
+app.use("/api/admin/bookings", adminBookingsRouter);
+app.use("/api/admin/trips", adminTripsRouter);
+app.use("/api/admin/moderate", adminModerationRouter);
 
 // --- Global Error Handler ---
 app.use(errorHandler);
