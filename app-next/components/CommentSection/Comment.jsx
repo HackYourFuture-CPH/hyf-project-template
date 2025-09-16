@@ -2,8 +2,8 @@
 import { useState } from "react";
 import styles from "./Comment.module.css";
 
-export default function Comment({ postId, commentsData }) {
-  const [comments, setComments] = useState(commentsData);
+export default function Comment({ postId, commentsData = [], resource = "blogposts" }) {
+  const [comments, setComments] = useState(Array.isArray(commentsData) ? commentsData : []);
   const [input, setInput] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [editInput, setEditInput] = useState("");
@@ -12,10 +12,10 @@ export default function Comment({ postId, commentsData }) {
   const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-const handleDelete = async (commentId) => {
+  const handleDelete = async (commentId) => {
   try {
     const res = await fetch(
-      `${API_URL}/api/blogposts/${postId}/comments/${commentId}`, // adjust postId if needed
+      `${API_URL}/api/${resource}/${postId}/comments/${commentId}`,
       {
         method: "DELETE",
            headers: {
@@ -47,7 +47,7 @@ const handleDelete = async (commentId) => {
     try {
       
 
-      const res = await fetch(`${API_URL}/api/blogposts/${postId}/comments`, {
+      const res = await fetch(`${API_URL}/api/${resource}/${postId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,14 +69,14 @@ const handleDelete = async (commentId) => {
 
   const handleEdit = (index) => {
     setEditingIndex(index);
-    setEditInput(comments[index]);
+    setEditInput(comments[index]?.content || "");
   };
 
   const handleSave = (index) => {
     if (editInput.trim() === "") return;
 
     setComments((prev) =>
-      prev.map((comment, i) => (i === index ? editInput : comment))
+      prev.map((comment, i) => (i === index ? { ...comment, content: editInput } : comment))
     );
     setEditingIndex(null);
     setEditInput("");
