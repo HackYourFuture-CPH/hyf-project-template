@@ -1,8 +1,10 @@
 -- =================================================================
 --  Better travel Database Schema
 -- =================================================================
+DROP TABLE IF EXISTS trip_invitations CASCADE;
 
--- Drop existing tables in reverse order of dependency to avoid errors
+DROP TABLE IF EXISTS trip_collaborators CASCADE;
+
 DROP TABLE IF EXISTS user_favorites CASCADE;
 
 DROP TABLE IF EXISTS trip_itineraries CASCADE;
