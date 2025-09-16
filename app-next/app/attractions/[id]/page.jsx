@@ -122,7 +122,7 @@ export default function AttractionDetailsPage() {
             </div>
             <div className={styles.description}>{attraction.content}</div>
           </div>
-          <Comment />
+          <Comment postId={attraction.id} commentsData={attraction.comments} resource="attractions" />
         </div>
       </div>
     </>
