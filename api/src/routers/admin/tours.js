@@ -91,13 +91,22 @@ adminToursRouter.get("/:id", async (req, res) => {
       knex("tour_reviews").where("tour_id", id),
     ]);
 
+    // Helper function to properly handle image URLs
+    const processImageUrl = (url) => {
+      if (!url) return null;
+      // If it's already a complete URL (starts with http/https), return as is
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      // Otherwise, prepend the protocol and host for relative URLs
+      return `${req.protocol}://${req.get("host")}${url}`;
+    };
+
     res.json({
       message: "Tour details retrieved successfully for admin.",
       data: {
         ...tour,
-        cover_image_url: tour.cover_image_url
-          ? `${req.protocol}://${req.get("host")}${tour.cover_image_url}`
-          : null,
+        cover_image_url: processImageUrl(tour.cover_image_url),
         destinations,
         accommodations,
         flights,

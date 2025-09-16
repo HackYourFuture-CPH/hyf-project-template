@@ -20,10 +20,12 @@ export default function BlogCard({ card }) {
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
     if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    // If it's already a complete URL (starts with http/https), return as is
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
     return s;
   };
 
-  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
+  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/") && !raw.trim().startsWith("http://") && !raw.trim().startsWith("https://");
   const initial = isBackendPath ? placeholder : (normalize(raw) || placeholder);
   const [imageSrc, setImageSrc] = useState(initial);
 
@@ -44,7 +46,7 @@ export default function BlogCard({ card }) {
     return () => {
       cancelled = true;
     };
-  }, [raw]);
+  }, [raw, isBackendPath]);
   // Prepare display values
   const rawTitle = card.title ?? card.name ?? "Untitled";
   // If the title ends with a colon + hex/hash suffix (e.g. ": c4ca4238a0"), strip it

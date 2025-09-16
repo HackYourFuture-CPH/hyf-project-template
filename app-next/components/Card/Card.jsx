@@ -134,7 +134,7 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
   const placeholder = card?.id ? `https://picsum.photos/seed/tour-${card.id}/600/400` : "https://picsum.photos/600/400";
 
   // Normalize incoming image URLs:
-  // - DB-relative paths ("/images/...") -> prefix with API_URL
+  // - DB-relative paths ("/images/...") -> use local images from app-next/images
   // - known problematic external placeholders (placehold.co) -> replace with picsum seed
   // - otherwise use the raw URL
   const normalize = (src) => {
@@ -145,7 +145,12 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
       const seed = card?.id ? `tour-${card.id}` : encodeURIComponent(s);
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
-    if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    if (s.startsWith("/images/")) {
+      // Use local images from app-next/images instead of API_URL
+      return s;
+    }
+    // If it's already a complete URL (starts with http/https), return as is
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
     return s;
   };
 
@@ -154,15 +159,15 @@ export default function Card({ card, onFavoriteChange, viewLink, size = "regular
   // not have the file and Next's image optimizer will proxy & 404. Instead use the
   // placeholder initially and perform a lightweight HEAD check client-side; if the
   // file exists, switch to the backend URL.
-  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
+  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/") && !raw.trim().startsWith("http://") && !raw.trim().startsWith("https://");
   const initial = isBackendPath ? placeholder : (normalize(raw) || "/images/tours/default.jpg");
   const [imageSrc, setImageSrc] = useState(initial);
 
-  // client-side: check whether backend file exists (only for backend-relative paths)
+  // client-side: check whether local image file exists (only for local image paths)
   useEffect(() => {
     if (!isBackendPath) return;
     let cancelled = false;
-    const url = `${API_URL}${raw}`;
+    const url = raw; // Use the local path directly
     (async () => {
       try {
         const res = await fetch(url, { method: "HEAD" });

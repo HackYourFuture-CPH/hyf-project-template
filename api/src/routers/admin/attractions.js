@@ -54,9 +54,20 @@ adminAttractionsRouter.get("/", async (req, res) => {
           .where({ post_id: attraction.id })
           .limit(1); // Get only the first photo for the card
         
+        // Helper function to properly handle image URLs
+        const processImageUrl = (url) => {
+          if (!url) return null;
+          // If it's already a complete URL (starts with http/https), return as is
+          if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url;
+          }
+          // Otherwise, prepend the protocol and host for relative URLs
+          return `${req.protocol}://${req.get("host")}${url}`;
+        };
+
         const photosWithUrls = photos.map((p) => ({
           ...p,
-          image_url: `${req.protocol}://${req.get("host")}${p.image_url}`,
+          image_url: processImageUrl(p.image_url),
         }));
 
         return {
@@ -90,9 +101,21 @@ adminAttractionsRouter.get("/:id", async (req, res) => {
     }
 
     const photos = await knex("attraction_post_photos").where({ post_id: id });
+    
+    // Helper function to properly handle image URLs
+    const processImageUrl = (url) => {
+      if (!url) return null;
+      // If it's already a complete URL (starts with http/https), return as is
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      // Otherwise, prepend the protocol and host for relative URLs
+      return `${req.protocol}://${req.get("host")}${url}`;
+    };
+
     const photosWithUrls = photos.map((p) => ({
       ...p,
-      image_url: `${req.protocol}://${req.get("host")}${p.image_url}`,
+      image_url: processImageUrl(p.image_url),
     }));
 
     res.json({

@@ -123,3 +123,36 @@
     color: #d1d5db;
   }
 }
+
+/* Force Light Theme Classes */
+.forceLightWrapper {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+.forceLightWrapper:focus-within {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.forceLight .searchInput {
+  color: #111827 !important;
+}
+
+.forceLight .searchInput::placeholder {
+  color: #9ca3af !important;
+}
+
+.forceLight .searchIcon {
+  color: #6b7280 !important;
+}
+
+.forceLight .clearButton {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+}
+
+.forceLight .clearButton:hover {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}

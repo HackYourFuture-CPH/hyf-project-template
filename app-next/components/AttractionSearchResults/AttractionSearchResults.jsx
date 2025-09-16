@@ -1,4 +1,5 @@
 import styles from './AttractionSearchResults.module.css';
+import Image from 'next/image';
 
 const AttractionSearchResults = ({ 
   attractions, 
@@ -54,90 +55,69 @@ const AttractionSearchResults = ({
       </div>
       
       <div className={styles.attractionsGrid}>
-        {attractions.map((attraction) => (
-          <div key={attraction.id} className={styles.attractionCard}>
-            {/* Attraction Image */}
-            <div className={styles.attractionImageContainer}>
-              {attraction.photos && attraction.photos.length > 0 ? (
-                <img 
-                  src={attraction.photos[0].image_url} 
-                  alt={attraction.title}
-                  className={styles.attractionImage}
+        {attractions.map((a) => (
+          <div key={a.id} className={styles.attractionCard}>
+            <div className={styles.attractionImage}>
+              {a.photos && a.photos.length > 0 ? (
+                <Image
+                  src={a.photos[0].image_url}
+                  alt={`${a.title} attraction`}
+                  width={300}
+                  height={200}
+                  className={styles.attractionImageFile}
                 />
               ) : (
                 <div className={styles.attractionImagePlaceholder}>
-                  <i className="fas fa-landmark"></i>
-                  <span>No Image</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                  </svg>
                 </div>
               )}
             </div>
-            
-            <div className={styles.cardHeader}>
-              <div className={styles.attractionTitle}>
-                {attraction.title}
-              </div>
-              <div className={styles.attractionActions}>
-                <button
-                  className={styles.editButton}
-                  onClick={() => onEdit && onEdit(attraction)}
-                  title="Edit attraction"
-                >
-                  <i className="fas fa-edit"></i>
-                </button>
-                <button
-                  className={styles.deleteButton}
-                  onClick={() => onDelete && onDelete(attraction)}
-                  title="Delete attraction"
-                >
-                  <i className="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-            
-            <div className={styles.cardContent}>
-              {attraction.content && (
-                <div className={styles.attractionContent}>
-                  <i className="fas fa-align-left"></i>
-                  <span>{attraction.content.length > 150 ? `${attraction.content.substring(0, 150)}...` : attraction.content}</span>
-                </div>
-              )}
-              
+            <div className={styles.attractionInfo}>
+              <h3 className={styles.attractionName}>{a.title}</h3>
+              <p className={styles.attractionDescription}>{a.content ? (a.content.length > 80 ? `${a.content.substring(0, 80)}...` : a.content) : 'No description available'}</p>
               <div className={styles.attractionDetails}>
-                {attraction.location && (
-                  <div className={styles.attractionLocation}>
-                    <i className="fas fa-map-marker-alt"></i>
-                    <span>{attraction.location}</span>
-                  </div>
-                )}
-                
-                {attraction.type && (
-                  <div className={styles.attractionType}>
-                    <i className="fas fa-tag"></i>
-                    <span>{attraction.type}</span>
-                  </div>
-                )}
+                <div className={styles.attractionDetail}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>{a.location || 'Unknown location'}</span>
+                </div>
+                <div className={styles.attractionDetail}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                  </svg>
+                  <span>{a.type || 'Uncategorized'}</span>
+                </div>
               </div>
             </div>
-            
-            <div className={styles.cardFooter}>
-              <div className={styles.attractionMeta}>
-                <span className={styles.attractionBadge}>
-                  <i className="fas fa-landmark"></i>
-                  Attraction
-                </span>
-                {attraction.rating && (
-                  <span className={styles.attractionRating}>
-                    <i className="fas fa-star"></i>
-                    <span>{attraction.rating}/5</span>
-                  </span>
-                )}
-              </div>
-              {attraction.created_at && (
-                <div className={styles.attractionDate}>
-                  <i className="fas fa-calendar"></i>
-                  <span>{new Date(attraction.created_at).toLocaleDateString()}</span>
-                </div>
-              )}
+            <div className={styles.attractionActions}>
+              <button 
+                className={styles.editButton}
+                onClick={() => onEdit && onEdit(a)}
+                title="Edit attraction"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button 
+                className={styles.deleteButton}
+                onClick={() => onDelete && onDelete(a)}
+                title="Delete attraction"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
             </div>
           </div>
         ))}

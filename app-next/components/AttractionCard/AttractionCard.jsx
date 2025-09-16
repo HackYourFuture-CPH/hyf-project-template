@@ -18,10 +18,12 @@ export default function AttractionCard({ card }) {
       return `https://picsum.photos/seed/${seed}/600/400`;
     }
     if (s.startsWith("/images/")) return `${API_URL}${s}`;
+    // If it's already a complete URL (starts with http/https), return as is
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
     return s;
   };
 
-  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/");
+  const isBackendPath = typeof raw === "string" && raw.trim().startsWith("/images/") && !raw.trim().startsWith("http://") && !raw.trim().startsWith("https://");
   const initial = isBackendPath ? placeholder : (normalize(raw) || placeholder);
   const [imageSrc, setImageSrc] = useState(initial);
 
@@ -41,7 +43,7 @@ export default function AttractionCard({ card }) {
     return () => {
       cancelled = true;
     };
-  }, [raw]);
+  }, [raw, isBackendPath]);
 
   // sanitize title (strip trailing hash-like suffix)
   const rawTitle = card.title ?? card.name ?? "Untitled";
@@ -63,7 +65,7 @@ export default function AttractionCard({ card }) {
         <div className={styles.cardContent}>
           <h4 className={styles.cardTitle}>{title}</h4>
           <div className={styles.meta}>
-            <span>{card.location}</span>
+            <span>{title} - {card.location}</span>
           </div>
           <p className={styles.description}>{card.content}</p>
         </div>

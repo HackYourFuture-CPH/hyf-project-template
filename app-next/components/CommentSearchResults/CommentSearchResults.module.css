@@ -1,0 +1,250 @@
+.searchResultsContainer {
+  margin-bottom: 2rem;
+}
+
+.searchResultsHeader {
+  margin-bottom: 1.5rem;
+}
+
+.searchResultsHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #64748b;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #dc2626;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+}
+
+.errorIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.errorContainer h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.errorContainer p {
+  margin: 0;
+  color: #991b1b;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.emptyState p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.commentsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.commentCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.commentCard:hover {
+  border-color: #dc2626;
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+  transform: translateY(-2px);
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.commentAuthor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.authorName {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.commentDate {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.commentStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadge.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.statusBadge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.commentContent {
+  margin-bottom: 16px;
+}
+
+.commentContent p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.commentPost {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 3px solid #dc2626;
+}
+
+.postReference {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.commentActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.actionButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.approveButton {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.approveButton:hover {
+  background: #bbf7d0;
+}
+
+.unapproveButton {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.unapproveButton:hover {
+  background: #fde68a;
+}
+
+.deleteButton {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.deleteButton:hover {
+  background: #fecaca;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .commentsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .commentCard {
+    padding: 16px;
+  }
+  
+  .commentActions {
+    flex-direction: column;
+  }
+  
+  .actionButton {
+    width: 100%;
+  }
+}

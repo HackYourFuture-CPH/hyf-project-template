@@ -25,6 +25,7 @@ import adminUsersRouter from "./routers/admin/users.js";
 import adminToursRouter from "./routers/admin/tours.js";
 import adminPostsRouter from "./routers/admin/posts.js";
 import adminAttractionsRouter from "./routers/admin/attractions.js";
+import adminCommentsRouter from "./routers/admin/comments.js";
 import adminDashboardRouter from "./routers/admin/dashboard.js";
 
 const app = express();
@@ -79,6 +80,7 @@ app.use("/api/admin/users", adminUsersRouter);
 app.use("/api/admin/tours", adminToursRouter);
 app.use("/api/admin/posts", adminPostsRouter);
 app.use("/api/admin/attractions", adminAttractionsRouter);
+app.use("/api/admin/comments", adminCommentsRouter);
 app.use("/api/admin", adminDashboardRouter);
 
 // --- Global Error Handler ---
