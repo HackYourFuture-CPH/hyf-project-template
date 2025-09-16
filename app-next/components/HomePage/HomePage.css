@@ -11,3 +11,32 @@
 .sectionWrapper {
   margin-bottom: 3rem; /* or whatever spacing you want */
 }
+
+.plannerSection {
+  display: flex;
+  justify-content: center;
+}
+
+.plannerCard {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 900px;
+  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
+  text-align: center;
+}
+
+.plannerCard h2 {
+  margin-top: 0;
+}
+
+.plannerButton {
+  display: inline-block;
+  margin-top: 12px;
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}

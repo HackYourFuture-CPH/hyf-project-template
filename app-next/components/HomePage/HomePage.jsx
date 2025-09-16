@@ -1,8 +1,9 @@
 import "./HomePage.css";
 import HeroSection from "../HeroSection/HeroSection";
-import ToursSection from "../ToursSection/ToursSection"; 
+import ToursSection from "../ToursSection/ToursSection";
 import BlogPostsSection from "../BlogPostsSection/BlogPostsSection";
 import AttractionsSection from "../AttractionsSection/AttractionsSection";
+import TripPlannerSection from "../TripPlannerSection/TripPlannerSection";
 
 function HomePage() {
   return (
@@ -18,6 +19,9 @@ function HomePage() {
       </section>
       <section id="attractions" className="sectionWrapper">
         <AttractionsSection />
+      </section>
+      <section id="planner" className="sectionWrapper">
+        <TripPlannerSection />
       </section>
     </>
   );
