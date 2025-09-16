@@ -509,6 +509,18 @@
   color: white;
   box-shadow: 0 4px 12px rgba(23, 26, 31, 0.2);
   transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.statIcon svg {
+  width: 24px;
+  height: 24px;
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .statNumber {

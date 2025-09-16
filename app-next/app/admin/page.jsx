@@ -38,6 +38,7 @@ export default function AdminPage() {
   const [attractions, setAttractions] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [postComments, setPostComments] = useState([]);
+  const [bookings, setBookings] = useState([]);
 
   // Modal states for CRUD operations
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
@@ -458,6 +459,19 @@ export default function AdminPage() {
           }
         } catch (err) {
           console.debug("Reviews request error:", err.message);
+        }
+
+        // 8) All Bookings (admin endpoint)
+        try {
+          const resBookings = await fetch(`${API_URL}/api/admin/bookings`, { headers });
+          const parsed = await safeParseResponse(resBookings);
+          if (resBookings.ok && parsed.body) {
+            if (mounted) setBookings(parsed.body.data || parsed.body || []);
+          } else {
+            console.debug("Bookings fetch failed:", parsed.raw || parsed.body?.message);
+          }
+        } catch (err) {
+          console.debug("Bookings request error:", err.message);
         }
 
       } catch (err) {
@@ -1331,6 +1345,231 @@ export default function AdminPage() {
     );
   }
 
+  function renderBookings() {
+    if (!user)
+      return (
+        <div className={styles.profileCard}>
+          <p className={styles.empty}>Please log in to view bookings.</p>
+        </div>
+      );
+
+    return (
+      <div className={styles.profileCard}>
+        <div className={styles.sectionHeader}>
+          <h3>All Bookings</h3>
+          <p>Manage and view all user bookings</p>
+        </div>
+        
+        <div className={styles.cardGrid}>
+          {bookings.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>📋</div>
+              <h3>No bookings found</h3>
+              <p>User bookings will appear here</p>
+            </div>
+          ) : (
+            bookings.map((booking) => (
+              <div key={booking.booking_id} className={styles.cardWrapper}>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h4 className={styles.cardTitle}>{booking.trip_name || "Unknown Trip"}</h4>
+                    <span 
+                      className={styles.statusBadge}
+                      style={{
+                        backgroundColor: 
+                          booking.booking_status === "confirmed" ? "#10b981" :
+                          booking.booking_status === "cancelled" ? "#ef4444" : "#f59e0b",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "12px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {booking.booking_status || "pending"}
+                    </span>
+                  </div>
+                  
+                  <div className={styles.cardContent}>
+                    <div className={styles.cardMeta}>
+                      <span><strong>Type:</strong> {booking.booking_type || "tour"}</span>
+                      <span><strong>User:</strong> {booking.username || "Unknown"}</span>
+                      <span><strong>Booked:</strong> {new Date(booking.booked_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.cardActions}>
+                    <button
+                      className={styles.secondary}
+                      onClick={() => {
+                        // View booking details
+                        console.log("View booking:", booking);
+                      }}
+                    >
+                      View Details
+                    </button>
+                    <button
+                      className={styles.primary}
+                      onClick={async () => {
+                        // Update booking status
+                        try {
+                          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+                          const headers = { "Content-Type": "application/json" };
+                          if (token) headers.Authorization = `Bearer ${token}`;
+                          
+                          const newStatus = booking.booking_status === "confirmed" ? "cancelled" : "confirmed";
+                          
+                          const res = await fetch(
+                            `${API_URL}/api/admin/bookings/${booking.booking_type}/${booking.booking_id}`,
+                            {
+                              method: "PUT",
+                              headers,
+                              body: JSON.stringify({ booking_status: newStatus }),
+                            }
+                          );
+                          
+                          if (res.ok) {
+                            // Update local state
+                            setBookings(prev => 
+                              prev.map(b => 
+                                b.booking_id === booking.booking_id 
+                                  ? { ...b, booking_status: newStatus }
+                                  : b
+                              )
+                            );
+                            showSuccess(`Booking ${newStatus} successfully!`);
+                          } else {
+                            const error = await res.json().catch(() => ({ error: "Failed to update booking" }));
+                            showError(error.error || "Failed to update booking");
+                          }
+                        } catch (err) {
+                          showError("Failed to update booking");
+                        }
+                      }}
+                    >
+                      {booking.booking_status === "confirmed" ? "Cancel" : "Confirm"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function renderBookings() {
+    if (!user)
+      return (
+        <div className={styles.profileCard}>
+          <p className={styles.empty}>Please log in to view bookings.</p>
+        </div>
+      );
+
+    return (
+      <div className={styles.profileCard}>
+        <div className={styles.sectionHeader}>
+          <h3>All Bookings</h3>
+          <p>Manage all user bookings across the platform</p>
+        </div>
+        
+        <div className={styles.cardGrid}>
+          {bookings.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>📋</div>
+              <h3>No bookings found</h3>
+              <p>User bookings will appear here</p>
+            </div>
+          ) : (
+            bookings.map((booking) => (
+              <div key={booking.booking_id} className={styles.cardWrapper}>
+                <div className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h4 className={styles.cardTitle}>{booking.trip_name || "Unknown Trip"}</h4>
+                    <span 
+                      className={styles.statusBadge}
+                      style={{
+                        backgroundColor: 
+                          booking.booking_status === "confirmed" ? "#10b981" :
+                          booking.booking_status === "cancelled" ? "#ef4444" : "#f59e0b",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {booking.booking_status || "pending"}
+                    </span>
+                  </div>
+                  
+                  <div className={styles.cardContent}>
+                    <div className={styles.field}>
+                      <strong>User:</strong> {booking.username || "Unknown User"}
+                    </div>
+                    <div className={styles.field}>
+                      <strong>Type:</strong> {booking.booking_type || "tour"}
+                    </div>
+                    <div className={styles.field}>
+                      <strong>Booked:</strong> {new Date(booking.booked_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.cardActions}>
+                    <button
+                      className={styles.secondary}
+                      onClick={() => {
+                        // View booking details
+                        console.log("View booking:", booking);
+                      }}
+                    >
+                      View Details
+                    </button>
+                    <button
+                      className={styles.primary}
+                      onClick={async () => {
+                        // Update booking status
+                        try {
+                          const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+                          const headers = { "Content-Type": "application/json" };
+                          if (token) headers.Authorization = `Bearer ${token}`;
+                          
+                          const newStatus = booking.booking_status === "confirmed" ? "cancelled" : "confirmed";
+                          const res = await fetch(
+                            `${API_URL}/api/admin/bookings/${booking.booking_type}/${booking.booking_id}`,
+                            {
+                              method: "PUT",
+                              headers,
+                              body: JSON.stringify({ booking_status: newStatus }),
+                            }
+                          );
+                          
+                          if (res.ok) {
+                            // Refresh bookings
+                            const resBookings = await fetch(`${API_URL}/api/admin/bookings`, { headers });
+                            const parsed = await resBookings.json();
+                            if (resBookings.ok) {
+                              setBookings(parsed.data || parsed || []);
+                            }
+                          }
+                        } catch (err) {
+                          console.error("Failed to update booking:", err);
+                        }
+                      }}
+                    >
+                      {booking.booking_status === "confirmed" ? "Cancel" : "Confirm"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
   function renderProfile() {
     if (!user)
       return (
@@ -1776,6 +2015,21 @@ export default function AdminPage() {
               </div>
               <div
                 onClick={() => {
+                  setCurrentSection("bookings");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`${styles.navItem} ${currentSection === "bookings" ? styles.active : ""}`}
+              >
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                </div>
+                <span>Bookings</span>
+              </div>
+              <div
+                onClick={() => {
                   setCurrentSection("profile");
                   setIsMobileMenuOpen(false);
                 }}
@@ -1801,6 +2055,7 @@ export default function AdminPage() {
             {currentSection === "posts" && renderPosts()}
             {currentSection === "attractions" && renderAttractions()}
             {currentSection === "reviews" && renderReviews()}
+            {currentSection === "bookings" && renderBookings()}
             {currentSection === "profile" && renderProfile()}
           </div>
         </main>

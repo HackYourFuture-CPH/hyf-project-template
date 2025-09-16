@@ -549,6 +549,24 @@ export default function UserPage() {
     }
   }
 
+  // fetch latest bookings from server and update local state
+  async function refreshBookings() {
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(`${API_URL}/api/bookings/my-bookings`, { headers });
+      const data = await res.json().catch(() => null);
+      if (res.ok && data && data.data) {
+        setBookings(data.data);
+      } else {
+        console.error("Failed to fetch bookings:", data?.error || res.statusText);
+      }
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+    }
+  }
+
   // fetch latest favorites from server and update local state + storage
   async function refreshFavorites() {
     try {
@@ -985,7 +1003,7 @@ export default function UserPage() {
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
               </svg>
@@ -997,7 +1015,7 @@ export default function UserPage() {
           </div>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14,2 14,8 20,8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -1012,7 +1030,7 @@ export default function UserPage() {
           </div>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
             </div>
@@ -1021,6 +1039,190 @@ export default function UserPage() {
               <div className={styles.statLabel}>Favorites</div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderBookings() {
+    if (!user)
+      return (
+        <div className={styles.profileCard}>
+          <p className={styles.empty}>Please log in to view your bookings.</p>
+        </div>
+      );
+    
+    return (
+      <div className={styles.profileCard}>
+        <div className={styles.sectionHeader}>
+          <h3>My Bookings</h3>
+        </div>
+        <div className={styles.cardGrid}>
+          {(() => {
+            const visibleBookings = Array.isArray(bookings)
+              ? bookings.filter(
+                  (bb) => (bb.booking_status || bb.status || "booked") !== "cancelled"
+                )
+              : [];
+            if (visibleBookings.length === 0)
+              return <p className={styles.empty}>No bookings yet.</p>;
+            return visibleBookings.map((b) => {
+              const tourId = b.tour_id || null;
+              const matchingTour = tourId
+                ? tours.find((t) => String(t.id) === String(tourId))
+                : null;
+              if (matchingTour) {
+                // Use existing Card component for tours so the design matches exactly
+                return (
+                  <div key={`booking-tour-${b.id || tourId}`} className={styles.cardWrapper}>
+                    <Card
+                      card={matchingTour}
+                      viewLink={`/tours/${tourId}`}
+                      onFavoriteChange={() => {}}
+                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 8,
+                        marginTop: 8,
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <a
+                        href={`/tours/${tourId}`}
+                        className={styles.secondary}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View
+                      </a>
+                      <button
+                        className={styles.secondary}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          cancelBooking(b);
+                        }}
+                        disabled={
+                          !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                        }
+                      >
+                        {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                          ? "Cancelling..."
+                          : "Cancel"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Fallback visual for custom trips or missing tour rows - reuse Card styles
+              const link = b.tour_id
+                ? `/tours/${b.tour_id}`
+                : b.trip_id
+                  ? `/trips/${b.trip_id}`
+                  : `#`;
+              const title = b.trip_name || b.plan_name || b.name || "Booked item";
+              const img = b.cover_image_url || b.cover_image || null;
+              const bookedAt = b.booked_at ? new Date(b.booked_at).toLocaleString() : null;
+              const total =
+                typeof b.total_price_minor === "number"
+                  ? b.total_price_minor
+                  : b.total_price_minor || null;
+              const currency = b.currency_code || (b.price_minor ? "USD" : null);
+              const status = b.booking_status || b.status || "booked";
+
+    return (
+                <div
+                  key={b.id || `${b.tour_id || b.trip_id}-${b.booked_at || ""}`}
+                  className={styles.cardWrapper}
+                >
+      <div>
+                    <div className={cardStyles.travelCard} style={{ background: "transparent" }}>
+                      <div className={cardStyles.imageWrapper}>
+                        {img ? (
+                          // plain img for fallback cards
+                          <img
+                            src={img}
+                            alt={title}
+                            className={cardStyles.travelImage}
+                            style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                          />
+                        ) : (
+                          <div
+                            className={cardStyles.travelImage}
+                            style={{
+                              width: "100%",
+                              height: "200px",
+                              background: "linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#666",
+                              fontSize: "14px",
+                            }}
+                          >
+                            No Image
+                          </div>
+                        )}
+                      </div>
+                      <div className={cardStyles.travelContent}>
+                        <h3 className={cardStyles.travelTitle}>{title}</h3>
+                        <div className={cardStyles.travelMeta}>
+                          {bookedAt && (
+                            <span className={cardStyles.travelDate}>Booked: {bookedAt}</span>
+                          )}
+                          {total && currency && (
+                            <span className={cardStyles.travelPrice}>
+                              Total: {currency} {(total / 100).toFixed(2)}
+                            </span>
+                          )}
+                          <span
+                            className={cardStyles.travelStatus}
+                            style={{
+                              color: status === "confirmed" ? "#10b981" : status === "cancelled" ? "#ef4444" : "#f59e0b",
+                            }}
+                          >
+                            {status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 8,
+                        marginTop: 8,
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <a
+                        href={link}
+                        className={styles.secondary}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View
+                      </a>
+                      <button
+                        className={styles.secondary}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          cancelBooking(b);
+                        }}
+                        disabled={
+                          !!cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                        }
+                      >
+                        {cancelling[String(b.booking_id || b.id || b.tour_id || b.trip_id)]
+                          ? "Cancelling..."
+                          : "Cancel"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
     );
@@ -1380,8 +1582,8 @@ export default function UserPage() {
                 <span>Summary</span>
               </div>
               <div
-                onClick={() => setCurrentSection("trips")}
-                className={`${styles.navItem} ${currentSection === "trips" ? styles.active : ""}`}
+                onClick={() => setCurrentSection("bookings")}
+                className={`${styles.navItem} ${currentSection === "bookings" ? styles.active : ""}`}
               >
                 <div className={styles.navIcon}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
@@ -1436,7 +1638,7 @@ export default function UserPage() {
         <main className={styles.main}>
           <div id="dashboard-content-area" className={styles.dashboardContent}>
             {currentSection === "summary" && renderSummary()}
-            {currentSection === "trips" && renderTrips()}
+            {currentSection === "bookings" && renderBookings()}
             {currentSection === "profile" && (
               <div className={styles.profileCard}>
                 <ProfileView />
