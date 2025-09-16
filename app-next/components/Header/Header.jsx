@@ -45,7 +45,7 @@ export default function Header() {
     window.addEventListener("storage", checkAuthStatus);
     
     return () => window.removeEventListener("storage", checkAuthStatus);
-  }, []);
+  }, [pathname]);
 
   // close menu when route changes
   useEffect(() => {

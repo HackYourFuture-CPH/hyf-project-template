@@ -1,6 +1,6 @@
 "use client";
-import { Link } from "react-scroll";
-
+import { Link as ScrollLink } from "react-scroll";
+import NextLink from "next/link";
 import styles from "./Navbar.module.css";
 import { usePathname } from "next/navigation";
 
@@ -15,7 +15,7 @@ export default function Navbar() {
         <nav className={styles.nav}>
           <ul>
             <li>
-              <Link
+              <ScrollLink
                 to="home"
                 smooth={true}
                 duration={600}
@@ -25,11 +25,11 @@ export default function Navbar() {
                 spy={true}
               >
                 Home
-              </Link>
+              </ScrollLink>
             </li>
 
             <li>
-              <Link
+              <ScrollLink
                 to="trips"
                 smooth={true}
                 duration={600}
@@ -39,10 +39,10 @@ export default function Navbar() {
                 spy={true}
               >
                 Tours
-              </Link>
+              </ScrollLink>
             </li>
             <li>
-              <Link
+              <ScrollLink
                 to="blogposts"
                 smooth={true}
                 duration={600}
@@ -52,11 +52,11 @@ export default function Navbar() {
                 spy={true}
               >
                 Blog Posts
-              </Link>
+              </ScrollLink>
             </li>
 
             <li>
-              <Link
+              <ScrollLink
                 to="attractions"
                 smooth={true}
                 duration={600}
@@ -66,7 +66,38 @@ export default function Navbar() {
                 spy={true}
               >
                 Attractions
-              </Link>
+              </ScrollLink>
+            </li>
+            <li>
+              {/* Trip Planner link: scroll to planner section on the home page */}
+              <ScrollLink
+                to="planner"
+                smooth={true}
+                duration={600}
+                offset={-70}
+                activeClass={styles.active}
+                className={styles.link}
+                spy={true}
+              >
+                Trip Planner
+              </ScrollLink>
+            </li>
+          </ul>
+        </nav>
+      )}
+      {!isHome && (
+        <nav className={styles.nav}>
+          <ul>
+            {/* replicate other nav items simply as links for non-home pages */}
+            <li>
+              <NextLink href="/" className={styles.link}>
+                Home
+              </NextLink>
+            </li>
+            <li>
+              <NextLink href="/#planner" className={styles.link}>
+                Trip Planner
+              </NextLink>
             </li>
           </ul>
         </nav>

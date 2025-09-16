@@ -209,9 +209,20 @@
 .addButton {
   background: #2563eb;
   color: white;
-  padding: 8px 12px;
-  border-radius: 999px;
+  padding: 8px 14px;
+  border-radius: 8px;
   font-weight: 700;
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  transition: transform 180ms;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+}
+
+.addButton:hover {
+  transform: scale(1.05);
 }
 
 .subSection {
