@@ -1298,6 +1298,343 @@ export default function AdminPage() {
     );
   }
 
+  function renderProfile() {
+    if (!user)
+      return (
+        <div className={styles.profileCard}>
+          <p className={styles.empty}>Please log in to view profile.</p>
+        </div>
+      );
+
+    const [editing, setEditing] = useState(false);
+    const [form, setForm] = useState({
+      first_name: user?.first_name || "",
+      last_name: user?.last_name || "",
+      mobile: user?.mobile || "",
+      profile_image: user?.profile_image || "",
+    });
+    const [imagePreview, setImagePreview] = useState(user?.profile_image || "");
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState("");
+    const [changingPassword, setChangingPassword] = useState(false);
+    const [pwForm, setPwForm] = useState({
+      current_password: "",
+      new_password: "",
+      new_password_confirmation: "",
+    });
+    const [pwSubmitting, setPwSubmitting] = useState(false);
+    const [pwMessage, setPwMessage] = useState("");
+
+    useEffect(() => {
+      setForm({
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        mobile: user?.mobile || "",
+        profile_image: user?.profile_image || "",
+      });
+      setImagePreview(user?.profile_image || "");
+    }, [user]);
+
+    function onChange(e) {
+      const { name, value } = e.target;
+      setForm((f) => ({ ...f, [name]: value }));
+    }
+
+    function onPwChange(e) {
+      const { name, value } = e.target;
+      setPwForm((p) => ({ ...p, [name]: value }));
+      setPwMessage("");
+    }
+
+    async function onUploadComplete(res) {
+      try {
+        if (!res || res.length === 0) return;
+        const url = res[0].url;
+        setImagePreview(url);
+        setForm((f) => ({ ...f, profile_image: url }));
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        const payload = { profile_image: url };
+        const resp = await fetch(`${API_URL}/api/users/profile`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload),
+        });
+        if (resp.ok) {
+          const data = await resp.json().catch(() => null);
+          if (data && (data.data || data)) {
+            setUser(data.data || data);
+            // Update localStorage with new user data
+            localStorage.setItem("user", JSON.stringify(data.data || data));
+            // Dispatch custom event to notify Header component
+            window.dispatchEvent(new CustomEvent("userUpdated"));
+          }
+        }
+      } catch {
+        // silent
+      }
+    }
+
+    async function onSubmit(e) {
+      e.preventDefault();
+      setFormError("");
+      const fname = (form.first_name || "").trim();
+      const lname = (form.last_name || "").trim();
+      const mobileVal = (form.mobile || "").trim();
+      if (!fname) return setFormError("First name is required");
+      if (!lname) return setFormError("Last name is required");
+      const mobilePattern = /^\+?[\d\s\-\(\)]{10,15}$/;
+      if (!mobileVal) return setFormError("Mobile number is required");
+      if (!mobilePattern.test(mobileVal)) return setFormError("Please enter a valid mobile number");
+      setSubmitting(true);
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        const payload = { first_name: fname, last_name: lname, mobile: mobileVal };
+        if (form.profile_image && typeof form.profile_image === "string") {
+          const v = form.profile_image;
+          if (v.startsWith("http://") || v.startsWith("https://")) payload.profile_image = v;
+        }
+        const res = await fetch(`${API_URL}/api/users/profile`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(payload),
+        });
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = { message: text };
+        }
+        if (res.ok) {
+          setUser(parsed.data || parsed);
+          // Update localStorage with new user data
+          localStorage.setItem("user", JSON.stringify(parsed.data || parsed));
+          // Dispatch custom event to notify Header component
+          window.dispatchEvent(new CustomEvent("userUpdated"));
+          setEditing(false);
+        } else {
+          setFormError(parsed.message || "Failed to update profile");
+        }
+      } catch (err) {
+        setFormError("Network error. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    }
+
+    async function onSubmitPassword(e) {
+      e.preventDefault();
+      setPwMessage("");
+      const { current_password, new_password, new_password_confirmation } = pwForm;
+      if (!current_password) return setPwMessage("Current password is required");
+      if (!new_password) return setPwMessage("New password is required");
+      if (new_password.length < 6) return setPwMessage("New password must be at least 6 characters");
+      if (new_password !== new_password_confirmation) return setPwMessage("New passwords do not match");
+      setPwSubmitting(true);
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        const res = await fetch(`${API_URL}/api/users/change-password`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ current_password, new_password }),
+        });
+        const text = await res.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = { message: text };
+        }
+        if (res.ok) {
+          setPwMessage("Password updated successfully");
+          setPwForm({ current_password: "", new_password: "", new_password_confirmation: "" });
+        } else {
+          setPwMessage(parsed.message || "Failed to update password");
+        }
+      } catch (err) {
+        setPwMessage("Network error. Please try again.");
+      } finally {
+        setPwSubmitting(false);
+      }
+    }
+
+    return (
+      <div className={styles.profileCard}>
+        <h2 className={styles.dashboardTitle}>My Profile</h2>
+        
+        <div className={styles.profileRow}>
+          <div>
+            <div className={styles.avatarWrap}>
+              {imagePreview ? (
+                <Image
+                  src={imagePreview}
+                  alt="avatar"
+                  className={styles.avatar}
+                  width={120}
+                  height={120}
+                />
+              ) : (
+                <div className={styles.avatar}>
+                  {(user?.full_name || user?.first_name || user?.username || "")[0]}
+                </div>
+              )}
+            </div>
+            {editing ? (
+              <div style={{ marginTop: 12 }}>
+                <UploadButton
+                  endpoint="imageUploader"
+                  className={styles.uploadThingButton}
+                  aria-label="Upload profile photo"
+                  onClientUploadComplete={(res) => onUploadComplete(res)}
+                  onUploadError={() => {}}
+                >
+                  Upload photo
+                </UploadButton>
+              </div>
+            ) : null}
+          </div>
+
+          <div className={styles.info}>
+            {editing ? (
+              <form onSubmit={onSubmit}>
+                <div className={styles.field}>
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={form.first_name}
+                    onChange={onChange}
+                    required
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={form.last_name}
+                    onChange={onChange}
+                    required
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Mobile</label>
+                  <input
+                    type="tel"
+                    name="mobile"
+                    value={form.mobile}
+                    onChange={onChange}
+                    required
+                  />
+                </div>
+                {formError ? <div className={styles.error}>{formError}</div> : null}
+                <div className={styles.formActions}>
+                  <button type="submit" disabled={submitting} className={styles.primary}>
+                    {submitting ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className={styles.secondary}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <div className={styles.name}>
+                  {user?.full_name || `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || user?.username}
+                </div>
+                <div className={styles.field}>
+                  <strong>Email:</strong> {user?.email}
+                </div>
+                <div className={styles.field}>
+                  <strong>Mobile:</strong> {user?.mobile || "Not provided"}
+                </div>
+                <div className={styles.field}>
+                  <strong>Role:</strong> {user?.role || "user"}
+                </div>
+                <div className={styles.field}>
+                  <strong>Member since:</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : "Unknown"}
+                </div>
+                <button onClick={() => setEditing(true)} className={styles.primary}>
+                  Edit Profile
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Password Change Section */}
+        <div style={{ marginTop: 32 }}>
+          <h3 className={styles.sectionHeader}>Change Password</h3>
+          {changingPassword ? (
+            <form onSubmit={onSubmitPassword} className={styles.passwordContainer}>
+              <div className={styles.field}>
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  name="current_password"
+                  value={pwForm.current_password}
+                  onChange={onPwChange}
+                  required
+                />
+              </div>
+              <div className={styles.field}>
+                <label>New Password</label>
+                <input
+                  type="password"
+                  name="new_password"
+                  value={pwForm.new_password}
+                  onChange={onPwChange}
+                  required
+                />
+              </div>
+              <div className={styles.field}>
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  name="new_password_confirmation"
+                  value={pwForm.new_password_confirmation}
+                  onChange={onPwChange}
+                  required
+                />
+              </div>
+              {pwMessage ? (
+                <div className={pwMessage.includes("successfully") ? styles.success : styles.error}>
+                  {pwMessage}
+                </div>
+              ) : null}
+              <div className={styles.formActions}>
+                <button type="submit" disabled={pwSubmitting} className={styles.primary}>
+                  {pwSubmitting ? "Updating..." : "Update Password"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChangingPassword(false)}
+                  className={styles.secondary}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button onClick={() => setChangingPassword(true)} className={styles.secondary}>
+              Change Password
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className={styles.container}>
       <Link href="/" className={styles.backLink}>
@@ -1433,6 +1770,21 @@ export default function AdminPage() {
                 </div>
                 <span>Reviews</span>
               </div>
+              <div
+                onClick={() => {
+                  setCurrentSection("profile");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`${styles.navItem} ${currentSection === "profile" ? styles.active : ""}`}
+              >
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <span>My Profile</span>
+              </div>
             </nav>
           </div>
         </aside>
@@ -1445,6 +1797,7 @@ export default function AdminPage() {
             {currentSection === "posts" && renderPosts()}
             {currentSection === "attractions" && renderAttractions()}
             {currentSection === "reviews" && renderReviews()}
+            {currentSection === "profile" && renderProfile()}
           </div>
         </main>
       </div>

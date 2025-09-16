@@ -36,9 +36,9 @@ import adminModerationRouter from "./routers/admin/moderation.js";
 
 const app = express();
 
-// CORS configuration for frontend at localhost:3000
+// CORS configuration for frontend
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://localhost:3002"],
   credentials: true
 }));
 const PORT = process.env.PORT || 3001;

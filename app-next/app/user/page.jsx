@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { UploadButton } from "@uploadthing/react";
 import styles from "./User.module.css";
@@ -28,11 +28,225 @@ export default function UserPage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  // Image cropping states (moved to main component)
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [cropData, setCropData] = useState({ x: 0, y: 0, width: 200, height: 200 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isUploading, setIsUploading] = useState(false);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const imageRef = useRef(null);
 
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
   const [newPost, setNewPost] = useState({ title: "", category: "", content: "" });
   const [creatingPost, setCreatingPost] = useState(false);
   const [createError, setCreateError] = useState("");
+
+  // Add global mouse event listeners for smooth cropping
+  useEffect(() => {
+    if (showCropModal) {
+      const handleGlobalMouseMove = (e) => {
+        if (isDragging) {
+          handleMouseMove(e);
+        }
+      };
+      
+      const handleGlobalMouseUp = (e) => {
+        if (isDragging) {
+          handleMouseUp(e);
+        }
+      };
+      
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+      };
+    }
+  }, [showCropModal, isDragging]);
+
+  // Image cropping functions (moved to main component)
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedFile(file);
+      setShowCropModal(true);
+      // Reset crop data
+      setCropData({ x: 0, y: 0, width: 200, height: 200 });
+    }
+  }
+
+  function handleMouseDown(e) {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - cropData.x, y: e.clientY - cropData.y });
+  }
+
+  function handleMouseMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const newX = e.clientX - dragStart.x;
+    const newY = e.clientY - dragStart.y;
+    
+    setCropData(prev => ({
+      ...prev,
+      x: Math.max(0, Math.min(newX, 300 - prev.width)),
+      y: Math.max(0, Math.min(newY, 300 - prev.height))
+    }));
+  }
+
+  function handleMouseUp(e) {
+    e.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleResize(e, direction) {
+    e.stopPropagation();
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    if (direction === 'se') {
+      setCropData(prev => ({
+        ...prev,
+        width: Math.max(100, Math.min(x - prev.x, 300 - prev.x)),
+        height: Math.max(100, Math.min(y - prev.y, 300 - prev.y))
+      }));
+    }
+  }
+
+  async function cropAndUpload() {
+    if (!selectedFile || !imageRef.current || isUploading) return;
+    
+    setIsUploading(true);
+    
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      await new Promise((resolve, reject) => {
+        img.onload = () => {
+          canvas.width = 200;
+          canvas.height = 200;
+          
+          // Calculate scale
+          const scaleX = img.width / 300;
+          const scaleY = img.height / 300;
+          
+          // Draw cropped image
+          ctx.drawImage(
+            img,
+            cropData.x * scaleX,
+            cropData.y * scaleY,
+            cropData.width * scaleX,
+            cropData.height * scaleY,
+            0, 0, 200, 200
+          );
+          
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = URL.createObjectURL(selectedFile);
+      });
+      
+      // Convert to blob
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, 'image/jpeg', 0.9);
+      });
+      
+      // Create a File object from the blob
+      const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+      
+      // Store the file for upload
+      setCroppedFile(file);
+      
+      // Store the file and trigger upload via hidden button
+      setCroppedFile(file);
+      
+      // Trigger the hidden upload button
+      setTimeout(() => {
+        const hiddenUpload = document.querySelector('[data-uploadthing-crop]');
+        if (hiddenUpload) {
+          // Find the file input inside the upload button
+          const fileInput = hiddenUpload.querySelector('input[type="file"]');
+          if (fileInput) {
+            // Create a data transfer and set files
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+          } else {
+            console.error('File input not found in upload button');
+            handleCropUploadError(new Error('File input not found'));
+          }
+        } else {
+          console.error('Hidden upload button not found');
+          handleCropUploadError(new Error('Upload button not found'));
+        }
+      }, 100);
+      
+    } catch (error) {
+      console.error('Crop error:', error);
+      alert('Error cropping image. Please try again.');
+      setIsUploading(false);
+    }
+  }
+
+  // Handle upload completion
+  async function handleCropUploadComplete(res) {
+    if (res && res.length > 0) {
+      const imageUrl = res[0].url;
+      
+      try {
+        // Update profile
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        
+        const profileResponse = await fetch(`${API_URL}/api/users/profile`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ profile_image: imageUrl }),
+        });
+        
+        if (!profileResponse.ok) {
+          throw new Error(`Profile update failed: ${profileResponse.status}`);
+        }
+        
+        const profileData = await profileResponse.json().catch(() => null);
+        if (profileData && (profileData.data || profileData)) {
+          const updatedUser = profileData.data || profileData;
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          window.dispatchEvent(new CustomEvent("userUpdated"));
+        }
+        
+        // Close modal
+        setShowCropModal(false);
+        setSelectedFile(null);
+        setCroppedFile(null);
+        
+      } catch (error) {
+        console.error('Profile update error:', error);
+        alert('Error updating profile. Please try again.');
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  }
+
+  function handleCropUploadError(error) {
+    console.error('Upload error:', error);
+    alert('Error uploading image. Please try again.');
+    setIsUploading(false);
+  }
 
   // helper to safely parse JSON or return text
   async function safeParseResponse(res) {
@@ -455,7 +669,13 @@ export default function UserPage() {
         });
         if (resp.ok) {
           const data = await resp.json().catch(() => null);
-          if (data && (data.data || data)) setUser(data.data || data);
+          if (data && (data.data || data)) {
+            setUser(data.data || data);
+            // Update localStorage with new user data
+            localStorage.setItem("user", JSON.stringify(data.data || data));
+            // Dispatch custom event to notify Header component
+            window.dispatchEvent(new CustomEvent("userUpdated"));
+          }
         }
       } catch {
         // silent
@@ -497,6 +717,10 @@ export default function UserPage() {
         }
         if (res.ok) {
           setUser(parsed.data || parsed);
+          // Update localStorage with new user data
+          localStorage.setItem("user", JSON.stringify(parsed.data || parsed));
+          // Dispatch custom event to notify Header component
+          window.dispatchEvent(new CustomEvent("userUpdated"));
           setEditing(false);
         } else {
           const details = parsed.details || parsed.errors || null;
@@ -586,15 +810,30 @@ export default function UserPage() {
           </div>
           {editing ? (
             <div style={{ marginTop: 12 }}>
-              <UploadButton
-                endpoint="imageUploader"
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
                 className={styles.uploadThingButton}
-                aria-label="Upload profile photo"
-                onClientUploadComplete={(res) => onUploadComplete(res)}
-                onUploadError={() => {}}
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
               >
-                Upload photo
-              </UploadButton>
+                Choose Photo
+              </button>
             </div>
           ) : null}
         </div>
@@ -728,12 +967,9 @@ export default function UserPage() {
           <p className={styles.empty}>Please log in to see your dashboard summary.</p>
         </div>
       );
-    const myTrips = tours.filter(
-      (t) => t.owner_id === user.id || t.owner_id === user.sub || t.owner_id === user.user_id
-    );
-    const upcomingTrips = myTrips.filter(
-      (t) => t.start_date && new Date(t.start_date) >= new Date()
-    );
+    const myBookings = Array.isArray(bookings) ? bookings.filter(
+      (b) => (b.booking_status || b.status || "booked") !== "cancelled"
+    ) : [];
     const myPosts = posts.filter((p) => p.user_id === user.id || p.user_id === user.user_id);
     const myFavorites = favorites.filter(
       (f) => f.user_id === user.id || f.user_id === user.user_id || f.userId === user.id
@@ -745,21 +981,38 @@ export default function UserPage() {
         </h2>
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>✈️</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </div>
             <div>
-              <div className={styles.statNumber}>{upcomingTrips.length}</div>
-              <div className={styles.statLabel}>Upcoming Trips</div>
+              <div className={styles.statNumber}>{myBookings.length}</div>
+              <div className={styles.statLabel}>My Bookings</div>
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>📰</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14,2 14,8 20,8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10,9 9,9 8,9"></polyline>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{myPosts.length}</div>
-              <div className={styles.statLabel}>Total Posts</div>
+              <div className={styles.statLabel}>My Posts</div>
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>❤️</div>
+            <div className={styles.statIcon}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </div>
             <div>
               <div className={styles.statNumber}>{myFavorites.length}</div>
               <div className={styles.statLabel}>Favorites</div>
@@ -774,20 +1027,15 @@ export default function UserPage() {
     if (!user)
       return (
         <div className={styles.profileCard}>
-          <p className={styles.empty}>Please log in to view trips.</p>
+          <p className={styles.empty}>Please log in to view your bookings.</p>
         </div>
       );
-    const myTrips = tours.filter(
-      (t) => t.owner_id === user.id || t.owner_id === user.sub || t.owner_id === user.user_id
-    );
-    const upcoming = myTrips.filter((t) => t.start_date && new Date(t.start_date) >= new Date());
-    const past = myTrips.filter((t) => t.start_date && new Date(t.start_date) < new Date());
+    
     return (
-      <div>
-        <div className={styles.sectionHeader} style={{ marginBottom: 12 }}>
+      <div className={styles.profileCard}>
+        <div className={styles.sectionHeader}>
           <h3>My Bookings</h3>
         </div>
-        <div className={styles.subSection} style={{ marginBottom: 20 }}>
           <div className={styles.cardGrid}>
             {(() => {
               const visibleBookings = Array.isArray(bookings)
@@ -930,45 +1178,6 @@ export default function UserPage() {
                 );
               });
             })()}
-          </div>
-        </div>
-        <div className={styles.sectionHeader}>
-          <h3>My Trips</h3>
-          <button className={styles.addButton}>+ Add New Trip</button>
-        </div>
-        <div className={styles.subSection}>
-          <h4>Upcoming Trips</h4>
-          <div className={styles.cardGrid}>
-            {upcoming.length === 0 ? (
-              <p className={styles.empty}>No upcoming trips.</p>
-            ) : (
-              upcoming.map((t) => (
-                <div key={t.id} className={styles.card}>
-                  <div className={styles.cardTitle}>{t.name}</div>
-                  <div className={styles.cardMeta}>
-                    {t.duration_days} days • {t.destination}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-        <div className={styles.subSection}>
-          <h4>Past Trips</h4>
-          <div className={styles.cardGrid}>
-            {past.length === 0 ? (
-              <p className={styles.empty}>No past trips.</p>
-            ) : (
-              past.map((t) => (
-                <div key={t.id} className={styles.card}>
-                  <div className={styles.cardTitle}>{t.name}</div>
-                  <div className={styles.cardMeta}>
-                    {t.duration_days} days • {t.destination}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
         </div>
       </div>
     );
@@ -978,7 +1187,7 @@ export default function UserPage() {
     if (!user)
       return (
         <div className={styles.profileCard}>
-          <p className={styles.empty}>Sign in to see your posts.</p>
+          <p className={styles.empty}>Please log in to see your posts.</p>
         </div>
       );
     const myPosts = posts.filter((p) => p.user_id === user.id || p.user_id === user.user_id);
@@ -986,9 +1195,8 @@ export default function UserPage() {
       <div className={styles.profileCard}>
         <div className={styles.sectionHeader}>
           <h3>My Posts</h3>
-          <div>
             <button
-              className={styles.primary}
+            className={styles.addButton}
               onClick={() => {
                 setCreateError("");
                 setNewPost({ title: "", category: "", content: "" });
@@ -997,7 +1205,6 @@ export default function UserPage() {
             >
               + Create Post
             </button>
-          </div>
         </div>
         {myPosts.length === 0 && <p className={styles.empty}>No posts yet.</p>}
         <div className={styles.cardGrid}>
@@ -1078,14 +1285,16 @@ export default function UserPage() {
     if (!user)
       return (
         <div className={styles.profileCard}>
-          <p className={styles.empty}>Sign in to see favorites.</p>
+          <p className={styles.empty}>Please log in to see your favorites.</p>
         </div>
       );
     return (
       <div className={styles.profileCard}>
-        <h3>Favorites</h3>
+        <div className={styles.sectionHeader}>
+          <h3>My Favorites</h3>
+        </div>
 
-        <section style={{ marginBottom: 20 }}>
+        <div className={styles.subSection}>
           <h4>Favorite Tours</h4>
           {!Array.isArray(favoriteTours) || favoriteTours.length === 0 ? (
             <p className={styles.empty}>No favorite tours yet.</p>
@@ -1102,9 +1311,9 @@ export default function UserPage() {
               ))}
             </div>
           )}
-        </section>
+        </div>
 
-        <section style={{ marginBottom: 20 }}>
+        <div className={styles.subSection}>
           <h4>Favorite Posts</h4>
           {!Array.isArray(favoritePosts) || favoritePosts.length === 0 ? (
             <p className={styles.empty}>No favorite posts yet.</p>
@@ -1120,9 +1329,9 @@ export default function UserPage() {
               ))}
             </div>
           )}
-        </section>
+        </div>
 
-        <section style={{ marginBottom: 20 }}>
+        <div className={styles.subSection}>
           <h4>Favorite Attractions</h4>
           {!Array.isArray(favoriteAttractions) || favoriteAttractions.length === 0 ? (
             <p className={styles.empty}>No favorite attractions yet.</p>
@@ -1138,7 +1347,7 @@ export default function UserPage() {
               ))}
             </div>
           )}
-        </section>
+        </div>
       </div>
     );
   }
@@ -1157,35 +1366,64 @@ export default function UserPage() {
                 onClick={() => setCurrentSection("summary")}
                 className={`${styles.navItem} ${currentSection === "summary" ? styles.active : ""}`}
               >
-                <i className={`fas fa-home ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </div>
                 <span>Summary</span>
               </div>
               <div
                 onClick={() => setCurrentSection("trips")}
                 className={`${styles.navItem} ${currentSection === "trips" ? styles.active : ""}`}
               >
-                <i className={`fas fa-plane-departure ${styles.navIcon}`} aria-hidden />
-                <span>Trips</span>
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                </div>
+                <span>My Bookings</span>
               </div>
               <div
                 onClick={() => setCurrentSection("posts")}
                 className={`${styles.navItem} ${currentSection === "posts" ? styles.active : ""}`}
               >
-                <i className={`fas fa-newspaper ${styles.navIcon}`} aria-hidden />
-                <span>Blog Posts</span>
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14,2 14,8 20,8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10,9 9,9 8,9"></polyline>
+                  </svg>
+                </div>
+                <span>My Posts</span>
               </div>
               <div
                 onClick={() => setCurrentSection("favorites")}
                 className={`${styles.navItem} ${currentSection === "favorites" ? styles.active : ""}`}
               >
-                <i className={`fas fa-heart ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </div>
                 <span>Favorites</span>
               </div>
               <div
                 onClick={() => setCurrentSection("profile")}
                 className={`${styles.navItem} ${currentSection === "profile" ? styles.active : ""}`}
               >
-                <i className={`fas fa-user-edit ${styles.navIcon}`} aria-hidden />
+                <div className={styles.navIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
                 <span>My Profile</span>
               </div>
             </nav>
@@ -1364,6 +1602,132 @@ export default function UserPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      
+
+      {/* Crop Modal */}
+      {showCropModal && selectedFile && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '500px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
+              Crop Your Photo
+            </h3>
+            
+            <div style={{
+              position: 'relative',
+              width: '300px',
+              height: '300px',
+              margin: '0 auto 16px',
+              border: '2px solid #e5e7eb',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <img
+                ref={imageRef}
+                src={URL.createObjectURL(selectedFile)}
+                alt="Preview"
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  userSelect: 'none',
+                  pointerEvents: 'none'
+                }}
+                draggable={false}
+              />
+              
+              {/* Crop overlay */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: cropData.x,
+                  top: cropData.y,
+                  width: cropData.width,
+                  height: cropData.height,
+                  border: '2px solid #2563eb',
+                  backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                  cursor: isDragging ? 'grabbing' : 'grab',
+                  userSelect: 'none'
+                }}
+                onMouseDown={handleMouseDown}
+              >
+                {/* Resize handle */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '-4px',
+                    right: '-4px',
+                    width: '12px',
+                    height: '12px',
+                    backgroundColor: '#2563eb',
+                    border: '2px solid white',
+                    borderRadius: '50%',
+                    cursor: 'se-resize'
+                  }}
+                  onMouseDown={(e) => handleResize(e, 'se')}
+                />
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setShowCropModal(false);
+                  setSelectedFile(null);
+                }}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  background: 'white',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={cropAndUpload}
+                disabled={isUploading}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  background: isUploading ? '#9ca3af' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white',
+                  cursor: isUploading ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: isUploading ? 0.7 : 1
+                }}
+              >
+                {isUploading ? 'Uploading...' : 'Crop & Upload'}
+              </button>
+            </div>
           </div>
         </div>
       )}

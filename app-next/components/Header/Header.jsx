@@ -13,6 +13,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
 
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), []);
@@ -26,16 +27,20 @@ export default function Header() {
         
         if (token && userData) {
           const parsedUser = JSON.parse(userData);
+          console.log("Header - User data:", parsedUser);
+          console.log("Header - Profile image:", parsedUser.profile_image);
           setUser(parsedUser);
           setIsLoggedIn(true);
         } else {
           setUser(null);
           setIsLoggedIn(false);
         }
+        setIsLoading(false);
       } catch (error) {
         console.warn("Error checking auth status:", error);
         setUser(null);
         setIsLoggedIn(false);
+        setIsLoading(false);
       }
     };
 
@@ -44,7 +49,16 @@ export default function Header() {
     // Listen for storage changes (e.g., when user logs out in another tab)
     window.addEventListener("storage", checkAuthStatus);
     
-    return () => window.removeEventListener("storage", checkAuthStatus);
+    // Listen for custom events when localStorage is updated in the same tab
+    const handleUserUpdate = () => {
+      checkAuthStatus();
+    };
+    window.addEventListener("userUpdated", handleUserUpdate);
+    
+    return () => {
+      window.removeEventListener("storage", checkAuthStatus);
+      window.removeEventListener("userUpdated", handleUserUpdate);
+    };
   }, []);
 
   // close menu when route changes
@@ -89,7 +103,11 @@ export default function Header() {
         </div>
         <div className={styles.desktopNav}>
           <Navbar />
-          {!isLoggedIn ? (
+          {isLoading ? (
+            <div className={styles.login} style={{ opacity: 0 }}>
+              <span>Loading...</span>
+            </div>
+          ) : !isLoggedIn ? (
             <Link href="/login" className={styles.login} aria-label="Login">
               <span>Login</span>
             </Link>
@@ -97,18 +115,44 @@ export default function Header() {
             <div className={styles.userMenu}>
               <div className={styles.userAvatar}>
                 {user?.profile_image ? (
-                  <Image
-                    src={user.profile_image}
-                    alt={`${user?.first_name || "User"} profile`}
-                    width={32}
-                    height={32}
-                    className={styles.avatarImage}
-                  />
-                ) : (
-                  <div className={styles.avatarPlaceholder}>
-                    {(user?.first_name || user?.username || "U")[0].toUpperCase()}
-                  </div>
-                )}
+                  <>
+                    <img
+                      src={user.profile_image}
+                      alt={`${user?.first_name || "User"} profile`}
+                      width={32}
+                      height={32}
+                      className={styles.avatarImage}
+                      onLoad={() => {
+                        console.log("✅ Image loaded successfully:", user.profile_image);
+                      }}
+                      onError={(e) => {
+                        console.log("❌ Image failed to load:", user.profile_image);
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    {/* Fallback test image */}
+                    <img
+                      src="https://via.placeholder.com/32x32/2563eb/ffffff?text=A"
+                      alt="Test"
+                      width={32}
+                      height={32}
+                      className={styles.avatarImage}
+                      style={{ display: 'none' }}
+                      onLoad={(e) => {
+                        console.log("✅ Test image loaded");
+                        e.target.style.display = 'block';
+                        e.target.previousSibling.style.display = 'none';
+                      }}
+                    />
+                  </>
+                ) : null}
+                <div 
+                  className={styles.avatarPlaceholder}
+                  style={{ display: user?.profile_image ? 'none' : 'flex' }}
+                >
+                  {(user?.first_name || user?.username || "U")[0].toUpperCase()}
+                </div>
               </div>
               <div className={styles.userActions}>
                 <Link href={user?.role === "admin" ? "/admin" : "/user"} className={styles.dashboardLink} aria-label={user?.role === "admin" ? "Admin Dashboard" : "User Dashboard"}>
@@ -142,7 +186,11 @@ export default function Header() {
           </div>
           <BurgerMenu open={menuOpen}>
             <Navbar />
-            {!isLoggedIn ? (
+            {isLoading ? (
+              <div className={styles.login} style={{ opacity: 0 }}>
+                <span>Loading...</span>
+              </div>
+            ) : !isLoggedIn ? (
               <Link href="/login" className={styles.login}>
                 <span>Login</span>
               </Link>
@@ -150,18 +198,24 @@ export default function Header() {
               <div className={styles.mobileUserMenu}>
                 <div className={styles.mobileUserAvatar}>
                   {user?.profile_image ? (
-                    <Image
+                    <img
                       src={user.profile_image}
                       alt={`${user?.first_name || "User"} profile`}
                       width={40}
                       height={40}
                       className={styles.mobileAvatarImage}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
                     />
-                  ) : (
-                    <div className={styles.mobileAvatarPlaceholder}>
+                  ) : null}
+                  <div 
+                    className={styles.mobileAvatarPlaceholder}
+                    style={{ display: user?.profile_image ? 'none' : 'flex' }}
+                  >
                       {(user?.first_name || user?.username || "U")[0].toUpperCase()}
                     </div>
-                  )}
                 </div>
                 <Link href={user?.role === "admin" ? "/admin" : "/user"} className={styles.mobileDashboardLink}>
                   <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -100,6 +100,15 @@ export default function Login() {
           console.warn("Failed to persist token to localStorage", e);
         }
       }
+      
+      // Store user data including role for redirect logic
+      if (parsed.body?.user) {
+        try {
+          localStorage.setItem("user", JSON.stringify(parsed.body.user));
+        } catch (e) {
+          console.warn("Failed to persist user data to localStorage", e);
+        }
+      }
 
       // try to reset the submitted form (both direct event target and form ref)
       try {

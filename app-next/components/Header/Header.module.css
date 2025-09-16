@@ -156,6 +156,12 @@
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  display: block !important;
+  background: #f0f0f0;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .avatarImage:hover {
@@ -251,6 +257,10 @@
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  display: block !important;
+  background: #f0f0f0;
+  width: 40px !important;
+  height: 40px !important;
 }
 
 .mobileAvatarImage:hover {

@@ -225,6 +225,7 @@ router.post("/login", validateRequest(loginSchema), async (req, res) => {
         email: user.email,
         username: user.username,
         mobile: user.mobile,
+        profile_image: user.profile_image,
         full_name: `${user.first_name} ${user.last_name}`,
         role: user.role,
         is_active: user.is_active,
