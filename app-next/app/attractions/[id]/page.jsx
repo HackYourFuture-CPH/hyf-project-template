@@ -36,7 +36,13 @@ export default function AttractionDetailsPage() {
 
   useEffect(() => {
     if (!attraction) return;
-    const raw = attraction.cover_image_url || attraction.image_url || "";
+    // Prefer the same photo used by the card components when available
+    const photoUrl =
+      attraction.photos && attraction.photos.length > 0 && attraction.photos[0].image_url
+        ? attraction.photos[0].image_url
+        : null;
+
+    const raw = photoUrl || attraction.cover_image_url || attraction.image_url || "";
     const placeholder = attraction?.id
       ? `https://picsum.photos/seed/attraction-${attraction.id}/1200/800`
       : "/images/attractions/default.jpg";
@@ -48,7 +54,7 @@ export default function AttractionDetailsPage() {
         const seed = attraction?.id ? `attraction-${attraction.id}` : encodeURIComponent(t);
         return `https://picsum.photos/seed/${seed}/1200/800`;
       }
-      if (t.startsWith("/images/")) return null;
+      if (t.startsWith("/images/")) return null; // backend-relative path — HEAD-check below
       return t;
     };
 
@@ -58,6 +64,7 @@ export default function AttractionDetailsPage() {
       return;
     }
 
+    // Backend-relative or empty: use placeholder then attempt HEAD request for backend assets
     setImageSrc(placeholder);
     if (raw && raw.startsWith("/images/")) {
       let cancelled = false;

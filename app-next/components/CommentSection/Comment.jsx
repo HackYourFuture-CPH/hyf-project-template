@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Comment.module.css";
 
 export default function Comment({ postId, commentsData = [], resource = "blogposts" }) {
@@ -9,8 +9,14 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
   const [editInput, setEditInput] = useState("");
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-  const token =
-        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    // if token is missing, start auto-redirect countdown when user attempts actions
+    if (!token) return;
+    setRedirecting(false);
+  }, [token]);
 
   const handleDelete = async (commentId) => {
   try {
@@ -42,6 +48,12 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
   // 🔹 Add new comment
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!token) {
+      // Not logged in: start redirect
+      setRedirecting(true);
+      setTimeout(() => (window.location.href = "/login"), 3000);
+      return;
+    }
     if (input.trim() === "") return;
 
     try {
@@ -93,14 +105,33 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
         <h3>Comments</h3>
         <h4>Leave a Reply</h4>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <textarea
-            placeholder="Write your comment..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button type="submit" className={styles.postBtn}>Post Comment</button>
-        </form>
+        {!token ? (
+          <div className={styles.loginNotice}>
+            <p>You must be logged in to comment.</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <a href="/login" className={styles.primary}>Go to login</a>
+              <button
+                className={styles.secondary}
+                onClick={() => {
+                  setRedirecting(true);
+                  setTimeout(() => (window.location.href = "/login"), 3000);
+                }}
+              >
+                Redirect me
+              </button>
+            </div>
+            {redirecting ? <div className={styles.small}>Redirecting to login...</div> : null}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <textarea
+              placeholder="Write your comment..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button type="submit" className={styles.postBtn}>Post Comment</button>
+          </form>
+        )}
 
         <ul className={styles.commentList}>
           {comments.map((comment, index) => (
