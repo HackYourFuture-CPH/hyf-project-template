@@ -14,7 +14,7 @@ export default function AttractionDetailsPage() {
   const [derivedAvatar, setDerivedAvatar] = useState(null);
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-  const [imageSrc, setImageSrc] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null); 
 
   // Fetch a single blog post from the API and set local state
   async function fetchSingleBlog() {
