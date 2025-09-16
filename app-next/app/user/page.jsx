@@ -164,92 +164,74 @@ export default function UserPage() {
         canvas.toBlob(resolve, 'image/jpeg', 0.9);
       });
       
-      // Create a File object from the blob
-      const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+      if (!blob) {
+        throw new Error('Failed to create image blob');
+      }
       
-      // Store the file for upload
-      setCroppedFile(file);
+      // Create FormData for direct upload
+      const formData = new FormData();
+      formData.append('files', blob, 'profile.jpg');
+      formData.append('endpoint', 'imageUploader');
       
-      // Store the file and trigger upload via hidden button
-      setCroppedFile(file);
+      // Upload directly to uploadthing
+      const uploadResponse = await fetch('/api/uploadthing', {
+        method: 'POST',
+        body: formData,
+      });
       
-      // Trigger the hidden upload button
-      setTimeout(() => {
-        const hiddenUpload = document.querySelector('[data-uploadthing-crop]');
-        if (hiddenUpload) {
-          // Find the file input inside the upload button
-          const fileInput = hiddenUpload.querySelector('input[type="file"]');
-          if (fileInput) {
-            // Create a data transfer and set files
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-          } else {
-            console.error('File input not found in upload button');
-            handleCropUploadError(new Error('File input not found'));
-          }
-        } else {
-          console.error('Hidden upload button not found');
-          handleCropUploadError(new Error('Upload button not found'));
-        }
-      }, 100);
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(`Upload failed: ${errorText}`);
+      }
+      
+      const uploadResult = await uploadResponse.json();
+      
+      if (!uploadResult || !uploadResult[0] || !uploadResult[0].url) {
+        throw new Error('Invalid upload response');
+      }
+      
+      const imageUrl = uploadResult[0].url;
+      
+      // Update profile with new image
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      
+      const profileResponse = await fetch(`${API_URL}/api/users/profile`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ profile_image: imageUrl }),
+      });
+      
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        const updatedUser = profileData.data || profileData;
+        
+        // Update user state and localStorage
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        
+        // Dispatch custom event to update header
+        window.dispatchEvent(new CustomEvent("userUpdated"));
+        
+        // Close crop modal
+        setShowCropModal(false);
+        setSelectedFile(null);
+        setCropData({ x: 50, y: 50, width: 200, height: 200 });
+        
+        alert('Profile image updated successfully!');
+      } else {
+        throw new Error('Failed to update profile');
+      }
       
     } catch (error) {
-      console.error('Crop error:', error);
-      alert('Error cropping image. Please try again.');
+      console.error('Crop and upload error:', error);
+      alert(`Error uploading image: ${error.message}`);
+    } finally {
       setIsUploading(false);
     }
   }
 
-  // Handle upload completion
-  async function handleCropUploadComplete(res) {
-    if (res && res.length > 0) {
-      const imageUrl = res[0].url;
-      
-      try {
-        // Update profile
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const headers = { "Content-Type": "application/json" };
-        if (token) headers.Authorization = `Bearer ${token}`;
-        
-        const profileResponse = await fetch(`${API_URL}/api/users/profile`, {
-          method: "PUT",
-          headers,
-          body: JSON.stringify({ profile_image: imageUrl }),
-        });
-        
-        if (!profileResponse.ok) {
-          throw new Error(`Profile update failed: ${profileResponse.status}`);
-        }
-        
-        const profileData = await profileResponse.json().catch(() => null);
-        if (profileData && (profileData.data || profileData)) {
-          const updatedUser = profileData.data || profileData;
-          setUser(updatedUser);
-          localStorage.setItem("user", JSON.stringify(updatedUser));
-          window.dispatchEvent(new CustomEvent("userUpdated"));
-        }
-        
-        // Close modal
-        setShowCropModal(false);
-        setSelectedFile(null);
-        setCroppedFile(null);
-        
-      } catch (error) {
-        console.error('Profile update error:', error);
-        alert('Error updating profile. Please try again.');
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  }
-
-  function handleCropUploadError(error) {
-    console.error('Upload error:', error);
-    alert('Error uploading image. Please try again.');
-    setIsUploading(false);
-  }
 
   // helper to safely parse JSON or return text
   async function safeParseResponse(res) {
