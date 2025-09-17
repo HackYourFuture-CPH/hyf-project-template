@@ -1,0 +1,52 @@
+.flightRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.flightRow:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.flightRow.selected {
+    border-color: #2583f1;
+    box-shadow: 0 0 0 3px rgba(37, 131, 241, 0.2);
+}
+
+.airlineInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.airlineName {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.flightDetails {
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.priceInfo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.selectButton {
+    width: auto !important;
+    padding: 10px 18px !important;
+}

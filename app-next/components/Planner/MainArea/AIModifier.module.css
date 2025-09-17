@@ -1,0 +1,21 @@
+.aiModifier {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+}
+
+.aiModifier input {
+    flex-grow: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: "Archivo", sans-serif;
+}
+
+.aiModifier button {
+    width: auto;
+    flex-shrink: 0;
+}

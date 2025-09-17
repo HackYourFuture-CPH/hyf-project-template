@@ -1,0 +1,48 @@
+.plannerLayout {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    padding-top: 100px;
+    box-sizing: border-box;
+}
+
+.createFormLayout {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.plannerContent {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    margin-top: 2rem;
+    align-items: flex-start;
+}
+
+.sidebarContainer {
+    width: 350px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+}
+
+.mainAreaContainer {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+}
+
+@media (max-width: 960px) {
+    .plannerContent {
+        flex-wrap: wrap;
+        flex-direction: column;
+    }
+
+    .sidebarContainer {
+        width: 100%;
+        position: static;
+        top: auto;
+    }
+}
