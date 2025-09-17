@@ -1,100 +1,56 @@
 "use client";
-import { Link as ScrollLink } from "react-scroll";
+import { Link as ScrollLink, scroller } from "react-scroll";
 import NextLink from "next/link";
 import styles from "./Navbar.module.css";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const path = usePathname();
+  const router = useRouter();
 
   const isHome = path === "/";
 
+  const items = [
+    { id: "home", label: "Home" },
+    { id: "trips", label: "Tours" },
+    { id: "blogposts", label: "Blog Posts" },
+    { id: "attractions", label: "Attractions" },
+    { id: "planner", label: "Trip Planner" },
+  ];
+
+  const handleClick = (e, id) => {
+    // allow default modifier-key behavior
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (isHome) {
+      scroller.scrollTo(id, {
+        duration: 600,
+        smooth: true,
+        offset: -70,
+      });
+    } else {
+      // navigate to root with hash; once there the browser will land on the anchor
+      router.push(`/#${id}`);
+    }
+  };
+
   return (
-    <>
-      {isHome && (
-        <nav className={styles.nav}>
-          <ul>
-            <li>
-              <ScrollLink
-                to="home"
-                smooth={true}
-                duration={600}
-                offset={-70}
-                activeClass={styles.active}
-                className={styles.link}
-                spy={true}
-              >
-                Home
-              </ScrollLink>
-            </li>
-
-            <li>
-              <ScrollLink
-                to="trips"
-                smooth={true}
-                duration={600}
-                offset={-70}
-                activeClass={styles.active}
-                className={styles.link}
-                spy={true}
-              >
-                Tours
-              </ScrollLink>
-            </li>
-            <li>
-              <ScrollLink
-                to="blogposts"
-                smooth={true}
-                duration={600}
-                offset={-70}
-                activeClass={styles.active}
-                className={styles.link}
-                spy={true}
-              >
-                Blog Posts
-              </ScrollLink>
-            </li>
-
-            <li>
-              <ScrollLink
-                to="attractions"
-                smooth={true}
-                duration={600}
-                offset={-70}
-                activeClass={styles.active}
-                className={styles.link}
-                spy={true}
-              >
-                Attractions
-              </ScrollLink>
-            </li>
-            <li>
-              <ScrollLink
-                to="planner"
-                smooth={true}
-                duration={600}
-                offset={-70}
-                activeClass={styles.active}
-                className={styles.link}
-                spy={true}
-              >
-                Trip Planner
-              </ScrollLink>
-            </li>
-          </ul>
-        </nav>
-      )}
-      {!isHome && (
-        <nav className={styles.nav}>
-          <ul>
-            <li>
-              <NextLink href="/" className={styles.link}>
-                Home
-              </NextLink>
-            </li>
-          </ul>
-        </nav>
-      )}
-    </>
+    <nav className={styles.nav}>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            {/* Always render an anchor-like element so right-click/open in new tab works */}
+            <a
+              href={`/#${item.id}`}
+              className={styles.link}
+              onClick={(e) => handleClick(e, item.id)}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }

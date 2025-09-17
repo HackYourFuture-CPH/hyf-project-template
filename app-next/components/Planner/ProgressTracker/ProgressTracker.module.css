@@ -5,7 +5,7 @@
     border-radius: 12px;
     padding: 0.5rem;
     background: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .progressStep {
@@ -54,4 +54,11 @@
     color: #2583f1;
     margin-left: 8px;
     font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .progressTracker {
+        flex-direction: column;
+        padding: 16px;
+    }
 }
