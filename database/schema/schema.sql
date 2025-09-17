@@ -1,13 +1,21 @@
 -- =================================================================
 --  Better travel Database Schema
 -- =================================================================
+DROP TABLE IF EXISTS trip_votes CASCADE;
+
+DROP TABLE IF EXISTS trip_shortlist_items CASCADE;
+
+DROP TABLE IF EXISTS trip_itineraries CASCADE;
+
+DROP TABLE IF EXISTS trip_chat_messages CASCADE;
+
+DROP TABLE IF EXISTS trip_preferences CASCADE;
+
 DROP TABLE IF EXISTS trip_invitations CASCADE;
 
 DROP TABLE IF EXISTS trip_collaborators CASCADE;
 
 DROP TABLE IF EXISTS user_favorites CASCADE;
-
-DROP TABLE IF EXISTS trip_itineraries CASCADE;
 
 DROP TABLE IF EXISTS ai_requests CASCADE;
 
@@ -96,6 +104,8 @@ CREATE TABLE travel_plans (
     plan_type VARCHAR(20) NOT NULL CHECK (plan_type IN ('user', 'tour')),
     rating NUMERIC(3, 2) DEFAULT 0.00,
     rating_count INTEGER DEFAULT 0,
+    selected_accommodation_id UUID,
+    selected_flight_id UUID,
     created_at TIMESTAMP
     WITH
         TIME ZONE DEFAULT NOW()
@@ -251,6 +261,7 @@ CREATE TABLE comments (
             )
         )
 );
+
 -- This table links users to the trips they are collaborating on.
 CREATE TABLE trip_collaborators (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -287,16 +298,6 @@ CREATE TABLE ai_requests (
         TIME ZONE DEFAULT NOW()
 );
 
--- Stores AI-generated itinerary data.
-CREATE TABLE trip_itineraries (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    travel_plan_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
-    itinerary_data JSONB NOT NULL,
-    generated_at TIMESTAMP
-    WITH
-        TIME ZONE DEFAULT NOW()
-);
-
 -- Stores user favorites.
 CREATE TABLE user_favorites (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -320,11 +321,11 @@ CREATE TABLE flights (
     arrival_city VARCHAR(100) NOT NULL,
     departure_timestamp TIMESTAMP
     WITH
-        TIME ZONE, -- New
+        TIME ZONE,
         arrival_timestamp TIMESTAMP
     WITH
-        TIME ZONE, -- New
-        available_seats INTEGER, -- New
+        TIME ZONE,
+        available_seats INTEGER,
         price_minor BIGINT,
         currency_code CHAR(3) REFERENCES currencies (code),
         UNIQUE (airline, flight_number)
@@ -342,7 +343,7 @@ CREATE TABLE accommodations (
             'guesthouse'
         )
     ),
-    capacity_per_room INTEGER, -- New
+    capacity_per_room INTEGER,
     rating NUMERIC(2, 1),
     price_per_night_minor BIGINT,
     currency_code CHAR(3) REFERENCES currencies (code)
@@ -360,4 +361,64 @@ CREATE TABLE custom_trip_bookings (
     WITH
         TIME ZONE DEFAULT NOW(),
         UNIQUE (user_id, trip_id)
+);
+
+-- =================================================================
+--  NEW TABLES FOR TRIP PLANNER
+-- =================================================================
+
+-- Stores individual user preferences for a collaborative trip.
+CREATE TABLE trip_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    preference_text TEXT NOT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (trip_id, user_id)
+);
+
+-- Stores the attractions that users have shortlisted for a specific trip.
+CREATE TABLE trip_shortlist_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    attraction_id UUID NOT NULL REFERENCES attraction_posts (id) ON DELETE CASCADE,
+    added_by_user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (trip_id, attraction_id)
+);
+
+-- Stores votes from users for items on a trip's shortlist.
+CREATE TABLE trip_votes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    shortlist_item_id UUID NOT NULL REFERENCES trip_shortlist_items (id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW(),
+        UNIQUE (shortlist_item_id, user_id)
+);
+
+-- Stores the final, AI-generated itinerary data for a trip.
+CREATE TABLE trip_itineraries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    travel_plan_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE UNIQUE,
+    itinerary_data JSONB NOT NULL,
+    generated_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW()
+);
+
+-- Stores messages for the collaborative chat window on a trip planner page.
+CREATE TABLE trip_chat_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    trip_id UUID NOT NULL REFERENCES travel_plans (id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP
+    WITH
+        TIME ZONE DEFAULT NOW()
 );
