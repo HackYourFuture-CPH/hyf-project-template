@@ -8,14 +8,22 @@ export default function CreateTripForm({ onTripCreate }) {
   const [destination, setDestination] = useState("Paris, France");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!tripName || !destination || !startDate || !endDate) {
       alert("Please fill out all fields.");
       return;
     }
     const tripData = { name: tripName, destination, startDate, endDate };
-    onTripCreate(tripData);
+    try {
+      setIsCreating(true);
+      await onTripCreate(tripData);
+    } catch (err) {
+      console.error("CreateTripForm: error creating trip", err);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -65,7 +73,9 @@ export default function CreateTripForm({ onTripCreate }) {
             />
           </div>
         </div>
-        <Button onClick={handleCreate}>Create Trip & Start Planning →</Button>
+        <Button onClick={handleCreate} disabled={isCreating} aria-busy={isCreating}>
+          {isCreating ? "Creating..." : "Create Trip & Start Planning →"}
+        </Button>
       </div>
     </div>
   );

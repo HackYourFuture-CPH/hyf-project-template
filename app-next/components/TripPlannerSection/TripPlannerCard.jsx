@@ -8,7 +8,7 @@ export default function TripPlannerCard({
   title = "Plan your next trip",
   description = "Create a personalized itinerary and save your favorite places.",
   buttonText = "Open Trip Planner",
-  href = "/trips/planner",
+  href = "/planner/new",
   imageSrc = "/trip-planner.webp",
   imageAlt = "scenic travel image",
 }) {
