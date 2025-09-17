@@ -7,8 +7,7 @@ import commentsRouter from "./comments.js";
 
 const router = express.Router();
 
-// Apply authentication middleware to all routes
-router.use(authenticateToken);
+// Note: Keep GET routes public. Apply `authenticateToken` only to mutating routes.
 
 // GET all posts
 router.get("/", async (req, res) => {
@@ -23,8 +22,7 @@ router.get("/", async (req, res) => {
     console.error("Error fetching posts:", error);
     res.status(500).json({
       error: "Posts retrieval failed",
-      message:
-        "We encountered an error while loading the posts. Please try again later.",
+      message: "We encountered an error while loading the posts. Please try again later.",
     });
   }
 });
@@ -51,17 +49,16 @@ router.get("/:id", async (req, res) => {
     console.error("Error fetching post:", error);
     res.status(500).json({
       error: "Post retrieval failed",
-      message:
-        "We encountered an error while loading the post. Please try again later.",
+      message: "We encountered an error while loading the post. Please try again later.",
     });
   }
 });
 
 // POST create new post
-router.post("/", validateRequest(postSchema), async (req, res) => {
+router.post("/", authenticateToken, validateRequest(postSchema), async (req, res) => {
   try {
     const { title, content } = req.validatedData;
-    const userId = req.user.id;
+    const userId = req.user && (req.user.id || req.user.sub);
 
     const [newPost] = await knex("posts")
       .insert({
@@ -81,23 +78,20 @@ router.post("/", validateRequest(postSchema), async (req, res) => {
     console.error("Error creating post:", error);
     res.status(500).json({
       error: "Post creation failed",
-      message:
-        "We encountered an error while creating your post. Please try again later.",
+      message: "We encountered an error while creating your post. Please try again later.",
     });
   }
 });
 
 // PUT update post
-router.put("/:id", validateRequest(postSchema), async (req, res) => {
+router.put("/:id", authenticateToken, validateRequest(postSchema), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.validatedData;
-    const userId = req.user.id;
+    const userId = req.user && (req.user.id || req.user.sub);
 
     // Check if post exists and belongs to user
-    const existingPost = await knex("posts")
-      .where({ id, user_id: userId })
-      .first();
+    const existingPost = await knex("posts").where({ id, user_id: userId }).first();
 
     if (!existingPost) {
       return res.status(404).json({
@@ -124,22 +118,19 @@ router.put("/:id", validateRequest(postSchema), async (req, res) => {
     console.error("Error updating post:", error);
     res.status(500).json({
       error: "Post update failed",
-      message:
-        "We encountered an error while updating your post. Please try again later.",
+      message: "We encountered an error while updating your post. Please try again later.",
     });
   }
 });
 
 // DELETE post
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user && (req.user.id || req.user.sub);
 
     // Check if post exists and belongs to user
-    const existingPost = await knex("posts")
-      .where({ id, user_id: userId })
-      .first();
+    const existingPost = await knex("posts").where({ id, user_id: userId }).first();
 
     if (!existingPost) {
       return res.status(404).json({
@@ -158,8 +149,7 @@ router.delete("/:id", async (req, res) => {
     console.error("Error deleting post:", error);
     res.status(500).json({
       error: "Post deletion failed",
-      message:
-        "We encountered an error while deleting your post. Please try again later.",
+      message: "We encountered an error while deleting your post. Please try again later.",
     });
   }
 });

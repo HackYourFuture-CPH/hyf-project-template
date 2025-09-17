@@ -12,6 +12,25 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const [redirecting, setRedirecting] = useState(false);
 
+  // derive current user id (if available)
+  let currentUserId = null;
+  try {
+    if (token) {
+      // require a safe helper - use same decoder logic as other components
+      // decode payload
+      const parts = token.split(".");
+      if (parts.length >= 2) {
+        const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+        const json = typeof window !== "undefined" ? atob(padded) : null;
+        const obj = json ? JSON.parse(json) : null;
+        currentUserId = obj?.id || obj?.sub || obj?.user_id || obj?.userId || null;
+      }
+    }
+  } catch {
+    currentUserId = null;
+  }
+
   useEffect(() => {
     // if token is missing, start auto-redirect countdown when user attempts actions
     if (!token) return;
@@ -19,31 +38,27 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
   }, [token]);
 
   const handleDelete = async (commentId) => {
-  try {
-    const res = await fetch(
-      `${API_URL}/api/${resource}/${postId}/comments/${commentId}`,
-      {
+    try {
+      const res = await fetch(`${API_URL}/api/${resource}/${postId}/comments/${commentId}`, {
         method: "DELETE",
-           headers: {
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, // Add your token here
         },
         credentials: "include", // include cookies / auth token if needed
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete comment");
       }
-    );
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || "Failed to delete comment");
+      // Remove the comment from local state after successful deletion
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+    } catch (error) {
+      console.error("Error deleting comment:", error);
     }
-
-    // Remove the comment from local state after successful deletion
-    setComments((prev) => prev.filter((c) => c.id !== commentId));
-  } catch (error) {
-    console.error("Error deleting comment:", error);
-  }
-};
-
+  };
 
   // 🔹 Add new comment
   const handleSubmit = async (e) => {
@@ -57,8 +72,6 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
     if (input.trim() === "") return;
 
     try {
-      
-
       const res = await fetch(`${API_URL}/api/${resource}/${postId}/comments`, {
         method: "POST",
         headers: {
@@ -108,8 +121,10 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
         {!token ? (
           <div className={styles.loginNotice}>
             <p>You must be logged in to comment.</p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <a href="/login" className={styles.primary}>Go to login</a>
+            <div style={{ display: "flex", gap: 8 }}>
+              <a href="/login" className={styles.primary}>
+                Go to login
+              </a>
               <button
                 className={styles.secondary}
                 onClick={() => {
@@ -129,7 +144,9 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
-            <button type="submit" className={styles.postBtn}>Post Comment</button>
+            <button type="submit" className={styles.postBtn}>
+              Post Comment
+            </button>
           </form>
         )}
 
@@ -144,16 +161,10 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
                     onChange={(e) => setEditInput(e.target.value)}
                   />
                   <div className={styles.actionButtons}>
-                    <button
-                      className={styles.saveButton}
-                      onClick={() => handleSave(index)}
-                    >
+                    <button className={styles.saveButton} onClick={() => handleSave(index)}>
                       Save
                     </button>
-                    <button
-                      className={styles.cancelButton}
-                      onClick={handleCancel}
-                    >
+                    <button className={styles.cancelButton} onClick={handleCancel}>
                       Cancel
                     </button>
                   </div>
@@ -162,18 +173,19 @@ export default function Comment({ postId, commentsData = [], resource = "blogpos
                 <>
                   <span className={styles.commentText}>{comment.content}</span>
                   <div className={styles.actionButtons}>
-                    <button
-                      className={styles.editButton}
-                      onClick={() => handleEdit(index)}
-                    >
-                      ✎ Edit
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={() => handleDelete(comment.id)}
-                    >
-                      ✕
-                    </button>
+                    {token && String(comment.user_id) === String(currentUserId) ? (
+                      <>
+                        <button className={styles.editButton} onClick={() => handleEdit(index)}>
+                          ✎ Edit
+                        </button>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDelete(comment.id)}
+                        >
+                          ✕
+                        </button>
+                      </>
+                    ) : null}
                   </div>
                 </>
               )}
