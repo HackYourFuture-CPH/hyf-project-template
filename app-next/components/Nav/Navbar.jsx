@@ -69,7 +69,6 @@ export default function Navbar() {
               </ScrollLink>
             </li>
             <li>
-              {/* Trip Planner link: scroll to planner section on the home page */}
               <ScrollLink
                 to="planner"
                 smooth={true}
@@ -88,15 +87,9 @@ export default function Navbar() {
       {!isHome && (
         <nav className={styles.nav}>
           <ul>
-            {/* replicate other nav items simply as links for non-home pages */}
             <li>
               <NextLink href="/" className={styles.link}>
                 Home
-              </NextLink>
-            </li>
-            <li>
-              <NextLink href="/#planner" className={styles.link}>
-                Trip Planner
               </NextLink>
             </li>
           </ul>
