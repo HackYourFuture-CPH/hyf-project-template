@@ -1,0 +1,57 @@
+.viewContainer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+.createTripContainer {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 3rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.createTripContainer h1 {
+    margin-top: 0;
+    font-size: 2.25rem;
+    text-align: center;
+}
+
+.subtitle {
+    color: #6b7280;
+    margin-top: -1rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.formGroup {
+    margin-bottom: 1.75rem;
+}
+
+.formGroup label {
+    display: block;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    font-family: "Archivo", sans-serif;
+}
+
+.dateInputs {
+    display: flex;
+    gap: 1rem;
+}

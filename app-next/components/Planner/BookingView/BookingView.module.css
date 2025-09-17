@@ -1,0 +1,63 @@
+.bookingPage {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.bookingContainer {
+    max-width: 600px;
+    margin: 4rem auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.costSummary {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.costSummary li {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    font-size: 1.1rem;
+}
+
+.costSummary li.total {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
