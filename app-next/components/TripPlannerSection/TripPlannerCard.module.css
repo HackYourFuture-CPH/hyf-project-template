@@ -7,9 +7,8 @@
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(2, 6, 23, 0.1);
   margin: 0 auto;
-  min-height: 260px; /* ensure a reasonable height when image loads */
+  min-height: 260px; 
   display: block;
-  /* Remove default link text decoration for the whole clickable card */
   text-decoration: none;
   transition:
     box-shadow 0.28s ease,
@@ -24,7 +23,6 @@
 }
 
 .card::after {
-  /* subtle gradient overlay to ensure text contrast */
   content: "";
   position: absolute;
   inset: 0;
@@ -38,7 +36,6 @@
 }
 
 .content {
-  /* absolutely center the content over the media to avoid top alignment issues */
   position: absolute;
   z-index: 2;
   left: 50%;
@@ -60,7 +57,6 @@
   font-size: 1.5rem;
   font-weight: 700;
   font-size: 2rem;
-  /* ensure no underlines or link decoration appear on headings inside link */
   text-decoration: none;
 }
 

@@ -3,7 +3,7 @@
 import styles from "./Trip.module.css";
 import Card from "../../components/Card/Card";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -19,25 +19,43 @@ export default function TripPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
   const [error, setError] = useState(null);
+  const skipNextFetchRef = useRef(false);
 
   async function fetchTours() {
-    setLoading(true);
+    // backward compatibility: no-op placeholder when using the new fetch wrapper
+    return;
+  }
+
+  // New fetch wrapper that accepts overrides so handlers (Clear etc.) can request
+  // a single immediate fetch without relying on batched state updates.
+  async function fetchToursWithOptions({
+    searchText = undefined,
+    sortKeyOverride = undefined,
+    filterDestinationOverride = undefined,
+    pageOverride = undefined,
+    suppressLoading = false,
+  } = {}) {
+    if (!suppressLoading) setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams();
 
-      // backend expects sort like "field-dir"
-      if (sortKey === "price_asc") params.append("sort", "price_minor-asc");
-      else if (sortKey === "price_desc") params.append("sort", "price_minor-desc");
-      else if (sortKey === "rating_asc") params.append("sort", "rating-asc");
-      else if (sortKey === "rating_desc") params.append("sort", "rating-desc");
+      const currentSort = sortKeyOverride !== undefined ? sortKeyOverride : sortKey;
+      const currentFilterDestination =
+        filterDestinationOverride !== undefined ? filterDestinationOverride : filterDestination;
+      const currentPage = pageOverride !== undefined ? pageOverride : page;
+
+      if (currentSort === "price_asc") params.append("sort", "price_minor-asc");
+      else if (currentSort === "price_desc") params.append("sort", "price_minor-desc");
+      else if (currentSort === "rating_asc") params.append("sort", "rating-asc");
+      else if (currentSort === "rating_desc") params.append("sort", "rating-desc");
 
       // NOTE: search is handled client-side only for this page (no server-side search)
-      // if (search) params.append("search", search);
+      // if (searchText) params.append("search", searchText);
 
-      if (filterDestination) params.append("destination", filterDestination);
+      if (currentFilterDestination) params.append("destination", currentFilterDestination);
 
-      params.append("page", String(page));
+      params.append("page", String(currentPage));
       params.append("limit", String(limit));
 
       const url = `${API_URL}/api/tours?${params.toString()}`;
@@ -52,7 +70,6 @@ export default function TripPage() {
       else if (Array.isArray(data)) list = data;
       else if (Array.isArray(data.tours?.items)) list = data.tours.items;
 
-      // pagination info from API
       const apiTotalPages =
         data.totalPages ??
         data.pagination?.totalPages ??
@@ -85,13 +102,45 @@ export default function TripPage() {
       console.error("Error fetching tours", err);
       setError(err.message || String(err));
     } finally {
-      setLoading(false);
+      if (!suppressLoading) setLoading(false);
     }
   }
 
+  // Mirror attractions: explicit effects for each change to avoid relying on a large dep array
   useEffect(() => {
-    fetchTours();
-  }, [sortKey, page, limit, filterDestination]);
+    fetchToursWithOptions();
+  }, []);
+
+  useEffect(() => {
+    if (skipNextFetchRef.current) {
+      skipNextFetchRef.current = false;
+      return;
+    }
+    setPage(1);
+    fetchToursWithOptions({ searchText: search, pageOverride: 1, suppressLoading: true });
+  }, [search]);
+
+  useEffect(() => {
+    if (skipNextFetchRef.current) {
+      skipNextFetchRef.current = false;
+      return;
+    }
+    setPage(1);
+    fetchToursWithOptions({ sortKeyOverride: sortKey, pageOverride: 1, suppressLoading: true });
+  }, [sortKey]);
+
+  useEffect(() => {
+    if (skipNextFetchRef.current) {
+      skipNextFetchRef.current = false;
+      return;
+    }
+    setPage(1);
+    fetchToursWithOptions({ filterDestinationOverride: filterDestination, pageOverride: 1, suppressLoading: true });
+  }, [filterDestination]);
+
+  useEffect(() => {
+    fetchToursWithOptions({ pageOverride: page });
+  }, [page, limit]);
 
   // client-side filtering (extra safety)
   const filteredTours = tours.filter((tour) => {
@@ -128,21 +177,25 @@ export default function TripPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
-          className={styles.filterSelect}
-          value={filterDestination}
-          onChange={(e) => {
-            setFilterDestination(e.target.value);
-            setPage(1); // reset page when destination filter changes
-          }}
-        >
-          <option value="">All Destinations</option>
-          {destinations.map((dest) => (
-            <option key={dest} value={dest}>
-              {dest}
-            </option>
-          ))}
-        </select>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button
+            type="button"
+            className={styles.filterButton}
+            onClick={() => {
+              // avoid the per-effect fetches from firing once we've manually fetched
+              skipNextFetchRef.current = true;
+              setSearch("");
+              setFilterDestination("");
+              setSortKey("");
+              setPage(1);
+              // perform a single immediate fetch and keep UI steady (no global loading flash)
+              fetchToursWithOptions({ sortKeyOverride: "", filterDestinationOverride: "", pageOverride: 1, suppressLoading: true });
+            }}
+            aria-label="Clear filters"
+          >
+            Clear
+          </button>
+        </div>
 
         <select
           className={styles.filterSelect}
@@ -171,7 +224,12 @@ export default function TripPage() {
           <div style={{ color: "red" }}>Error: {error}</div>
         ) : (
           filteredTours.map((card) => (
-            <Card key={card.id} card={card} onFavoriteChange={() => {}} viewLink={`/tours/${card.id}`} />
+            <Card
+              key={card.id}
+              card={card}
+              onFavoriteChange={() => {}}
+              viewLink={`/tours/${card.id}`}
+            />
           ))
         )}
       </div>

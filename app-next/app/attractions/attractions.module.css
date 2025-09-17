@@ -106,9 +106,11 @@
 .loadingDots span:nth-child(2) {
   animation-delay: 0.2s;
 }
+
 .loadingDots span:nth-child(3) {
   animation-delay: 0.4s;
 }
+
 .filterButton {
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -117,6 +119,7 @@
   background-color: #fff;
   transition: background-color 0.2s;
 }
+
 .filterButton:hover {
   background-color: #f3f4f6;
   cursor: pointer;
