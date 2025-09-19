@@ -16,6 +16,26 @@
   --font-weight-extrabold: 800;
 }
 
+/* Validation Styles */
+.fieldError {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.inputError {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 1px #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+
+.inputError:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2) !important;
+}
+
 /* Animations */
 @keyframes slideInUp {
   from {

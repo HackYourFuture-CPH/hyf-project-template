@@ -22,7 +22,7 @@ import { usePostSearch } from "../../hooks/usePostSearch";
 import { useAttractionSearch } from "../../hooks/useAttractionSearch";
 import { useCommentSearch } from "../../hooks/useCommentSearch";
 import { useReviewSearch } from "../../hooks/useReviewSearch";
-import { parseValidationErrors, getFieldError, hasValidationErrors } from "../../utils/validationUtils";
+import { parseValidationErrors, getFieldError, hasValidationErrors, getCombinedFieldError } from "../../utils/validationUtils";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -93,6 +93,7 @@ export default function AdminPage() {
   const [createError, setCreateError] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
+  const [clientValidationErrors, setClientValidationErrors] = useState({});
   
   // Success popup state
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -179,6 +180,111 @@ export default function AdminPage() {
     hasSearched: hasReviewSearched,
     clearSearch: clearReviewSearch
   } = useReviewSearch();
+
+  // Client-side validation functions
+  function validateFirstName(value) {
+    if (!value || value.trim() === "") {
+      return "First name is required";
+    }
+    if (value.length < 2) {
+      return "First name must be at least 2 characters";
+    }
+    if (!/^[a-zA-Z\s]+$/.test(value)) {
+      return "First name can only contain letters and spaces";
+    }
+    return null;
+  }
+
+  function validateLastName(value) {
+    if (!value || value.trim() === "") {
+      return "Last name is required";
+    }
+    if (value.length < 2) {
+      return "Last name must be at least 2 characters";
+    }
+    if (!/^[a-zA-Z\s]+$/.test(value)) {
+      return "Last name can only contain letters and spaces";
+    }
+    return null;
+  }
+
+  function validateEmail(value) {
+    if (!value || value.trim() === "") {
+      return "Email is required";
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return "Please enter a valid email address";
+    }
+    return null;
+  }
+
+  function validateUsername(value) {
+    if (!value || value.trim() === "") {
+      return "Username is required";
+    }
+    if (value.length < 3) {
+      return "Username must be at least 3 characters";
+    }
+    if (value.length > 20) {
+      return "Username must be less than 20 characters";
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      return "Username can only contain letters, numbers, and underscores";
+    }
+    if (value.startsWith("_") || value.endsWith("_")) {
+      return "Username cannot start or end with underscore";
+    }
+    return null;
+  }
+
+  function validateMobile(value) {
+    if (!value || value.trim() === "") {
+      return "Mobile number is required";
+    }
+    if (!/^\+?[\d\s\-\(\)]{10,15}$/.test(value)) {
+      return "Please enter a valid mobile number (10-15 digits)";
+    }
+    return null;
+  }
+
+  function validateUserField(fieldName, value) {
+    let error = null;
+    switch (fieldName) {
+      case 'first_name':
+        error = validateFirstName(value);
+        break;
+      case 'last_name':
+        error = validateLastName(value);
+        break;
+      case 'email':
+        error = validateEmail(value);
+        break;
+      case 'username':
+        error = validateUsername(value);
+        break;
+      case 'mobile':
+        error = validateMobile(value);
+        break;
+      default:
+        return;
+    }
+    
+    setClientValidationErrors(prev => ({
+      ...prev,
+      [fieldName]: error
+    }));
+  }
+
+  // Helper function to get input classes with validation
+  function getInputClasses(fieldName) {
+    const hasError = getCombinedFieldError(validationErrors, clientValidationErrors, fieldName);
+    return hasError ? `${styles.input} ${styles.inputError}` : styles.input;
+  }
+
+  // Handle field blur for validation
+  function handleFieldBlur(fieldName, value) {
+    validateUserField(fieldName, value);
+  }
 
   // Post handlers
   const handleEditPost = (post) => {
@@ -2146,6 +2252,7 @@ export default function AdminPage() {
                 e.preventDefault();
                 setCreateError("");
                 setValidationErrors({});
+                setClientValidationErrors({});
                 setCreatingUser(true);
                 try {
                   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -2210,49 +2317,79 @@ export default function AdminPage() {
                 <input
                   type="text"
                   value={newUser.first_name}
-                  onChange={(e) => setNewUser((n) => ({ ...n, first_name: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser((n) => ({ ...n, first_name: value }));
+                    validateUserField('first_name', value);
+                  }}
+                  onBlur={(e) => handleFieldBlur('first_name', e.target.value)}
+                  className={getInputClasses('first_name')}
                   required
                 />
-                <FieldError error={getFieldError(validationErrors, 'first_name')} fieldName="First Name" />
+                <FieldError error={getCombinedFieldError(validationErrors, clientValidationErrors, 'first_name')} fieldName="First Name" />
               </div>
               <div className={styles.field}>
                 <label>Last Name</label>
                 <input
                   type="text"
                   value={newUser.last_name}
-                  onChange={(e) => setNewUser((n) => ({ ...n, last_name: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser((n) => ({ ...n, last_name: value }));
+                    validateUserField('last_name', value);
+                  }}
+                  onBlur={(e) => handleFieldBlur('last_name', e.target.value)}
+                  className={getInputClasses('last_name')}
                   required
                 />
-                <FieldError error={getFieldError(validationErrors, 'last_name')} fieldName="Last Name" />
+                <FieldError error={getCombinedFieldError(validationErrors, clientValidationErrors, 'last_name')} fieldName="Last Name" />
               </div>
               <div className={styles.field}>
                 <label>Email</label>
                 <input
                   type="email"
                   value={newUser.email}
-                  onChange={(e) => setNewUser((n) => ({ ...n, email: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser((n) => ({ ...n, email: value }));
+                    validateUserField('email', value);
+                  }}
+                  onBlur={(e) => handleFieldBlur('email', e.target.value)}
+                  className={getInputClasses('email')}
                   required
                 />
-                <FieldError error={getFieldError(validationErrors, 'email')} fieldName="Email" />
+                <FieldError error={getCombinedFieldError(validationErrors, clientValidationErrors, 'email')} fieldName="Email" />
               </div>
               <div className={styles.field}>
                 <label>Username</label>
                 <input
                   type="text"
                   value={newUser.username}
-                  onChange={(e) => setNewUser((n) => ({ ...n, username: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser((n) => ({ ...n, username: value }));
+                    validateUserField('username', value);
+                  }}
+                  onBlur={(e) => handleFieldBlur('username', e.target.value)}
+                  className={getInputClasses('username')}
                   required
                 />
-                <FieldError error={getFieldError(validationErrors, 'username')} fieldName="Username" />
+                <FieldError error={getCombinedFieldError(validationErrors, clientValidationErrors, 'username')} fieldName="Username" />
               </div>
               <div className={styles.field}>
                 <label>Mobile</label>
                 <input
                   type="tel"
                   value={newUser.mobile}
-                  onChange={(e) => setNewUser((n) => ({ ...n, mobile: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewUser((n) => ({ ...n, mobile: value }));
+                    validateUserField('mobile', value);
+                  }}
+                  onBlur={(e) => handleFieldBlur('mobile', e.target.value)}
+                  className={getInputClasses('mobile')}
                 />
-                <FieldError error={getFieldError(validationErrors, 'mobile')} fieldName="Mobile" />
+                <FieldError error={getCombinedFieldError(validationErrors, clientValidationErrors, 'mobile')} fieldName="Mobile" />
               </div>
               <div className={styles.field}>
                 <label>Role</label>

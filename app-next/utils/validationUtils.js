@@ -16,17 +16,27 @@ export const parseValidationErrors = (response) => {
       if (error.field && error.message) {
         // Convert field name to a more readable format
         const fieldName = formatFieldName(error.field);
-        errors[error.field] = {
-          field: fieldName,
-          message: error.message
-        };
+        // If field already has errors, append to existing message
+        if (errors[error.field]) {
+          errors[error.field].message += `; ${error.message}`;
+        } else {
+          errors[error.field] = {
+            field: fieldName,
+            message: error.message
+          };
+        }
       } else if (error.path && error.message) {
         // Handle Zod-style errors
         const fieldName = formatFieldName(error.path.join('.'));
-        errors[error.path.join('.')] = {
-          field: fieldName,
-          message: error.message
-        };
+        const pathKey = error.path.join('.');
+        if (errors[pathKey]) {
+          errors[pathKey].message += `; ${error.message}`;
+        } else {
+          errors[pathKey] = {
+            field: fieldName,
+            message: error.message
+          };
+        }
       }
     });
   }
@@ -110,7 +120,7 @@ export const getFieldError = (errors, fieldName) => {
   if (!errors || !fieldName) return null;
   
   const error = errors[fieldName];
-  return error ? error.message : null;
+  return error ? (typeof error === 'string' ? error : error.message) : null;
 };
 
 /**
@@ -120,4 +130,18 @@ export const getFieldError = (errors, fieldName) => {
  */
 export const hasValidationErrors = (errors) => {
   return errors && Object.keys(errors).length > 0;
+};
+
+/**
+ * Get combined error message from server and client validation errors
+ * @param {Object} serverErrors - Server validation errors
+ * @param {Object} clientErrors - Client validation errors  
+ * @param {string} fieldName - Field name to get error for
+ * @returns {string|null} - Combined error message or null
+ */
+export const getCombinedFieldError = (serverErrors, clientErrors, fieldName) => {
+  const serverError = getFieldError(serverErrors, fieldName);
+  const clientError = getFieldError(clientErrors, fieldName);
+  
+  return serverError || clientError;
 };
