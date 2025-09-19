@@ -49,25 +49,52 @@ export const parseValidationErrors = (response) => {
  */
 const formatFieldName = (fieldName) => {
   const fieldMap = {
+    // User fields
     'first_name': 'First Name',
     'last_name': 'Last Name',
     'email': 'Email',
     'username': 'Username',
     'password': 'Password',
+    'password_confirmation': 'Password Confirmation',
+    'current_password': 'Current Password',
+    'new_password': 'New Password',
+    'new_password_confirmation': 'New Password Confirmation',
+    'mobile': 'Mobile Number',
+    'profile_image': 'Profile Image',
     'role': 'Role',
+    'is_active': 'Status',
+    
+    // Post fields
     'title': 'Title',
     'content': 'Content',
     'category': 'Category',
     'cover_image_url': 'Cover Image',
-    'name': 'Name',
+    
+    // Tour fields
+    'name': 'Tour Name',
     'description': 'Description',
-    'location': 'Location',
-    'price': 'Price',
-    'duration': 'Duration',
-    'max_participants': 'Max Participants',
+    'price_minor': 'Price',
+    'duration_days': 'Duration (Days)',
+    'capacity': 'Capacity',
+    'currency_code': 'Currency Code',
     'start_date': 'Start Date',
     'end_date': 'End Date',
-    'is_active': 'Status'
+    'destinations': 'Destinations',
+    
+    // Attraction fields
+    'location': 'Location',
+    'type': 'Type',
+    
+    // Review fields
+    'rating': 'Rating',
+    
+    // Comment fields
+    'post_id': 'Post',
+    'tour_id': 'Tour',
+    
+    // General fields
+    'item_id': 'Item ID',
+    'item_type': 'Item Type'
   };
   
   return fieldMap[fieldName] || fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

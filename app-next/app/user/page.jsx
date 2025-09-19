@@ -622,7 +622,7 @@ export default function UserPage() {
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className={styles.secondary}
+                    className={styles.primary}
                   >
                     Cancel
                   </button>
@@ -635,7 +635,7 @@ export default function UserPage() {
               <div className={styles.passwordContainer} style={{ marginTop: 12 }}>
                 <button
                   type="button"
-                  className={styles.secondary}
+                  className={styles.primary}
                   onClick={() => {
                     setChangingPassword((c) => !c);
                     setPwMessage("");
@@ -704,7 +704,7 @@ export default function UserPage() {
                   <button
                     type="button"
                     onClick={() => setChangingPassword(false)}
-                    className={styles.secondary}
+                    className={styles.primary}
                   >
                     Cancel
                   </button>
@@ -783,11 +783,10 @@ export default function UserPage() {
     const upcoming = myTrips.filter((t) => t.start_date && new Date(t.start_date) >= new Date());
     const past = myTrips.filter((t) => t.start_date && new Date(t.start_date) < new Date());
     return (
-      <div>
-        <div className={styles.sectionHeader} style={{ marginBottom: 12 }}>
+      <div className={styles.profileCard}>
+        <div className={styles.sectionHeader}>
           <h3>My Bookings</h3>
         </div>
-        <div className={styles.subSection} style={{ marginBottom: 20 }}>
           <div className={styles.cardGrid}>
             {(() => {
               const visibleBookings = Array.isArray(bookings)
@@ -821,13 +820,13 @@ export default function UserPage() {
                       >
                         <a
                           href={`/tours/${tourId}`}
-                          className={styles.secondary}
+                          className={styles.primary}
                           onClick={(e) => e.stopPropagation()}
                         >
                           View
                         </a>
                         <button
-                          className={styles.secondary}
+                          className={styles.primary}
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
@@ -908,7 +907,7 @@ export default function UserPage() {
                               View
                             </Link>
                             <button
-                              className={styles.secondary}
+                              className={styles.primary}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
@@ -1007,7 +1006,7 @@ export default function UserPage() {
                 <BlogCard card={p} />
                 <div className={styles.cardActions} style={{ marginTop: 8 }}>
                   <button
-                    className={styles.secondary}
+                    className={styles.primary}
                     onClick={(e) => {
                       e.stopPropagation();
                       setCreateError("");
@@ -1023,7 +1022,7 @@ export default function UserPage() {
                     Edit
                   </button>
                   <button
-                    className={styles.secondary}
+                    className={styles.primary}
                     onClick={async (e) => {
                       e.stopPropagation();
                       if (!confirm("Are you sure you want to delete this post?")) return;
@@ -1355,7 +1354,7 @@ export default function UserPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreatePostModal(false)}
-                  className={styles.secondary}
+                  className={styles.primary}
                 >
                   Cancel
                 </button>

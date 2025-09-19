@@ -121,20 +121,335 @@
   gap: 24px;
 }
 
+/* Modern Review Cards Grid */
+.reviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 24px;
+  margin: 20px 0;
+}
+
+/* Modern Review Card Styles */
+.reviewCard {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(23, 26, 31, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.reviewCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #171a1f 0%, #2d3748 100%);
+}
+
+.reviewCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15);
+  border-color: rgba(23, 26, 31, 0.2);
+}
+
+.reviewCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid rgba(23, 26, 31, 0.1);
+}
+
+.reviewAuthorInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authorAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.2);
+}
+
+.authorDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.authorName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #171a1f;
+  margin: 0;
+}
+
+.reviewDate {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.reviewStatus {
+  display: flex;
+  align-items: center;
+}
+
+.reviewCardBody {
+  padding: 16px 20px;
+}
+
+.reviewContent {
+  margin-bottom: 16px;
+}
+
+.reviewContent p {
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 14px;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tourInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tourLabel {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.tourName {
+  font-size: 14px;
+  color: #171a1f;
+  font-weight: 600;
+}
+
+.ratingSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ratingLabel {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}
+
+.starFilled {
+  filter: none;
+}
+
+.starEmpty {
+  filter: grayscale(100%) opacity(0.3);
+}
+
+.reviewCardActions {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px 20px 20px;
+  border-top: 1px solid rgba(23, 26, 31, 0.1);
+  background: rgba(23, 26, 31, 0.02);
+}
+
+/* Modern Status Badge for Reviews */
+.reviewStatus .statusBadge {
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.reviewStatus .statusBadge.approved {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: 1px solid #10b981;
+}
+
+.reviewStatus .statusBadge.approved::before {
+  content: '✓';
+  font-weight: bold;
+}
+
+.reviewStatus .statusBadge.pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: 1px solid #f59e0b;
+}
+
+.reviewStatus .statusBadge.pending::before {
+  content: '⏳';
+  font-size: 10px;
+}
+
+/* Modern Action Buttons for Reviews */
+.reviewCardActions .actionButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.reviewCardActions .actionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.reviewCardActions .actionButton:hover::before {
+  left: 100%;
+}
+
+.reviewCardActions .actionButton.approveButton {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.reviewCardActions .actionButton.approveButton:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.reviewCardActions .actionButton.unapproveButton {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.reviewCardActions .actionButton.unapproveButton:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.reviewCardActions .actionButton.deleteButton {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.reviewCardActions .actionButton.deleteButton:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.reviewCardActions .actionButton:active {
+  transform: scale(0.95);
+}
+
+/* Empty State for Reviews */
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 16px;
+  border: 2px dashed #cbd5e1;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.emptyState h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 8px 0;
+}
+
+.emptyState p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
 /* Modern Comment Card - Only for Admin Panel */
 .commentsGrid .commentCard {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid rgba(23, 26, 31, 0.1) !important;
   border-radius: 16px !important;
   padding: 24px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.commentsGrid .commentCard::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 4px !important;
+  height: 100% !important;
+  background: linear-gradient(180deg, #171a1f 0%, #2d3748 100%) !important;
 }
 
 .commentsGrid .commentCard:hover {
-  border-color: #dc2626 !important;
-  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15) !important;
-  transform: translateY(-2px) !important;
+  border-color: rgba(23, 26, 31, 0.2) !important;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15) !important;
+  transform: translateY(-4px) !important;
 }
 
 /* Keep original comment card styles for other sections */
@@ -157,6 +472,8 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(23, 26, 31, 0.1);
 }
 
 .commentAuthor {
@@ -167,8 +484,8 @@
 
 .authorName {
   font-weight: 600;
-  color: #0f172a;
-  font-size: 14px;
+  color: #171a1f;
+  font-size: 16px;
 }
 
 .commentDate,
@@ -252,18 +569,28 @@
 
 .commentPost {
   margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(23, 26, 31, 0.02);
+  border-radius: 8px;
+  border-left: 3px solid rgba(23, 26, 31, 0.1);
 }
 
 .postReference {
   font-size: 12px;
   color: #64748b;
   font-style: italic;
+  font-weight: 500;
 }
 
 .commentActions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid rgba(23, 26, 31, 0.1);
+  background: rgba(23, 26, 31, 0.02);
+  margin: 16px -24px -24px -24px;
+  padding: 16px 24px 24px 24px;
 }
 
 /* Modern Compact Admin Panel Action Buttons - Only for Reviews/Comments Section */
@@ -3282,4 +3609,516 @@
   background: #dc2626 !important;
   transform: scale(1.05) !important;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Load More Button Styles */
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+  padding: 20px;
+}
+
+.loadMoreButton {
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(23, 26, 31, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.loadMoreButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.loadMoreButton:hover::before {
+  left: 100%;
+}
+
+.loadMoreButton:hover {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(23, 26, 31, 0.3);
+}
+
+.loadMoreButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.loadMoreText {
+  font-weight: 600;
+}
+
+.loadMoreCount {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.loadMoreIcon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+.loadMoreButton:hover .loadMoreIcon {
+  transform: translateX(2px);
+}
+
+/* Profile Section Styles */
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.profileImage {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(23, 26, 31, 0.1);
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.1);
+  position: relative;
+}
+
+.profileImageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.profileImageContainer:hover .imageOverlay {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(23, 26, 31, 0.3);
+  border: 2px solid white;
+  opacity: 0.9;
+}
+
+.imageOverlay:hover {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.4);
+}
+
+.overlayUploadButton {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+}
+
+.overlayUploadButton::before,
+.overlayUploadButton::after {
+  display: none !important;
+}
+
+.overlayUploadButton:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.overlayUploadButton svg {
+  width: 14px !important;
+  height: 14px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: white !important;
+  stroke: white !important;
+  fill: none !important;
+}
+
+/* Upload icon button wrapper */
+.uploadIconButton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Ensure icon is visible */
+.imageOverlay svg,
+.uploadIconButton svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: white !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+}
+
+/* Force UploadButton to show content */
+.overlayUploadButton :global(*) {
+  color: white !important;
+}
+
+.overlayUploadButton :global(svg) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: white !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+}
+
+.profileImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profilePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 24px;
+  border-radius: 50%;
+}
+
+.profileDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profileDetails h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #171a1f;
+  margin: 0;
+}
+
+.profileEmail,
+.profileRole,
+.profileUsername,
+.profileMobile {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.profileActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+/* Profile Editing Styles */
+.profileImageEdit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileImageEdit .profileImg {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(23, 26, 31, 0.1);
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.1);
+}
+
+.profileImageEdit .profilePlaceholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 24px;
+  border: 3px solid rgba(23, 26, 31, 0.1);
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.1);
+}
+
+.uploadButton {
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  min-height: 36px !important;
+  line-height: 1 !important;
+}
+
+.uploadButton:hover {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+  transform: scale(1.05) !important;
+}
+
+.uploadAllowedContent {
+  display: none !important;
+}
+
+.uploadContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Make UploadButton loading indicators smaller for profile section */
+.profileImageEdit :global([data-ut-element="button"]) {
+  background: linear-gradient(135deg, #171a1f 0%, #2d3748 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+}
+
+.profileImageEdit :global([data-ut-element="button"]:hover) {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+  transform: scale(1.05) !important;
+}
+
+.profileImageEdit :global([data-ut-element="button"]:disabled) {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* Smaller loading spinner for profile upload */
+.profileImageEdit :global([data-ut-element="button"] svg) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileImageEdit :global([data-ut-element="button"] .ut-loading) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileImageEdit :global([data-ut-element="button"] .ut-spinner) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Hide progress bar for profile upload to keep it minimal */
+.profileImageEdit :global([data-ut-element="progress"]) {
+  display: none !important;
+}
+
+/* Hide file list for profile upload */
+.profileImageEdit :global([data-ut-element="file-list"]) {
+  display: none !important;
+}
+
+/* Hide allowed content for profile upload */
+.profileImageEdit :global([data-ut-element="allowed-content"]) {
+  display: none !important;
+}
+
+/* Additional loading indicator targeting for smaller size */
+.profileImageEdit :global(.ut-uploading) {
+  font-size: 11px !important;
+}
+
+.profileImageEdit :global(.ut-uploading svg) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileImageEdit :global(.ut-uploading .ut-spinner) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileImageEdit :global(.ut-uploading .ut-loading) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Target any loading text or indicators */
+.profileImageEdit :global([data-ut-element="button"] span) {
+  font-size: 11px !important;
+}
+
+.profileImageEdit :global([data-ut-element="button"] div) {
+  font-size: 11px !important;
+}
+
+/* Make sure any loading animations are small */
+.profileImageEdit :global(.animate-spin) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileImageEdit :global(.animate-pulse) {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #171a1f;
+}
+
+.input {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #171a1f;
+  box-shadow: 0 0 0 3px rgba(23, 26, 31, 0.1);
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.passwordSection {
+  margin-top: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(23, 26, 31, 0.1);
+}
+
+.passwordSection h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #171a1f;
+  margin: 0 0 20px 0;
+}
+
+.passwordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.success {
+  color: #059669;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
 }
