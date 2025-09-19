@@ -1,0 +1,601 @@
+.container {
+  width: 100%;
+  flex-grow: 1;
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  color: #0f172a;
+  font-family: "Archivo", sans-serif;
+  margin-top: 92px;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.center {
+  padding: 48px 0;
+  text-align: center;
+  color: #64748b;
+}
+
+.error {
+  color: #b91c1c;
+  background: #fff1f2;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
+}
+
+.avatarWrap {
+  flex: 0 0 120px;
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.info {
+  flex: 1;
+}
+
+.name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.field {
+  margin-top: 8px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.primary {
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border: none;
+  transition: transform 180ms;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+}
+
+.primary:hover {
+  transform: scale(1.05);
+}
+
+/* dashboard and sidebar additions */
+.dashboard {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.aside {
+  width: 100%;
+  max-width: 260px;
+}
+
+.sidebarCard {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2);
+}
+
+.dashboardTitle {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dashboardNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: #334155;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.navItem:hover {
+  background: #f1f5f9;
+}
+
+.navItem.active {
+  background: #2563eb;
+  color: white;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+}
+
+.navIcon {
+  width: 18px;
+  text-align: center;
+}
+
+.main {
+  flex: 1;
+}
+
+.dashboardContent {
+  min-height: 200px;
+}
+
+.profileCard {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  /* box-shadow: 0 6px 18px rgba(2, 6, 23, 0.2); */
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.statCard {
+  background: #dbeafe;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statIcon {
+  font-size: 28px;
+}
+
+.statNumber {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #475569;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.addButton {
+  background: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  transition: transform 180ms;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+}
+
+.addButton:hover {
+  transform: scale(1.05);
+}
+
+.subSection {
+  margin-top: 18px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+}
+
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.passwordContainer {
+  display: flex;
+}
+
+.secondary {
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+  text-decoration: none;
+  font-weight: 700;
+  background: #e5e7eb;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #111827;
+  border: none;
+  box-shadow: 4px 4px 4px rgb(197, 195, 195);
+  transition: transform 180ms;
+}
+
+.secondary:hover {
+  transform: scale(1.05);
+}
+
+/* Profile edit specific styles */
+.profileForm label {
+  display: block;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.profileForm input[type="text"],
+.profileForm input[type="tel"],
+.profileForm input[type="email"],
+.profileForm input[type="password"],
+.profileForm input[name="first_name"],
+.profileForm input[name="last_name"],
+.profileForm input[name="mobile"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee8f5;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+/* Make profile form inputs show a visible focus state like the modal forms */
+.profileForm input:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
+}
+
+.profileForm input[type="file"] {
+  margin-top: 8px;
+}
+
+.formActions .primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.formActions .primary[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.avatarWrap .avatar {
+  border-radius: 12px;
+}
+
+.avatarActions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.avatarActions input[type="file"] {
+  background: #f8fafc;
+  border: 1px dashed #e6eef8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+/* Ensure UploadThing button wrapper is positioned so we can overlay the native file input
+   and hide the browser "No file chosen" text while keeping the input clickable. */
+.uploadThingButton {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.uploadThingButton input[type="file"] {
+  /* Put the native file input on top but invisible so the browser text isn't shown */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.card {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.04);
+}
+
+.cardTitle {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.cardMeta {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.empty {
+  color: #64748b;
+  font-style: italic;
+}
+
+.profileRow {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+/* Modal styles for Create Post */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 24px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.3);
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modalTitle {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.modal .field {
+  margin-bottom: 12px;
+}
+
+.modal textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+  min-height: 140px;
+  resize: vertical;
+}
+
+.modal input[type="text"],
+.modal input[type="email"],
+.modal input[type="tel"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+}
+
+/* Make modal form look like the profile edit form */
+.modal label {
+  display: block;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.modal .field input[type="text"],
+.modal .field input[type="email"],
+.modal .field input[type="tel"],
+.modal .field input[type="search"],
+.modal .field select,
+.modal .field textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee8f5;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal .field input:focus,
+.modal .field textarea:focus,
+.modal .field select:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
+}
+
+.modal .error {
+  color: #b91c1c;
+  background: #fff1f2;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+.modal .formActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.modal .primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal .secondary {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal .primary[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard > * {
+    flex: 1;
+    width: 100%;
+  }
+
+  .formActions {
+    justify-content: center;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .profileCard {
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* align-items: stretch; */
+  }
+
+  .profileRow {
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .avatarWrap {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 500px) {
+  .aside {
+    max-width: 100%;
+  }
+
+  .passwordContainer {
+    justify-content: center;
+  }
+}

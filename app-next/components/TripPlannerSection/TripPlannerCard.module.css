@@ -1,0 +1,108 @@
+.card {
+  cursor: pointer;
+  position: relative;
+  max-width: 1200px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.1);
+  margin: 0 auto;
+  min-height: 260px; 
+  display: block;
+  text-decoration: none;
+  transition:
+    box-shadow 0.28s ease,
+    transform 0.28s ease;
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
+  z-index: 1;
+}
+
+.card:hover {
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+  transform: translateY(-6px);
+}
+
+.content {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.cardTitle {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-size: 2rem;
+  text-decoration: none;
+}
+
+.cardDesc {
+  font-size: 1.2rem;
+  font-style: italic;
+  margin: 0 0 14px 0;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+}
+
+.actions {
+  margin-top: auto;
+}
+
+.ctaText {
+  font-size: 1.2rem;
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    opacity 0.18s ease,
+    text-decoration-color 0.18s ease;
+}
+
+.ctaText:hover {
+  opacity: 0.95;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 720px) {
+  .card {
+    min-height: 200px;
+  }
+  .media {
+    height: 100%;
+  }
+  .content {
+    padding: 16px;
+  }
+  .cardTitle {
+    font-size: 1.25rem;
+  }
+}

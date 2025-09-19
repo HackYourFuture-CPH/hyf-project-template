@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
+
+.toursWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  font-family: "Archivo", sans-serif;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.attractionsTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attractionsTitleContainer p {
+  color: gray;
+  font-style: italic;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.gridContainer {
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.exploreBtn {
+  background-color: #1f84ca;
+  font-family: "Archivo", sans-serif;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 6px;
+
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: block;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .attractionsTitleContainer {
+    flex-direction: column;
+  }
+
+  .attractionsTitleContainer p {
+    margin: 0 auto;
+  }
+
+  .title {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .toursWrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 16px;
+  }
+
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .attractionsTitleContainer p {
+    font-size: 12px;
+  }
+}

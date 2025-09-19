@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "image": "https://picsum.photos/id/1018/600/300",
+    "title": "Hiking the Cinque Terre",
+    "author": "Jane",
+    "category": "Nature",
+    "comments": 1,
+    "excerpt": "My unforgettable hiking experience along the Italian coastline...",
+    "country": "Italy"
+  },
+  {
+    "id": 2,
+    "image": "https://picsum.photos/id/1025/600/300",
+    "title": "Top 10 Travel Hacks",
+    "author": "Alex",
+    "category": "Tips",
+    "comments": 3,
+    "excerpt": "Here are my top 10 tricks to make your travels smoother and cheaper...",
+    "country": "USA"
+  },
+  {
+    "id": 3,
+    "image": "https://picsum.photos/id/1003/600/300",
+    "title": "Exploring the Streets of Kyoto",
+    "author": "Mika",
+    "category": "Culture",
+    "comments": 5,
+    "excerpt": "A deep dive into the traditions, temples, and tea houses of Kyoto...",
+    "country": "Japan"
+  },
+  {
+    "id": 4,
+    "image": "https://picsum.photos/id/1041/600/300",
+    "title": "Camping in the Rockies",
+    "author": "Chris",
+    "category": "Adventure",
+    "comments": 2,
+    "excerpt": "Nothing beats waking up to sunrise over the Rocky Mountains...",
+    "country": "Canada"
+  }
+]

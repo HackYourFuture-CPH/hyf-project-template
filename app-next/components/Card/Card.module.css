@@ -1,0 +1,204 @@
+.travelCard {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 1.5px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s;
+  cursor: pointer;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+}
+
+.travelCard:hover {
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.18),
+    0 3px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 12rem;
+  overflow: hidden;
+}
+
+/* large variant for detail pages */
+.imageWrapperLarge {
+  position: relative;
+  width: 100%;
+  height: 25rem;
+  overflow: hidden;
+}
+
+.cardDetails {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.startDate {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.capacity {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardTitle {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.cardDetails {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  color: #2563eb;
+}
+
+.duration {
+  color: #2563eb;
+}
+
+.rating {
+  color: #fbbf24;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.star {
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.cardDestination {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.heart {
+  color: #9ca3af;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition:
+    color 0.18s,
+    background-color 0.18s;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fav {
+  color: #ef4444;
+}
+
+.heart:hover {
+  color: #ef4444;
+}
+
+.heart.fav {
+  color: #ef4444;
+}
+
+.primary {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .imageWrapper {
+    height: 10rem;
+  }
+
+  .imageWrapperLarge {
+    height: 10rem;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .imageWrapper {
+    height: 9rem;
+  }
+
+  .imageWrapperLarge {
+    height: 9rem;
+  }
+
+  .cardContent {
+    padding: 0.75rem;
+  }
+}

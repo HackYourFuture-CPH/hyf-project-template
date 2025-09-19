@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        @apply bg-gray-50;
+      }
+      .dashboard-nav-item {
+        @apply flex items-center p-3 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors duration-200;
+      }
+      .dashboard-nav-item.active {
+        @apply bg-blue-500 text-white shadow-md;
+      }
+      .pagination-button {
+        @apply px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-white rounded-md sm:inline hover:bg-blue-500 hover:text-white;
+      }
+      .pagination-button.active {
+        @apply bg-blue-500 text-white;
+      }
+      .pagination-button:disabled {
+        @apply opacity-50 cursor-not-allowed;
+      }
+      .detail-tab {
+        @apply px-4 py-2 font-semibold text-gray-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500 cursor-pointer;
+      }
+      .detail-tab.active {
+        @apply text-blue-600 border-blue-600;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header id="main-header" class="bg-white sticky top-0 z-50 shadow-md">
+      <div
+        class="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between"
+      >
+        <h1 class="text-2xl font-bold text-gray-800">Travel Planner</h1>
+        <nav
+          class="mt-4 sm:mt-0 flex flex-wrap justify-center items-center sm:space-x-4"
+        >
+          <button
+            onclick="showPage('homePage'); smoothScrollTo('hero-section')"
+            class="nav-button px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+          >
+            Home
+          </button>
+          <button
+            onclick="showPage('homePage'); smoothScrollTo('tours-section')"
+            class="nav-button px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+          >
+            Tours
+          </button>
+          <button
+            onclick="showPage('homePage'); smoothScrollTo('posts-section')"
+            class="nav-button px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+          >
+            Blog Posts
+          </button>
+          <button
+            onclick="showPage('homePage'); smoothScrollTo('attractions-section')"
+            class="nav-button px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+          >
+            Attractions
+          </button>
+          <button
+            onclick="showPage('plannerPage')"
+            class="nav-button px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+          >
+            Plan a Trip
+          </button>
+
+          <div class="relative group">
+            <button
+              class="nav-button flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+            >
+              <i class="fas fa-user-circle text-2xl"></i>
+              <span
+                id="current-user-indicator"
+                class="ml-2 text-sm font-semibold"
+                >Guest</span
+              >
+            </button>
+            <div
+              id="user-dropdown"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 hidden group-hover:block z-50"
+            >
+              <div class="px-4 py-2 text-sm text-gray-500 border-b">
+                Switch User Role
+              </div>
+              <a
+                href="#"
+                onclick="switchUser('guest')"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Guest</a
+              >
+              <a
+                href="#"
+                onclick="switchUser('user')"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >User</a
+              >
+              <a
+                href="#"
+                onclick="switchUser('admin')"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Admin</a
+              >
+              <div
+                id="user-actions-separator"
+                class="border-t my-1 hidden"
+              ></div>
+              <a
+                href="#"
+                id="dashboard-link"
+                onclick="showPage('userDashboardPage')"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden"
+                >User Dashboard</a
+              >
+              <a
+                href="#"
+                id="admin-panel-link"
+                onclick="showPage('adminPanelPage')"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden"
+                >Admin Panel</a
+              >
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div id="page-container" class="flex-grow">
+      <div id="homePage" class="page container mx-auto px-4 py-8">
+        <div
+          id="hero-section"
+          class="relative bg-cover bg-center h-96 rounded-3xl shadow-xl overflow-hidden mb-12"
+          style="
+            background-image: url('https://picsum.photos/seed/hero/1200/600');
+          "
+        >
+          <div class="absolute inset-0 bg-black opacity-40"></div>
+          <div
+            class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center"
+          >
+            <h2 class="text-4xl sm:text-6xl font-extrabold mb-4 drop-shadow-lg">
+              Plan Your Next Group Adventure
+            </h2>
+            <p class="text-lg sm:text-2xl font-medium drop-shadow-md max-w-2xl">
+              Effortlessly organize and share your travel plans with friends and
+              family.
+            </p>
+          </div>
+        </div>
+
+        <section id="tours-section" class="mb-12">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-3xl font-bold text-gray-800">Popular Tours</h3>
+            <button
+              onclick="showPage('allToursPage')"
+              class="bg-blue-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-200"
+            >
+              Show All
+            </button>
+          </div>
+          <div
+            id="home-tours-container"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          ></div>
+        </section>
+
+        <section id="posts-section" class="mb-12">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-3xl font-bold text-gray-800">User Blog Posts</h3>
+            <button
+              onclick="showPage('allPostsPage')"
+              class="bg-blue-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-200"
+            >
+              Show All
+            </button>
+          </div>
+          <div
+            id="home-posts-container"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          ></div>
+        </section>
+
+        <section id="attractions-section" class="mb-12">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-3xl font-bold text-gray-800">
+              Popular Attractions
+            </h3>
+            <button
+              onclick="showPage('allAttractionsPage')"
+              class="bg-blue-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-200"
+            >
+              Show All
+            </button>
+          </div>
+          <div
+            id="home-attractions-container"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          ></div>
+        </section>
+      </div>
+
+      <div id="allToursPage" class="page hidden container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-4xl font-bold text-gray-800">All Tours</h2>
+          <button
+            onclick="showPage('homePage')"
+            class="text-gray-600 hover:text-blue-500 transition-colors duration-200"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+          </button>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6"
+        >
+          <input
+            id="tour-search"
+            type="text"
+            placeholder="Search tours..."
+            class="flex-grow p-3 rounded-xl border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          />
+          <select
+            id="tour-destination-filter"
+            class="p-3 rounded-xl border bg-white border-gray-300 shadow-sm"
+          >
+            <option value="">All Destinations</option>
+          </select>
+          <select
+            id="tour-sort"
+            class="p-3 rounded-xl border bg-white border-gray-300 shadow-sm"
+          >
+            <option value="default">Default Sort</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating-desc">Rating: High to Low</option>
+          </select>
+        </div>
+        <div
+          id="all-tours-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        ></div>
+        <div
+          id="tours-pagination"
+          class="flex justify-center items-center space-x-2 mt-8"
+        ></div>
+      </div>
+
+      <div id="allPostsPage" class="page hidden container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-4xl font-bold text-gray-800">All Blog Posts</h2>
+          <button
+            onclick="showPage('homePage')"
+            class="text-gray-600 hover:text-blue-500 transition-colors duration-200"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+          </button>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6"
+        >
+          <input
+            id="post-search"
+            type="text"
+            placeholder="Search posts..."
+            class="flex-grow p-3 rounded-xl border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          />
+          <select
+            id="post-category-filter"
+            class="p-3 rounded-xl border bg-white border-gray-300 shadow-sm"
+          >
+            <option value="">All Categories</option>
+          </select>
+          <select
+            id="post-sort"
+            class="p-3 rounded-xl border bg-white border-gray-300 shadow-sm"
+          >
+            <option value="default">Default Sort</option>
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+          </select>
+        </div>
+        <div
+          id="all-posts-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        ></div>
+        <div
+          id="posts-pagination"
+          class="flex justify-center items-center space-x-2 mt-8"
+        ></div>
+      </div>
+
+      <div
+        id="allAttractionsPage"
+        class="page hidden container mx-auto px-4 py-8"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-4xl font-bold text-gray-800">All Attractions</h2>
+          <button
+            onclick="showPage('homePage')"
+            class="text-gray-600 hover:text-blue-500 transition-colors duration-200"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Back to Home
+          </button>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6"
+        >
+          <input
+            id="attraction-search"
+            type="text"
+            placeholder="Search attractions..."
+            class="flex-grow p-3 rounded-xl border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          />
+          <select
+            id="attraction-location-filter"
+            class="p-3 rounded-xl border bg-white border-gray-300 shadow-sm"
+          >
+            <option value="">All Locations</option>
+          </select>
+        </div>
+        <div
+          id="all-attractions-container"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        ></div>
+        <div
+          id="attractions-pagination"
+          class="flex justify-center items-center space-x-2 mt-8"
+        ></div>
+      </div>
+
+      <div id="plannerPage" class="page hidden container mx-auto px-4 py-8">
+        <h2 class="text-4xl font-bold text-gray-800 mb-6">AI Trip Planner</h2>
+        <div class="bg-white p-8 rounded-3xl shadow-xl max-w-4xl mx-auto">
+          <form id="ai-planner-form" class="space-y-8">
+            <div class="space-y-4">
+              <h3 class="text-2xl font-bold text-gray-800">Trip Details</h3>
+              <p class="text-gray-600">
+                Tell us about your trip and who's coming with you.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="destination"
+                    class="block text-gray-700 font-semibold mb-2"
+                    >Destination</label
+                  >
+                  <input
+                    type="text"
+                    id="destination"
+                    name="destination"
+                    class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="e.g., Paris, France"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    for="travelDates"
+                    class="block text-gray-700 font-semibold mb-2"
+                    >Travel Dates</label
+                  >
+                  <input
+                    type="text"
+                    id="travelDates"
+                    name="travelDates"
+                    class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="e.g., 5 days in September"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    for="numTravelers"
+                    class="block text-gray-700 font-semibold mb-2"
+                    >Number of Travelers</label
+                  >
+                  <input
+                    type="number"
+                    id="numTravelers"
+                    name="numTravelers"
+                    class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    min="1"
+                    max="10"
+                    value="1"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    for="budget"
+                    class="block text-gray-700 font-semibold mb-2"
+                    >Budget per Person</label
+                  >
+                  <select
+                    id="budget"
+                    name="budget"
+                    class="w-full p-3 rounded-xl border border-gray-300 shadow-sm"
+                  >
+                    <option value="low">Low ($)</option>
+                    <option value="medium" selected>Medium ($$)</option>
+                    <option value="high">High ($$$)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-2xl font-bold text-gray-800">
+                Traveler Preferences
+              </h3>
+              <div id="traveler-forms-container" class="space-y-6"></div>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600 transition-colors duration-200 shadow-md"
+            >
+              Plan My Trip
+            </button>
+          </form>
+
+          <div id="ai-response-container" class="mt-8 hidden">
+            <div
+              id="ai-response-loading"
+              class="text-center text-blue-500 font-semibold text-lg animate-pulse"
+            >
+              <i class="fas fa-spinner fa-spin mr-2"></i>Thinking...
+            </div>
+            <div
+              id="ai-response-content"
+              class="bg-gray-50 p-6 rounded-2xl border border-gray-200 text-gray-800"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="userDashboardPage"
+        class="page hidden container mx-auto px-4 py-8"
+      >
+        <div class="flex flex-col md:flex-row md:space-x-8">
+          <aside class="w-full md:w-1/4 mb-8 md:mb-0">
+            <div class="bg-white p-6 rounded-3xl shadow-xl h-full">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                My Dashboard
+              </h2>
+              <nav id="dashboard-nav" class="space-y-2">
+                <div
+                  onclick="showDashboardSection('summary')"
+                  class="dashboard-nav-item active"
+                >
+                  <i class="fas fa-home w-6 text-center mr-3"></i>
+                  <span>Summary</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('trips')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-plane-departure w-6 text-center mr-3"></i>
+                  <span>My Trips</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('posts')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-newspaper w-6 text-center mr-3"></i>
+                  <span>My Posts</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('favorites')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-heart w-6 text-center mr-3"></i>
+                  <span>My Favorites</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('reviews')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-star w-6 text-center mr-3"></i>
+                  <span>My Reviews</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('ai-history')"
+                  class="dashboard-nav-item"
+                >
+                  <i
+                    class="fas fa-magic-wand-sparkles w-6 text-center mr-3"
+                  ></i>
+                  <span>AI Trip History</span>
+                </div>
+                <div
+                  onclick="showDashboardSection('profile')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-user-edit w-6 text-center mr-3"></i>
+                  <span>My Profile</span>
+                </div>
+              </nav>
+            </div>
+          </aside>
+          <main class="w-full md:w-3/4">
+            <div id="dashboard-content-area" class="min-h-full"></div>
+          </main>
+        </div>
+      </div>
+
+      <div id="adminPanelPage" class="page hidden container mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row md:space-x-8">
+          <aside class="w-full md:w-1/4 mb-8 md:mb-0">
+            <div class="bg-white p-6 rounded-3xl shadow-xl h-full">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">Admin Menu</h2>
+              <nav id="admin-nav" class="space-y-2">
+                <div
+                  onclick="showAdminSection('dashboard')"
+                  class="dashboard-nav-item active"
+                >
+                  <i class="fas fa-chart-line w-6 text-center mr-3"></i>
+                  <span>Dashboard</span>
+                </div>
+                <div
+                  onclick="showAdminSection('users')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-users w-6 text-center mr-3"></i>
+                  <span>Users</span>
+                </div>
+                <div
+                  onclick="showAdminSection('tours')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-map-marked-alt w-6 text-center mr-3"></i>
+                  <span>Tours</span>
+                </div>
+                <div
+                  onclick="showAdminSection('posts')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-newspaper w-6 text-center mr-3"></i>
+                  <span>Posts</span>
+                </div>
+                <div
+                  onclick="showAdminSection('attractions')"
+                  class="dashboard-nav-item"
+                >
+                  <i class="fas fa-landmark w-6 text-center mr-3"></i>
+                  <span>Attractions</span>
+                </div>
+              </nav>
+            </div>
+          </aside>
+          <main class="w-full md:w-3/4">
+            <div
+              id="admin-content-area"
+              class="bg-white p-8 rounded-3xl shadow-xl min-h-full"
+            ></div>
+          </main>
+        </div>
+      </div>
+
+      <div
+        id="form-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50"
+      >
+        <div
+          class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-lg relative"
+        >
+          <button
+            onclick="hideForm()"
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            <i class="fas fa-times text-2xl"></i>
+          </button>
+          <h3
+            id="form-title"
+            class="text-2xl font-bold text-gray-800 mb-6"
+          ></h3>
+          <form id="edit-form" class="space-y-6"></form>
+        </div>
+      </div>
+
+      <div
+        id="itinerary-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50"
+      >
+        <div
+          class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-2xl relative"
+        >
+          <button
+            onclick="hideItineraryModal()"
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            <i class="fas fa-times text-2xl"></i>
+          </button>
+          <div id="itinerary-modal-content"></div>
+        </div>
+      </div>
+
+      <div
+        id="tourDetailsPage"
+        class="page hidden container mx-auto px-4 py-8"
+      ></div>
+      <div
+        id="postDetailsPage"
+        class="page hidden container mx-auto px-4 py-8"
+      ></div>
+      <div
+        id="attractionDetailsPage"
+        class="page hidden container mx-auto px-4 py-8"
+      ></div>
+    </div>
+
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-12">
+      <div class="container mx-auto px-4 text-center">
+        <p>&copy; 2025 Travel Planner. All rights reserved.</p>
+      </div>
+    </footer>
+    <script>
+      // Mock Data
+      let mockUsers = [
+        {
+          id: "user1",
+          username: "john_doe",
+          first_name: "John",
+          last_name: "Doe",
+          email: "john@example.com",
+          password: "password123",
+          phone_number: "555-123-4567",
+          role: "user",
+        },
+        {
+          id: "user2",
+          username: "jane_smith",
+          first_name: "Jane",
+          last_name: "Smith",
+          email: "jane@example.com",
+          password: "password123",
+          phone_number: "555-987-6543",
+          role: "user",
+        },
+        {
+          id: "user3",
+          username: "admin_user",
+          first_name: "Admin",
+          last_name: "User",
+          email: "admin@example.com",
+          password: "password123",
+          phone_number: "555-555-5555",
+          role: "admin",
+        },
+      ];
+
+      let mockTravelPlans = [
+        {
+          id: "tour1",
+          name: "Grand European Tour",
+          destination: "Europe",
+          start_date: "2025-09-01",
+          end_date: "2025-09-14",
+          duration_days: 14,
+          price_usd: 2400.0,
+          description: "A classic tour of Europe's most iconic cities.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour1/800/600",
+        },
+        {
+          id: "tour2",
+          name: "Southeast Asian Adventure",
+          destination: "Asia",
+          start_date: "2025-10-05",
+          end_date: "2025-10-15",
+          duration_days: 11,
+          price_usd: 1800.0,
+          description:
+            "Explore the bustling markets and serene temples of Southeast Asia.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour2/800/600",
+        },
+        {
+          id: "tour3",
+          name: "New Zealand Fjord Expedition",
+          destination: "New Zealand",
+          start_date: "2025-11-20",
+          end_date: "2025-11-27",
+          duration_days: 8,
+          price_usd: 3100.0,
+          description:
+            "Discover the breathtaking beauty of Milford Sound and the surrounding fjords.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour3/800/600",
+        },
+        {
+          id: "tour4",
+          name: "Canadian Rockies Tour",
+          destination: "Canada",
+          start_date: "2026-07-20",
+          end_date: "2026-07-28",
+          duration_days: 9,
+          price_usd: 2300.0,
+          description:
+            "Exploring the stunning lakes and mountains of Banff and Jasper.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour4/800/600",
+        },
+        {
+          id: "tour5",
+          name: "Egyptian Pyramids Tour",
+          destination: "Egypt",
+          start_date: "2026-03-15",
+          end_date: "2026-03-22",
+          duration_days: 8,
+          price_usd: 2800.0,
+          description:
+            "Discover the ancient wonders of Egypt, from the Pyramids of Giza to the Valley of the Kings.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour5/800/600",
+        },
+        {
+          id: "tour6",
+          name: "Iceland's Northern Lights",
+          destination: "Iceland",
+          start_date: "2026-02-10",
+          end_date: "2026-02-18",
+          duration_days: 9,
+          price_usd: 3200.0,
+          description:
+            "A quest to witness the magical aurora borealis and explore ice caves.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour6/800/600",
+        },
+        {
+          id: "tour7",
+          name: "Machu Picchu Trek",
+          destination: "Peru",
+          start_date: "2026-05-01",
+          end_date: "2026-05-09",
+          duration_days: 9,
+          price_usd: 2700.0,
+          description:
+            "Hike the legendary Inca Trail to the lost city of Machu Picchu.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour7/800/600",
+        },
+        {
+          id: "tour8",
+          name: "Greek Islands Cruise",
+          destination: "Greece",
+          start_date: "2026-06-10",
+          end_date: "2026-06-20",
+          duration_days: 11,
+          price_usd: 3500.0,
+          description:
+            "Sail through the Aegean Sea, visiting iconic islands like Santorini and Mykonos.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour8/800/600",
+        },
+        {
+          id: "tour9",
+          name: "African Safari Adventure",
+          destination: "Kenya",
+          start_date: "2026-08-01",
+          end_date: "2026-08-10",
+          duration_days: 10,
+          price_usd: 5500.0,
+          description:
+            "An unforgettable safari experience in the heart of the Maasai Mara.",
+          plan_type: "tour",
+          owner_id: null,
+          image_url: "https://picsum.photos/seed/tour9/800/600",
+        },
+        {
+          id: "usertrip1",
+          name: "John's Hawaiian Getaway",
+          destination: "Hawaii",
+          start_date: "2026-01-10",
+          end_date: "2026-01-17",
+          duration_days: 8,
+          price_usd: 3500.0,
+          description: "My personal trip to explore the islands of Hawaii.",
+          plan_type: "user",
+          owner_id: "user1",
+          image_url: "https://picsum.photos/seed/usertrip1/800/600",
+        },
+        {
+          id: "usertrip2",
+          name: "John's Past Japan Trip",
+          destination: "Japan",
+          start_date: "2025-04-05",
+          end_date: "2025-04-15",
+          duration_days: 11,
+          price_usd: 4200.0,
+          description:
+            "An amazing trip to see the cherry blossoms in Kyoto and explore Tokyo.",
+          plan_type: "user",
+          owner_id: "user1",
+          image_url: "https://picsum.photos/seed/usertrip2/800/600",
+        },
+      ];
+
+      const mockAttractionPosts = [
+        {
+          id: "attraction1",
+          title: "The Colosseum",
+          location: "Rome",
+          content: "An iconic symbol of Imperial Rome...",
+          created_at: "2024-07-15T12:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction1/800/600",
+        },
+        {
+          id: "attraction2",
+          title: "Eiffel Tower",
+          location: "Paris",
+          content: "A wrought-iron lattice tower on the Champ de Mars...",
+          created_at: "2024-07-10T15:30:00Z",
+          image_url: "https://picsum.photos/seed/attraction2/800/600",
+        },
+        {
+          id: "attraction3",
+          title: "Pyramids of Giza",
+          location: "Egypt",
+          content:
+            "The last surviving of the Seven Wonders of the Ancient World.",
+          created_at: "2024-07-05T09:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction3/800/600",
+        },
+        {
+          id: "attraction4",
+          title: "The Louvre Museum",
+          location: "Paris",
+          content:
+            "Home to thousands of works of art, including the Mona Lisa.",
+          created_at: "2024-07-01T10:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction4/800/600",
+        },
+        {
+          id: "attraction5",
+          title: "The British Museum",
+          location: "London",
+          content: "A world-famous museum of human history, art, and culture.",
+          created_at: "2024-06-28T11:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction5/800/600",
+        },
+        {
+          id: "attraction6",
+          title: "Mount Fuji",
+          location: "Japan",
+          content: "Japan's highest peak and an iconic symbol of the country.",
+          created_at: "2024-06-25T14:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction6/800/600",
+        },
+        {
+          id: "attraction7",
+          title: "The Great Wall of China",
+          location: "China",
+          content:
+            "A monumental ancient fortification with breathtaking views.",
+          created_at: "2024-06-22T09:30:00Z",
+          image_url: "https://picsum.photos/seed/attraction7/800/600",
+        },
+        {
+          id: "attraction8",
+          title: "The Acropolis of Athens",
+          location: "Greece",
+          content:
+            "A historic site containing the remains of ancient buildings, including the Parthenon.",
+          created_at: "2024-06-20T16:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction8/800/600",
+        },
+        {
+          id: "attraction9",
+          title: "The Sydney Opera House",
+          location: "Australia",
+          content:
+            "A multi-venue performing arts centre and an icon of modern architecture.",
+          created_at: "2024-06-18T13:00:00Z",
+          image_url: "https://picsum.photos/seed/attraction9/800/600",
+        },
+      ];
+
+      let mockUserPosts = [
+        {
+          id: "post1",
+          user_id: "user2",
+          title: "Hiking the Cinque Terre",
+          content:
+            "My unforgettable hiking experience along the Italian coastline...",
+          category: "Nature",
+          created_at: "2024-07-15T10:00:00Z",
+          image_url: "https://picsum.photos/seed/post1/800/600",
+        },
+        {
+          id: "post2",
+          user_id: "user1",
+          title: "Culinary Journey in Rome",
+          content:
+            "From carbonara to supplì, a food lover's dream trip through the heart of Italy...",
+          category: "Food",
+          created_at: "2024-06-20T14:30:00Z",
+          image_url: "https://picsum.photos/seed/post2/800/600",
+        },
+        {
+          id: "post3",
+          user_id: "user2",
+          title: "Ancient Wonders of Athens",
+          content:
+            "Walking through the Acropolis and the ancient Agora felt like stepping back in time...",
+          category: "History",
+          created_at: "2024-06-01T11:00:00Z",
+          image_url: "https://picsum.photos/seed/post3/800/600",
+        },
+        {
+          id: "post4",
+          user_id: "user1",
+          title: "Reflections on Hawaiian Sunsets",
+          content:
+            "The sunsets in Maui are unlike anything I've ever seen. The colors are simply breathtaking.",
+          category: "Personal",
+          created_at: "2025-01-20T18:00:00Z",
+          image_url: "https://picsum.photos/seed/post4/800/600",
+        },
+        {
+          id: "post5",
+          user_id: "user2",
+          title: "The Art of Paris",
+          content:
+            "Spent a week getting lost in the Louvre and Musée d'Orsay. A dream for any art lover.",
+          category: "Art",
+          created_at: "2024-05-15T12:00:00Z",
+          image_url: "https://picsum.photos/seed/post5/800/600",
+        },
+        {
+          id: "post6",
+          user_id: "user1",
+          title: "Road Trip Through Arizona",
+          content:
+            "Driving from the Grand Canyon to Monument Valley was an epic adventure. The landscapes are otherworldly.",
+          category: "Adventure",
+          created_at: "2024-05-10T08:00:00Z",
+          image_url: "https://picsum.photos/seed/post6/800/600",
+        },
+        {
+          id: "post7",
+          user_id: "user2",
+          title: "What to Eat in Rome",
+          content:
+            "Beyond pizza and pasta! I found some incredible local dishes that you have to try.",
+          category: "Food",
+          created_at: "2024-04-20T19:00:00Z",
+          image_url: "https://picsum.photos/seed/post7/800/600",
+        },
+        {
+          id: "post8",
+          user_id: "user1",
+          title: "Solo Traveling in Portugal",
+          content:
+            "My tips and tricks for exploring Lisbon and Porto on your own. It's an amazing country for solo travelers.",
+          category: "Travel Tips",
+          created_at: "2024-04-05T15:00:00Z",
+          image_url: "https://picsum.photos/seed/post8/800/600",
+        },
+        {
+          id: "post9",
+          user_id: "user2",
+          title: "A Weekend in the Swiss Alps",
+          content:
+            "The hiking trails around Interlaken offer some of the most stunning mountain views in the world.",
+          category: "Nature",
+          created_at: "2024-03-25T11:00:00Z",
+          image_url: "https://picsum.photos/seed/post9/800/600",
+        },
+      ];
+
+      const mockTourReviews = [
+        {
+          id: "review1",
+          tour_id: "tour1",
+          user_id: "user2",
+          rating: 5,
+          content: "An amazing tour, highly recommended!",
+        },
+        {
+          id: "review2",
+          tour_id: "tour1",
+          user_id: "user1",
+          rating: 4,
+          content: "Great sights, but a bit too fast-paced.",
+        },
+        {
+          id: "review3",
+          tour_id: "tour2",
+          user_id: "user1",
+          rating: 5,
+          content:
+            "Perfect for an adventure seeker! The temples were beautiful.",
+        },
+      ];
+
+      let mockFavorites = [
+        { userId: "user1", type: "tour", itemId: "tour2" },
+        { userId: "user1", type: "post", itemId: "post1" },
+        { userId: "user1", type: "attraction", itemId: "attraction3" },
+      ];
+
+      const mockUserPostComments = [
+        {
+          post_id: "post1",
+          user_id: "user1",
+          content: "Looks like a beautiful hike!",
+        },
+        {
+          post_id: "post2",
+          user_id: "user2",
+          content: "This looks delicious! I need to go to Rome.",
+        },
+      ];
+
+      const mockAiRequests = [
+        {
+          id: "ai1",
+          user_id: "user1",
+          request_text:
+            "A 5-day cultural trip to Paris for 2 people on a medium budget.",
+          travel_plan_id: "aitrip1",
+        },
+        {
+          id: "ai2",
+          user_id: "user1",
+          request_text:
+            "A 10-day adventure in Costa Rica, focus on nature and wildlife.",
+          travel_plan_id: "aitrip2",
+        },
+      ];
+
+      const mockTripItineraries = {
+        aitrip1: {
+          title: "Cultural Discovery of Paris",
+          days: [
+            {
+              day: 1,
+              title: "Arrival and Montmartre",
+              activities: [
+                "Check into hotel",
+                "Explore Sacré-Cœur",
+                "Dinner in Montmartre",
+              ],
+            },
+            {
+              day: 2,
+              title: "Museums and Masterpieces",
+              activities: [
+                "Visit the Louvre Museum",
+                "Walk through Tuileries Garden",
+                "See art at Musée d'Orsay",
+              ],
+            },
+            {
+              day: 3,
+              title: "Icons of Paris",
+              activities: [
+                "Climb the Eiffel Tower",
+                "Champs-Élysées and Arc de Triomphe",
+                "Seine River Cruise",
+              ],
+            },
+            {
+              day: 4,
+              title: "Gothic Architecture & Latin Quarter",
+              activities: [
+                "Visit Notre-Dame Cathedral area",
+                "Explore the Latin Quarter",
+                "Visit Shakespeare and Company bookstore",
+              ],
+            },
+            {
+              day: 5,
+              title: "Departure",
+              activities: [
+                "Last-minute souvenir shopping",
+                "Enjoy a final Parisian breakfast",
+                "Depart from CDG",
+              ],
+            },
+          ],
+        },
+        aitrip2: {
+          title: "Costa Rica Nature Adventure",
+          days: [
+            {
+              day: 1,
+              title: "Arrival in San José",
+              activities: [
+                "Arrive and transfer to hotel",
+                "Explore downtown San José",
+              ],
+            },
+            {
+              day: 2,
+              title: "Arenal Volcano",
+              activities: [
+                "Travel to La Fortuna",
+                "Hike near Arenal Volcano",
+                "Relax in hot springs",
+              ],
+            },
+            {
+              day: 3,
+              title: "Rainforest Ziplining",
+              activities: ["Ziplining canopy tour", "Walk on hanging bridges"],
+            },
+            //... more days
+          ],
+        },
+      };
+
+      // Global State
+      let currentActivePage = "homePage";
+      let currentUser = null;
+      const TODAY = new Date("2025-08-30T12:00:00Z");
+      let paginationState = {
+        tours: { currentPage: 1, itemsPerPage: 9, data: [] },
+        posts: { currentPage: 1, itemsPerPage: 9, data: [] },
+        attractions: { currentPage: 1, itemsPerPage: 9, data: [] },
+      };
+
+      // Utility Functions
+      function getTourRating(tourId) {
+        const reviews = mockTourReviews.filter((r) => r.tour_id === tourId);
+        if (reviews.length === 0) return 0;
+        const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+        return (totalRating / reviews.length).toFixed(1);
+      }
+
+      // Page Navigation
+      function showPage(pageId) {
+        if (
+          (pageId === "userDashboardPage" && !currentUser) ||
+          (pageId === "adminPanelPage" && currentUser?.role !== "admin")
+        ) {
+          alert(
+            "Access denied. Please switch to an appropriate user role via the user icon."
+          );
+          return;
+        }
+
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.add("hidden"));
+        document.getElementById(pageId).classList.remove("hidden");
+        currentActivePage = pageId;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        if (pageId === "allToursPage") {
+          paginationState.tours.data = mockTravelPlans.filter(
+            (p) => p.plan_type === "tour"
+          );
+          paginationState.tours.currentPage = 1;
+          renderPaginatedItems("tours");
+          populateFilters("tour");
+        } else if (pageId === "allPostsPage") {
+          paginationState.posts.data = mockUserPosts;
+          paginationState.posts.currentPage = 1;
+          renderPaginatedItems("posts");
+          populateFilters("post");
+        } else if (pageId === "allAttractionsPage") {
+          paginationState.attractions.data = mockAttractionPosts;
+          paginationState.attractions.currentPage = 1;
+          renderPaginatedItems("attractions");
+          populateFilters("attraction");
+        } else if (pageId === "userDashboardPage") {
+          renderUserDashboard();
+        } else if (pageId === "adminPanelPage") {
+          renderAdminPanel();
+        } else if (pageId === "plannerPage") {
+          renderTravelerForms();
+        }
+      }
+
+      function smoothScrollTo(elementId) {
+        const element = document.getElementById(elementId);
+        const header = document.getElementById("main-header");
+        if (element && header) {
+          const headerHeight = header.offsetHeight;
+          const elementPosition = element.offsetTop;
+          const offsetPosition = elementPosition - headerHeight - 20;
+          setTimeout(() => {
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+          }, 100);
+        }
+      }
+
+      // Rendering Functions
+      function createCard(item, type, context = "public") {
+        let details = "";
+        let image =
+          item.image_url || "https://picsum.photos/seed/fallback/800/600";
+
+        if (type === "tour") {
+          const rating = getTourRating(item.id);
+          const ratingHtml =
+            rating > 0
+              ? `<div class="flex items-center text-yellow-500 text-sm font-semibold"><i class="fas fa-star mr-1"></i>${rating}</div>`
+              : "";
+          details = `
+            <div class="flex items-center justify-between text-sm font-semibold text-blue-600 mb-2">
+                <span>$${item.price_usd}</span>
+                <span>${item.duration_days} days</span>
+                ${ratingHtml}
+            </div>
+            <p class="text-sm text-gray-500 mb-2">${item.destination}</p>`;
+        } else if (type === "post") {
+          const user = mockUsers.find((u) => u.id === item.user_id);
+          const comments = mockUserPostComments.filter(
+            (c) => c.post_id === item.id
+          ).length;
+          details = `<p class="text-sm text-gray-500 mb-2">by ${
+            user?.first_name || "User"
+          } • ${item.category} • ${comments} comment${
+            comments !== 1 ? "s" : ""
+          }</p>`;
+        } else if (type === "attraction") {
+          details = `<p class="text-sm text-gray-500 mb-2">${item.location}</p>`;
+        }
+
+        let buttonsHtml = "";
+        if (context === "dashboard") {
+          const itemType = type === "trip" ? "tour" : type;
+          buttonsHtml = `
+            <div class="mt-4 pt-4 border-t flex space-x-2">
+                <button onclick="event.stopPropagation(); showDetails('${type}', '${item.id}')" class="flex-1 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200">View</button>
+                <button onclick="event.stopPropagation(); showForm('${type}', 'edit', '${item.id}')" class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-yellow-600"><i class="fas fa-edit"></i></button>
+                <button onclick="event.stopPropagation(); deleteItem('${type}', '${item.id}')" class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-red-600"><i class="fas fa-trash-alt"></i></button>
+            </div>`;
+        } else if (context === "favorite") {
+          buttonsHtml = `
+            <div class="mt-4 pt-4 border-t flex space-x-2">
+                <button onclick="event.stopPropagation(); showDetails('${type}', '${item.id}')" class="flex-1 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200">View</button>
+                <button onclick="event.stopPropagation(); removeFavorite('${item.id}')" class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-red-600"><i class="fas fa-heart-crack"></i></button>
+            </div>`;
+        }
+
+        return `
+          <div onclick="showDetails('${type}', '${
+          item.id
+        }')" class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex flex-col">
+              <img src="${image}" alt="${
+          item.title || item.name
+        }" class="w-full h-48 object-cover">
+              <div class="p-6 flex flex-col flex-grow">
+                  <h4 class="text-xl font-bold text-gray-800 mb-2">${
+                    item.name || item.title
+                  }</h4>
+                  ${details}
+                  <p class="text-gray-600 line-clamp-3 flex-grow">${
+                    item.description || item.content
+                  }</p>
+                  ${buttonsHtml}
+              </div>
+          </div>`;
+      }
+
+      function renderCards(containerId, items, type, context = "public") {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        if (items.length === 0) {
+          container.innerHTML = `<p class="text-gray-600 italic col-span-full">No items found.</p>`;
+          return;
+        }
+        container.innerHTML = items
+          .map((item) => createCard(item, type, context))
+          .join("");
+      }
+
+      function renderFavoriteCards(containerId, favoriteLinks) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const favoriteItems = favoriteLinks
+          .map((fav) => {
+            let item, itemType;
+            if (fav.type === "tour") {
+              item = mockTravelPlans.find((t) => t.id === fav.itemId);
+              itemType = "tour";
+            } else if (fav.type === "post") {
+              item = mockUserPosts.find((p) => p.id === fav.itemId);
+              itemType = "post";
+            } else {
+              item = mockAttractionPosts.find((a) => a.id === fav.itemId);
+              itemType = "attraction";
+            }
+            return item ? { ...item, itemType: itemType } : null;
+          })
+          .filter(Boolean);
+
+        if (favoriteItems.length === 0) {
+          container.innerHTML = `<p class="text-gray-600 italic col-span-full">You haven't favorited any items yet.</p>`;
+          return;
+        }
+        container.innerHTML = favoriteItems
+          .map((item) => createCard(item, item.itemType, "favorite"))
+          .join("");
+      }
+
+      function showDetails(type, id) {
+        const fromPage = currentActivePage;
+        let dataArray, pageId, item, imageUrl;
+        let contentHtml = "";
+
+        // Ensure type is consistent for lookups
+        const lookupType = type === "trip" ? "tour" : type;
+
+        if (lookupType === "tour") {
+          dataArray = mockTravelPlans;
+          pageId = "tourDetailsPage";
+          item = dataArray.find((i) => i.id === id);
+          if (!item) return;
+          imageUrl = item.image_url;
+          const rating = getTourRating(item.id);
+
+          contentHtml = `
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-0">
+                        <div class="md:col-span-3">
+                            <img src="${imageUrl}" alt="${
+            item.name
+          }" class="w-full h-full object-cover max-h-[500px]">
+                        </div>
+                        <div class="md:col-span-2 p-8 flex flex-col">
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-3xl font-bold text-gray-800">${
+                                  item.name
+                                }</h2>
+                                <button class="text-gray-400 hover:text-red-500 text-2xl"><i class="far fa-heart"></i></button>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                                <div class="grid grid-cols-2 gap-4 text-center">
+                                    <div>
+                                        <div class="text-2xl font-bold text-blue-600">$${
+                                          item.price_usd
+                                        }</div>
+                                        <div class="text-sm text-gray-500">per person</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-blue-600">${
+                                          item.duration_days
+                                        }</div>
+                                        <div class="text-sm text-gray-500">days</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-blue-600">${
+                                          item.destination
+                                        }</div>
+                                        <div class="text-sm text-gray-500">Destination</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-yellow-500 flex items-center justify-center">
+                                          <i class="fas fa-star mr-1"></i> ${
+                                            rating > 0 ? rating : "N/A"
+                                          }
+                                        </div>
+                                        <div class="text-sm text-gray-500">Rating</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-gray-600 flex-grow mb-6">${
+                              item.description
+                            }</p>
+                            <button class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600 transition-transform transform hover:scale-105">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (lookupType === "post") {
+          dataArray = mockUserPosts;
+          pageId = "postDetailsPage";
+          item = dataArray.find((i) => i.id === id);
+          if (!item) return;
+          const user = mockUsers.find((u) => u.id === item.user_id);
+          imageUrl =
+            item.image_url || "https://picsum.photos/seed/fallback/1200/800";
+
+          contentHtml = `
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-3xl shadow-xl">
+                    <img src="${imageUrl}" alt="${
+            item.title
+          }" class="w-full h-96 object-cover rounded-2xl mb-6">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">${
+                      item.title
+                    }</h2>
+                    <div class="flex items-center justify-between text-gray-500 mb-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
+                               <i class="fas fa-user text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">${
+                                  user.first_name
+                                } ${user.last_name}</p>
+                                <p class="text-sm">Posted on ${new Date(
+                                  item.created_at
+                                ).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                             <button class="text-gray-400 hover:text-red-500 text-2xl"><i class="far fa-heart"></i></button>
+                             <button class="text-gray-400 hover:text-blue-500 text-2xl"><i class="fas fa-share-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-lg text-gray-700 leading-relaxed mb-8">${
+                      item.content
+                    }</div>
+                    
+                    <div class="border-t pt-8">
+                        <h3 class="text-2xl font-bold mb-4">Comments</h3>
+                        <div id="comments-section" class="space-y-4 mb-6">
+                            </div>
+                        <h4 class="text-xl font-bold mb-2">Leave a Reply</h4>
+                        <form class="space-y-4">
+                            <textarea class="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment..."></textarea>
+                            <button type="submit" class="bg-blue-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-600">Post Comment</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        } else if (lookupType === "attraction") {
+          dataArray = mockAttractionPosts;
+          pageId = "attractionDetailsPage";
+          item = dataArray.find((i) => i.id === id);
+          if (!item) return;
+          imageUrl =
+            item.image_url || "https://picsum.photos/seed/fallback/1200/800";
+          const relatedTours = mockTravelPlans.filter(
+            (t) =>
+              (item.location.includes(t.destination) ||
+                t.destination.includes(item.location)) &&
+              t.plan_type === "tour"
+          );
+
+          contentHtml = `
+              <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="h-96 bg-cover bg-center" style="background-image: url('${imageUrl}')">
+                    <div class="h-full w-full bg-black bg-opacity-40 flex flex-col justify-end p-8 text-white">
+                        <h2 class="text-5xl font-extrabold drop-shadow-lg">${
+                          item.title
+                        }</h2>
+                        <p class="text-2xl font-medium drop-shadow-md">${
+                          item.location
+                        }</p>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="md:col-span-2">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">About ${
+                              item.title
+                            }</h3>
+                            <p class="text-lg text-gray-600 leading-relaxed">${
+                              item.content
+                            }</p>
+                        </div>
+                        <div class="md:col-span-1">
+                            <div class="bg-gray-50 rounded-xl p-6">
+                                <h4 class="text-xl font-bold text-gray-800 mb-4">Information</h4>
+                                <ul class="space-y-3 text-gray-700">
+                                    <li class="flex items-center"><i class="fas fa-map-marker-alt text-blue-500 w-6"></i><span>${
+                                      item.location
+                                    }</span></li>
+                                    <li class="flex items-center"><i class="far fa-clock text-blue-500 w-6"></i><span>Best time: Spring</span></li>
+                                </ul>
+                                <button class="w-full mt-6 bg-gray-200 text-gray-800 font-bold py-2 rounded-xl hover:bg-gray-300">Add to Favorites</button>
+                            </div>
+                        </div>
+                    </div>
+                    ${
+                      relatedTours.length > 0
+                        ? `
+                    <div class="mt-12 border-t pt-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Tours that visit ${
+                          item.location
+                        }</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${relatedTours
+                              .map((t) => createCard(t, "tour"))
+                              .join("")}
+                        </div>
+                    </div>`
+                        : ""
+                    }
+                </div>
+              </div>
+            `;
+        }
+
+        const detailsPageContainer = document.getElementById(pageId);
+        detailsPageContainer.innerHTML = `
+            <div class="max-w-6xl mx-auto">
+                <button onclick="showPage('${fromPage}')" class="mb-6 text-gray-600 hover:text-blue-500 transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                ${contentHtml}
+            </div>
+        `;
+        showPage(pageId);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const tours = mockTravelPlans.filter((p) => p.plan_type === "tour");
+        renderCards("home-tours-container", tours.slice(0, 3), "tour");
+        renderCards("home-posts-container", mockUserPosts.slice(0, 3), "post");
+        renderCards(
+          "home-attractions-container",
+          mockAttractionPosts.slice(0, 3),
+          "attraction"
+        );
+        switchUser("guest");
+      });
+
+      function populateFilters(type) {
+        let dataArray, filterId, propertyKey;
+
+        if (type === "tour") {
+          dataArray = mockTravelPlans.filter((p) => p.plan_type === "tour");
+          filterId = "tour-destination-filter";
+          propertyKey = "destination";
+        } else if (type === "post") {
+          dataArray = mockUserPosts;
+          filterId = "post-category-filter";
+          propertyKey = "category";
+        } else if (type === "attraction") {
+          dataArray = mockAttractionPosts;
+          filterId = "attraction-location-filter";
+          propertyKey = "location";
+        } else {
+          return;
+        }
+
+        const filterDropdown = document.getElementById(filterId);
+        if (!filterDropdown) return;
+        const uniqueValues = [
+          ...new Set(dataArray.map((item) => item[propertyKey])),
+        ].sort();
+        filterDropdown.innerHTML =
+          `<option value="">All ${
+            propertyKey.charAt(0).toUpperCase() + propertyKey.slice(1)
+          }s</option>` +
+          uniqueValues
+            .map((val) => `<option value="${val}">${val}</option>`)
+            .join("");
+      }
+
+      function filterAndSort(type) {
+        let dataArray, propertyKey;
+        const typePlural = type + "s";
+        if (type === "tour") {
+          dataArray = mockTravelPlans.filter((p) => p.plan_type === "tour");
+          propertyKey = "destination";
+        } else if (type === "post") {
+          dataArray = mockUserPosts;
+          propertyKey = "category";
+        } else if (type === "attraction") {
+          dataArray = mockAttractionPosts;
+          propertyKey = "location";
+        }
+
+        const searchTerm = document
+          .getElementById(`${type}-search`)
+          .value.toLowerCase();
+        const filterTerm = document.getElementById(
+          `${type}-${propertyKey}-filter`
+        ).value;
+        const sortValue =
+          type !== "attraction"
+            ? document.getElementById(`${type}-sort`).value
+            : "default";
+
+        let filteredItems = dataArray.filter((item) => {
+          const nameMatch = (item.name || item.title || "")
+            .toLowerCase()
+            .includes(searchTerm);
+          const descMatch = (item.description || item.content || "")
+            .toLowerCase()
+            .includes(searchTerm);
+          const matchesSearch = nameMatch || descMatch;
+          const matchesFilter = !filterTerm || item[propertyKey] === filterTerm;
+          return matchesSearch && matchesFilter;
+        });
+
+        if (sortValue !== "default") {
+          filteredItems.sort((a, b) => {
+            switch (sortValue) {
+              case "price-asc":
+                return a.price_usd - b.price_usd;
+              case "price-desc":
+                return b.price_usd - a.price_usd;
+              case "rating-desc":
+                return getTourRating(b.id) - getTourRating(a.id);
+              case "date-desc":
+                return new Date(b.created_at) - new Date(a.created_at);
+              case "date-asc":
+                return new Date(a.created_at) - new Date(b.created_at);
+              default:
+                return 0;
+            }
+          });
+        }
+
+        paginationState[typePlural].data = filteredItems;
+        paginationState[typePlural].currentPage = 1;
+        renderPaginatedItems(typePlural);
+      }
+
+      ["tour-search", "post-search", "attraction-search"].forEach((id) =>
+        document
+          .getElementById(id)
+          .addEventListener("input", () => filterAndSort(id.split("-")[0]))
+      );
+      [
+        "tour-destination-filter",
+        "post-category-filter",
+        "attraction-location-filter",
+      ].forEach((id) =>
+        document
+          .getElementById(id)
+          .addEventListener("change", () => filterAndSort(id.split("-")[0]))
+      );
+      ["tour-sort", "post-sort"].forEach((id) =>
+        document
+          .getElementById(id)
+          .addEventListener("change", () => filterAndSort(id.split("-")[0]))
+      );
+
+      // Pagination Logic
+      function renderPaginatedItems(type) {
+        const state = paginationState[type];
+        const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+        const endIndex = startIndex + state.itemsPerPage;
+        const itemsToDisplay = state.data.slice(startIndex, endIndex);
+
+        const singularType = type.slice(0, -1);
+        renderCards(`all-${type}-container`, itemsToDisplay, singularType);
+        renderPaginationControls(type);
+      }
+
+      function renderPaginationControls(type) {
+        const state = paginationState[type];
+        const totalItems = state.data.length;
+        const totalPages = Math.ceil(totalItems / state.itemsPerPage);
+        const container = document.getElementById(`${type}-pagination`);
+        if (!container) return;
+
+        if (totalPages <= 1) {
+          container.innerHTML = "";
+          return;
+        }
+
+        let buttonsHtml = `
+              <button onclick="changePage('${type}', ${
+          state.currentPage - 1
+        })" class="pagination-button" ${
+          state.currentPage === 1 ? "disabled" : ""
+        }>
+                  <i class="fas fa-chevron-left"></i>
+              </button>
+          `;
+        for (let i = 1; i <= totalPages; i++) {
+          buttonsHtml += `<button onclick="changePage('${type}', ${i})" class="pagination-button ${
+            i === state.currentPage ? "active" : ""
+          }">${i}</button>`;
+        }
+        buttonsHtml += `
+              <button onclick="changePage('${type}', ${
+          state.currentPage + 1
+        })" class="pagination-button" ${
+          state.currentPage === totalPages ? "disabled" : ""
+        }>
+                  <i class="fas fa-chevron-right"></i>
+              </button>
+          `;
+        container.innerHTML = buttonsHtml;
+      }
+
+      function changePage(type, pageNumber) {
+        const state = paginationState[type];
+        const totalPages = Math.ceil(state.data.length / state.itemsPerPage);
+        if (pageNumber < 1 || pageNumber > totalPages) return;
+
+        state.currentPage = pageNumber;
+        renderPaginatedItems(type);
+        window.scrollTo({
+          top: document.getElementById(`all-${type}-container`).offsetTop - 100,
+          behavior: "smooth",
+        });
+      }
+
+      // User Switcher (Prototype Auth)
+      function switchUser(role) {
+        const indicator = document.getElementById("current-user-indicator");
+        const dashboardLink = document.getElementById("dashboard-link");
+        const adminLink = document.getElementById("admin-panel-link");
+        const separator = document.getElementById("user-actions-separator");
+
+        if (role === "guest") {
+          currentUser = null;
+          indicator.textContent = "Guest";
+          dashboardLink.classList.add("hidden");
+          adminLink.classList.add("hidden");
+          separator.classList.add("hidden");
+        } else if (role === "user") {
+          currentUser = mockUsers.find((u) => u.role === "user");
+          indicator.textContent = currentUser.first_name;
+          dashboardLink.classList.remove("hidden");
+          adminLink.classList.add("hidden");
+          separator.classList.remove("hidden");
+        } else if (role === "admin") {
+          currentUser = mockUsers.find((u) => u.role === "admin");
+          indicator.textContent = currentUser.first_name;
+          dashboardLink.classList.remove("hidden");
+          adminLink.classList.remove("hidden");
+          separator.classList.remove("hidden");
+        }
+
+        if (
+          (currentActivePage === "userDashboardPage" && !currentUser) ||
+          (currentActivePage === "adminPanelPage" &&
+            currentUser?.role !== "admin")
+        ) {
+          showPage("homePage");
+        }
+      }
+
+      // AI Trip Planner Logic
+      const travelInterests = [
+        "History",
+        "Nature",
+        "Food",
+        "Adventure",
+        "Culture",
+        "Shopping",
+      ];
+      const foodPreferences = [
+        "Local Cuisine",
+        "Vegetarian",
+        "Vegan",
+        "Fine Dining",
+        "Street Food",
+      ];
+      const activityPreferences = [
+        "Relaxed Pace",
+        "Fast-paced Sightseeing",
+        "Outdoor Activities",
+        "Nightlife",
+      ];
+      const travelers = [];
+
+      function generateTravelerForm(travelerNum) {
+        return `<div class="bg-gray-100 p-6 rounded-2xl border border-gray-200">
+          <h4 class="text-lg font-bold text-gray-800 mb-4">Traveler ${travelerNum}</h4>
+          <div><label class="block text-gray-700 font-semibold mb-2">Interests</label><div class="flex flex-wrap gap-2 mb-4">
+            ${travelInterests
+              .map(
+                (i) =>
+                  `<button type="button" class="interest-tag bg-white text-gray-700 px-3 py-1 rounded-full font-medium hover:bg-gray-200" data-interest="${i}" data-traveler="${travelerNum}">${i}</button>`
+              )
+              .join("")}
+          </div></div>
+          <div><label class="block text-gray-700 font-semibold mb-2">Food Preferences</label><div class="flex flex-wrap gap-2 mb-4">
+            ${foodPreferences
+              .map(
+                (f) =>
+                  `<button type="button" class="food-tag bg-white text-gray-700 px-3 py-1 rounded-full font-medium hover:bg-gray-200" data-food="${f}" data-traveler="${travelerNum}">${f}</button>`
+              )
+              .join("")}
+          </div></div>
+          <div><label class="block text-gray-700 font-semibold mb-2">Activity Pace</label><div class="flex flex-wrap gap-2">
+            ${activityPreferences
+              .map(
+                (a) =>
+                  `<button type="button" class="activity-tag bg-white text-gray-700 px-3 py-1 rounded-full font-medium hover:bg-gray-200" data-activity="${a}" data-traveler="${travelerNum}">${a}</button>`
+              )
+              .join("")}
+          </div></div></div>`;
+      }
+
+      function renderTravelerForms() {
+        const numTravelers = document.getElementById("numTravelers").value;
+        const container = document.getElementById("traveler-forms-container");
+        if (!container) return;
+        container.innerHTML = "";
+        travelers.length = 0;
+        for (let i = 1; i <= numTravelers; i++) {
+          container.innerHTML += generateTravelerForm(i);
+          travelers.push({
+            interests: new Set(),
+            food: new Set(),
+            activities: new Set(),
+          });
+        }
+        document
+          .querySelectorAll(".interest-tag")
+          .forEach((b) =>
+            b.addEventListener("click", (e) => toggleTag(e, "interests"))
+          );
+        document
+          .querySelectorAll(".food-tag")
+          .forEach((b) =>
+            b.addEventListener("click", (e) => toggleTag(e, "food"))
+          );
+        document
+          .querySelectorAll(".activity-tag")
+          .forEach((b) =>
+            b.addEventListener("click", (e) => toggleTag(e, "activities"))
+          );
+      }
+
+      function toggleTag(event, type) {
+        const button = event.target;
+        const travelerNum = button.dataset.traveler;
+        const value = button.dataset[type.slice(0, -1)];
+        const travelerSet = travelers[travelerNum - 1][type];
+        if (travelerSet.has(value)) {
+          travelerSet.delete(value);
+          button.classList.remove("bg-blue-500", "text-white");
+          button.classList.add("bg-white", "text-gray-700");
+        } else {
+          travelerSet.add(value);
+          button.classList.remove("bg-white", "text-gray-700");
+          button.classList.add("bg-blue-500", "text-white");
+        }
+      }
+      document
+        .getElementById("numTravelers")
+        .addEventListener("input", renderTravelerForms);
+      document
+        .getElementById("ai-planner-form")
+        .addEventListener("submit", (e) => {
+          e.preventDefault(); /* AI logic... */
+        });
+
+      // User Dashboard Logic
+      function renderUserDashboard() {
+        if (!currentUser) return;
+        showDashboardSection("summary");
+      }
+
+      function showDashboardSection(sectionName) {
+        document
+          .querySelectorAll("#dashboard-nav .dashboard-nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        document
+          .querySelector(
+            `#dashboard-nav .dashboard-nav-item[onclick="showDashboardSection('${sectionName}')"]`
+          )
+          .classList.add("active");
+
+        const contentArea = document.getElementById("dashboard-content-area");
+        contentArea.innerHTML = `<div class="bg-white p-8 rounded-3xl shadow-xl"></div>`; // Wrapper for content
+        const innerContentArea = contentArea.querySelector("div");
+
+        const myTrips = mockTravelPlans.filter(
+          (p) => p.owner_id === currentUser.id
+        );
+        const myPosts = mockUserPosts.filter(
+          (p) => p.user_id === currentUser.id
+        );
+        const myFavorites = mockFavorites.filter(
+          (f) => f.userId === currentUser.id
+        );
+        const myReviews = mockTourReviews.filter(
+          (r) => r.user_id === currentUser.id
+        );
+
+        switch (sectionName) {
+          case "summary":
+            const upcomingTrips = myTrips.filter(
+              (t) => new Date(t.start_date) >= TODAY
+            );
+            innerContentArea.innerHTML = `
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome, ${currentUser.first_name}!</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div class="bg-blue-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-plane-departure text-4xl text-blue-500"></i><div><p class="text-4xl font-bold text-blue-600">${upcomingTrips.length}</p><p class="font-semibold text-blue-800">Upcoming Trips</p></div></div>
+                      <div class="bg-green-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-newspaper text-4xl text-green-500"></i><div><p class="text-4xl font-bold text-green-600">${myPosts.length}</p><p class="font-semibold text-green-800">Total Posts</p></div></div>
+                      <div class="bg-yellow-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-heart text-4xl text-yellow-500"></i><div><p class="text-4xl font-bold text-yellow-600">${myFavorites.length}</p><p class="font-semibold text-yellow-800">Favorites</p></div></div>
+                    </div>
+                `;
+            break;
+          case "trips":
+            const upcoming = myTrips.filter(
+              (t) => new Date(t.start_date) >= TODAY
+            );
+            const past = myTrips.filter((t) => new Date(t.start_date) < TODAY);
+            innerContentArea.innerHTML = `<div class="flex items-center justify-between mb-6"><h3 class="text-2xl font-bold text-gray-800">My Trips</h3><button onclick="showForm('trip')" class="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-600"><i class="fas fa-plus mr-2"></i>Add New Trip</button></div>
+                <div class="space-y-10">
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-700 mt-4 border-b pb-2 mb-6">Upcoming Trips</h4>
+                        <div id="upcoming-trips-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-700 mt-6 border-b pb-2 mb-6">Past Trips</h4>
+                        <div id="past-trips-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
+                    </div>
+                </div>`;
+            renderCards("upcoming-trips-grid", upcoming, "trip", "dashboard");
+            renderCards("past-trips-grid", past, "trip", "dashboard");
+            break;
+          case "posts":
+            innerContentArea.innerHTML = `<div class="flex items-center justify-between mb-4"><h3 class="text-2xl font-bold text-gray-800">My Blog Posts</h3><button onclick="showForm('post')" class="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-600"><i class="fas fa-plus mr-2"></i>Create New Post</button></div>
+                <div id="my-posts-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>`;
+            renderCards("my-posts-grid", myPosts, "post", "dashboard");
+            break;
+          case "favorites":
+            innerContentArea.innerHTML = `<h3 class="text-2xl font-bold text-gray-800 mb-6">My Favorites</h3>
+                <div id="favorites-grid-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>`;
+            renderFavoriteCards("favorites-grid-container", myFavorites);
+            break;
+          case "reviews":
+            innerContentArea.innerHTML = `<h3 class="text-2xl font-bold text-gray-800 mb-4">My Reviews</h3>
+                <div class="space-y-4">${
+                  myReviews.length > 0
+                    ? myReviews.map(createReviewItem).join("")
+                    : '<p class="text-gray-600 italic">You haven\'t written any reviews yet.</p>'
+                }</div>`;
+            break;
+          case "ai-history":
+            const myAiRequests = mockAiRequests.filter(
+              (r) => r.user_id === currentUser.id
+            );
+            innerContentArea.innerHTML = `<h3 class="text-2xl font-bold text-gray-800 mb-4">AI Trip History</h3>
+                <div class="space-y-4">${
+                  myAiRequests.length > 0
+                    ? myAiRequests.map(createAiHistoryItem).join("")
+                    : '<p class="text-gray-600 italic">You haven\'t generated any AI trips yet.</p>'
+                }</div>`;
+            break;
+          case "profile":
+            innerContentArea.innerHTML = `<h3 class="text-2xl font-bold text-gray-800 mb-4">My Profile</h3><div id="profile-form-container"></div>`;
+            renderProfileForm();
+            break;
+        }
+      }
+
+      function createReviewItem(review) {
+        const tour = mockTravelPlans.find((t) => t.id === review.tour_id);
+        return `<div class="bg-gray-100 p-4 rounded-xl border">
+          <p class="font-semibold text-gray-800">Review for: <span class="text-blue-600">${
+            tour ? tour.name : "a tour"
+          }</span></p>
+          <p class="text-yellow-500 my-1">${"★".repeat(
+            review.rating
+          )}${"☆".repeat(5 - review.rating)}</p>
+          <p class="text-gray-600 italic">"${review.content}"</p></div>`;
+      }
+
+      function createAiHistoryItem(request) {
+        return `<div class="bg-gray-100 p-4 rounded-xl border flex justify-between items-center">
+            <div>
+                <p class="font-semibold text-gray-800">${
+                  request.request_text
+                }</p>
+                <p class="text-sm text-gray-500">Generated on ${new Date().toLocaleDateString()}</p>
+            </div>
+            <button onclick="showItineraryModal('${
+              request.travel_plan_id
+            }')" class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-600">View Itinerary</button>
+        </div>`;
+      }
+
+      function renderProfileForm() {
+        const formContainer = document.getElementById("profile-form-container");
+        formContainer.innerHTML = `
+        <div class="flex flex-col md:flex-row items-start space-y-6 md:space-y-0 md:space-x-8">
+            <div class="flex-shrink-0 text-center">
+                <div class="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fas fa-user text-6xl text-gray-400"></i>
+                </div>
+                <button class="w-full mt-4 text-sm text-blue-600 hover:underline">Change Photo</button>
+            </div>
+            <form id="profile-form" class="space-y-4 flex-grow">
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Username</label><input type="text" value="${currentUser.username}" class="w-full p-3 rounded-xl bg-gray-100 border" readonly></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Email</label><input type="email" name="email" value="${currentUser.email}" class="w-full p-3 rounded-xl border border-gray-300"></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label><input type="text" name="first_name" value="${currentUser.first_name}" class="w-full p-3 rounded-xl border border-gray-300"></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label><input type="text" name="last_name" value="${currentUser.last_name}" class="w-full p-3 rounded-xl border border-gray-300"></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Phone</label><input type="tel" name="phone_number" value="${currentUser.phone_number}" class="w-full p-3 rounded-xl border border-gray-300"></div>
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600">Save Changes</button>
+            </form>
+        </div>`;
+        document
+          .getElementById("profile-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            alert("Profile updated!");
+          });
+      }
+
+      // Admin Panel Logic
+      function renderAdminPanel() {
+        showAdminSection("dashboard");
+      }
+      function showAdminSection(sectionName) {
+        document
+          .querySelectorAll("#admin-nav .dashboard-nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        document
+          .querySelector(
+            `#admin-nav .dashboard-nav-item[onclick="showAdminSection('${sectionName}')"]`
+          )
+          .classList.add("active");
+
+        const contentArea = document.getElementById("admin-content-area");
+        let contentHtml = "";
+
+        switch (sectionName) {
+          case "dashboard":
+            contentHtml = `<h2 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div class="bg-blue-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-users text-4xl text-blue-500"></i><div><p class="text-4xl font-bold text-blue-600">${
+                        mockUsers.length
+                      }</p><p class="font-semibold text-blue-800">Total Users</p></div></div>
+                      <div class="bg-green-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-map-marked-alt text-4xl text-green-500"></i><div><p class="text-4xl font-bold text-green-600">${
+                        mockTravelPlans.filter((p) => p.plan_type === "tour")
+                          .length
+                      }</p><p class="font-semibold text-green-800">Total Tours</p></div></div>
+                      <div class="bg-yellow-100 p-6 rounded-2xl flex items-center space-x-4"><i class="fas fa-newspaper text-4xl text-yellow-500"></i><div><p class="text-4xl font-bold text-yellow-600">${
+                        mockUserPosts.length
+                      }</p><p class="font-semibold text-yellow-800">Total Posts</p></div></div>
+                  </div>`;
+            break;
+          case "users":
+            contentHtml = `<h2 class="text-3xl font-bold text-gray-800 mb-6">User Management</h2><div class="overflow-x-auto bg-white rounded-lg shadow"><table class="min-w-full">
+                  <thead class="bg-gray-100"><tr class="text-left text-gray-600 uppercase text-sm"><th class="py-3 px-6">Username</th><th class="py-3 px-6">Name</th><th class="py-3 px-6">Email</th><th class="py-3 px-6 text-center">Role</th><th class="py-3 px-6 text-center">Actions</th></tr></thead>
+                  <tbody class="text-gray-700 text-sm">${mockUsers
+                    .map(
+                      (u) =>
+                        `<tr class="border-b border-gray-200 hover:bg-gray-50"><td class="py-3 px-6 font-medium">${u.username}</td><td class="py-3 px-6">${u.first_name} ${u.last_name}</td><td class="py-3 px-6">${u.email}</td><td class="py-3 px-6 text-center">${u.role}</td><td class="py-3 px-6 text-center"><div class="flex item-center justify-center"><button class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"><i class="fas fa-edit"></i></button><button class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"><i class="fas fa-trash-alt"></i></button></div></td></tr>`
+                    )
+                    .join("")}</tbody>
+                </table></div>`;
+            break;
+          case "tours":
+            contentHtml = `<h2 class="text-3xl font-bold text-gray-800 mb-6">Tour Management</h2><div class="overflow-x-auto bg-white rounded-lg shadow"><table class="min-w-full">
+                  <thead class="bg-gray-100"><tr class="text-left text-gray-600 uppercase text-sm"><th class="py-3 px-6">Name</th><th class="py-3 px-6">Destination</th><th class="py-3 px-6 text-center">Price</th><th class="py-3 px-6 text-center">Actions</th></tr></thead>
+                  <tbody class="text-gray-700 text-sm">${mockTravelPlans
+                    .filter((p) => p.plan_type === "tour")
+                    .map(
+                      (t) =>
+                        `<tr class="border-b border-gray-200 hover:bg-gray-50"><td class="py-3 px-6 font-medium">${t.name}</td><td class="py-3 px-6">${t.destination}</td><td class="py-3 px-6 text-center">$${t.price_usd}</td><td class="py-3 px-6 text-center"><div class="flex item-center justify-center"><button class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"><i class="fas fa-edit"></i></button><button class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"><i class="fas fa-trash-alt"></i></button></div></td></tr>`
+                    )
+                    .join("")}</tbody>
+                </table></div>`;
+            break;
+          case "posts":
+            contentHtml = `<h2 class="text-3xl font-bold text-gray-800 mb-6">Post Management</h2><div class="overflow-x-auto bg-white rounded-lg shadow"><table class="min-w-full">
+                  <thead class="bg-gray-100"><tr class="text-left text-gray-600 uppercase text-sm"><th class="py-3 px-6">Title</th><th class="py-3 px-6">Author</th><th class="py-3 px-6 text-center">Category</th><th class="py-3 px-6 text-center">Actions</th></tr></thead>
+                  <tbody class="text-gray-700 text-sm">${mockUserPosts
+                    .map((p) => {
+                      const user = mockUsers.find((u) => u.id === p.user_id);
+                      return `<tr class="border-b border-gray-200 hover:bg-gray-50"><td class="py-3 px-6 font-medium">${
+                        p.title
+                      }</td><td class="py-3 px-6">${
+                        user ? user.username : "N/A"
+                      }</td><td class="py-3 px-6 text-center">${
+                        p.category
+                      }</td><td class="py-3 px-6 text-center"><div class="flex item-center justify-center"><button class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"><i class="fas fa-edit"></i></button><button class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"><i class="fas fa-trash-alt"></i></button></div></td></tr>`;
+                    })
+                    .join("")}</tbody>
+                </table></div>`;
+            break;
+          case "attractions":
+            contentHtml = `<h2 class="text-3xl font-bold text-gray-800 mb-6">Attraction Management</h2><div class="overflow-x-auto bg-white rounded-lg shadow"><table class="min-w-full">
+                  <thead class="bg-gray-100"><tr class="text-left text-gray-600 uppercase text-sm"><th class="py-3 px-6">Title</th><th class="py-3 px-6">Location</th><th class="py-3 px-6 text-center">Actions</th></tr></thead>
+                  <tbody class="text-gray-700 text-sm">${mockAttractionPosts
+                    .map(
+                      (a) =>
+                        `<tr class="border-b border-gray-200 hover:bg-gray-50"><td class="py-3 px-6 font-medium">${a.title}</td><td class="py-3 px-6">${a.location}</td><td class="py-3 px-6 text-center"><div class="flex item-center justify-center"><button class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"><i class="fas fa-edit"></i></button><button class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"><i class="fas fa-trash-alt"></i></button></div></td></tr>`
+                    )
+                    .join("")}</tbody>
+                </table></div>`;
+            break;
+        }
+        contentArea.innerHTML = contentHtml;
+      }
+
+      // CRUD Operations
+      let formType = null,
+        formAction = null,
+        formItemId = null;
+      function showForm(type, action = "add", itemId = null) {
+        formType = type;
+        formAction = action;
+        formItemId = itemId;
+        const formTitle = document.getElementById("form-title");
+        const formContent = document.getElementById("edit-form");
+        formContent.innerHTML = "";
+        if (formType === "trip") {
+          formTitle.textContent =
+            action === "add" ? "Add New Trip" : "Edit Trip";
+          const trip =
+            action === "edit"
+              ? mockTravelPlans.find((t) => t.id === itemId)
+              : {};
+          formContent.innerHTML = `
+            <div><label for="trip-name" class="block text-gray-700 font-semibold mb-2">Trip Name</label><input type="text" id="trip-name" name="name" value="${
+              trip.name || ""
+            }" class="w-full p-3 rounded-xl border border-gray-300" required></div>
+            <div><label for="trip-destination" class="block text-gray-700 font-semibold mb-2">Destination</label><input type="text" id="trip-destination" name="destination" value="${
+              trip.destination || ""
+            }" class="w-full p-3 rounded-xl border border-gray-300" required></div>
+            <div><label for="trip-duration" class="block text-gray-700 font-semibold mb-2">Duration (days)</label><input type="number" id="trip-duration" name="duration_days" value="${
+              trip.duration_days || ""
+            }" class="w-full p-3 rounded-xl border border-gray-300" required></div>
+            <div><label for="trip-description" class="block text-gray-700 font-semibold mb-2">Description</label><textarea id="trip-description" name="description" class="w-full p-3 rounded-xl border border-gray-300" rows="4" required>${
+              trip.description || ""
+            }</textarea></div>
+            <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600">${
+              action === "add" ? "Add Trip" : "Save Changes"
+            }</button>`;
+        } else if (formType === "post") {
+          formTitle.textContent =
+            action === "add" ? "Create New Post" : "Edit Post";
+          const post =
+            action === "edit" ? mockUserPosts.find((p) => p.id === itemId) : {};
+          formContent.innerHTML = `
+            <div><label for="post-title" class="block text-gray-700 font-semibold mb-2">Post Title</label><input type="text" id="post-title" name="title" value="${
+              post.title || ""
+            }" class="w-full p-3 rounded-xl border border-gray-300" required></div>
+            <div><label for="post-category" class="block text-gray-700 font-semibold mb-2">Category</label><input type="text" id="post-category" name="category" value="${
+              post.category || ""
+            }" class="w-full p-3 rounded-xl border border-gray-300" required></div>
+            <div><label for="post-content" class="block text-gray-700 font-semibold mb-2">Content</label><textarea id="post-content" name="content" class="w-full p-3 rounded-xl border border-gray-300" rows="6" required>${
+              post.content || ""
+            }</textarea></div>
+            <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600">${
+              action === "add" ? "Create Post" : "Save Changes"
+            }</button>`;
+        }
+        document.getElementById("form-modal").classList.remove("hidden");
+        document
+          .getElementById("edit-form")
+          .addEventListener("submit", handleFormSubmit);
+      }
+      function hideForm() {
+        document.getElementById("form-modal").classList.add("hidden");
+        document
+          .getElementById("edit-form")
+          .removeEventListener("submit", handleFormSubmit);
+      }
+      function showItineraryModal(planId) {
+        const itinerary = mockTripItineraries[planId];
+        if (!itinerary) return;
+        const modalContent = document.getElementById("itinerary-modal-content");
+        let itineraryHtml = `<h3 class="text-2xl font-bold mb-4">${itinerary.title}</h3><div class="space-y-4 max-h-[60vh] overflow-y-auto">`;
+        itinerary.days.forEach((day) => {
+          itineraryHtml += `
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <h4 class="font-bold text-lg">Day ${day.day}: ${
+            day.title
+          }</h4>
+                    <ul class="list-disc list-inside text-gray-700 mt-2">
+                        ${day.activities
+                          .map((act) => `<li>${act}</li>`)
+                          .join("")}
+                    </ul>
+                </div>
+            `;
+        });
+        itineraryHtml += `</div>`;
+        modalContent.innerHTML = itineraryHtml;
+        document.getElementById("itinerary-modal").classList.remove("hidden");
+      }
+
+      function hideItineraryModal() {
+        document.getElementById("itinerary-modal").classList.add("hidden");
+      }
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        if (formType === "trip") {
+          if (formAction === "add") {
+            const newTrip = {
+              id: `user-trip-${Date.now()}`,
+              ...data,
+              plan_type: "user",
+              owner_id: currentUser.id,
+              image_url: `https://picsum.photos/seed/${Date.now()}/800/600`,
+            };
+            mockTravelPlans.push(newTrip);
+          } else if (formAction === "edit") {
+            const tripIndex = mockTravelPlans.findIndex(
+              (t) => t.id === formItemId
+            );
+            if (tripIndex !== -1)
+              mockTravelPlans[tripIndex] = {
+                ...mockTravelPlans[tripIndex],
+                ...data,
+              };
+          }
+        } else if (formType === "post") {
+          if (formAction === "add") {
+            const newPost = {
+              id: `user-post-${Date.now()}`,
+              user_id: currentUser.id,
+              ...data,
+              created_at: new Date().toISOString(),
+              image_url: `https://picsum.photos/seed/${Date.now()}/800/600`,
+            };
+            mockUserPosts.push(newPost);
+          } else if (formAction === "edit") {
+            const postIndex = mockUserPosts.findIndex(
+              (p) => p.id === formItemId
+            );
+            if (postIndex !== -1)
+              mockUserPosts[postIndex] = {
+                ...mockUserPosts[postIndex],
+                ...data,
+              };
+          }
+        }
+        hideForm();
+        showDashboardSection(formType === "trip" ? "trips" : "posts");
+      }
+      function deleteItem(type, itemId) {
+        if (confirm(`Are you sure you want to delete this ${type}?`)) {
+          if (type === "trip") {
+            mockTravelPlans = mockTravelPlans.filter((t) => t.id !== itemId);
+          } else if (type === "post") {
+            mockUserPosts = mockUserPosts.filter((p) => p.id !== itemId);
+            mockUserPostComments = mockUserPostComments.filter(
+              (c) => c.post_id !== itemId
+            );
+          }
+          showDashboardSection(type === "trip" ? "trips" : "posts");
+        }
+      }
+      function removeFavorite(itemId) {
+        if (
+          confirm("Are you sure you want to remove this from your favorites?")
+        ) {
+          mockFavorites = mockFavorites.filter((f) => f.itemId !== itemId);
+          showDashboardSection("favorites");
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+.container {
+  max-width: 1200px;
+  text-align: center;
+  font-family: "Archivo", sans-serif;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.sectionWrapper {
+  margin-bottom: 3rem;
+}
+
+.plannerSection {
+  display: flex;
+  justify-content: center;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.description {
+  align-self: center;
+  color: gray;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .titleContainer {
+    flex-direction: column;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    margin: 0 auto;
+    font-size: 1.5rem;
+  }
+
+  .description {
+    margin: 0 auto;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,136 @@
+.topRowContainer {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.topRowModule {
+  flex: 1;
+  min-width: 300px;
+}
+
+.mainContentPanel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.emptyState {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 480px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  overflow: hidden;
+  background-color: #2d3748;
+  background-image: url("https://www.tourissimo.travel/hs-fs/hubfs/Blog_pictures/Joy%20of%20Travel%20Planning/Travel%20Plans%20Blog.jpg?width=2240&name=Travel%20Plans%20Blog.jpg");
+  background-size: cover;
+  background-position: center;
+  /* margin: -2rem; */
+}
+
+.emptyState::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.textContainer {
+  position: relative;
+  z-index: 2;
+  padding: 1rem;
+}
+
+.textContainer h2 {
+  font-size: 2.75rem;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.textContainer p {
+  font-size: 1.25rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.displayContainer {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.itineraryContainer {
+  line-height: 1.7;
+}
+
+.itineraryContainer h2 {
+  margin-top: 0;
+  font-size: 1.75rem;
+}
+
+.itineraryContainer h4 {
+  margin-top: 2rem;
+  font-size: 1.25rem;
+}
+
+.itineraryContainer ul {
+  padding-left: 20px;
+  font-size: 1.05rem;
+}
+
+.aiModifier {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.aiModifier input {
+  flex-grow: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.aiModifier button {
+  width: auto;
+}
+
+.confirmButton {
+  margin-top: 2rem;
+  width: auto;
+  float: right;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .mainContentPanel {
+    max-width: 300px;
+  }
+}

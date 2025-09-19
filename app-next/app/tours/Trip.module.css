@@ -1,0 +1,181 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
+
+.pageWrapper {
+  flex-grow: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 90px;
+  padding: 2rem;
+  font-family: "Archivo", sans-serif;
+}
+
+.backButton {
+  display: inline-block;
+  font-family: "Archivo", sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2583f1;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+  transform-origin: left center;
+}
+
+/* override all link states */
+.backButton:link,
+.backButton:visited,
+.backButton:hover,
+.backButton:active,
+.backButton:focus {
+  color: #2583f1;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.backButton:hover {
+  transform: scale(1.05);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.9);
+  outline-offset: 2px;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.gridContainer {
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.searchAndSortWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.searchInput {
+  flex: 1 1 0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+}
+
+.filterButton {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: background-color 0.2s;
+}
+
+.filterButton:hover {
+  background-color: #f3f4f6;
+  cursor: pointer;
+  border-color: rgb(155, 157, 157);
+}
+
+.filterSelect {
+  flex: 0 0 160px;
+  width: 200px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+}
+
+.paginationBtn {
+  background-color: #1f84ca;
+  font-family: "Archivo", sans-serif;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-block;
+  text-decoration: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04), transparent);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 6px 18px rgba(31, 132, 202, 0.06);
+  transform: translateZ(0);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.paginationBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(31, 132, 202, 0.12);
+  background-color: #1977b6;
+}
+
+.paginationBtn:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.paginationBtn:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.9);
+  outline-offset: 3px;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paginationBtn {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .pageWrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+  .searchAndSortWrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .filterSelect {
+    width: 100%;
+    flex: none;
+  }
+}

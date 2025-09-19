@@ -1,227 +1,357 @@
-<img src="./images/hyf.svg" alt="image" width="200px" height="200px">
+# Better Travel - Full Stack Travel Platform
 
-# HackYourFuture project template
+A comprehensive travel platform built with Next.js frontend and Node.js backend, featuring tour management, user authentication, blog posts, and attractions.
 
-This template is meant to be used as part of the meal-sharing and Final Project modules,
-but can work as a starting point for any full stack project.
+## Project Overview
 
-It consists of two packages:
+Better Travel is a modern travel platform that allows users to discover tours, read travel blogs, explore attractions, and manage their travel experiences. The platform consists of a responsive Next.js frontend and a robust Node.js API backend with PostgreSQL database.
 
-- `api` which is a NodeJS project using Express for the API
-- `app` which is Next project using React for the web app
+## Architecture
 
-Both packages are as small as possible but feel free to add more tools as you see fit.
+The project follows a full-stack architecture with clear separation of concerns:
 
-## Prerequisites
+- **Frontend**: Next.js 15 with React 19, CSS Modules for styling
+- **Backend**: Node.js with Express.js, PostgreSQL database with Knex.js ORM
+- **Authentication**: JWT-based authentication system
+- **Database**: PostgreSQL with Docker containerization
+- **API**: RESTful API with comprehensive CRUD operations
 
-This template assumes that there is a database already set up with tables and data.
-
-You can start a MySQL instance using Docker with the below command:  
-`docker run --name mysql -e MYSQL_ROOT_PASSWORD=mysql-root-password -e MYSQL_DATABASE=my-database -d -p 3306:3306 mysql:latest`
-
-Then connect to this instance using any database management tool you prefer, such as MySQL Workbench, to set up your tables and add data.
-![Testing your database](./images/db_test.png)
-
-## Getting started
-
-> Before you start, make sure no other projects are running, in order to have the ports free.
-
-To get started you'll need two terminals.
-
-In the first terminal run the following commands:
+## Project Structure
 
 ```
+hyf-final-project-name/
+├── api/                    # Backend API server
+│   ├── src/
+│   │   ├── routers/       # API route handlers
+│   │   ├── middleware/    # Authentication and error handling
+│   │   ├── migrations/    # Database migrations
+│   │   ├── validation/    # Input validation schemas
+│   │   └── db/           # Database configuration
+│   └── package.json
+├── app-next/              # Next.js frontend application
+│   ├── app/              # Next.js app router pages
+│   ├── components/       # React components
+│   ├── assets/          # Static assets
+│   └── public/          # Public files
+├── database/             # Database schemas and seeds
+├── docs/                # Technical documentation
+└── docker-compose.yml   # Docker configuration
+```
+
+## Backend Development
+
+### Core Contributors: Ali Sharifi & Ehsan Karkooti
+
+The backend development was primarily handled by **Ali Sharifi** and **Ehsan Karkooti**, who built a comprehensive API system with the following features:
+
+#### Ali Sharifi's Contributions
+- **Authentication System**: Complete JWT-based authentication with registration and login endpoints
+- **Tours API**: Full CRUD operations for tours with advanced search, filtering, and pagination
+- **API Documentation**: Comprehensive documentation for all tour endpoints
+- **Database Integration**: PostgreSQL setup with Knex.js ORM
+
+#### Ehsan Karkooti's Contributions
+- **Database Architecture**: Complete database schema design and migrations
+- **Middleware Development**: Error handling, logging, and authentication middleware
+- **Reviews & Comments System**: Full implementation of review and comment functionality
+- **User Management**: Advanced user management with role-based access control
+- **Docker Configuration**: Database containerization and setup scripts
+
+### Backend Features
+
+#### Authentication & User Management
+- JWT-based authentication with 24-hour token expiration
+- Multiple login methods (email, username, mobile)
+- Role-based access control (User, Moderator, Admin)
+- Password hashing with bcrypt (12 salt rounds)
+- Account activation/deactivation
+- Login history tracking
+
+#### Tours Management
+- Complete CRUD operations for tours
+- Advanced search across tour names, descriptions, cities, and countries
+- Multiple sorting options (price, duration, rating, creation date)
+- Pagination support for large datasets
+- Price and duration filtering
+- Currency support
+
+#### Reviews & Comments
+- Tour review system with ratings
+- Comment functionality for tours
+- User-generated content management
+- Content moderation capabilities
+
+#### Database Features
+- PostgreSQL with comprehensive schema
+- Migration system for database versioning
+- Seed data for development and testing
+- Docker containerization for easy setup
+
+## Frontend Development
+
+### Core Contributors: Mateus Britto & Niger Afroze
+
+The frontend development was primarily handled by **Mateus Britto** and **Niger Afroze**, who created a modern, responsive user interface:
+
+#### Mateus Britto's Contributions
+- **Homepage Layout**: Hero section with image transitions and search functionality
+- **Authentication Pages**: Login and registration forms with backend integration
+- **Tours Page**: Complete tours listing with search, filtering, and sorting
+- **Navigation System**: Responsive navigation with smooth scrolling
+- **UI Components**: Card components, form handling, and responsive design
+- **API Integration**: Frontend-backend connectivity for authentication and data fetching
+
+#### Niger Afroze's Contributions
+- **Header & Footer**: Complete header and footer components with responsive design
+- **Travel Cards**: Tour card components with rating display and styling
+- **Blog Posts Section**: User blog posts display and management
+- **Attractions Section**: Attractions display and detail pages
+- **Mobile Responsiveness**: Burger menu, mobile navigation, and responsive layouts
+- **Styling & Design**: CSS modules, animations, and visual enhancements
+
+### Frontend Features
+
+#### User Interface
+- Modern, responsive design with CSS Modules
+- Smooth scrolling navigation
+- Image carousel in hero section
+- Mobile-first responsive design
+- Interactive search and filtering
+
+#### Pages & Components
+- **Homepage**: Hero section, tours preview, blog posts, attractions
+- **Tours Page**: Complete tours listing with advanced filtering
+- **Login/Register**: Toggle forms with backend integration
+- **Tour Details**: Individual tour pages with reviews and comments
+- **Attractions**: Attraction listings and detail pages
+
+#### User Experience
+- Real-time search functionality
+- Loading states and error handling
+- Form validation and user feedback
+- Smooth transitions and animations
+- Accessible design with proper ARIA labels
+
+## Database Schema
+
+The database includes the following main tables:
+
+- **Users**: User accounts with authentication data
+- **Travel Plans**: Tour information and details
+- **Reviews**: User reviews for tours
+- **Comments**: User comments on tours
+- **Attractions**: Tourist attractions data
+- **Blog Posts**: User-generated blog content
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+
+### Tours
+- `GET /api/tours` - Get all tours with search, filtering, and pagination
+- `GET /api/tours/:id` - Get specific tour details
+- `POST /api/tours` - Create new tour (authenticated)
+- `PUT /api/tours/:id` - Update tour (authenticated)
+- `DELETE /api/tours/:id` - Delete tour (authenticated)
+
+### Reviews & Comments
+- `GET /api/reviews` - Get tour reviews
+- `POST /api/reviews` - Create review (authenticated)
+- `GET /api/comments` - Get tour comments
+- `POST /api/comments` - Create comment (authenticated)
+
+### Users
+- `GET /api/users/profile` - Get user profile (authenticated)
+- `PUT /api/users/profile` - Update user profile (authenticated)
+
+## Docker & Database Setup
+
+The project uses Docker for database containerization, making it easy to set up and manage the PostgreSQL database across different environments.
+
+### Docker Configuration
+
+The project includes a `docker-compose.yml` file that sets up a PostgreSQL 14 Alpine container:
+
+```yaml
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: better_travel_db_container
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+```
+
+### Database Schema
+
+The database includes a comprehensive schema with the following main tables:
+
+- **users**: User accounts with authentication and profile data
+- **travel_plans**: Tour templates and user-created trips
+- **tour_destinations**: Individual stops/destinations for multi-destination tours
+- **attraction_posts**: Admin-created content about specific attractions
+- **user_posts**: Community blog posts written by users
+- **tour_reviews**: User reviews for tours with ratings
+- **user_post_comments**: Comments on user blog posts
+- **tour_flights**: Flight details associated with tours
+- **tour_accommodations**: Accommodation details for tour destinations
+- **currencies**: Currency information and exchange rates
+- **user_favorites**: User favorites for tours, posts, and attractions
+- **ai_requests**: AI-generated trip requests
+- **trip_itineraries**: AI-generated itinerary data
+
+### Database Initialization
+
+The project includes an automated database setup script (`api/scripts/db-init.js`) that:
+- Waits for the database container to be ready
+- Applies the complete database schema
+- Seeds the database with mock data for development
+- Handles errors gracefully with proper logging
+
+## Development Setup
+
+### Prerequisites
+- Node.js 20.12.1 or higher
+- npm 10.5.0 or higher
+- Docker and Docker Compose
+- PostgreSQL (via Docker)
+
+### Backend Setup
+
+1. Navigate to the API directory:
+```bash
 cd api
-cp .env-example .env
+```
+
+2. Install dependencies:
+```bash
 npm install
+```
+
+3. Create environment file:
+```bash
+cp .env.example .env
+```
+
+4. Configure environment variables in `.env`:
+```env
+PORT=3000
+DB_CLIENT=pg
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_DATABASE_NAME=your_database_name
+JWT_SECRET=your_super_secret_jwt_key_here
+```
+
+5. Start the database with Docker:
+```bash
+npm run db:start
+```
+
+6. Initialize the database (applies schema and seeds data):
+```bash
+npm run db:reset
+```
+
+7. Start the development server:
+```bash
 npm run dev
 ```
 
-You can then test the API using [Postman](https://www.postman.com/) at [http://localhost:3001/api](http://localhost:3001/api).
-![Testing the API with Postman](./images/api_test.png)
+### Available Database Commands
 
-In the second terminal run the following commands:
+The project includes several npm scripts for database management:
 
+- `npm run db:start` - Start the PostgreSQL Docker container
+- `npm run db:stop` - Stop the PostgreSQL Docker container
+- `npm run db:clean` - Stop and remove the container and volumes
+- `npm run db:reset` - Clean, start, and initialize the database
+- `npm run db:setup` - Complete database setup (clean + start + reset)
+- `npm run migrate` - Run Knex.js migrations
+- `npm run migrate:rollback` - Rollback the last migration
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd app-next
 ```
-cd app
+
+2. Install dependencies:
+```bash
 npm install
+```
+
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-You can then open the web app at [http://localhost:3000](http://localhost:3000).
-![Testing the app with a browser](./images/app_test.png)
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
 
-## Common issues
+## Technology Stack
 
-### Port conflict
+### Backend
+- **Node.js**: Runtime environment
+- **Express.js**: Web framework
+- **PostgreSQL**: Database
+- **Knex.js**: SQL query builder
+- **JWT**: Authentication
+- **bcryptjs**: Password hashing
+- **Zod**: Input validation
+- **Morgan**: HTTP request logger
+- **CORS**: Cross-origin resource sharing
 
-If you see the below error when trying to start either the API or the web app, then you have a port conflict.  
-Some other process is already listening on the port you want to use. Either stop that process or use another port by changing the PORT variable in the `.env` file for the package that is facing the conflict (API or web app).
+### Frontend
+- **Next.js 15**: React framework
+- **React 19**: UI library
+- **CSS Modules**: Styling
+- **React Icons**: Icon library
+- **React Scroll**: Smooth scrolling
 
-```
-node:events:496
-      throw er; // Unhandled 'error' event
-      ^
+### Development Tools
+- **Docker**: Containerization
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Nodemon**: Development server
 
-Error: listen EADDRINUSE: address already in use :::3001
-    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
-    at listenInCluster (node:net:1945:12)
-    at Server.listen (node:net:2037:7)
-    at Function.listen (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/express/lib/application.js:635:24)
-    at file:///Users/hyf/dev/hyf/hyf-project-template/api/src/index.js:29:5
-    at ModuleJob.run (node:internal/modules/esm/module_job:222:25)
-    at async ModuleLoader.import (node:internal/modules/esm/loader:323:24)
-    at async loadESM (node:internal/process/esm_loader:28:7)
-    at async handleMainPromise (node:internal/modules/run_main:113:12)
-Emitted 'error' event on Server instance at:
-    at emitErrorNT (node:net:1924:8)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '::',
-  port: 3001
-}
-```
+## Security Features
 
-### Wrong database credentials
+- Password hashing with bcrypt
+- JWT token authentication
+- Input validation and sanitization
+- SQL injection protection
+- CORS configuration
+- Rate limiting
+- Role-based access control
 
-If you see the error below when trying to make a query to your database it means that the variables `DB_USER` and `DB_PASSWORD` don't match the username and password used when starting the database container. Either find the right credentials or recreate your database container and store the new credentials.
+## Contributing
 
-```
-/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/packets/packet.js:728
-    const err = new Error(message);
-                ^
+This project was developed as a collaborative effort with clear role distribution:
 
-Error: Access denied for user 'root'@'192.168.65.1' (using password: YES)
-    at Packet.asError (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/packets/packet.js:728:17)
-    at ClientHandshake.execute (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/commands/command.js:29:26)
-    at Connection.handlePacket (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/connection.js:481:34)
-    at PacketParser.onPacket (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/connection.js:97:12)
-    at PacketParser.executeStart (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/packet_parser.js:75:16)
-    at Socket.<anonymous> (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/mysql2/lib/connection.js:104:25)
-    at Socket.emit (node:events:519:28)
-    at addChunk (node:internal/streams/readable:559:12)
-    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
-    at Readable.push (node:internal/streams/readable:390:5) {
-  code: 'ER_ACCESS_DENIED_ERROR',
-  errno: 1045,
-  sqlState: '28000',
-  sqlMessage: "Access denied for user 'root'@'192.168.65.1' (using password: YES)",
-  sql: undefined
-}
-```
+- **Backend Development**: Ali Sharifi & Ehsan Karkooti
+- **Frontend Development**: Mateus Britto & Niger Afroze
+- **Project Management**: Team collaboration through GitHub
 
-### Using SSL when the database does not support it
+## License
 
-If you see the below error, then you are trying to establish a SSL (secure) connection to a database that doesn't support it, most likely you set the value of the environment variable `DB_USE_SSL` to "true" when it should be "false".
+This project is developed as part of the Hack Your Future curriculum.
 
-```
-/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/pg/lib/connection.js:77
-          return self.emit('error', new Error('The server does not support SSL connections'))
-                                    ^
+## Contact
 
-Error: The server does not support SSL connections
-    at Socket.<anonymous> (/Users/hyf/dev/hyf/hyf-project-template/api/node_modules/pg/lib/connection.js:77:37)
-    at Object.onceWrapper (node:events:633:26)
-    at Socket.emit (node:events:518:28)
-    at addChunk (node:internal/streams/readable:559:12)
-    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
-    at Readable.push (node:internal/streams/readable:390:5)
-    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
-
-Node.js v20.12.2
-[nodemon] app crashed - waiting for file changes before starting...
-
-Database not running or wrong address:
-API listening on port 3001
-node:internal/process/promises:289
-            triggerUncaughtException(err, true /* fromPromise */);
-            ^
-
-AggregateError [ECONNREFUSED]:
-    at internalConnectMultiple (node:net:1116:18)
-    at afterConnectMultiple (node:net:1683:7) {
-  code: 'ECONNREFUSED',
-  fatal: true,
-  [errors]: [
-    Error: connect ECONNREFUSED ::1:3306
-        at createConnectionError (node:net:1646:14)
-        at afterConnectMultiple (node:net:1676:16) {
-      errno: -61,
-      code: 'ECONNREFUSED',
-      syscall: 'connect',
-      address: '::1',
-      port: 3306
-    },
-    Error: connect ECONNREFUSED 127.0.0.1:3306
-        at createConnectionError (node:net:1646:14)
-        at afterConnectMultiple (node:net:1676:16) {
-      errno: -61,
-      code: 'ECONNREFUSED',
-      syscall: 'connect',
-      address: '127.0.0.1',
-      port: 3306
-    }
-  ]
-}
-```
-
-### Broken TypeScript config file
-This boilerplate does not use TypeScript, but Next which is used in the `app` package has built in support for TypeScript.
-This means that Next (or rather `esbuild` which is used internally) will look for a TypeScript config file (`tsconfig.json`) in the current folder and all parent folders until it finds one.
-If it does find a TypeScript config file but that file is invalid or empty you'll see errors like this:
-
-```
-✘ [ERROR] Unexpected end of file in JSON
-
-    ../../tsconfig.json:1:0:
-      1 │ 
-        ╵ ^
-
-failed to load config from /Users/milton/dev/hyf/hyf-project-template/app/next.config.js
-error when starting dev server:
-Error: Build failed with 1 error:
-../../tsconfig.json:1:0: ERROR: Unexpected end of file in JSON
-    at failureErrorWithLog (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1651:15)
-    at /Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1059:25
-    at runOnEndCallbacks (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1486:45)
-    at buildResponseToResult (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1057:7)
-    at /Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:1086:16
-    at responseCallbacks.<computed> (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:704:9)
-    at handleIncomingPacket (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:764:9)
-    at Socket.readFromStdout (/Users/milton/dev/hyf/hyf-project-template/app/node_modules/esbuild/lib/main.js:680:7)
-    at Socket.emit (node:events:519:28)
-    at addChunk (node:internal/streams/readable:559:12)
-```
-
-There are 3 possible solutions:
-1. Delete the offending TypeScript config file
-2. Fix the issue in the file so that Next can use it
-3. Move your project folder to some place that doesn't put the TypeScript config file in the parent folder of your project folder
-
-## Architecture diagram
-
-![Architecture](./images/architecture.png)
-
-## Applying consistent formatting
-
-Before you commit any changes you've made, you can run the command `npm run format` in either package to format the code using [Prettier](https://prettier.io/).
-
-Using a consistent code style makes it easier to read code which improves productivity and avoid bugs.  
-When collaborating with other people, a code base should still look like it was written by a single person.
-
-## Checking for common code problems
-
-Before you commit your changes, you can use `npm run check` in either package to check for code issues using [ESLint](https://eslint.org/).
-
-ESLint is a "linter", a tool that scans your code for common code problems, this can help you avoid bugs and write better code.
-
-## Deploying
-
-All 3 components (database, API, web app) can be deployed for free at [Render.com](https://render.com).
-Sign in using your Github account to make the process smoother.
-When you sign in you can specify which of your repositories you want Render.com to have access to.
-
-[Database and API deployment instructions](./api/README.md#deploying)  
-[App deployment instructions](./app/README.md#deploying-a-static-web-app)
+For questions or contributions, please contact the development team through the project repository.

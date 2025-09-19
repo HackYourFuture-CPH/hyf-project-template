@@ -1,0 +1,64 @@
+.progressTracker {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.5rem;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.progressStep {
+    flex: 1;
+    text-align: center;
+    padding: 0.8rem 0.5rem;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    background: none;
+    border: none;
+    font-family: "Archivo", sans-serif;
+}
+
+.progressStep:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
+
+.progressStep:not(:disabled) {
+    cursor: pointer;
+}
+
+.active {
+    background-color: #2583f1;
+    color: #fff;
+    font-weight: 600;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(37, 131, 241, 0.2);
+}
+
+.completed {
+    color: #2583f1;
+    font-weight: 600;
+}
+
+.completed:hover:not(:disabled) {
+    background-color: #eff6ff;
+}
+
+.completed::after {
+    content: "✔";
+    color: #2583f1;
+    margin-left: 8px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .progressTracker {
+        flex-direction: column;
+        padding: 16px;
+    }
+}

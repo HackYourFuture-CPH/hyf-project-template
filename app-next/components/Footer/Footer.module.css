@@ -1,0 +1,13 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #171a1fff;
+  font-family: Inter, sans-serif;
+  padding: 0 1rem;
+}
+
+.footNote {
+  color: #ffffff;
+  text-align: center;
+}
