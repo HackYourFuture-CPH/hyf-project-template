@@ -212,6 +212,59 @@ export const userPostSchema = z.object({
 
 // --- ADMIN SCHEMAS ---
 
+// Schema for an admin creating a user
+export const adminUserCreateSchema = z.object({
+  first_name: z
+    .string()
+    .min(1, "First name is required")
+    .min(2, "First name must be at least 2 characters")
+    .max(50, "First name must be less than 50 characters")
+    .regex(/^[a-zA-Z\s]+$/, "First name can only contain letters and spaces"),
+
+  last_name: z
+    .string()
+    .min(1, "Last name is required")
+    .min(2, "Last name must be at least 2 characters")
+    .max(50, "Last name must be less than 50 characters")
+    .regex(/^[a-zA-Z\s]+$/, "Last name can only contain letters and spaces"),
+
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address")
+    .max(100, "Email must be less than 100 characters"),
+
+  username: z
+    .string()
+    .min(1, "Username is required")
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be less than 20 characters")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .refine(
+      (username) => !username.startsWith("_") && !username.endsWith("_"),
+      {
+        message: "Username cannot start or end with underscore",
+      }
+    ),
+
+  mobile: z
+    .string()
+    .min(1, "Mobile number is required")
+    .regex(
+      /^\+?[\d\s\-\(\)]{10,15}$/,
+      "Please enter a valid mobile number (10-15 digits)"
+    ),
+
+  role: z
+    .enum(["user", "admin", "moderator"], {
+      errorMap: () => ({ message: "Please select a valid role." }),
+    })
+    .default("user"),
+});
+
 // Schema for an admin updating a user's details
 export const adminUserUpdateSchema = z.object({
   role: z

@@ -1,8 +1,9 @@
 import express from "express";
 import knex from "../../db.mjs";
+import bcrypt from "bcryptjs";
 import { authenticateToken, requireRole } from "../../middleware/auth.js";
 import { validateRequest } from "../../middleware/validation.js";
-import { adminUserUpdateSchema } from "../../validation/schemas.js";
+import { adminUserCreateSchema, adminUserUpdateSchema } from "../../validation/schemas.js";
 
 const adminUsersRouter = express.Router();
 adminUsersRouter.use(authenticateToken, requireRole(["admin"]));
