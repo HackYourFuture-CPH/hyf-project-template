@@ -7,20 +7,37 @@ const commentsRouter = express.Router();
 // Apply authentication to all routes
 commentsRouter.use(authenticateToken);
 
-// Get all comments for admin management
+// Get all comments for admin management with pagination
 commentsRouter.get("/", async (req, res) => {
   try {
-    const comments = await knex("user_post_comments as upc")
-      .join("users as u", "upc.user_id", "u.id")
-      .join("user_posts as up", "upc.post_id", "up.id")
+    const { limit = 5, offset = 0 } = req.query;
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
+
+    const comments = await knex("comments as c")
+      .join("users as u", "c.user_id", "u.id")
+      .leftJoin("user_posts as up", function() {
+        this.on("c.commentable_id", "=", "up.id")
+             .andOn("c.commentable_type", "=", knex.raw("'post'"));
+      })
+      .leftJoin("attraction_posts as ap", function() {
+        this.on("c.commentable_id", "=", "ap.id")
+             .andOn("c.commentable_type", "=", knex.raw("'attraction'"));
+      })
       .select(
-        "upc.*",
+        "c.*",
         "u.first_name",
         "u.last_name",
         "u.username",
-        "up.title as post_title"
+        knex.raw("COALESCE(up.title, ap.title) as post_title"),
+        "c.commentable_type"
       )
-      .orderBy("upc.created_at", "desc");
+      .orderBy("c.created_at", "desc")
+      .limit(limitNum)
+      .offset(offsetNum);
+
+    // Get total count for pagination
+    const totalCount = await knex("comments").count("* as count").first();
 
     // Transform the data to match the expected format
     const transformedComments = comments.map(comment => ({
@@ -32,12 +49,19 @@ commentsRouter.get("/", async (req, res) => {
       },
       post: {
         title: comment.post_title
-      }
+      },
+      is_approved: comment.status === 'approved'
     }));
 
     res.json({ 
       message: "Comments retrieved successfully.", 
-      data: transformedComments 
+      data: transformedComments,
+      pagination: {
+        total: parseInt(totalCount.count),
+        limit: limitNum,
+        offset: offsetNum,
+        hasMore: (offsetNum + limitNum) < parseInt(totalCount.count)
+      }
     });
   } catch (error) {
     console.error("Error fetching all comments:", error);
@@ -54,7 +78,7 @@ commentsRouter.put("/:commentId/toggle-approval", async (req, res) => {
     const { commentId } = req.params;
     
     // Get current approval status
-    const comment = await knex("user_post_comments")
+    const comment = await knex("comments")
       .where({ id: commentId })
       .first();
 
@@ -63,15 +87,15 @@ commentsRouter.put("/:commentId/toggle-approval", async (req, res) => {
     }
 
     // Toggle approval status
-    const newApprovalStatus = !comment.is_approved;
+    const newStatus = comment.status === 'approved' ? 'pending' : 'approved';
     
-    const [updatedComment] = await knex("user_post_comments")
+    const [updatedComment] = await knex("comments")
       .where({ id: commentId })
-      .update({ is_approved: newApprovalStatus })
+      .update({ status: newStatus })
       .returning("*");
 
     res.json({
-      message: `Comment ${newApprovalStatus ? 'approved' : 'unapproved'} successfully.`,
+      message: `Comment ${newStatus === 'approved' ? 'approved' : 'unapproved'} successfully.`,
       data: updatedComment
     });
   } catch (error) {
@@ -85,7 +109,7 @@ commentsRouter.delete("/:commentId", async (req, res) => {
   try {
     const { commentId } = req.params;
 
-    const deletedCount = await knex("user_post_comments")
+    const deletedCount = await knex("comments")
       .where({ id: commentId })
       .del();
 
